@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<head id="my_head">
+	<title>Portrit - </title>
+    <meta charset="utf-8" />
+	<link rel="shortcut icon" href="/site_media/img/favicon.ico">
+    <link rel="apple-touch-icon" href="/site_media/img/icon128.png"/>
+    <link rel="apple-touch-icon-precomposed" href="/site_media/img/icon128.png"/>
+    {% if production_code %}
+        <link rel="stylesheet" href="/site_media/styles/production/landing.css" />
+        <link rel="stylesheet" href="/site_media/styles/production/portrit.css"/>
+    {% else %}
+        <link rel="stylesheet" href="/site_media/styles/trunk/landing.css" />
+        <link rel="stylesheet" href="/site_media/styles/trunk/portrit.css"/>
+    {% endif %}
+    <script src="http://www.google.com/jsapi?key=ABQIAAAAv9UUX4Bh3gRCpbzjSE5MxxSfZ7BxKgj6oXj1KRYYnjuHN0SsnBTx1B5nTeUxCB_k-Yerxn8ZVGvnLA" type="text/javascript"></script>
+    <script type="text/javascript">
+        google.load("jquery", "1.4.4");
+    </script>
+    {% if production_code %}
+        <script type="text/javascript" src="/site_media/js/production/portrit-min.js"></script>
+    {% else %}
+        <script type="text/javascript" src="/site_media/js/trunk/easing.1.3.js"></script>
+        <script type="text/javascript" src="/site_media/js/trunk/ajaxfileupload.js"></script>
+        <script type="text/javascript" src="/site_media/js/trunk/jquery.autocomplete.js"></script>
+        <script type="text/javascript" src="/site_media/js/trunk/iscroll.js"></script>
+        <script type="text/javascript" src="/site_media/js/trunk/mdetect.js"></script>
+        <script type="text/javascript" src="/site_media/js/trunk/main.js"></script>
+    {% endif %}
+
+    {% if analytics %}
+        <script type="text/javascript">
+
+          var _gaq = _gaq || [];
+          _gaq.push(['_setAccount', 'UA-17124785-1']);
+          _gaq.push(['_trackPageview']);
+
+          (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+          })();
+
+        </script>
+    {% endif %}
+</head>
+<body>
+    <div id="fb-root"></div>
+    <script type="text/javascript">
+    	if (window.location.hostname == 'portrit.com' || window.location.hostname == 'www.portrit.com'){
+    	    window.fbAsyncInit = function() {
+                FB.init({appId: '126374870731237', status: true, cookie: true, xfbml: false});
+                FB.getLoginStatus(handleSessionResponse);
+            };
+        }
+        else if (window.location.hostname == 'test.portrit.com' || window.location.hostname == 'www.test.portrit.com'){
+            window.fbAsyncInit = function() {
+                FB.init({appId: '123063501058161', status: true, cookie: true, xfbml: false});
+                FB.getLoginStatus(handleSessionResponse);
+            };
+        }
+        else{
+            window.fbAsyncInit = function() {
+                FB.init({appId: '155664697800227', status: true, cookie: true, xfbml: false});
+                FB.getLoginStatus(handleSessionResponse);
+            };
+        }
+        
+        (function() {
+            var e = document.createElement('script');
+            e.src = document.location.protocol + '//connect.facebook.net/en_US/all.js';
+            e.async = true;
+            document.getElementById('fb-root').appendChild(e);
+        }());
+    </script>
+    <div id="search" style="display:none;">
+        <div id="search_cont">
+			<h2>Search</h2>
+            <input type="text" id="query"/>
+            <img id="close_search" src="/site_media/img/x.png" class="close_img"/>
+            <div id="results"></div>
+        </div>
+    </div>
+    <div id="feedback" style="display:none;">
+        <div id="feedback_cont">
+            <h2>Feedback</h2>
+            <div id="feedback_cont_wrap">
+                <p>Tell us what you like, what you don't like, what you would do differently, or just tell us what's up.</p>
+                <textarea id="feedback_message"></textarea>
+                <p id="error_text"></p>
+                <a class="awesome large red" id="submit_feedback">Submit</a>
+                <div class="clear"></div>
+            </div>
+            <div id="feedback_reponse">
+                <h2 id="feedback_thanks">Thanks for your support!</h2>
+                <div id="close_feedback_button">
+                    <a class="awesome large red">Close</a>
+                </div>
+            </div>
+            <img id="close_feedback" class="close_img" src="/site_media/img/x.png"/>
+        </div>
+    </div>
+    <div id="photo_upload" style="display:none;">
+        <div id="photo_upload_cont">
+            <h1>Upload Photos</h1>
+            <p>Instantly nominate your newest photos. Photos uploaded to Portrit will also be uploaded to your Facebook.</p>
+            <div id="upload_center_cont">
+                <div id="left_cont">
+                    <div id="upload_preview" style="display:none;">
+                        <h1>Photos to Upload</h1>
+                        <div id="upload_preview_cont">
+
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <input type="file" name="photo" id="upload_photo_button" class="awesome large" value="Select Photo"/>
+                </div>
+                <div id="right_cont">
+                    <div id="drag_container" style="display:none;">
+                        <p>Drag and drop your photos here to upload</p>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div id="bottom_controls">
+                <a id="cancel_upload" class="awesome large">Cancel</a>
+                <a id="post_upload" class="awesome orange large">Upload Photos</a>
+            </div>
+            <img id="close_upload" class="close_img" src="/site_media/img/x.png">
+        </div>
+    </div>
+    <div id="context_overlay" style="display:none;">
+        <div id="context_overlay_cont">
+            <img id="close_overlay" class="close_img" src="/site_media/img/x.png">
+            <div></div>
+        </div>
+    </div>
+    <div id="new_nomination_wrap" style="display:none;">
+        <div id="new_nomination_cont">
+            <div id="trophy_cont_top">
+                <h2>Nominate Photo For A Trophy</h2>
+                <ul>
+                    <li class="unselected" id="Hot_cont">
+                        <img src="/site_media/img/trophies/medium/hot.png"/>
+                        <h4 class="nom_cat_hot_text">Hot</h4>
+                    </li>
+                    <li class="unselected" id="Lol_cont">
+                        <img src="/site_media/img/trophies/medium/lol.png"/>
+                        <h4 class="nom_cat_lol_text">LOL</h4>
+                    </li>
+                    <li class="unselected" id="Artsy_cont">
+                        <img src="/site_media/img/trophies/medium/artsy.png"/>
+                        <h4 class="nom_cat_artsy_text">Artsy</h4>
+                    </li>
+                    <li class="unselected" id="Fail_cont">
+                        <img src="/site_media/img/trophies/medium/fail.png"/>
+                        <h4 class="nom_cat_fail_text">Fail</h4>
+                    </li>
+                    <li class="unselected" id="Party_Animal_cont">
+                        <img src="/site_media/img/trophies/medium/party_animal.png"/>
+                        <h4 class="nom_cat_party_animal_text">Party Animal</h4>
+                    </li>
+                    <li class="unselected" id="Cute_cont">
+                        <img src="/site_media/img/trophies/medium/cute.png"/>
+                        <h4 class="nom_cat_cute_text">Cute</h4>
+                    </li>
+                    <li class="unselected" id="WTF_cont">
+                        <img src="/site_media/img/trophies/medium/wtf.png"/>
+                        <h4 class="nom_cat_wtf_text">WTF</h4>
+                    </li>
+                    <li class="unselected" id="Creepy_cont">
+                        <img src="/site_media/img/trophies/medium/creepy.png"/>
+                        <h4 class="nom_cat_creepy_text">Creepy</h4>
+                    </li>
+                    <div class="clear"></div>
+                </ul>
+            </div>
+            <div class="clear"></div>
+            <div id="trophy_cont_bottom">
+                <div id="active_nominations">
+                    <h3>Selected Nominations</h3>
+                    <div id="active_empty">
+                        <h5>No nominations selected</h5>
+                    </div>
+                    <div id="active_nominations_cont">
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <textarea id="nomination_comment">Tell your friend's why this photo rocks!</textarea>
+                <span id="cancel_nomination" class="awesome large">Cancel</span>
+                <span id="post_nomination" class="awesome large">Post Nomination</span>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <div id="nom_complete_cont" style="display:none;">
+            <h1>Photo Has Been Nominated</h1>
+            <img id="close_nom_success" class="close_img" src="/site_media/img/x.png">
+        </div>
+    </div>
+    <div id="wrapper">
+        <div id="header" style="display:none; background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#333), to(#111));">
+			<div id="header_wrap">
+				<div id="left_nav">
+	                <div class="nav_icon" id="back" title="Back"><img src="/site_media/img/back.png"/><p class="hover_title" stlye="display:none;">Back</p></div>
+	                <div class="nav_icon" id="home" title="Home"><img src="/site_media/img/home.png"/><p class="hover_title" stlye="display:none;">Home</p></div>
+	                <div class="nav_icon" id="search_control" title="Search"><img src="/site_media/img/search.png"/><p class="hover_title" stlye="display:none;">Search</p></div>
+	                <div id="give_feedback"><a onclick="void(0)">Give Feedback</a></div>
+	            </div>
+                <a id="logo_link" href="#">
+                    <img id="logo" src="/site_media/img/logo.png"/>
+                </a>
+				<div id="right_nav">
+	                <div class="nav_icon" id="settings" title="Settings"><img src="/site_media/img/settings.png"/><p class="hover_title" id="settings_title" stlye="display:none;">Settings</p></div>
+	                <div class="nav_icon" id="logout" title="Logout"><img src="/site_media/img/logout.png"/><p class="hover_title" stlye="display:none;">Logout</p></div>
+	                <div id="me">
+	                    <div id="profile_pic"></div>
+	                </div>
+	            </div>
+	            <div class="clear"></div>
+			</div>
+        </div>
+        <div id="tutorial_cont" style="display:none;">
+            <h1>Tutorial</h1>
+            <div id="tut_section_wrap">
+                <div class="tut_section" id="nomination_tut">
+
+                </div>
+                <div class="tut_section" id="vote_count_tut">
+
+                </div>
+                <div class="tut_section" id="comment_count_tut">
+
+                </div>
+            </div>
+            <a id="skip_tut" class="awesome large">Skip</a>
+            <img id="close_tut" class="close_img" src="/site_media/img/x.png">
+        </div>
+        <div id="cont">
+            <div id="notification_popup_cont"></div>
+            <div id="title"></div>
+            <div id="content_loading">
+                <h2>Loading Canvas...</h2>
+            </div>
+            <div id="login_cont" style="display:none;">
+                <div id="login_header">
+                    <img id="login_logo" src="/site_media/img/logo_blank.png"/>
+                </div>
+                <div id="login_content">
+                    <div id="login_left_cont">
+						<div id="login_left_cont">
+	                        <ul class="slideshow">  
+	                            <li class="show"><a><img src="/site_media/img/landing/main.jpg" width="460" height="320" alt="View all your friends as photos on a canvas"/></a></li>  
+	                            <li><a><img src="/site_media/img/landing/album.jpg" width="460" height="320" alt="Quickly get a overview of your friend's albums with album peek"/></a></li>  
+	                            <li><a><img src="/site_media/img/landing/list.jpg" width="460" height="320" alt="Dive deep into an album to see the photos"/></a></li>
+	                            <li><a><img src="/site_media/img/landing/gallery.jpg" width="460" height="320" alt="Go to gallery view to view large photos"/></a></li>
+	                            <li><a><img src="/site_media/img/landing/mobile.jpg" height="320" alt="Optimized for mobile devices"/></a></li>
+	                        </ul>
+	                    </div>
+                    </div>
+					<div id="login_right_cont">
+						<div id="tagline_cont">
+                            <h2>What's Portrit?</h2>
+                            <p>Portrit brings you your facebook friends in a human friendly way, because we can't all be robots. Everything is done with a picture!</p>
+                            <img id="login" src="http://static.ak.fbcdn.net/images/fbconnect/login-buttons/connect_light_large_long.gif"/>
+                            <p style="text-align:center;">Simply click the Connect with Facebook button above.</p>
+                        </div>
+					</div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+            <div id="friend_cont">
+                <div id="wall_cont"></div>
+                <div id="top" style="display:none;"><img src="/site_media/img/top.png"/></div>
+            </div>
+            <div id="canvas_cont"></div>
+            <div id="friend_album_cont"></div>
+            <div id="photo_cont"></div>
+            <div id="context_cont" style="display: none;"></div>
+        </div>
+        <div id="push"></div>
+    </div>
+    <div id="footer" style="background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#333), to(#111));">
+        <div id="footer_notification_cont">
+            <img src="/site_media/img/favicon.png"/>
+            <p>Notifications</p>
+            <span id="clear_all_notifications" style="display:none;">Clear All</span>
+            <div id="notification_footer_popup">
+                <div id="notification_footer_popup_heading">
+                    <h2>Notifications</h2>
+                </div>
+                <div id="notification_footer_popup_cont">
+                    
+                </div>
+            </div>
+        </div>
+        <a class="footer_hover" id="about" href="#/context=about">About Portrit</a>
+        <span>|</span>
+        <a class="footer_hover" id="contact" href="http://blog.portrit.com" target="_blank">Blog</a>
+        <span>|</span>
+        <a class="footer_hover" id="contact" href="#/context=contact">Contact Us</a>
+        <span>|</span>
+        <a class="footer_hover" id="terms" href="#/context=terms">Terms of Use</a>
+        <span>|</span>
+        <a class="footer_hover" id="privacy" href="#/context=privacy">Privacy Policy</a>
+        <span>|</span>
+        <p id="copyright">Portrit © 2010</p>
+    </div>
+</body>
+</html>

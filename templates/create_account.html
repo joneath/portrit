@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Portrit - Coming Soon!</title>
+    <meta charset="utf-8" />
+    <meta name="description" content="In Portrit, everything is a picture!" />
+    <meta name="keywords" content="facebook, visual, social, portrit, portrait, friends, touch" />
+    
+    <link rel="shortcut icon" href="/site_media/img/favicon.ico">
+    <link rel="apple-touch-icon" href="/site_media/img/icon128.png"/>
+    <link rel="apple-touch-icon-precomposed" href="/site_media/img/icon128.png"/>
+    {% if production_code %}
+        <link rel="stylesheet" href="/site_media/styles/production/portrit.css"/>
+        <link rel="stylesheet" href="/site_media/styles/production/landing.css" />
+    {% else %}
+        <link rel="stylesheet" href="/site_media/styles/trunk/portrit.css"/>
+        <link rel="stylesheet" href="/site_media/styles/trunk/landing.css" />
+    {% endif %}
+    <script src="http://www.google.com/jsapi?key=ABQIAAAAv9UUX4Bh3gRCpbzjSE5MxxSfZ7BxKgj6oXj1KRYYnjuHN0SsnBTx1B5nTeUxCB_k-Yerxn8ZVGvnLA" type="text/javascript"></script>
+    <script type="text/javascript">
+        google.load("jquery", "1.4.2");
+    </script>
+    <script type="text/javascript" src="/site_media/js/trunk/mdetect.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            function isValidEmailAddress(emailAddress) {
+                var pattern = new RegExp(/^[a-zA-Z0-9\._%-]+@[A-Z0-9\.-]+\.[a-zA-Z]{2,4}(?:(?:[,][a-zA-Z0-9\._%-]+@[a-zA-Z0-9\.-]+))?$/i);
+                return pattern.test(emailAddress);
+            }
+            
+            var mobile = false;
+            var tablet = false;
+            if (DetectMobileQuick() === true){
+                mobile = true;
+            }
+            else if (DetectIpad() === true){
+                mobile = true;
+                tablet = true;
+            }
+            
+            if (mobile && !tablet){
+                if (typeof(_gaq) !== "undefined"){
+                    var meta_html = '<link rel="stylesheet" href="/site_media/styles/production/mobile_landing.css"/>' +
+                                    '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
+                                    '<link rel="shortcut icon" href="/site_media/img/favicon.ico">' +
+                                    '<link rel="apple-touch-icon" href="/site_media/img/icon128.png"/>' +
+                                    '<link rel="apple-touch-icon-precomposed" href="/site_media/img/icon128.png"/>';
+                }
+                else{
+                    var meta_html = '<link rel="stylesheet" href="/site_media/styles/trunk/mobile_landing.css"/>' +
+                                    '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
+                                    '<link rel="shortcut icon" href="/site_media/img/favicon.ico">' +
+                                    '<link rel="apple-touch-icon" href="/site_media/img/icon128.png"/>' +
+                                    '<link rel="apple-touch-icon-precomposed" href="/site_media/img/icon128.png"/>';
+                }
+                $('head').append(meta_html);
+                
+                $('#submit_login').addClass('large');
+
+                var window_width = 520;
+                $('body, html, #header, #cont, #wrapper').css({
+                    'margin': '0 auto',
+                    'min-width': window_width,
+                    'width': window_width,
+                    'max-width': window_width
+                });
+
+
+                if(window.orientation != 0){
+                    var window_width = 720;
+                    $('#viewport_meta').attr('content', 'width=520, user-scalable=no, target-densityDpi=160');
+                }else{
+                    var window_width = 520;
+                    $('#viewport_meta').attr('content', 'width=520, user-scalable=no, target-densityDpi=260');
+                }
+            }
+            
+            $('#login').focus(function() {  
+                if (this.value == this.defaultValue){
+                    this.value = '';
+                    $('#login_form_cont').css({'opacity': '1.0'});
+                    $(this).css({'color': 'black'});
+                }  
+            });
+
+            $('#login').blur(function() {  
+                if ($.trim(this.value) == ''){
+                    this.value = (this.defaultValue ? this.defaultValue : '');
+                    $('#login_form_cont').css({'opacity': '0.5'});
+                    $(this).css({'color': '#7e7e7e'});
+                    $('#login_response_text').text('');
+                }  
+            });
+            
+            $('#beta_key, #email_username').focus(function() {  
+                if (this.value == this.defaultValue){
+                    this.value = '';
+                    $(this).css({'color': '#333'});
+                }  
+            });
+            
+            $('#beta_key, #email_username').blur(function() {  
+                if ($.trim(this.value) == ''){
+                    this.value = (this.defaultValue ? this.defaultValue : '');
+                    $(this).css({'color': '#7e7e7e'});
+                }  
+            });
+            
+            $('#login_form').submit(function(){
+                var email = $('#login').val();
+                email = email.replace(/^\s*|\s*$/g,'');
+                if (isValidEmailAddress(email)){
+                    $.post('/login/', {'email': email}, function(data){
+                        var response_text = ''
+                        if (data === false){
+                            response_text = 'Looks like you are still in line for an invite. Don\'t worry, these things are going like hot-cakes.';
+                        }
+                        else if(data === 'None'){
+                            response_text = 'Looks like we don\'t have your email on file. Please input your email into subscription box to be notified when we are ready for you.';
+                            
+                        }
+                        else if (data === true){
+                            window.location.href = '/beta';
+                        }
+                        $('#login_response_text').text(response_text);
+                    });
+                }
+                else{
+                    $('#login_response_text').text('Uh oh! Looks like the email address you inputed isn\'t formatted correctly.');
+                }
+                return false; 
+            });
+            
+            $('#beta_submit_form').submit(function(){
+                $('#submit_beta_key, #submit_beta_account').click();
+                return false;
+            });
+            
+            $('#submit_beta_key').live('click', function(){
+                $('#beta_key_text_cont > .valid_data').remove();
+                var key = $('#beta_key').val();
+                $.post('/check_key/', {'key': key}, function(data){
+                    if (data === true){
+                        $('#submit_beta_key').attr('id', 'submit_beta_account');
+                        $('#beta_key_text_cont').append('<img class="valid_data" src="/site_media/img/check_24.png"/>');
+                        $('#email_auth_cont').show();
+                    }
+                    else{
+                        $('#beta_key_text_cont').append('<img class="valid_data" src="/site_media/img/cross_24.png"/>');
+                        if (data == 'finished'){
+                            $('#response_text').text('I am sorry, but it looks like this key has expired.');
+                        }
+                        else if (data == 'non-active'){
+                            $('#response_text').text('I am sorry, but it looks like this key is no longer active.');
+                        }
+                    }
+                });
+                return false;
+            });
+            
+            $('#submit_beta_account').live('click', function(){
+                $('#email_auth_text_cont > .valid_data').remove();
+                 var key = $('#beta_key').val();
+                 var email = $('#email_username').val();
+                 if (isValidEmailAddress(email)){
+                    $.post('/create_beta_account/', {'key': key, 'email': email}, function(data){
+                        if (data === true){
+                            var time = 5;
+                            $('#email_auth_text_cont').append('<img class="valid_data" src="/site_media/img/check_24.png"/>');
+                            $('#response_text').text('Redirecting to beta login in ' + time + ' seconds');
+                            setInterval(function(){
+                                time -= 1
+                                if (time > 0){
+                                    $('#response_text').text('Redirecting to beta login in ' + time + ' seconds');
+                                }
+                                else{
+                                    window.location.href = '/beta/';
+                                }
+                            }, 1000);
+                        }
+                        else if (data == 'exists'){
+                            $('#email_auth_text_cont').append('<img class="valid_data" src="/site_media/img/cross_24.png"/>');
+                            var response_text = 'Looks like we already have your email in the system. You can login above.';
+                            $('#response_text').text(response_text);
+                        }
+                        else{
+                            alert(data)
+                            $('#email_auth_text_cont').append('<img class="valid_data" src="/site_media/img/cross_24.png"/>');
+                        }
+                    });
+                 }
+                 else{
+                     $('#email_auth_text_cont').append('<img class="valid_data" src="/site_media/img/cross_24.png"/>');
+                     var response_text = 'Uh oh! Looks like the email address you inputed isn\'t formatted correctly.';
+                     $('#response_text').text(response_text);
+                 }
+                 return false;
+            });
+        });
+    </script>
+    {% if analytics %}
+        <script type="text/javascript">
+
+          var _gaq = _gaq || [];
+          _gaq.push(['_setAccount', 'UA-17124785-1']);
+          _gaq.push(['_trackPageview']);
+
+          (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+          })();
+
+        </script>
+    {% endif %}
+</head>
+<body>
+    <div id="wrapper">
+        <div id="cont">
+			<div id="login_cont">
+	            <div id="login_header">
+	                <a href="/">
+	                    <img id="login_logo" src="/site_media/img/logo_blank.png"/>
+	                </a>
+	                <div class="clear"></div>
+	                <div id="login_form_cont">
+	                    <form id="login_form" action="/login/" method="POST">
+	                        <p id="login_response_text"></p>
+	                        <input id="login" type="text" name="email" value="Email"/>
+	                        <a id="submit_login" class="medium awesome">Login</a>
+	                        <div class="clear"></div>
+	                    </form>
+	                </div>
+				</div>
+			</div>
+			<div id="account_create_cont">
+				<h2>Got a Golden Ticket?</h2>
+				<div>
+				    <p>Welcome to the Portrit preview! Before you can begin there is just one small formality...</p>
+				</div>
+				<form method="post" id="beta_submit_form">
+    				<div id="beta_key_cont">
+        				<p>Please enter your preview key</p>
+        				<div class="text_input_cont" id="beta_key_text_cont">
+        				    <input type="text" id="beta_key" value="Preview Key"/>
+        				</div>
+        			</div>
+    				<div id="email_auth_cont" style="display:none;">
+    				    <p>This will be your login email address</p>
+    				    <div class="text_input_cont" id="email_auth_text_cont">
+    				        <input type="text" id="email_username" value="Your Email"/>
+    				    </div>
+    				</div>
+                    <input type="submit" style="position: absolute; left: -9999px"/>
+    				<a class="awesome large" id="submit_beta_key">Submit</a>
+    			</form>
+    			<div>
+    			    <p id="response_text"></p>
+    			</div>
+			</div>
+		</div>
+        <div id="push"></div>
+    </div>
+    <div id="footer" style="background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#333), to(#111));">
+        <a class="footer_hover" id="contact" href="mailto:contact@portrit.com">Contact Us</a>
+        <span>|<span>
+        <a class="footer_hover" id="contact" href="http://blog.portrit.com" target="_blank">Blog</a>
+        <span>|<span>
+        <p id="copyright">Portrit © 2010</p>
+    </div>
+</body>
+</html>

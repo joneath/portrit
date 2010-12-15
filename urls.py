@@ -1,0 +1,69 @@
+import os.path
+from django.conf.urls.defaults import *
+from django.contrib import admin
+admin.autodiscover()
+
+from settings import ENV
+
+handler404 = 'main.index_views.handle404'
+handler500 = 'main.index_views.handle500'
+
+ENV = "dsds"
+
+if ENV == "LOCAL":
+    urlpatterns = patterns('',
+        url(r'^$', 'main.index_views.index', name='index'),
+    )
+else:
+    urlpatterns = patterns('',
+        url(r'^$', 'main.index_views.index', name='index'),
+        # url(r'^beta/$', 'main.views.index', name='index'),
+    ) 
+
+#User Views
+urlpatterns += patterns('',
+    url(r'^login_fb_user/$', 'main.user_views.login_fb_user', name='login_fb_user'),
+    url(r'^logout/$', 'main.user_views.logout_user', name='logout'),
+    url(r'^get_user_trophies/$', 'main.user_views.get_user_trophies', name='get_user_trophies'),
+    url(r'^get_more_recent_stream/$', 'main.user_views.get_more_recent_stream', name='get_more_recent_stream'),
+)
+
+#Nomination Views
+urlpatterns += patterns('',
+    url(r'^nominate_photo/$', 'main.nomination_views.nominate_photo', name='nominate_photo'),
+    url(r'^vote/$', 'main.nomination_views.vote_on_nomination', name='vote_on_nomination'),
+    url(r'^get_user_album_nom_data/$', 'main.nomination_views.get_user_album_nom_data', name='get_user_album_nom_data'),
+    url(r'^get_nom_comments/$', 'main.nomination_views.get_nom_comments', name='get_nom_comments'),
+    url(r'^new_comment/$', 'main.nomination_views.new_comment', name='new_comment'),
+    url(r'^get_recent_winners/$', 'main.nomination_views.get_recent_winners', name='get_recent_winners'),
+    url(r'^init_recent_stream/$', 'main.nomination_views.init_recent_stream', name='init_recent_stream'),
+    url(r'^mark_nomination_as_won$', 'main.nomination_views.mark_nomination_as_won', name='mark_nomination_as_won'),
+)
+
+#Photo URLs
+urlpatterns += patterns('',
+    url(r'^upload_photo/$', 'main.photo_views.upload_photo', name='upload_photo'),
+    url(r'^mark_photos_live/$', 'main.photo_views.mark_photos_live', name='mark_photos_live'),
+)
+
+#Notification URLs
+urlpatterns += patterns('',
+    url(r'^notification_read/$', 'main.notification_views.notification_read', name='notification_read'),
+)
+
+#Contact/Feedback URLS
+urlpatterns += patterns('',
+    url(r'^submit_feedback/$', 'main.index_views.submit_feedback', name='submit_feedback'),
+    url(r'^contact_portrit/$', 'main.index_views.contact_portrit', name='contact_portrit'),
+    url(r'^submit_bug_report/$', 'main.index_views.submit_bug_report', name='submit_bug_report'),
+)
+
+
+#Admin URLs
+urlpatterns += patterns('',
+	(r'^admin/', include(admin.site.urls)),
+)
+
+urlpatterns += patterns('',                                                            
+	(r'^site_media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': os.path.join(os.path.dirname(__file__), 'media').replace('\\','/')}),  
+)
