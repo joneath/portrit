@@ -1072,26 +1072,35 @@ div#nom_detail_cont{
                 
                     div#nomination_text_cont{
                         float:              left;
-                        margin-left:        15px;
-                        margin-top:         50px;
+                        margin-left:        5px;
+                        margin-top:         35px;
                         text-align:         left;
-                        width:              130px;
+                        width:              185px;
                         text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
                     }
+                    
+                        div#nomination_text_cont span{
+                            color:                  white;
+                            font-size:              22px;
+                        }
+                        
+                        div#nomination_text_cont span:hover{
+                            text-decoration:        underline;
+                        }
                 
                         div#nomination_text_cont p{
 
                         }
                     
                         div#nomination_text_cont h3{
-                            font-size:              22px;
+                            font-size:              30px;
                             font-weight:            bold;
                         }
                         
                         div#nomination_text_cont img{
-                            bottom:                 15px;
+                            bottom:                 0px;
                             position:               absolute;
-                            right:                  10px;
+                            right:                  0px;
                         }
             
             div#main_nom_cont_right #nom_votes_cont{
@@ -1789,7 +1798,7 @@ div#profile_cont{
                     color:              white;
                     font-size:          30px;
                     font-weight:        bold;
-                    margin-right:       55px;
+                    margin-right:       15px;
                     margin-top:         10px;
                     text-shadow: rgba(0, 0, 0, 0.246094) 0px -1px 1px;
                 }
@@ -2784,11 +2793,15 @@ div#wall_cont div#profile_wrap{
     
         .recent_nom_top_cont h3{
             float:                  right;
-            font-size:              15px;
+            font-size:              14px;
             margin-top:             18px;
             margin-right:           10px;
             text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
         }
+        
+            .recent_nom_top_cont h3 span{
+                font-size:          18px;
+            }
     
         .recent_nom_top_cont img{
             float:                  left;
@@ -2796,7 +2809,7 @@ div#wall_cont div#profile_wrap{
         
         .recent_nom_top_cont h2{
             float:                  left;
-            font-size:              18px;
+            font-size:              20px;
             font-weight:            bold;
             margin-left:            10px;
             margin-top:             15px;
@@ -2815,7 +2828,7 @@ div#wall_cont div#profile_wrap{
         background-color:           black;
         float:                      left;
         height:                     350px;
-        width:                      485px;
+        width:                      466px;
     }
     
         .recent_nom_photo_left_cont .recent_nom_photo_left_wrap{
@@ -2824,7 +2837,7 @@ div#wall_cont div#profile_wrap{
             text-align:                 center;
             vertical-align:             middle;
             height:                     350px;
-            width:                      485px;
+            width:                      466px;
         }
         
             .recent_nom_photo_left_wrap img{
@@ -2837,12 +2850,12 @@ div#wall_cont div#profile_wrap{
         float:                  left;
         height:                 350px;
         text-align:             center;
-        width:                  160px;
+        width:                  179px;
     }
     
         .recent_nom_photo_right_cont .recent_nom_vote_count{
             color:                  white;
-            margin-top:             80px;
+            margin-top:             40px;
         }
         
             .recent_nom_vote_count h2{
@@ -4185,8 +4198,8 @@ div#payment_types_cont{
         }
         
             .color_transition{
-                -webkit-transition:     background 5s ease-out;
-                -moz-transition:        background 5s ease-out;
+                -webkit-transition:     background 3s ease-out;
+                -moz-transition:        background 3s ease-out;
             }
         
             .notification_popup_cont .notification_color{

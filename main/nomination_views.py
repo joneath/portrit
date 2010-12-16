@@ -234,11 +234,14 @@ def nominate_photo(request):
                 else:
                     try:
                         owner_fb_user = FB_User.objects.get(fid=owner)
-                        nominatee_portrit_user = Portrit_User.objects.get(fb_user=owner_fb_user)
-                        nominatee_portrit_user.recieved_nomination_count += 1
+                        try:
+                            nominatee_portrit_user = Portrit_User.objects.get(fb_user=owner_fb_user)
+                            nominatee_portrit_user.recieved_nomination_count += 1
+                            nominatee_portrit_user.save()
+                        except:
+                            pass
+                            
                         nominator_portrit_user.given_nomination_count += 1
-                
-                        nominatee_portrit_user.save()
                     except:
                         pass
                 

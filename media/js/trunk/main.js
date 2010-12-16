@@ -1930,12 +1930,17 @@ $(document).ready(function(){
                 'opacity': '1.0'
             });
             if (footer_show_first){
-                $('.notification_popup_cont[read="0"]').each(function(){
+                var read_ids = "";
+                $('.notification_popup_cont[read="false"]').each(function(){
                     var cat_name = $(this).attr('name');
                     $(this).removeClass('nom_cat_' + cat_name);
+                    read_ids += $(this).attr('id').replace('notification_', '') + ',';
+                });
+                $.post('/notification_read/', {'notification_ids': read_ids}, function(){
+
                 });
                 setTimeout(function(){
-                    $('.notification_popup_cont[read="0"]').removeClass('color_transition');
+                    $('.notification_popup_cont').removeClass('color_transition');
                 }, 3000);
             }
             
@@ -3057,9 +3062,9 @@ $(document).ready(function(){
                                         '</div>' +
                                         '<div id="trophy_cont" class="nom_cat_' + nom.nomination_category.replace(' ', '_').toLowerCase() + '">' +
                                             '<div id="nomination_text_cont">' +
-                                                '<span class="strong">' + name + '</span><p>' + nom_winning_text + '</p>' +
+                                                '<a href="/#/user=' + nom.nominatee + '"><span class="strong">' + name + '</span></a><p>' + nom_winning_text + '</p>' +
                                                 '<h3>' + nom.nomination_category + '</h3>' +
-                                                '<img src="/site_media/img/trophies/large/' + nom.nomination_category.replace(' ', '_').toLowerCase() + '.png"/>' +
+                                                '<img id="nom_trohpy_icon" src="/site_media/img/trophies/large/' + nom.nomination_category.replace(' ', '_').toLowerCase() + '.png"/>' +
                                             '</div>' +
                                         '</div>' +
                                     '</div>' +
@@ -4726,7 +4731,7 @@ $(document).ready(function(){
                                         '</div>' +
                                         '<div class="recent_nom_photo_right_cont">' +
                                             '<div class="recent_nom_vote_count nom_vote_' + nom.id + '">' +
-                                                '<img src="/site_media/img/trophies/medium/' + nom_cat_underscore + '.png">' + 
+                                                '<img src="/site_media/img/trophies/large/' + nom_cat_underscore + '.png">' + 
                                                 '<a href="#/nom_id=' + nom.id + '/votes">' +
                                                     '<h2 class="nom_cat_' + nom_cat_underscore + '">Votes: ' + nom.vote_count + '</h2>' +
                                                 '</a>' +
@@ -7081,6 +7086,7 @@ $(document).ready(function(){
         else{
             name = '';
         }
+        $('#nomination_text_cont a').attr('href', '/#/user=' + nom.nominatee + '');
         $('#nomination_text_cont span').text(name);
         
         var winning_text = '';
