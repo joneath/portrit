@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q
+from django.db.models import Q, Count
 
 from main.models import Portrit_User, FB_User, Album, Photo, Nomination, Nomination_Category, Comment, \
                         Notification, Notification_Type
@@ -17,63 +17,161 @@ from portrit_fb import Portrit_FB
 
 from itertools import chain
 import facebook, json, socket, time
-    
-def get_recent_winners(request):
+
+def get_trophy_wins(request):
     data = False
     try:
         cookie = facebook.get_user_from_cookie(
             request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
         if cookie:
-            fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
-            friends = fb_user.friends.all()
-            # friends_noms = Nomination.objects.filter(photo__album__fb_user__in=friends, active=True).order_by('up_votes', 'down_votes', '-created_date')
-            # active_nominations = fb_user.get_active_nominations()
-            
-            nom_cats = Nomination_Category.objects.all()
             data = [ ]
-            cat_count = 0
-            for cat in nom_cats.iterator():
-                try:
-                    data.append({
-                        'cat_name': cat.name,
-                        'noms': [ ],
+            user_id = request.GET.get('user')
+            cat = request.GET.get('cat')
+            
+            cat = cat.replace('_', ' ').title()
+            user = FB_User.objects.get(fid=user_id)
+            winning_noms = Nomination.objects.filter(won=True, nominatee=user, nomination_category__name=cat).order_by('-current_vote_count')
+            for nom in winning_noms.iterator():
+                comment_count = nom.get_comment_count()
+                votes = [ ]
+                for vote in nom.votes.all().iterator():
+                    votes.append({
+                        'vote_user': vote.fid,
+                        'vote_name': vote.portrit_fb_user.all()[0].name,
                     })
-                    
-                    top_noms = cat.nomination_set.filter(
-                        Q(nominatee__in=friends) |
-                        Q(nominatee=fb_user) |
-                        Q(nominator=fb_user),
-                        active=True, won=True).distinct('id').order_by('-current_vote_count')
-                    for nom in top_noms.iterator():
-                        comment_count = nom.get_comment_count()
-                        votes = [ ]
-                        for vote in nom.votes.all().iterator():
-                            votes.append({
-                                'vote_user': vote.fid,
-                                'vote_name': vote.portrit_fb_user.all()[0].name,
-                            })
-                        data[cat_count]['noms'].append({
-                            'id': nom.id,
-                            'nomination_category': nom.nomination_category.name,
-                            'nominator': nom.nominator.fid,
-                            'nominator_name': nom.nominator.portrit_fb_user.all()[0].name,
-                            'nominatee': nom.nominatee.fid,
-                            'nominatee_name': nom.nominatee.portrit_fb_user.all()[0].name,
-                            'won': nom.won,
-                            'time_remaining': nom.get_time_remaining(),
-                            'photo': nom.get_photo(),
-                            'caption': nom.caption,
-                            'comments': False,
-                            'comment_count': comment_count,
-                            'vote_count': nom.current_vote_count,
-                            'votes': votes,
+                data.append({
+                    'id': nom.id,
+                    'nomination_category': nom.nomination_category.name,
+                    'nominator': nom.nominator.fid,
+                    'nominator_name': nom.nominator.get_name(),
+                    'nominatee': nom.nominatee.fid,
+                    'nominatee_name': nom.nominatee.get_name(),
+                    'won': nom.won,
+                    'photo': nom.get_photo(),
+                    'caption': nom.caption,
+                    'comments': False,
+                    'comment_count': comment_count,
+                    'vote_count': nom.current_vote_count,
+                    'votes': votes,
+                })    
+    except:
+        pass
+        
+    data = simplejson.dumps(data) 
+    return HttpResponse(data, mimetype='application/json')
+    
+def get_recent_winners(request):
+    data = False
+    per_page = 12
+    try:
+        cookie = facebook.get_user_from_cookie(
+            request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
+        if cookie:
+            nom_id = request.GET.get('nom_id')
+            page = request.GET.get('page')
+            if not page:
+                page = 1
+            
+            data = [ ]
+            if not nom_id:
+                fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
+                friends = fb_user.friends.all()
+                winning_noms = Nomination.objects.filter(nominatee__in=friends, won=True).order_by('-created_date')[(per_page*(page-1)):(per_page*page)]
+                for nom in winning_noms.iterator():
+                    comment_count = nom.get_comment_count()
+                    votes = [ ]
+                    for vote in nom.votes.all().iterator():
+                        votes.append({
+                            'vote_user': vote.fid,
+                            'vote_name': vote.portrit_fb_user.all()[0].name,
                         })
-                    cat_count += 1
-                except:
-                    top_nom = None
-            data = sorted(data, key=lambda k: len(k['noms']), reverse=True)
-            if data.count() == 0:
-                data = "empty"
+                    data.append({
+                        'id': nom.id,
+                        'nomination_category': nom.nomination_category.name,
+                        'nominator': nom.nominator.fid,
+                        'nominator_name': nom.nominator.get_name(),
+                        'nominatee': nom.nominatee.fid,
+                        'nominatee_name': nom.nominatee.get_name(),
+                        'won': nom.won,
+                        'photo': nom.get_photo(),
+                        'caption': nom.caption,
+                        'comments': False,
+                        'comment_count': comment_count,
+                        'vote_count': nom.current_vote_count,
+                        'votes': votes,
+                    })
+            else:
+                nom = Nomination.objects.get(id=nom_id)
+                comment_count = nom.get_comment_count()
+                votes = [ ]
+                for vote in nom.votes.all().iterator():
+                    votes.append({
+                        'vote_user': vote.fid,
+                        'vote_name': vote.portrit_fb_user.all()[0].name,
+                    })
+                data.append({
+                    'id': nom.id,
+                    'nomination_category': nom.nomination_category.name,
+                    'nominator': nom.nominator.fid,
+                    'nominator_name': nom.nominator.get_name(),
+                    'nominatee': nom.nominatee.fid,
+                    'nominatee_name': nom.nominatee.get_name(),
+                    'won': nom.won,
+                    'photo': nom.get_photo(),
+                    'caption': nom.caption,
+                    'comments': False,
+                    'comment_count': comment_count,
+                    'vote_count': nom.current_vote_count,
+                    'votes': votes,
+                })
+                
+                print data
+            
+            # nom_cats = Nomination_Category.objects.all()
+            # data = [ ]
+            # cat_count = 0
+            # for cat in nom_cats.iterator():
+            #     try:
+            #         data.append({
+            #             'cat_name': cat.name,
+            #             'noms': [ ],
+            #         })
+            #         
+            #         top_noms = cat.nomination_set.filter(
+            #             Q(nominatee__in=friends) |
+            #             Q(nominatee=fb_user) |
+            #             Q(nominator=fb_user),
+            #             active=True, won=True).distinct('id').order_by('-current_vote_count')
+            #         for nom in top_noms.iterator():
+            #             comment_count = nom.get_comment_count()
+            #             votes = [ ]
+            #             for vote in nom.votes.all().iterator():
+            #                 votes.append({
+            #                     'vote_user': vote.fid,
+            #                     'vote_name': vote.portrit_fb_user.all()[0].name,
+            #                 })
+            #             data[cat_count]['noms'].append({
+            #                 'id': nom.id,
+            #                 'nomination_category': nom.nomination_category.name,
+            #                 'nominator': nom.nominator.fid,
+            #                 'nominator_name': nom.nominator.portrit_fb_user.all()[0].name,
+            #                 'nominatee': nom.nominatee.fid,
+            #                 'nominatee_name': nom.nominatee.portrit_fb_user.all()[0].name,
+            #                 'won': nom.won,
+            #                 'time_remaining': nom.get_time_remaining(),
+            #                 'photo': nom.get_photo(),
+            #                 'caption': nom.caption,
+            #                 'comments': False,
+            #                 'comment_count': comment_count,
+            #                 'vote_count': nom.current_vote_count,
+            #                 'votes': votes,
+            #             })
+            #         cat_count += 1
+            #     except:
+            #         top_nom = None
+            # data = sorted(data, key=lambda k: len(k['noms']), reverse=True)
+            # if data.count() == 0:
+            #     data = "empty"
     except:
         pass
     
@@ -151,7 +249,6 @@ def new_comment(request):
                     'notification_id': notification_id,
                 }
             }
-            print friends
             node_data = json.dumps(node_data)
             sock = socket.socket(
                 socket.AF_INET, socket.SOCK_STREAM)
@@ -513,9 +610,11 @@ def init_recent_stream(request):
             owner = FB_User.objects.get(fid=int(cookie["uid"]))
             recent_stream = get_recent_stream(owner)
             top_stream = get_top_stream(owner)
+            top_users = get_top_users(owner)
             data = {
                 'recent': recent_stream,
                 'top': top_stream,
+                'top_users': top_users,
             }
     except:
         pass
@@ -618,6 +717,20 @@ def get_top_stream(fb_user):
     except:
         pass
         
+    return data
+    
+def get_top_users(fb_user):
+    data = [ ]
+    try:
+        friends = fb_user.friends.filter(active_nominations__won=True).annotate(num_wins=Count('active_nominations')).order_by('-num_wins')
+        for friend in friends:
+            data.append({
+                'fid': friend.fid,
+                'noms_won': friend.active_nominations.filter(won=True).count(),
+                'top_nom_cat': friend.active_nominations.filter(won=True).annotate(noms_cat_count=Count('nomination_category')).order_by('-noms_cat_count')[0].nomination_category.name,
+            })
+    except:
+        pass
     return data
     
 def get_target_friends(fb_user, current_user):

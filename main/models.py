@@ -288,6 +288,12 @@ class FB_User(models.Model):
         ordering = ['-created_date']
         verbose_name_plural = "FB Users"
         verbose_name = "FB User"
+        
+    def get_name(self):
+        try:
+            return self.portrit_fb_user.all()[0].name
+        except:
+            return None
     
     def get_active_nominations(self):
         try:

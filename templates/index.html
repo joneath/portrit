@@ -13,6 +13,9 @@
         <link rel="stylesheet" href="/site_media/styles/trunk/landing.css" />
         <link rel="stylesheet" href="/site_media/styles/trunk/portrit.css"/>
     {% endif %}
+    {% ifequal mobile_var "ipad" %}
+        <link rel="stylesheet" href="/site_media/styles/trunk/tablet.css"/>
+    {% endifequal %}
     <script src="http://www.google.com/jsapi?key=ABQIAAAAv9UUX4Bh3gRCpbzjSE5MxxSfZ7BxKgj6oXj1KRYYnjuHN0SsnBTx1B5nTeUxCB_k-Yerxn8ZVGvnLA" type="text/javascript"></script>
     <script type="text/javascript">
         google.load("jquery", "1.4.4");
@@ -201,17 +204,17 @@
         <div id="header" style="display:none; background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#333), to(#111));">
 			<div id="header_wrap">
 				<div id="left_nav">
-	                <div class="nav_icon" id="back" title="Back"><img src="/site_media/img/back.png"/><p class="hover_title" stlye="display:none;">Back</p></div>
-	                <div class="nav_icon" id="home" title="Home"><img src="/site_media/img/home.png"/><p class="hover_title" stlye="display:none;">Home</p></div>
-	                <div class="nav_icon" id="search_control" title="Search"><img src="/site_media/img/search.png"/><p class="hover_title" stlye="display:none;">Search</p></div>
+	                <div class="nav_icon" id="back" title="Back"><img src="/site_media/img/back.png"/></div>
+	                <div class="nav_icon" id="home" title="Home"><img src="/site_media/img/home.png"/></div>
+	                <div class="nav_icon" id="search_control" title="Search"><img src="/site_media/img/search.png"/></div>
 	                <div id="give_feedback"><a onclick="void(0)">Give Feedback</a></div>
 	            </div>
                 <a id="logo_link" href="#">
                     <img id="logo" src="/site_media/img/logo.png"/>
                 </a>
 				<div id="right_nav">
-	                <div class="nav_icon" id="settings" title="Settings"><img src="/site_media/img/settings.png"/><p class="hover_title" id="settings_title" stlye="display:none;">Settings</p></div>
-	                <div class="nav_icon" id="logout" title="Logout"><img src="/site_media/img/logout.png"/><p class="hover_title" stlye="display:none;">Logout</p></div>
+	                <div class="nav_icon" id="settings" title="Settings"><img src="/site_media/img/settings.png"/></div>
+	                <div class="nav_icon" id="logout" title="Logout"><img src="/site_media/img/logout.png"/></div>
 	                <div id="me">
 	                    <div id="profile_pic"></div>
 	                </div>

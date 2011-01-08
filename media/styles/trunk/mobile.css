@@ -52,10 +52,15 @@ div.autocomplete{
     overflow-y:         hidden;
 }
 
+div#profile_wrap > ul{
+    margin-bottom:          0px;
+}
+
 div#main_view_control{
     background-color:       black;
     padding-top:            10px;
     padding-bottom:         15px;
+    width:                  100%;
 }
 
 div#title div#main_view_control{
@@ -83,25 +88,45 @@ div#context_cont{
     height:             16em;
 }
 
-/*div#left_nav{
-    position:       relative;
-    float:          left;
+#recent_left_cont{
+    width:          510px;
+    padding-left:   5px;
+    padding-right:  5px;
 }
 
-div#right_nav{
-    position:       relative;
-    float:          right;
-}*/
+    .recent_nom_cont .recent_nom_photo_left_cont{
+        width:      400px;
+    }
+
+    .recent_nom_photo_left_cont .recent_nom_photo_left_wrap{
+        width:      400px;
+    }
+    
+    .recent_nom_photo_left_wrap img{
+        max-width:  400px;
+    }
+    
+    .recent_nom_cont .recent_nom_photo_right_cont{
+        width:      110px;
+    }
+    
+    .recent_nom_cont .recent_nom_comment_cont{
+        width:      510px;
+    }
+    
+    .recent_nom_comment_cont .comment_body{
+        width:      488px;
+    }
 
 div#left_nav #give_feedback{
     position:       absolute;
-    top:            -80px;
-    right:          110px;
+    top:            -100px;
+    right:          40px;
     width:          200px;
 }
 
 div#give_feedback a{
-    font-size:      17px;
+    font-size:      18px;
 }
 
 div#right_nav #upgrade{
@@ -177,6 +202,40 @@ div#feedback div#feedback_cont{
         height:             6em;
     }
     
+div#active_stream_text_cont{
+    font-size:          22px;
+    margin-top:         27px;
+}
+
+div#active_stream_text_cont > span{
+    line-height:        26px;
+}
+
+.from_username{
+    font-size:          18px;
+}
+
+.comment .comment_time{
+    font-size:          16px;
+}
+
+.recent_nom_top_cont h3{
+    font-size:          16px;
+    width:              240px;
+}
+
+.recent_nom_vote_count h2{
+    padding:            10px 5px;
+}
+
+.recent_nom_comment_heading h1{
+    font-size:          26px;
+}
+
+.recent_nom_top_cont h2{
+    width:              200px;
+}
+    
 div#profile_wrap h1{
     margin-bottom:      10px;
     padding-bottom:     10px;
@@ -248,12 +307,35 @@ div#new_comment_cont .comment_body{
 }
 
 .feed_post_cont{
-    height:             430px;
+    margin-right:       0px;
+    height:             350px;
 }
 
 .feed_post_cont .nom_stream_left_cont{
-    float:              none;
-    width:              500px;
+    float:              left;
+    height:             350px;
+    overflow:           hidden;
+    width:              90px;
+}
+
+    .nom_stream_left_cont .voted_cont{
+        margin:         0px 10px 0px;
+        text-align:     center;
+        width:          50px;
+    }
+
+.feed_post_cont .stream_photo_cont{
+    top:                -15px;
+    width:              430px;
+    height:             349px;
+}
+
+    .nom_cat_main_photo_wrap .nom_main_photo{
+        max-height:     259px;
+    }
+
+.stream_photo_cont .nom_cat_main_photo_cont{
+    width:              430px;
 }
 
     .nom_stream_left_cont .target_cont{
@@ -266,22 +348,126 @@ div#new_comment_cont .comment_body{
             margin-left:    15px;
         }
     
-    .nom_stream_left_cont .voted_cont{
-        float:              left;
-    }
-    
         .voted_cont h3{
             font-size:      18px;
         }
     
-    .feed_post_cont .stream_photo_cont{
+/*    .feed_post_cont .stream_photo_cont{
         float:              none;
         height:             350px;
-    }
+    }*/
     
         .stream_photo_cont .nom_cat_main_photo_cont{
             width:              500px;
         }
+        
+div#nom_detail_cont{
+    width:          520px;
+}
+ 
+    div#main_nom_cont_left{
+        margin-left:    10px;
+        width:          360px;
+    } 
+       
+    div#main_nom_cont_left_wrap{
+        width:          360px;
+    }
+
+    div#main_nom_cont_left_wrap #main_nom_photo{
+        max-width:      360px;
+    }
+    
+    div#main_nom_cont_right{
+        width:          150px;
+    }
+    
+        div#main_nom_cont_right h2{
+            font-size:      26px;
+        }
+    
+    div#vote_cont_left{
+        margin-left:    60px;
+    }
+    
+    div#nomination_text_cont{
+        margin-top:     5px;
+        width:          150px;
+    }
+    
+    div#main_nom_bottom_cont{
+        width:          520px;
+    }
+    
+        div#nom_comments_cont{
+            width:          400px;
+        }
+        
+            div#comment_heading_cont h2{
+                font-size:      26px;
+            }
+        
+        div#nom_votes_cont{
+            width:      120px;
+        }
+        
+            #voted_heading{
+                font-size:      26px;
+            }
+        
+        div#new_comment_cont{
+            margin-left:    20px;
+            width:          390px;
+        }
+        
+        div#new_comment_cont .comment_body{
+            width:          368px;
+        }
+        
+.comment_empty h2{
+    font-size:      20px;
+}
+
+div#user_profile_cont #user_profile{
+    width:          520px;
+}
+
+    div#user_profile_cont #profile_nav_cont{
+        font-size:      18px;
+        padding:        10px;
+        top:            -55px;
+    }
+    
+        div#user_profile_cont #profile_nav_cont img#album_left_arrow{
+            left:           1px;
+            top:            18px;
+        }
+        
+        div#user_profile_cont #profile_nav_cont img#album_right_arrow{
+            top:            18px;
+            right:          1px;
+        }
+
+    #user_profile div#profile_left_cont{
+        width:          250px;
+    }
+    
+        #profile_user_info #profile_tab{
+            right:      10px;
+        }
+    
+    #user_profile div#profile_right_cont{
+        width:          255px;
+    }
+    
+div#user_profile_cont #album_cont{
+    right:          -520px;
+    width:          520px;
+}
+
+#new_nomination_cont{
+    width:          520px;
+}
 
 .img_thumbs > img{
     -webkit-transition:     none;

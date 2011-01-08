@@ -903,8 +903,10 @@ div#wall_cont{
     
     div#main_view_control #user_photo_view{
         background-color:           #689AC9;
-        -webkit-border-radius:      0px;
-        -moz-border-radius:         0px;
+        -webkit-border-top-left-radius:     0px;
+        -webkit-border-bottom-left-radius:  0px;
+        -moz-border-radius-topleft:         0px;
+        -moz-border-radius-bottomleft:      0px;
     }
     
     div#main_view_control #user_wall_view{
@@ -964,14 +966,10 @@ div#nom_detail_cont{
 
     div#nom_cat_stream{
         background-color:   #333;
-        margin-top:         15px;
         min-height:         170px;
         overflow-x:         hidden;
+        top:                -5px;
         position:           relative;
-        -webkit-border-top-right-radius:    15px;
-        -webkit-border-top-left-radius:     15px;
-        -moz-border-radius-topright:        15px;
-        -moz-border-radius-topleft:         15px;
     }
     
         div#nom_cat_stream .nom_photo_thumbnail{
@@ -986,8 +984,13 @@ div#nom_detail_cont{
         display:            inline-block;
         margin:             0 auto;
         position:           relative;
-        -moz-box-shadow:        0 -4px 4px rgba(0, 0, 0, 0.5);
-        -webkit-box-shadow:     rgba(0, 0, 0, 0.496094) 0px -4px 4px;
+        z-index:            1;
+        -webkit-border-top-left-radius:     10px;
+        -webkit-border-top-right-radius:    10px;
+        -moz-border-radius-topleft:         10px;
+        -moz-border-radius-topright:        10px;
+        -moz-box-shadow:        0 3px 3px rgba(0, 0, 0, 0.5);
+        -webkit-box-shadow:     rgba(0, 0, 0, 0.496094) 0px 3px 3px;
     }
     
         div#main_nom_cont_left{
@@ -1063,12 +1066,47 @@ div#nom_detail_cont{
                     opacity:                1.0;
                 }
                 
-                div#trophy_cont{
-                    bottom:             0px;
-                    height:             150px;
+                div#main_nom_cont_right_wrap div#trophy_cont{
                     position:           absolute;
                     width:              100%;
+                    bottom:             0px;
+                    height:             150px;
                 }
+                
+                div#info_wrap div#trophy_cont{
+                    background-color:   #333;
+                    padding-top:        10px;
+                    text-align:         center;
+                    width:              100%;
+                    -webkit-border-bottom-right-radius:    5px;
+                    -webkit-border-bottom-left-radius:     5px;
+                    -moz-border-radius-bottomright:        5px;
+                    -moz-border-radius-bottomleft:         5px;
+                }
+                
+                    div#trophy_cont .winning_trophy_cont{
+                        cursor:             pointer;
+                        display:            inline-block;
+                        margin-bottom:      10px;
+                        position:           relative;
+                        width:              65px;
+                    }
+                    
+                        div#trophy_cont .winning_trophy_cont .winning_trophy_count{
+                            color:          white;
+                            font-size:      18px;
+                            font-weight:    bold;
+                            line-height:    30px;
+                            opacity:        0.8;
+                            position:       absolute;
+                            height:         30px;
+                            top:            62px;
+                            right:          18px;
+                            width:          30px;
+                            -webkit-border-radius:      30px;
+                            -moz-border-radius:         30px;
+                            text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+                        }
                 
                     div#nomination_text_cont{
                         float:              left;
@@ -1121,10 +1159,13 @@ div#nom_detail_cont{
         position:           relative;
         top:                -5px;
         width:              960px;
-        -webkit-border-bottom-right-radius:    15px;
-        -webkit-border-bottom-left-radius:     15px;
-        -moz-border-radius-bottomright:        15px;
-        -moz-border-radius-bottomleft:         15px;
+        z-index:            1;
+        -webkit-border-bottom-right-radius:    10px;
+        -webkit-border-bottom-left-radius:     10px;
+        -moz-border-radius-bottomright:        10px;
+        -moz-border-radius-bottomleft:         10px;
+        -moz-box-shadow:        0 -3px 3px rgba(0, 0, 0, 0.5);
+        -webkit-box-shadow:     rgba(0, 0, 0, 0.496094) 0px -3px 3px;
     }
     
         div#nom_comments_cont{
@@ -1949,6 +1990,7 @@ div#profile_cont{
                     position:               absolute;
                     left:                   5px;
                     top:                    150px;
+                    z-index:                100;
                 }
                 
                 .nom_cat_main_photo_cont .next_photo{
@@ -1957,6 +1999,7 @@ div#profile_cont{
                     position:               absolute;
                     right:                  5px;
                     top:                    150px;
+                    z-index:                100;
                 }
                 
 
@@ -1969,6 +2012,7 @@ div#profile_cont{
         font-size:              30px;
         padding-left:           10px;
         padding-top:            15px;
+        text-align:             left;
     }
     
     #new_photo_cont .new_photo_cont{
@@ -1980,6 +2024,43 @@ div#profile_cont{
         .new_photo_cont img{
             border:                 5px solid #333;
         }
+        
+    #new_photo_cont .winning_nom_cont{
+        float:                  left;
+        height:                 150px;
+        margin:                 10px;
+        overflow:               hidden;
+        position:               relative;
+        width:                  225px;
+    }
+    
+        #new_photo_cont .winning_nom_cont > a >img{
+            width:                  225px;
+        }
+        
+        #new_photo_cont .winning_nom_cont .winning_nom_overlay{
+            background:             rgba(0,0,0,0.6);
+            bottom:                 0px;
+            height:                 40px;
+            position:               absolute;
+            width:                  225px;
+        }
+        
+            .winning_nom_cont .winning_nom_overlay p{
+                float:              left;
+                margin-top:         12px;
+                margin-left:        5px;
+            }
+            
+            .winning_nom_cont .winning_nom_overlay p:hover{
+                text-decoration:    underline;
+            }
+            
+            .winning_nom_cont .winning_nom_overlay > img{
+                bottom:             0px;
+                position:           absolute;
+                right:              5px;
+            }
         
 .winning_feed_post_cont{
     height:                 550px;
@@ -2234,9 +2315,8 @@ div#user_profile_cont{
 }
 
     div#user_profile_cont #profile_nav_cont{
-        background-color:       #222;
+        background:             rgba(68,68,68,0.7);
         cursor:                 pointer;
-        opacity:                0.7;
         padding:                15px;
         position:               absolute;
         right:                  10px;
@@ -2249,7 +2329,7 @@ div#user_profile_cont{
     }
     
         div#user_profile_cont #profile_nav_cont:hover{
-            opacity:                1.0;   
+            background:             rgba(68,68,68,1.0);
         }
         
         div#user_profile_cont #profile_nav_cont img#album_right_arrow{
@@ -2282,7 +2362,7 @@ div#user_profile_cont{
             div#user_profile #profile_left_cont h1{
                 font-size:              30px;
                 padding-top:            20px;
-                padding-left:           20px;
+                padding-left:           30px;
                 padding-bottom:         10px;
                 position:               relative;
                 z-index:                10;
@@ -2433,10 +2513,6 @@ div#info_wrap{
         -webkit-transition:     opacity .3s ease-out, left .3s ease-out, top .3s ease-out;
         -moz-transition:        opacity .3s ease-out, left .3s ease-out, top .3s ease-out;
     }
-
-    div#info_wrap ul{
-        margin-bottom:      15px;
-    }
     
     div#info_wrap li{
         list-style:         none;
@@ -2445,7 +2521,7 @@ div#info_wrap{
     div#info_wrap h1{
         background-color:   #dedede;
         font-size:          30px;
-        margin:             10px 0px;
+        margin-top:         10px;
         padding:            5px 10px;
         position:           relative;
         -webkit-box-shadow:     rgba(0, 0, 0, 0.496094) 0px 4px 3px 0px;
@@ -2507,7 +2583,7 @@ div#context_overlay{
         div.latest_photos_overlay{
             min-height:         300px;
             text-align:         center;
-            width:              920px;
+            width:              980px;
         }
     
 div#wall_cont div#profile_wrap{
@@ -2517,30 +2593,58 @@ div#wall_cont div#profile_wrap{
     width:                  960px;
     position:               relative;
     text-align:             left;
+    z-index:                1;
     -webkit-border-radius:  10px;
     -moz-border-radius:     10px;
 }
+
+    div#tab_nav{
+        position:           absolute;
+        right:              -160px;
+        top:                189px;
+        z-index:            0;
+        -webkit-transform: rotate(90deg);
+        -moz-transform: rotate(90deg);
+        filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
+    }
+
+    div#activate_recent_winners{
+        background-color:   #dedede;
+        color:              #444;
+        cursor:             pointer;
+        float:              left;
+        font-size:          16px;
+        font-weight:        bold;
+        margin-right:       5px;
+        padding-top:        10px;
+        text-align:         center;
+        height:             25px;
+        width:              140px;
+        -webkit-border-top-left-radius:     5px;
+        -webkit-border-top-right-radius:    5px;
+        -moz-border-radius-topright:        5px;
+        -moz-border-radius-topleft:         5px;
+    }
+        
+        div#activate_recent_winners:hover{
+            background-color:       #bebebe;
+        }
+    
+    div#activate_recent_winners.selected{
+        background-color:       #bebebe;
+    }
 
     div#activate_latest_photos{
         background-color:   #dedede;
         color:              #444;
         cursor:             pointer;
-        font-size:          18px;
+        float:              left;
+        font-size:          16px;
         font-weight:        bold;
-        padding-top:        14px;
-        position:           absolute;
+        padding-top:        10px;
         text-align:         center;
-        text-shadow:        0 -1px 1px rgba(0,0,0,0.25);
-        right:              -97px;
-        top:                118px;
-        height:             30px;
-        width:              150px;
-        z-index:            0;
-        writing-mode:       tb-rl;
-        -webkit-transform:  rotate(90deg);
-        -moz-transform:     rotate(90deg);
-        -o-transform:       rotate(90deg);
-        filter:             progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+        height:             25px;
+        width:              140px;
         -webkit-border-top-left-radius:     5px;
         -webkit-border-top-right-radius:    5px;
         -moz-border-radius-topright:        5px;
@@ -2551,14 +2655,8 @@ div#wall_cont div#profile_wrap{
             background-color:       #bebebe;
         }
         
-    div#activate_latest_photos_shadow{
-        height:             150px;
-        position:           absolute;
-        right:              0px;
-        top:                65px;
-        z-index:            1;
-        -webkit-box-shadow: rgba(0, 0, 0, 0.496094) 2px 0px 2px 1px;
-        -moz-box-shadow:    2px 0px 2px 1px rgba(0, 0, 0, 0.5);
+    div#activate_latest_photos.selected{
+        background-color:       #bebebe;
     }
 
     div#active_stream_text_cont{
@@ -2773,6 +2871,49 @@ div#wall_cont div#profile_wrap{
                     margin-top:             15px;
                 }
                 
+        #top_right_cont #top_friends{
+            text-align:         center;
+        }
+                
+        #top_friends .top_friend{
+            background-color:   white;
+            display:            inline-block;
+            margin-bottom:      5px;
+            overflow:           hidden;
+            position:           relative;
+            width:              280px;
+            height:             50px;
+        }
+        
+            .top_friend p{
+                color:              white;
+                float:              left;
+                font-size:          20px;
+                font-weight:        bold;
+                margin-left:        8px;
+                margin-top:         8px;
+                padding:            5px;
+                -webkit-border-radius:  5px;
+                -moz-border-radius:     5px;
+                text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+            }
+            
+            .top_friend h2{
+                color:              #333;
+                display:            inline-block;
+                font-size:          14px;
+                font-weight:        bold;
+                margin-top:         18px;
+            }
+            
+            .top_friend h2:hover{
+                text-decoration:    underline;
+            }
+            
+            .top_friend img{
+                float:              right;
+            }
+                
 #recent_cont_1{
     background-color:       #333;
     float:                  left;
@@ -2787,7 +2928,7 @@ div#wall_cont div#profile_wrap{
         -webkit-box-shadow: rgba(0, 0, 0, 0.496094) 6px 7px 4px -3px;
         -moz-box-shadow:    6px 7px 4px -3px rgba(0, 0, 0, 0.5);
         color:                  white;
-        height:                 50px;
+        min-height:             50px;
         position:               relative;
     }
     
@@ -2864,6 +3005,7 @@ div#wall_cont div#profile_wrap{
                 margin:                 0px 20px;
                 margin-bottom:          20px;
                 padding:                10px 20px;
+                text-align:             center;
                 -webkit-border-radius:  15px;
                 -moz-border-radius:     15px;
                 text-shadow: 0 -1px 1px rgba(0,0,0,0.25);

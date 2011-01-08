@@ -10,7 +10,38 @@ from django.contrib.auth.models import User
 from main.models import Portrit_User, FB_User, Album, Photo, Nomination, Nomination_Category
 from settings import ENV, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET
 
-import facebook
+import facebook, re
+
+def mobile(request):
+	device = {}
+
+	ua = request.META.get('HTTP_USER_AGENT', '').lower()
+
+	if ua.find("iphone") > 0:
+		device['iphone'] = "iphone" + re.search("iphone os (\d)", ua).groups(0)[0]
+
+	if ua.find("ipad") > 0:
+		device['ipad'] = "ipad"
+
+	if ua.find("android") > 0:
+		device['android'] = "android" + re.search("android (\d\.\d)", ua).groups(0)[0].translate(None, '.')
+
+	if ua.find("blackberry") > 0:
+		device['blackberry'] = "blackberry"
+
+	if ua.find("windows phone os 7") > 0:
+		device['winphone7'] = "winphone7"
+
+	if ua.find("iemobile") > 0:
+		device['winmo'] = "winmo"
+
+	if not device:			# either desktop, or something we don't care about.
+		device['baseline'] = "baseline"
+
+	# spits out device names for CSS targeting, to be applied to <html> or <body>.
+	device['classes'] = " ".join(v for (k,v) in device.items())
+
+	return {'device': device }
 
 def index(request, template='index.html'):    
     production_code = True
@@ -19,9 +50,18 @@ def index(request, template='index.html'):
     if ENV == 'LOCAL' or ENV == 'TEST':
         production_code = False
         analytics = None
-    payload = {'analytics': analytics, 'production_code': production_code}
-    return render_to_response(template, payload, context_instance=RequestContext(request))
+    mobile_dev = mobile(request)
+    mobile_var = None
+    try:
+        if mobile_dev['device']['ipad']:
+            mobile_var = 'ipad'
+    except:
+        pass
+        
+    print mobile_var
     
+    payload = {'analytics': analytics, 'mobile_var': mobile_var, 'production_code': production_code}
+    return render_to_response(template, payload, context_instance=RequestContext(request))
 # def add_email(request):
 #     data = False
 #     

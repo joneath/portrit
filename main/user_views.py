@@ -179,29 +179,29 @@ def get_user_trophies(request):
             'noms': [ ],
         })
         
-        for nom in winning_noms.iterator():
-            comment_count = nom.get_comment_count()
-            votes = [ ]
-            for vote in nom.votes.all().iterator():
-                votes.append({
-                    'vote_user': vote.fid,
-                    'vote_name': vote.portrit_fb_user.all()[0].name,
-                })
-            data[cat_count]['noms'].append({
-                'id': nom.id,
-                'nomination_category': nom.nomination_category.name,
-                'nominator': nom.nominator.fid,
-                'nominatee': nom.nominatee.fid,
-                'won': nom.won,
-                'time_remaining': nom.get_time_remaining(),
-                'photo': nom.get_photo(),
-                'caption': nom.caption,
-                'comments': False,
-                'comment_count': comment_count,
-                'vote_count': nom.current_vote_count,
-                'votes': votes,
-            })
-        cat_count += 1
+        # for nom in winning_noms.iterator():
+        #     comment_count = nom.get_comment_count()
+        #     votes = [ ]
+        #     for vote in nom.votes.all().iterator():
+        #         votes.append({
+        #             'vote_user': vote.fid,
+        #             'vote_name': vote.portrit_fb_user.all()[0].name,
+        #         })
+        #     data[cat_count]['noms'].append({
+        #         'id': nom.id,
+        #         'nomination_category': nom.nomination_category.name,
+        #         'nominator': nom.nominator.fid,
+        #         'nominatee': nom.nominatee.fid,
+        #         'won': nom.won,
+        #         'time_remaining': nom.get_time_remaining(),
+        #         'photo': nom.get_photo(),
+        #         'caption': nom.caption,
+        #         'comments': False,
+        #         'comment_count': comment_count,
+        #         'vote_count': nom.current_vote_count,
+        #         'votes': votes,
+        #     })
+        # cat_count += 1
     
     data = simplejson.dumps(data)
     return HttpResponse(data, mimetype='application/json')

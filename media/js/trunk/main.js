@@ -1377,24 +1377,7 @@ $(document).ready(function(){
                 meta_html = '<link rel="stylesheet" href="/site_media/styles/trunk/mobile.css"/>';
             }
         }
-        else if (tablet){
-            if (typeof(_gaq) !== "undefined"){
-                meta_html = '<link rel="stylesheet" href="/site_media/styles/production/tablet.css"/>' +
-                                '<link rel="shortcut icon" href="/site_media/img/favicon.ico">' +
-                                '<link rel="apple-touch-icon" href="/site_media/img/icon128.png"/>' +
-                                '<link rel="apple-touch-icon-precomposed" href="/site_media/img/icon128.png"/>';
-            }
-            else{
-                meta_html = '<link rel="stylesheet" href="/site_media/styles/trunk/tablet.css"/>' +
-                                '<link rel="shortcut icon" href="/site_media/img/favicon.ico">' +
-                                '<link rel="apple-touch-icon" href="/site_media/img/icon128.png"/>' +
-                                '<link rel="apple-touch-icon-precomposed" href="/site_media/img/icon128.png"/>';
-            }
-            $('#cont').css({
-                'width': $('#cont').width()
-            });
-        }
-        $('#my_head').append(meta_html);
+        $('head').append(meta_html);
     }
     
     var notifcation_cache = [ ];
@@ -2309,6 +2292,7 @@ $(document).ready(function(){
     
     function hide_search_view(){
         $(document).unbind('click', hide_search_view);
+        $('.autocomplete').hide();
         if (!mobile){
             $('#search').fadeOut();
             $('#wrapper').animate({
@@ -2316,6 +2300,7 @@ $(document).ready(function(){
             }, 350);
         }
         else{
+            $('#search').hide();
             $('#wrapper').css({
                 'opacity': '1.0'
             });
@@ -2674,7 +2659,8 @@ $(document).ready(function(){
             localStorage.setItem('default_view', JSON.stringify(default_view));
             var url_vars = getUrlVars();
             clear_canvas(url_vars);
-            // attach_main_handlers();
+            clear_event_handles();
+            attach_main_handlers();
             main_view();
             $('html, body').scrollTop(0);
         }
@@ -2687,7 +2673,8 @@ $(document).ready(function(){
             localStorage.setItem('default_view', JSON.stringify(default_view));
             var url_vars = getUrlVars();
             clear_canvas(url_vars);
-            // attach_main_handlers();
+            clear_event_handles();
+            attach_profile_handlers();
             main_view();
             $('html, body').scrollTop(0);
         }
@@ -2700,6 +2687,7 @@ $(document).ready(function(){
             localStorage.setItem('default_view', JSON.stringify(default_view));
             var url_vars = getUrlVars();
             clear_canvas(url_vars);
+            clear_event_handles();
             // attach_main_handlers();
             main_view();
             $('html, body').scrollTop(0);
@@ -2799,8 +2787,10 @@ $(document).ready(function(){
             if ($('#wall_cont #profile_wrap').length == 0){
                 $('#wall_cont').hide();
                 var wall_html = '<div id="profile_wrap">' +
-                                    '<div id="activate_latest_photos_shadow"></div>' +
-                                    '<div id="activate_latest_photos">Latest Photos</div>' +
+                                    '<div id="tab_nav">' +
+                                        '<div id="activate_recent_winners">Recent Winners</div>' +
+                                        '<div id="activate_latest_photos">Latest Photos</div>' +
+                                    '</div>' +
                                     '<ul>' +
                                         '<h1 id="active_stream_view" name="active_nominations">Active Nominations</h1>' +
                                         '<div class="clear"></div>' +
@@ -2851,7 +2841,7 @@ $(document).ready(function(){
         }
         else if (default_view === 'profile'){
             $('#wall_cont').hide();
-            var wall_html = '<div id="user_profile_cont"><div id="profile_nav_cont" value="albums"><h2>Photo Albums</h2><img id="album_left_arrow" style="display:none;" src="/site_media/img/albumarrow_left.png"/><img id="album_right_arrow" src="/site_media/img/albumarrow.png"/></div><div id="user_profile"></div><div id="album_cont" style="display:none;"></div></div>';
+            var wall_html = '<div id="user_profile_cont"><div id="profile_nav_cont" value="albums"><h2>Albums</h2><img id="album_left_arrow" style="display:none;" src="/site_media/img/albumarrow_left.png"/><img id="album_right_arrow" src="/site_media/img/albumarrow.png"/></div><div id="user_profile"></div><div id="album_cont" style="display:none;"></div></div>';
             $('#wall_cont').append(wall_html);
             selected_user = 'me';
             get_user_albums('me', 5, render_albums);
@@ -2918,7 +2908,7 @@ $(document).ready(function(){
             trohpy_name = data[i].cat_name;
             trophy_name_underscore = data[i].cat_name.replace(' ', '_').toLowerCase();
             trophy_html =   '<div class="trophy_cont nom_cat_' + trophy_name_underscore + '_hover">' +
-                                '<a href="#/trophy/me/' + trophy_name_underscore + '">' +
+                                '<a href="#/trophy/user=me/trophy=' + trophy_name_underscore + '">' +
                                     '<img src="/site_media/img/trophies/medium/' + trophy_name_underscore + '.png"/>' +
                                     '<div class="trophy_win_count">' +
                                         '<p class="nom_cat_' + trophy_name_underscore + '">' + data[i].count + '</p>' +
@@ -2960,10 +2950,11 @@ $(document).ready(function(){
         get_users_trophies(me.id, render_user_trophies);
     }
     
-    function nom_detail_view(){
+    function nom_detail_view(data){
         view_active = 'nom_detail';
         var nom_id = getUrlVars().nom_id,
             won = getUrlVars().won,
+            trophy = getUrlVars().trophy,
             nom = null,
             active_cache = null;
             noms_in_cat = null,
@@ -2975,14 +2966,22 @@ $(document).ready(function(){
             voted_cont_html = '',
             nom_winning_text = '',
             selected_nom_photo = null,
+            trophy_size = '';
             title = '';
             
-        if (won != undefined){
+        if (trophy != undefined){
+            won = true;
+            nom = data[0];
+            noms_in_cat = data
+            active_cache = data;
+            title = '<h1 class="title" name="' + nom.nomination_category + '">Winning <span class="nom_cat_' + nom.nomination_category.replace(' ', '_').toLowerCase() + '_text">' + nom.nomination_category + '</span> Photos</h1>';
+        }
+        else if (won != undefined){
             won = true;
             nom = winning_noms_cache[nom_id];
-            noms_in_cat = winning_nom_cats_map[nom.nomination_category.replace(' ', '_').toLowerCase()];
+            // noms_in_cat = winning_nom_cats_map[nom.nomination_category.replace(' ', '_').toLowerCase()];
             active_cache = winning_noms_cache;
-            title = '<h1 class="title" name="' + nom.nomination_category + '">Winning <span class="nom_cat_' + nom.nomination_category.replace(' ', '_').toLowerCase() + '_text">' + nom.nomination_category + '</span> Photos</h1>';
+            title = '<h1 class="title" name="' + nom.nomination_category + '">Winning <span class="nom_cat_' + nom.nomination_category.replace(' ', '_').toLowerCase() + '_text">' + nom.nomination_category + '</span> Photo</h1>';
         }
         else{
             nom = active_noms_cache[nom_id];
@@ -2996,7 +2995,7 @@ $(document).ready(function(){
                     nom = winning_noms_cache[nom_id];
                     noms_in_cat = winning_nom_cats_map[nom.nomination_category.replace(' ', '_').toLowerCase()];
                     active_cache = winning_noms_cache;
-                    title = '<h1 class="title" name="' + nom.nomination_category + '">Winning <span class="nom_cat_' + nom.nomination_category.replace(' ', '_').toLowerCase() + '_text">' + nom.nomination_category + '</span> Photos</h1>';
+                    title = '<h1 class="title" name="' + nom.nomination_category + '">Winning <span class="nom_cat_' + nom.nomination_category.replace(' ', '_').toLowerCase() + '_text">' + nom.nomination_category + '</span> Photo</h1>';
                 }
             }
             else{
@@ -3006,24 +3005,49 @@ $(document).ready(function(){
             }
         }
         
-        nom_stream_html = '<div id="nom_cat_stream"><img class="prev_photo" src="/site_media/img/backgallery-small.png"><img class="next_photo" src="/site_media/img/forwardgallery-small.png">';
-        for (var i = 0; i < noms_in_cat.length; i++){
-            nom_in_cat = active_cache[noms_in_cat[i]];
-            if (nom_in_cat.id == nom.id){
-                selected_nom_photo = 'nom_photo_' + nom_in_cat.id;
-                nom_stream_html +=  '<div id="nom_photo_' + nom_in_cat.id + '" class="nom_photo_thumbnail" style="height:' + nom_in_cat.photo.small_height + 'px; opacity: 1.0;" name="selected">' +
-                                        '<img src="' + nom_in_cat.photo.src_small + '"/>' +
-                                        '<p class="nom_cat_' + nom_in_cat.nomination_category.replace(' ', '_').toLowerCase() + '">' + nom_in_cat.vote_count + '</p>' +
-                                    '</div>';
+        if (trophy){
+            nom_stream_html = '<div id="nom_cat_stream"><img class="prev_photo" src="/site_media/img/backgallery-small.png"><img class="next_photo" src="/site_media/img/forwardgallery-small.png">';
+            for (var i = 0; i < active_cache.length; i++){
+                nom_in_cat = active_cache[i];
+                if (nom_in_cat.id == nom.id){
+                    selected_nom_photo = 'nom_photo_' + nom_in_cat.id;
+                    nom_stream_html +=  '<div id="nom_photo_' + nom_in_cat.id + '" class="nom_photo_thumbnail" style="height:' + nom_in_cat.photo.small_height + 'px; opacity: 1.0;" name="selected">' +
+                                            '<img src="' + nom_in_cat.photo.src_small + '"/>' +
+                                            '<p class="nom_cat_' + nom_in_cat.nomination_category.replace(' ', '_').toLowerCase() + '">' + nom_in_cat.vote_count + '</p>' +
+                                        '</div>';
+                }
+                else{
+                    nom_stream_html +=  '<div id="nom_photo_' + nom_in_cat.id + '" class="nom_photo_thumbnail" style="height:' + nom_in_cat.photo.small_height + 'px; opacity: 0.6;">' +
+                                            '<img src="' + nom_in_cat.photo.src_small + '"/>' +
+                                            '<p class="nom_cat_' + nom_in_cat.nomination_category.replace(' ', '_').toLowerCase() + '">' + nom_in_cat.vote_count + '</p>' +
+                                        '</div>';            
+                }        
             }
-            else{
-                nom_stream_html +=  '<div id="nom_photo_' + nom_in_cat.id + '" class="nom_photo_thumbnail" style="height:' + nom_in_cat.photo.small_height + 'px; opacity: 0.6;">' +
-                                        '<img src="' + nom_in_cat.photo.src_small + '"/>' +
-                                        '<p class="nom_cat_' + nom_in_cat.nomination_category.replace(' ', '_').toLowerCase() + '">' + nom_in_cat.vote_count + '</p>' +
-                                    '</div>';            
-            }        
+            nom_stream_html += '</div>';
         }
-        nom_stream_html += '</div>';
+        else if (!won){
+            nom_stream_html = '<div id="nom_cat_stream"><img class="prev_photo" src="/site_media/img/backgallery-small.png"><img class="next_photo" src="/site_media/img/forwardgallery-small.png">';
+            for (var i = 0; i < noms_in_cat.length; i++){
+                nom_in_cat = active_cache[noms_in_cat[i]];
+                if (nom_in_cat.id == nom.id){
+                    selected_nom_photo = 'nom_photo_' + nom_in_cat.id;
+                    nom_stream_html +=  '<div id="nom_photo_' + nom_in_cat.id + '" class="nom_photo_thumbnail" style="height:' + nom_in_cat.photo.small_height + 'px; opacity: 1.0;" name="selected">' +
+                                            '<img src="' + nom_in_cat.photo.src_small + '"/>' +
+                                            '<p class="nom_cat_' + nom_in_cat.nomination_category.replace(' ', '_').toLowerCase() + '">' + nom_in_cat.vote_count + '</p>' +
+                                        '</div>';
+                }
+                else{
+                    nom_stream_html +=  '<div id="nom_photo_' + nom_in_cat.id + '" class="nom_photo_thumbnail" style="height:' + nom_in_cat.photo.small_height + 'px; opacity: 0.6;">' +
+                                            '<img src="' + nom_in_cat.photo.src_small + '"/>' +
+                                            '<p class="nom_cat_' + nom_in_cat.nomination_category.replace(' ', '_').toLowerCase() + '">' + nom_in_cat.vote_count + '</p>' +
+                                        '</div>';            
+                }        
+            }
+            nom_stream_html += '</div>';
+        }
+        else{
+            nom_stream_html = '';
+        }
         
         var name = '';
         if (friends[nom.nominatee]){
@@ -3041,6 +3065,13 @@ $(document).ready(function(){
         }
         else{
             nom_winning_text = 'Nominated for';
+        }
+        
+        if (mobile){
+            trophy_size = 'medium';
+        }
+        else{
+            trophy_size = 'large';
         }
         
         nom_main_cont_html ='<div id="main_nom_cont" value="' + nom.id + '">' +
@@ -3064,7 +3095,7 @@ $(document).ready(function(){
                                             '<div id="nomination_text_cont">' +
                                                 '<a href="/#/user=' + nom.nominatee + '"><span class="strong">' + name + '</span></a><p>' + nom_winning_text + '</p>' +
                                                 '<h3>' + nom.nomination_category + '</h3>' +
-                                                '<img id="nom_trohpy_icon" src="/site_media/img/trophies/large/' + nom.nomination_category.replace(' ', '_').toLowerCase() + '.png"/>' +
+                                                '<img id="nom_trohpy_icon" src="/site_media/img/trophies/' + trophy_size + '/' + nom.nomination_category.replace(' ', '_').toLowerCase() + '.png"/>' +
                                             '</div>' +
                                         '</div>' +
                                     '</div>' +
@@ -3096,7 +3127,7 @@ $(document).ready(function(){
                                     '<div class="clear"></div>' +
                                 '</div>';
         
-        var html = '<div id="nom_detail_cont">' + title + nom_stream_html + nom_main_cont_html + nom_bottom_cont_html + '</div>';
+        var html = '<div id="nom_detail_cont">' + title + nom_main_cont_html + nom_stream_html + nom_bottom_cont_html + '</div>';
         $('#canvas_cont').append(html);
         
         slide_images = $('.nom_photo_thumbnail');
@@ -3107,7 +3138,12 @@ $(document).ready(function(){
         var center_found = false;
         var mid_screen = $('#nom_cat_stream').width() / 2;
         $(slide_images).each(function(j, selected){
-            slide_img_width = parseInt(active_cache[noms_in_cat[j]].photo.small_width);
+            if (trophy){
+                slide_img_width = parseInt(active_cache[j].photo.small_width);
+            }
+            else{
+                slide_img_width = parseInt(active_cache[noms_in_cat[j]].photo.small_width);
+            }
             if ($(this).attr('name') === 'selected'){
                 slide_center += (slide_img_width / 2);
                 center_found = true;
@@ -3130,22 +3166,25 @@ $(document).ready(function(){
             previous_x += img_widths[i];
         });
         
-        get_nom_comments(nom.id, won);
+        get_nom_comments(nom.id, won, trophy);
         // render_nom_comments(nom.comments);
         render_nom_votes(nom.votes);
     }
     
     function get_nom_comments(id, won){
         var active_cache = null;
+        var trophy = getUrlVars().trophy;
         if (won != undefined){
             active_cache = winning_noms_cache;
         }
         else{
             active_cache = active_noms_cache;
         }
-        if (active_cache[id].comments === false){
+        if (trophy || active_cache[id].comments === false){
             $.getJSON('/get_nom_comments/', {'nom_id': id}, function(data){
-                active_cache[id].comments = data;
+                if (!trophy){
+                    active_cache[id].comments = data; 
+                }
                 render_nom_comments(data);
             });
         }
@@ -3207,7 +3246,26 @@ $(document).ready(function(){
     }
     
     function trophy_view(cat){
-        alert(cat);
+        var url_vars = getUrlVars();
+        var user = url_vars.user,
+            cat = url_vars.trophy;
+            
+        if (user == 'me'){
+            user = me.id;
+        }
+        
+        append_load($('#wall_cont'), 'dark');
+        $.get('/get_trophy_wins/', {'user': user, 'cat': cat}, function(data){
+            remove_load();
+            
+            winning_noms_cache = { };
+            for (var i = 0; i < data.length; i++){
+                winning_noms_cache[data[i].id] = data[i];
+            }
+            user_winning_noms_cache[user] = data;
+            
+            nom_detail_view(data);
+        });
     }
     
     function render_alpha_wall(alpha_key){
@@ -3364,9 +3422,9 @@ $(document).ready(function(){
     }
     
     function render_winning_photo_noms(data){
-        for (var i = 0; i < data.album_objs.length; i++){
-            $('#' + data.album_objs[i].fid).append('');
-        }
+        // for (var i = 0; i < data.album_objs.length; i++){
+        //     $('#' + data.album_objs[i].fid).append('');
+        // }
     }
     
     function get_user_noms(){
@@ -3377,8 +3435,8 @@ $(document).ready(function(){
         if (user_winning_noms_cache[selected_user] == undefined){
             $.getJSON('/get_user_album_nom_data/', {'user': id}, function(data){
                 if (data){
-                    if (data.album_objs.length > 0){
-                        user_winning_noms_cache[selected_user] = data;
+                    if (data.winning_nom_objs.length > 0){
+                        user_winning_noms_cache[selected_user] = data.winning_nom_objs;
                         if (view_active == 'album'){
                             render_winning_photo_noms(data);
                         }
@@ -3448,10 +3506,10 @@ $(document).ready(function(){
         if (friends[id] != undefined){
             album_html = '<div id="info_wrap" style="display:none;"><h1>Profile Info</h1><div id="info_cont"><div id="info_loading"><img src="/site_media/img/album-loader-dark.gif"/></div></div></div><div id="album_cont"></div><div id="profile_wrap" style="display:none"><h1>' + friends[id].name.split(" ", 1) + '\'s Stream</h1><a id="add_new_comment" class="awesome large">Post</a><div id="new_comment_cont"><div class="comment_top_head"><a id="cancel_new_comment" class="awesome large">Close</a><a id="post_new_comment" class="awesome large">Post</a></div><textarea id="new_comment_body" class="comment_body"></textarea></div><div id="profile_cont_wrap"><div id="profile_loading"><img src="/site_media/img/ajax-loader-light.gif"/></div><div id="scroller"><div id="profile_cont"></div></div></div></div>';
             if (!mobile || tablet){
-                $('#title').html('<h3>' + name + '</h3><div id="main_view_control"><a id="user_info_view" class="main_control awesome large">Info</a><a id="user_photo_view" class="main_control awesome large main_control_active">Photos</a><a id="user_wall_view" class="main_control awesome large">Stream</a></div>');
+                $('#title').html('<h3>' + name + '</h3><div id="main_view_control"><a id="user_info_view" class="main_control awesome large">Info</a><a id="user_photo_view" class="main_control awesome large main_control_active">Photos</a></div>');
             }
             else if (mobile && !tablet){
-                $('#title').html('<h3>' + name + '</h3><div id="main_view_control"><a id="user_info_view" class="main_control awesome large">Info</a><a id="user_photo_view" class="main_control awesome large main_control_active">Photos</a><a id="user_wall_view" class="main_control awesome large">Stream</a></div>');
+                $('#title').html('<h3>' + name + '</h3><div id="main_view_control"><a id="user_info_view" class="main_control awesome large">Info</a><a id="user_photo_view" class="main_control awesome large main_control_active">Photos</a></div>');
             }
             
             $('#title').show();
@@ -3824,11 +3882,6 @@ $(document).ready(function(){
                                                 '<a href="#/nom_id=' + nom_data[k].id +'">' +
                                                     '<img class="nom_main_photo" src="' + nom_data[k].photo.src  + '"/>' +
                                                 '</a>' +
-                                                '<div class="vote_cont">' +
-                                                    '<img class="vote_up" name="' + nom_data[k].id + '" src="/site_media/img/up_small.png"/>' +
-                                                    '<p>' + nom_data[k].vote_count + '</p>' +
-                                                    '<img class="vote_down" name="' + nom_data[k].id + '" src="/site_media/img/down_small.png"/>' +
-                                                '</div>' +
                                             '</div>' +
                                         '</div>' +
                                         '<div class="nom_photo_bottom_wrap">' +
@@ -4096,6 +4149,7 @@ $(document).ready(function(){
         
         user_profile = data;
         $('#info_cont').append(profile_html);
+        render_user_profile_trophies();
     }
     
     function render_user_trophy_room(uid){
@@ -4141,20 +4195,12 @@ $(document).ready(function(){
             // });
         }
         else if (method == 'won'){
-            $.getJSON('/get_recent_winners/', function(data){
+            $.getJSON('/get_recent_winners/', {'nom_id': getUrlVars().nom_id}, function(data){
                 winners_feed = data;
                 var nom_data = null;
 
                 for (var i = 0; i < data.length; i++){
-                    nom_data = data[i].noms;
-                    winning_nom_cats_map[data[i].cat_name.replace(' ', '_').toLowerCase()] = [ ];
-
-                    if (nom_data.length > 0){
-                        for (var k = 0; k < nom_data.length; k++){
-                            winning_noms_cache[nom_data[k].id] = nom_data[k];
-                            winning_nom_cats_map[nom_data[k].nomination_category.replace(' ', '_').toLowerCase()].push(nom_data[k].id);
-                        }
-                    }
+                    winning_noms_cache[data[i].id] = data[i];
                 }
                 if (fnc_ptr){
                     fnc_ptr(data);
@@ -4474,19 +4520,20 @@ $(document).ready(function(){
     
     var winners_feed = null;
     function init_winners_view(){
-        view_active = 'winners_view';
-        append_load($('#profile_cont'), 'light');
+        append_load($('#context_overlay_cont > div'), 'light');
         if (!winners_feed){
             //Get winner feed from server
-            $.getJSON('/get_recent_winners/', function(data){
-                winners_feed = data;
-                remove_load();
-                render_winners(winners_feed);
-            });
+            remove_load();
+            get_user_feed(render_recent_winners, 'won');
+            // $.getJSON('/get_recent_winners/', function(data){
+            //     winners_feed = data;
+            //     
+            //     render_winners(winners_feed);
+            // });
         }
         else{
             remove_load();
-            render_winners(winners_feed)
+            render_recent_winners(winners_feed)
         }
     }
     
@@ -4537,6 +4584,62 @@ $(document).ready(function(){
         else{
             remove_load();
             render_latest_photos(photo_feed);
+        }
+    }
+    
+    function render_recent_winners(data){
+        var photo = null,
+            name = '',
+            nom_cat = '',
+            nom_cat_underscore = '',
+            winning_nom_html = '';
+            
+        $('#context_overlay_cont > div').append('<div id="new_photo_cont"><h1>Recent Winners</h1></div>');
+        for (var i = 0; i < data.length; i++){
+            photo = data[i].photo;
+            nom_cat = data[i].nomination_category;
+            nom_cat_underscore = nom_cat.replace(' ', '_').toLowerCase();
+            if (friends[data[i].nominatee] !== undefined){
+                name = friends[data[i].nominatee].name;
+            }
+            else if(data[i].nominatee == me.id){
+                name = 'You';
+            }
+            else{
+                name = '';
+            }
+            winning_nom_html =  '<div class="winning_nom_cont">' +
+                                    '<a href="/#/nom_id=' + data[i].id + '/won/">' +
+                                        '<img src="' + photo.src + '"/>' +
+                                    '</a>' +
+                                    '<div class="winning_nom_overlay">' +
+                                        '<a href="/#/user=' + data[i].nominatee + '">' +
+                                            '<p class="nom_cat_' + nom_cat_underscore + '_text">' + name + '</p>' +
+                                        '</a>' +
+                                        '<img src="/site_media/img/trophies/medium/' + nom_cat_underscore + '.png"/>' +
+                                    '</div>' +
+                                '</div>';
+            $('#new_photo_cont').append(winning_nom_html);
+        }
+        $('#new_photo_cont').append('<div class="clear"></div>');
+    }
+    
+    var winner_feed = null;
+    function init_recent_winners(){
+        view_active = 'recent_winners';
+        append_load($('#context_overlay_cont > div'), 'light');
+        if (!winner_feed){
+            remove_load();
+            get_user_feed(render_recent_winners, 'won');
+            // $.getJSON('/get_recent_winners/', function(data){
+            //     winners_feed = data;
+            //     remove_load();
+            //     render_recent_winners(winners_feed);
+            // });
+        }
+        else{
+            remove_load();
+            render_recent_winners(winner_feed);
         }
     }
     
@@ -4834,6 +4937,26 @@ $(document).ready(function(){
         }
     }
     
+    function render_top_users(top_users){
+        var user_html = '';
+        var top_html = '';
+        top_html = '<h1>All Time <span class="strong">Leaderboard</span></h1><div id="top_friends">';
+        for (var i = 0; i < top_users.length; i++){
+            user_html = '<div class="top_friend">' +
+                            '<p class="nom_cat_' + top_users[i].top_nom_cat.replace(' ', '_').toLowerCase() + '">' + (i + 1) + '</p>' +
+                            '<a href="/#/user=' + top_users[i].fid + '">' +
+                                '<h2>' + friends[top_users[i].fid].name + '</h2>' +
+                            '</a>' +
+                            '<a href="/#/user=' + top_users[i].fid + '">' +
+                                '<img src="https://graph.facebook.com/' + top_users[i].fid + '/picture?type=square"/>' +
+                            '</a>' +
+                        '</div>';
+            top_html += user_html;
+        }
+        top_html += '</div>';
+        $('#top_right_cont').append(top_html);
+    }
+    
     function init_recent_view(){
         var recent_view_html = '<div id="recent_cont_1">' +
                                     '<div id="recent_left_cont">' +
@@ -4850,6 +4973,7 @@ $(document).ready(function(){
                 remove_load();
                 render_recent_stream(data.recent);
                 render_top_noms(data.top);
+                render_top_users(data.top_users);
                 if (!mobile){
                     $('#profile_cont').fadeIn();
                 }
@@ -4861,6 +4985,35 @@ $(document).ready(function(){
         // else{
         //     render_recent_stream(recent_stream_map);
         // }
+    }
+    
+    function render_user_profile_trophies(){
+        var id = getUrlVars().user;
+        var data = user_winning_noms_cache[id];
+        var winning_noms_cats = { };
+        var nom_cat = '';
+        var nom_cat_underscore = '';
+        var trophy_cont_html = '';
+        for (var i = 0; i < data.length; i++){
+            if (winning_noms_cats[data[i].nom_cat] == undefined){
+                winning_noms_cats[[data[i].nom_cat]] = 1;
+            }else{
+                winning_noms_cats[data['nom_cat']] += 1;
+            }
+        }
+        for (var trophy in winning_noms_cats){
+            if (trophy != 'undefined'){
+                nom_cat = trophy;
+                nom_cat_underscore = nom_cat.replace(' ', '_').toLowerCase();
+                trophy_cont_html =  '<div class="winning_trophy_cont">' +
+                                        '<a href="/#/trophy/user=' + id + '/trophy=' + nom_cat_underscore + '">' +
+                                            '<img src="/site_media/img/trophies/medium/' + nom_cat_underscore + '.png"/>' +
+                                        '</a>' +
+                                        '<div class="winning_trophy_count nom_cat_' + nom_cat_underscore + '">' + winning_noms_cats[trophy] + '</div>' +
+                                    '</div>';
+                $('#trophy_cont').append(trophy_cont_html);
+            }
+        }
     }
     
     var my_feed_next_page = '';
@@ -4892,18 +5045,6 @@ $(document).ready(function(){
             FB.api('/' + id + '/', function(response){
                 render_profile(response);
             });
-            
-            // FB.api('/' + id + '/interests', function(response){
-            //     render_user_likes(response);
-            // });
-            // 
-            // FB.api('/' + id + '/movies', function(response){
-            //     render_user_movies(response);
-            // });
-            // 
-            // FB.api('/' + id + '/books', function(response){
-            //     render_user_books(response);
-            // });
         }
         else{
             if ($('#info_wrap').children().length === 1){
@@ -5139,44 +5280,6 @@ $(document).ready(function(){
             _gaq.push(['_trackEvent', 'Photo_List', 'Shown', '']);
         }
     }
-    
-    // function prev_album(e){
-    //     for (var x = 0; x < albums.length; x++){
-    //         if (albums[x].album.id === selected_album_id){
-    //             if (x - 1 < 0){
-    //                 x = 0;
-    //             }
-    //             else{
-    //                 x -= 1;
-    //             }
-    //             selected_photo = '';
-    //             selected_album_id = albums[x].album.id;
-    //             selected_album = albums[x];
-    //         }
-    //     }
-    //     update_urls();
-    //     e.stopPropagation();
-    //     return false;
-    // }
-    // 
-    // function next_album(e){
-    //     for (var x = 0; x < albums.length; x++){
-    //         if (albums[x].album.id === selected_album_id){
-    //             if (x + 1 > albums.length){
-    //                 x = 0;
-    //             }
-    //             else{
-    //                 x += 1;
-    //             }
-    //             selected_photo = '';
-    //             selected_album_id = albums[x].album.id;
-    //             selected_album = albums[x];
-    //         }
-    //     }
-    //     update_urls();
-    //     e.stopPropagation();
-    //     return false;
-    // }
     
     var high_photo_offset = 100;
     var album_completed = false;
@@ -6464,10 +6567,18 @@ $(document).ready(function(){
     
     $('#close_overlay').live('click', function(){
         var that = this;
-        $('#context_overlay').fadeOut(function(){
+        $('#tab_nav > .selected').removeClass('selected');
+        if (!mobile){
+            $('#context_overlay').fadeOut(function(){
+                $('#context_overlay_cont').removeClass();
+                $(that).next().html('');
+            });
+        }
+        else{
+            $('#context_overlay').hide();
             $('#context_overlay_cont').removeClass();
             $(that).next().html('');
-        });
+        }        
     });
     
     var clear_profile = false;
@@ -6519,44 +6630,32 @@ $(document).ready(function(){
         
         $('.vote_down').live('click', vote_down_handler)
         
-        // $('#profile_wrap  > ul').live('mouseover mouseout', function(event) {
-        //     if (event.type == 'mouseover') {
-        //         $('#drop_down_cont').show();
-        //     } else {
-        //         $('#drop_down_cont').hide();
-        //     }
-        // });
-        
         $('#activate_latest_photos').live('click', function(){
+            $('#tab_nav > .selected').removeClass('selected');
+            $(this).addClass('selected');
             $('#context_overlay_cont').removeClass().addClass('latest_photos_overlay');
-            $('#context_overlay').fadeIn();
+            if (!mobile){
+                $('#context_overlay').fadeIn();
+            }
+            else{
+                $('#context_overlay').show();
+            }
             init_latest_photos();
         });
         
-        // $('.activate_stream').live('click', function(){
-        //     var view_to_activate = $(this).attr('name');
-        //     var active_view = $('#active_stream_view').attr('name');
-        //     var active_text = $('#active_stream_view').text();
-        //     
-        //     if(view_to_activate == 'active_nominations'){
-        //         $('#active_stream_view').html('Active Nominations<img id="stream_triangle" src="/site_media/img/downtriangle.png">').attr('name', view_to_activate);
-        //         $('#active_stream_text_cont').show();
-        //         window.location.href = '#/';
-        //         // init_profile_view();
-        //     }
-        //     else if (view_to_activate == 'recent_winners'){
-        //         $('#active_stream_view').html('Recent Winners<img id="stream_triangle" src="/site_media/img/downtriangle.png">').attr('name', view_to_activate);
-        //         $('#active_stream_text_cont').hide();
-        //         window.location.href = '#/recent-winners';
-        //     }
-        //     else if(view_to_activate == 'latest_photos'){
-        //         $('#active_stream_view').html('Latest Photos<img id="stream_triangle" src="/site_media/img/downtriangle.png">').attr('name', view_to_activate);
-        //         $('#active_stream_text_cont').hide();
-        //         window.location.href = '#/latest-photos';
-        //     }
-        //     $('#drop_down_cont').hide();
-        //     $('.activate_stream[name="' + view_to_activate + '"] h1').text(active_text).parent().attr('name', active_view);
-        // });
+        $('#activate_recent_winners').live('click', function(){
+            $('#tab_nav > .selected').removeClass('selected');
+            $(this).addClass('selected');
+            $('#context_overlay_cont').removeClass().addClass('latest_photos_overlay');
+            if (!mobile){
+                $('#context_overlay').fadeIn();
+            }
+            else{
+                $('#context_overlay').show();
+            }
+            
+            init_recent_winners();
+        });
         
         $('.voted_cont a, .new_photo_cont').live('mouseover mouseout', function(event) {
             if (event.type == 'mouseover') {
@@ -6579,16 +6678,19 @@ $(document).ready(function(){
                     selected_photo = String(photo_id);
                     
                 window.location.href = '#/user=' + user_id + '/album=' + album_id + '/gallery';
+                $('#close_overlay').click();
             });
             
         });
         
         $('.next_photo').live('click', function(){
-            $(this).parent().prev().children().filter('[name="selected"]').next().click();
+            var selected = $(this).parent().prev().children().filter('[name="selected"]');
+            $(selected).next().click();
         });
         
         $('.prev_photo').live('click', function(){
-            $(this).parent().prev().children().filter('[name="selected"]').prev().click();
+            var selected = $(this).parent().prev().children().filter('[name="selected"]');
+            $(selected).prev().click();
         });
         
         function handleFiles(files) {  
@@ -6920,8 +7022,8 @@ $(document).ready(function(){
                 $(comment_cont).parent().find('.add_new_comment').fadeIn();
             }
             else{
-                $(comment_cont).remove();
                 $(comment_cont).parent().find('.add_new_comment').show();
+                $(comment_cont).remove();
             }
         });
         
@@ -7109,8 +7211,9 @@ $(document).ready(function(){
             var nom_id = $(this).attr('id').replace('nom_photo_', '');
             var nom = null;
             var won = getUrlVars().won;
+            var trophy = getUrlVars().trophy;
             
-            if (won != undefined){
+            if (won != undefined || trophy != undefined){
                 nom = winning_noms_cache[nom_id];
             }
             else{
@@ -7258,12 +7361,78 @@ $(document).ready(function(){
         $('.vote_down').live('click', vote_down_handler);
         
         $('.next_photo').live('click', function(){
-            $('#nom_cat_stream').children().filter('[name="selected"]').next().click();
+            var selected = $('#nom_cat_stream').children().filter('[name="selected"]');
+            $(selected).next().click();            
         });
         
         $('.prev_photo').live('click', function(){
-            $('#nom_cat_stream').children().filter('[name="selected"]').prev().click();
+            var selected = $('#nom_cat_stream').children().filter('[name="selected"]');
+            if ($(selected).index() != 2){
+                $(selected).prev().click();
+            }
         });
+    }
+    
+    function transition_trophy_view(instant){
+        var window_width = $(window).width();
+        var album_cont_count = Math.floor(($('.photo_album').length) / 3);
+        var album_cont_height = album_cont_count * 330;
+        var profile_nav_control = $('#profile_nav_cont');
+        $(profile_nav_control).attr('value', 'trophies');
+        $('h2', profile_nav_control).text('Trophies');
+        $('#album_right_arrow').hide();
+        $('#album_left_arrow').show();
+        $('#album_cont').show();
+        $('#user_profile_cont').css({
+            'min-height': album_cont_height
+        });
+        if (!mobile && !instant){
+            $('#user_profile_cont').animate({
+                'right': '800px'
+            }, 300);
+        }
+        else if (tablet){
+            $('#user_profile_cont').css({
+                'right': '800px'
+            });
+        }
+        else{
+            $('#profile_nav_cont').css({
+                'right': '-100px'
+            });
+            $('#user_profile_cont').css({
+                'right': '520px'
+            });
+        }
+    }
+    
+    function transition_album_view(instant){
+        var profile_nav_control = $('#profile_nav_cont');
+        $(profile_nav_control).attr('value', 'albums');
+        $('h2', profile_nav_control).text('Albums');
+        $('#album_right_arrow').show();
+        $('#album_left_arrow').hide();
+        $('#user_profile_cont').css({
+            'min-height': ''
+        });
+        if (!mobile && !instant){
+            $('#user_profile_cont').animate({
+                'right': '0px'
+            }, 300);
+        }
+        else if (tablet){
+            $('#user_profile_cont').css({
+                'right': '0px'
+            });
+        }
+        else{
+            $('#profile_nav_cont').css({
+                'right': '10px'
+            });
+            $('#user_profile_cont').css({
+                'right': '0px'
+            });
+        }
     }
     
     function attach_user_profile_handlers(){
@@ -7277,47 +7446,11 @@ $(document).ready(function(){
         
         $('#profile_nav_cont').live('click', function(){
             var view_to_activate = $(this).attr('value');
-            var window_width = $(window).width();
-            var album_cont_count = Math.floor(($('.photo_album').length) / 3);
-            var album_cont_height = album_cont_count * 330;
             if (view_to_activate == 'albums'){
-                $(this).attr('value', 'trophies');
-                $('h2', this).text('Trophy Room');
-                $('#album_right_arrow').hide();
-                $('#album_left_arrow').show();
-                $('#album_cont').show();
-                $('#user_profile_cont').css({
-                    'min-height': album_cont_height
-                });
-                if (!mobile){
-                    $('#user_profile_cont').animate({
-                        'right': '800px'
-                    }, 300);
-                }
-                else{
-                    $('#user_profile_cont').css({
-                        'right': '800px'
-                    });
-                }
+                transition_trophy_view();
             }
             else{
-                $(this).attr('value', 'albums');
-                $('h2', this).text('Photo Albums');
-                $('#album_right_arrow').show();
-                $('#album_left_arrow').hide();
-                $('#user_profile_cont').css({
-                    'min-height': ''
-                });
-                if (!mobile){
-                    $('#user_profile_cont').animate({
-                        'right': '0px'
-                    }, 300);
-                }
-                else{
-                    $('#user_profile_cont').css({
-                        'right': '0px'
-                    });
-                }
+                transition_album_view();
             }
         });
     }
@@ -7370,6 +7503,15 @@ $(document).ready(function(){
                 clearTimeout(click_hold_timer);
             });
         }
+        
+        $('.winning_trophy_cont').live('mouseover mouseout', function(event) {
+            var that = this;
+            if (event.type == 'mouseover') {
+                $('.winning_trophy_count', this).css('opacity', '1');
+            } else {
+                $('.winning_trophy_count', this).css('opacity', '0.8');
+            } 
+        });
         
         $('#user_info_view').live('click', function(){
             //Init user profile with render hidden
@@ -7683,7 +7825,7 @@ $(document).ready(function(){
         }
         
         var wall_html = '<div id="profile_wrap">' +
-                            '<div id="activate_latest_photos_shadow"></div>' +
+                            '<div id="activate_recent_winners">Recent Winners</div>' +
                             '<div id="activate_latest_photos">Latest Photos</div>' +
                             '<ul>' +
                                 '<h1 id="active_stream_view" name="' + active_view_name + '">' + active_view_text + '<img id="stream_triangle" src="/site_media/img/downtriangle.png"/></h1>' +
@@ -7770,6 +7912,7 @@ $(document).ready(function(){
         $('#profile_wrap  > ul > h1').die('mouseover mouseout');
         // $('.activate_stream').die('click');
         $('#activate_latest_photos').die('click');
+        $('#activate_recent_winners').die('click');
         $('.voted_cont a, .new_photo_cont').die('mouseover mouseout');
         $('.new_photo_cont').die('click');
         $('.next_photo').die('click');
@@ -7788,14 +7931,12 @@ $(document).ready(function(){
         $('#user_friends img').die('mouseover mouseout');
         $('#post_upload').die('click');
         $('#upload_photo_button').die('change');
+        $('.winning_trophy_cont').die('mouseover mouseout');
         
         //Nom Detail
         $('.nom_photo_thumbnail').die('click');
         $('#add_new_comment').die('click');
         $('.post_new_comment').die('click');
-        $('.next_photo').die('click');
-        
-        $('.prev_photo').die('click');
         
         //list view
         $('.photo_thumbs').die('mousedown');
@@ -7911,6 +8052,11 @@ $(document).ready(function(){
     function update_view(){     
         var url_vars = getUrlVars();
         var prev_active_view = view_active;
+        
+        if ($('#context_overlay').is(':visible')){
+            $('#close_overlay').click();
+        }
+        
         if (url_vars['recent-winners'] == undefined && url_vars['latest-photos'] == undefined){
             clear_event_handles();
         }
@@ -7920,7 +8066,7 @@ $(document).ready(function(){
             scroll_to_toggle = true;
         }
         
-        if (url_vars.user !== undefined && url_vars.album === undefined && url_vars.gallery === undefined){
+        if (url_vars.user !== undefined && url_vars.album === undefined && url_vars.gallery === undefined && url_vars.trophy == undefined){
             clear_canvas(url_vars);
             scroll_to_user = url_vars.user;
             if (scroll_to_user == me.id){
@@ -8056,7 +8202,7 @@ $(document).ready(function(){
         else if (url_vars.won !== undefined && url_vars.nom_id !== undefined){
             clear_canvas(url_vars);
             attach_nom_detail_handlers();
-            if (isEmpty(winners_feed)){
+            if (isEmpty(winners_feed) || winning_noms_cache[url_vars.nom_id] == undefined){
                 get_user_feed(nom_detail_view, 'won');
             }
             else{
@@ -8104,6 +8250,7 @@ $(document).ready(function(){
         }
         else if (url_vars['trophy'] != undefined){
             clear_canvas(url_vars);
+            attach_nom_detail_handlers();
             trophy_view(url_vars['cat']);
         }
         else if (default_view === 'friend'){
