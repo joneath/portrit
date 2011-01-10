@@ -11,32 +11,6 @@ var Portrit = function(){
         
     var nomination_emitter = new events.EventEmitter();
     
-    //Send nom won update to django server
-    var nom_won_callback = function(data){
-        // console.log(data);
-        var proxy = http.createClient(8000, "127.0.0.1");
-        var proxy_request = proxy.request('GET', '/mark_nomination_as_won?nom_id=' + data.id, {"host": "127.0.0.1"});
-        // proxy_request.write('TEST', 'binary');
-        proxy_request.end();
-        console.log('request sent')
-        proxy_request.addListener('response', function (proxy_response) {
-            console.log('recieve response');
-            // proxy_response.addListener('data', function(chunk) {
-            //     response.write(chunk, 'binary');
-            // });
-            // proxy_response.addListener('end', function() {
-            //     response.end();
-            // });
-            // response.writeHead(proxy_response.statusCode, proxy_response.headers);
-        });
-        // request.addListener('data', function(chunk) {
-        //     proxy_request.write(chunk, 'binary');
-        // });
-        // request.addListener('end', function() {
-        //     proxy_request.end();
-        // });
-    }
-    
     var tcp_server = net.createServer(function (stream) {
         var data_stream = '';
         stream.setEncoding('ascii');
@@ -49,32 +23,6 @@ var Portrit = function(){
         stream.on('end', function () {
             console.log('socket closed');
             var data = JSON.parse(data_stream);
-            
-            if (data.method == 'new_nom'){
-                console.log('new nom');
-                var nom_data = null;
-                for (var i = 0; i < data.payload.nom_data.length; i++){
-                    nom_data = data.payload.nom_data[i];
-                    console.log(nom_data.time_remaining);
-                    nomination_emitter.addListener('nom_id_' + nom_data.id, nom_won_callback);
-                    var nom_end_timeout = function(noms_data){
-                        var nom_id = noms_data.id;
-                        var timeout = noms_data.time_remaining * 1000;
-                        var data = noms_data;
-                        
-                        return {
-                            init_timeout: function(){
-                                setTimeout(function(){
-                                    console.log('nom_id_' + nom_id)
-                                    nomination_emitter.emit('nom_id_' + nom_id, data);
-                                }, 1000000);
-                            }
-                        }
-                    }
-                    var nom_timout = nom_end_timeout(nom_data);
-                    nom_timout.init_timeout();
-                }
-            }
             
             console.log(data.payload.friends);
             for (var i = 0; i < data.payload.friends.length; i++){
@@ -153,7 +101,7 @@ var Portrit = function(){
             console.log('long poll attached');
         }
         
-    }).listen(8080, '192.168.1.145');
+    }).listen(8080, '192.168.1.126');
 }
 
 var portrit = new Portrit();

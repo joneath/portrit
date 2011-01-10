@@ -113,17 +113,17 @@ a:hover{
 .medium.awesome, .medium.awesome:visited 		{ font-size: 13px; font-weight: bold; line-height: 1; text-shadow: 0 -1px 1px rgba(0,0,0,0.25); }
 .large.awesome, .large.awesome:visited, .large.awesome_abs  			{ font-size: 14px; padding: 8px 14px 9px; }
 
-.green.awesome, .green.awesome:visited		    { background-color: #91bd09; }
+.green.awesome, .green.awesome:visited, .green.awesome_abs		    { background-color: #91bd09; }
 .green.awesome:hover						    { background-color: #749a02; }
-.blue.awesome, .blue.awesome:visited		    { background-color: #2daebf; }
+.blue.awesome, .blue.awesome:visited, .blue.awesome_abs		    { background-color: #2daebf; }
 .blue.awesome:hover							    { background-color: #007d9a; }
 .red.awesome, .red.awesome:visited, .red.awesome_abs			    { background-color: #e33100; }
 .red.awesome:hover							    { background-color: #872300; }
-.magenta.awesome, .magenta.awesome:visited		{ background-color: #a9014b; }
+.magenta.awesome, .magenta.awesome:visited, .magenta.awesome_abs		{ background-color: #a9014b; }
 .magenta.awesome:hover							{ background-color: #630030; }
-.orange.awesome, .orange.awesome:visited		{ background-color: #ff5c00; }
+.orange.awesome, .orange.awesome:visited, .orange.awesome_abs		{ background-color: #ff5c00; }
 .orange.awesome:hover							{ background-color: #d45500; }
-.yellow.awesome, .yellow.awesome:visited		{ background-color: #ffb515; }
+.yellow.awesome, .yellow.awesome:visited, .yellow.awesome_abs		{ background-color: #ffb515; }
 .yellow.awesome:hover							{ background-color: #fc9200; }
 
 div#wrapper{
@@ -3137,10 +3137,61 @@ div#user_peek_cont{
         -webkit-transform: scale(0.5);
     }
     
+div#album_wrap{
+    margin: 0px auto;
+    max-width: 1200px;
+}    
+    
+div#trophy_cont{
+    margin: 0px auto;
+    max-width: 1200px;
+}
+
+    div#trophy_cont > h1{
+        font-size:          24px;
+        font-weight:        bold;
+        margin-bottom:      10px;
+        margin-left:        100px;
+        text-align:         left;
+    }
+    
+    div#trophy_cont .trophy_album{
+        cursor:             pointer;
+        display:            inline-block;
+        position:           relative;
+        width:              175px;
+        margin:             40px 40px 50px 40px;
+    }
+    
+        div#trophy_cont .img_thumbs{
+            display:            block;
+            position:           relative;
+            height:             175px;
+        }
+        
+        div#trophy_cont div.album_title{
+            font-size:          18px;
+        }
+        
+        div#trophy_cont .trophy_img{
+            position:           absolute;
+            bottom:             0px;
+            right:              0px;
+            z-index:            100000;
+        }
+    
 div#album_cont{
     max-width:          1200px;
     margin:             0 auto;
 }
+
+    div#album_cont > h1{
+        font-size:          24px;
+        font-weight:        bold;
+        margin-bottom:      10px;
+        margin-left:        100px;
+        text-align:         left;
+    }
 
     div#album_cont div.album_title{
         font-size:          18px;
@@ -3263,6 +3314,14 @@ div#photo_cont{
         div.photo_thumbs img{
             border:             5px solid #ffffff;
         }
+        
+        div#photo_cont div.photo_thumbs .trophy_cat{
+            height:             75px;
+            position:           absolute;
+            bottom:             9px;
+            right:              5px;
+            border:             none;
+        }
     
     div#photo_scroller{
         overflow-x:         hidden;
@@ -3285,25 +3344,59 @@ div#photo_cont{
             position:           relative;
         }
         
+            #photo_large_inline_cont .trophy_cont_gallery{
+                position:       absolute;
+                bottom:         0px;
+                right:          0px;
+            }
+        
             #photo_large_inline_cont #nominate_photo{
                 position:           absolute;
                 font-size:          14px;
                 font-weight:        bold;
-                bottom:             0px;
+                top:                0px;
                 left:               0px;
-                opacity:            0.6;
-                -webkit-border-bottom-left-radius:  0px;
+                opacity:            0.7;
+                padding:            10px 5px;
+                width:              100px;
+                -webkit-border-bottom-left-radius:  10px;
                 -webkit-border-top-left-radius:     0px;
-                -webkit-border-bottom-right-radius: 0px;
+                -webkit-border-top-right-radius:    0px;
+                -webkit-border-bottom-right-radius: 10px;
                 -moz-border-radius-topleft:         0px;
-                -moz-border-radius-bottomleft:      0px;
-                -moz-border-radius-bottomright:     0px;
+                -moz-border-radius-topright:        0px;
+                -moz-border-radius-bottomleft:      10px;
+                -moz-border-radius-bottomright:     10px;
+                -webkit-box-shadow:     none;
             }
             
-            #photo_large_inline_cont #nominate_photo:hover{
-                background-color:   #e33100; 
-                opacity:            1.0;
+                #photo_large_inline_cont #nominate_photo:hover{
+                    opacity:            1.0;
+                }
+            
+            #photo_large_inline_cont #go_nom_detail{
+                position:           absolute;
+                font-size:          14px;
+                font-weight:        bold;
+                top:                0px;
+                left:               0px;
+                opacity:            0.7;
+                padding:            10px 5px;
+                width:              100px;
+                -webkit-border-bottom-left-radius:  10px;
+                -webkit-border-top-left-radius:     0px;
+                -webkit-border-top-right-radius:    0px;
+                -webkit-border-bottom-right-radius: 10px;
+                -moz-border-radius-topleft:         0px;
+                -moz-border-radius-topright:        0px;
+                -moz-border-radius-bottomleft:      10px;
+                -moz-border-radius-bottomright:     10px;
+                -webkit-box-shadow:     none;
             }
+            
+                #photo_large_inline_cont #go_nom_detail:hover{
+                    opacity:            1.0;
+                }
             
     #new_nomination_wrap{
         margin:             0 auto;
@@ -3328,6 +3421,8 @@ div#photo_cont{
             padding:            5px;
             -webkit-border-radius:    10px;
             -moz-border-radius:       10px;
+            -webkit-box-shadow: rgba(0, 0, 0, 0.496094) 0px 0px 3px 2px;
+            -moz-box-shadow:    0px 0px 3px 2px rgba(0, 0, 0, 0.5);
         }
         
         #new_nomination_cont #trophy_cont_bottom{
@@ -3337,6 +3432,8 @@ div#photo_cont{
             width:              500px;
             -webkit-border-radius:    10px;
             -moz-border-radius:       10px;
+            -webkit-box-shadow: rgba(0, 0, 0, 0.496094) 0px 0px 3px 2px;
+            -moz-box-shadow:    0px 0px 3px 2px rgba(0, 0, 0, 0.5);
         }
     
         #new_nomination_cont #cancel_nominate_photo{
@@ -4260,16 +4357,23 @@ div#payment_types_cont{
     
     #footer_notification_cont{
         cursor:             pointer;
-        left:               50px;
-        padding-top:        7px;
-        position:           absolute;
-        top:                -1px;
-        width:              250px;
+        position:           relative;
     }
+    
+        #notification_footer_popup #notification_arrow{
+            opacity:            1.0;
+            position:           absolute;
+            top:                -12px;
+            left:               110px;
+        }
     
         #footer_notification_cont > img{
             float:              left;
             opacity:            0.3;
+        }
+        
+        #footer_notification_cont > img:hover{
+            opacity:            1.0;
         }
     
         #footer_notification_cont > p{
@@ -4294,18 +4398,20 @@ div#payment_types_cont{
         
         #notification_footer_popup{
             background-color:       white;
-            bottom:                 -345px;
             cursor:                 default;
+            display:                none;
             height:                 335px;
+            left:                   -90px;
+            top:                    71px;
             position:               absolute;
             width:                  250px;
             z-index:                -1;
-            -webkit-border-top-left-radius:     10px;
-            -webkit-border-top-right-radius:    10px;
-            -moz-border-radius-topleft:         10px;
-            -moz-border-radius-topright:        10px;
-            -webkit-box-shadow:     rgba(0, 0, 0, 0.496094) 0px 0px 8px 3px;
-            -moz-box-shadow:        0px 0px 8px 3px rgba(0, 0, 0, 0.5);
+            -webkit-border-bottom-left-radius:     10px;
+            -webkit-border-bottom-right-radius:    10px;
+            -moz-border-radius-bottomleft:         10px;
+            -moz-border-radius-bottomright:        10px;
+            -webkit-box-shadow:     rgba(0, 0, 0, 0.496094) 0px 0px 2px 3px;
+            -moz-box-shadow:        0px 0px 2px 3px rgba(0, 0, 0, 0.5);
         }
         
         #notification_footer_popup_cont{

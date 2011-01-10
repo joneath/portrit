@@ -57,8 +57,6 @@ def index(request, template='index.html'):
             mobile_var = 'ipad'
     except:
         pass
-        
-    print mobile_var
     
     payload = {'analytics': analytics, 'mobile_var': mobile_var, 'production_code': production_code}
     return render_to_response(template, payload, context_instance=RequestContext(request))

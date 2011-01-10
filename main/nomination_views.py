@@ -124,8 +124,6 @@ def get_recent_winners(request):
                     'vote_count': nom.current_vote_count,
                     'votes': votes,
                 })
-                
-                print data
             
             # nom_cats = Nomination_Category.objects.all()
             # data = [ ]
@@ -297,8 +295,8 @@ def nominate_photo(request):
         
         try:
             photo, created = Photo.objects.get_or_create(fid=photo_id)
-            album, created = Album.objects.get_or_create(fid=album_id)
-            album.photos.add(photo)
+            if album_id !='tagged':
+                album, created = Album.objects.get_or_create(fid=album_id)
             
             # if photo.nominations.count() < 3:
             photo.fb_source = photo_src
@@ -307,6 +305,8 @@ def nominate_photo(request):
             photo.small_width = photo_small_width
             photo.height = photo_height
             photo.width = photo_width
+            if album_id !='tagged':
+                photo.album = album
             photo.save()
             
             photo_data = { }
@@ -317,6 +317,7 @@ def nominate_photo(request):
             photo_data['small_width'] = photo.small_width
             photo_data['height'] = photo.height
             photo_data['width'] = photo.width
+            photo_data['album_fid'] = photo.get_album_fid()
             
             nominator_portrit_user = Portrit_User.objects.get(fb_user=fb_user)
             try:
@@ -345,7 +346,7 @@ def nominate_photo(request):
                 nominator_portrit_user.save()
             except:
                 pass
-            owner_fb_user.albums.add(album)
+                
         
             nom_data = [ ]
             notification_type = Notification_Type.objects.get(name="new_nom")
@@ -364,7 +365,6 @@ def nominate_photo(request):
                     comments = comments['comments']
                     photo.nominations.add(nomination)
                     fb_user.active_nominations.add(nomination)
-                        
                     #Create notification record
                     notification = Notification(source=fb_user, nomination=nomination, notification_type=notification_type)
                     notification.save()
@@ -443,24 +443,18 @@ def get_user_album_nom_data(request):
         if cookie:
             owner = FB_User.objects.get(fid=int(cookie["uid"]))
             user = FB_User.objects.get(fid=user_id)
-            winning_nominations = Nomination.objects.filter(photo__album__fb_user__fid=user_id, won=True)
-            albums = Album.objects.filter(fb_user__fid=user_id, photos__fb_user__winning_photos__isnull=False)
-            winning_photos = Photo.objects.filter(album__fb_user__fid=user_id, nominations__won=True)
+            winning_nominations = Nomination.objects.filter(nominatee=user, won=True)
             photos = Photo.objects.filter(album__fb_user__fid=user_id, nominations__isnull=False).exclude(nominations__won=True, nominations__active=False).distinct('id')
         
-            album_objs = [ ]
             winning_nom_objs = [ ]
-            winning_photo_objs = [ ]
             photo_objs = [ ]
-            for album in albums.iterator():
-                album_objs.append({'fid': album.fid})
         
             for nom in winning_nominations.iterator():
-                winning_nom_objs.append({'id': nom.id, 'up_votes': nom.up_votes, 'down_votes': nom.down_votes,
-                                'nom_cat': nom.nomination_category.name,})
-                        
-            for photo in winning_photos.iterator():
-                winning_photo_objs.append({'fid': photo.fid})
+                winning_nom_objs.append({'id': nom.id, 
+                                        'up_votes': nom.up_votes, 
+                                        'down_votes': nom.down_votes,
+                                        'nom_cat': nom.nomination_category.name,
+                                        'photo': nom.get_photo()})
             
             for photo in photos.iterator():
                 nom_objs = [ ]
@@ -471,9 +465,7 @@ def get_user_album_nom_data(request):
                 photo_objs.append({'fid': photo.fid, 'nom_objs': nom_objs})
             
             data = {
-                'album_objs': album_objs,
                 'winning_nom_objs': winning_nom_objs,
-                'winning_photo_objs': winning_photo_objs,
                 'photo_objs': photo_objs
             }
     except:
@@ -722,13 +714,14 @@ def get_top_stream(fb_user):
 def get_top_users(fb_user):
     data = [ ]
     try:
-        friends = fb_user.friends.filter(active_nominations__won=True).annotate(num_wins=Count('active_nominations')).order_by('-num_wins')
+        friends = fb_user.friends.annotate(num_wins=Count('winning_noms')).filter(num_wins__gt=0).order_by('-num_wins')[:10]
         for friend in friends:
             data.append({
                 'fid': friend.fid,
-                'noms_won': friend.active_nominations.filter(won=True).count(),
-                'top_nom_cat': friend.active_nominations.filter(won=True).annotate(noms_cat_count=Count('nomination_category')).order_by('-noms_cat_count')[0].nomination_category.name,
+                'noms_won': friend.winning_noms.all().count(),
+                'top_nom_cat': friend.winning_noms.all().annotate(noms_cat_count=Count('nomination_category')).order_by('-noms_cat_count')[0].nomination_category.name,
             })
+
     except:
         pass
     return data

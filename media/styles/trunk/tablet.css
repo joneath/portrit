@@ -149,6 +149,34 @@ div.latest_photos_overlay{
 	font-size:			16px;
 }
 
+#notification_footer_popup{
+    left:           -125px;
+    height:         350px;
+    width:          325px;
+}
+
+    #notification_footer_popup_cont{
+        height:     311px;
+    }
+
+    #notification_footer_popup_heading{
+        margin:         0px;
+        padding:        10px 10px 10px 0px;
+    }
+
+        #notification_footer_popup_heading h2{
+            font-size:      24px;
+            font-weight:    bold;
+        }
+    
+    .notification_popup_cont{
+        font-size:      16px;
+    }
+    
+        .notification_text_cont span.time{
+            font-size:  13px;
+        }
+
 #footer{
     background:         -moz-linear-gradient(center top , #333333, #111111) repeat scroll 0 0 transparent;
     height:             20px;

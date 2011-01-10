@@ -67,6 +67,20 @@ def logout_user(request):
     data = simplejson.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
+def skip_tut(request):
+    data = False
+    cookie = facebook.get_user_from_cookie(
+        request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
+    if cookie:
+        fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
+        user = fb_user.portrit_fb_user.all()[0]
+        user.tutorial_completed = True
+        user.save()
+        data = True
+        
+    data = simplejson.dumps(data)
+    return HttpResponse(data, mimetype='application/json')
+    
 def get_more_recent_stream(request):
     data = []
     create_time = request.GET.get('create_time')

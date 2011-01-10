@@ -117,6 +117,46 @@ div#context_cont{
     .recent_nom_comment_cont .comment_body{
         width:      488px;
     }
+    
+#footer_notification_cont{
+    margin-left:    5px;
+}
+    
+#notification_footer_popup{
+    left:           -145px;
+    height:         400px;
+    width:          350px;
+}
+    
+    #notification_footer_popup #notification_arrow{
+        left:       160px;
+        opacity:    1;
+        position:   absolute;
+        top:        -12px;
+        z-index:    100;
+    }
+
+    #notification_footer_popup_cont{
+        height:     361px;
+    }
+
+    #notification_footer_popup_heading{
+        margin:         0px;
+        padding:        10px 10px 10px 0px;
+    }
+
+        #notification_footer_popup_heading h2{
+            font-size:      28px;
+            font-weight:    bold;
+        }
+    
+    .notification_popup_cont{
+        font-size:      20px;
+    }
+    
+        .notification_text_cont span.time{
+            font-size:  16px;
+        }
 
 div#left_nav #give_feedback{
     position:       absolute;
@@ -466,7 +506,25 @@ div#user_profile_cont #album_cont{
 }
 
 #new_nomination_cont{
-    width:          520px;
+    width:          500px;
+}
+
+div#trophy_cont > h1{
+    margin-left:        10px;
+}
+
+div#album_cont > h1{
+    margin-left:        10px;
+}
+
+#photo_large_inline_cont #nominate_photo{
+    font-size:          18px;
+    padding:            15px 10px;
+}
+
+#photo_large_inline_cont #go_nom_detail{
+    font-size:          18px;
+    padding:            15px 10px;
 }
 
 .img_thumbs > img{

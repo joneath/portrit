@@ -26,6 +26,7 @@ urlpatterns += patterns('',
     url(r'^logout/$', 'main.user_views.logout_user', name='logout'),
     url(r'^get_user_trophies/$', 'main.user_views.get_user_trophies', name='get_user_trophies'),
     url(r'^get_more_recent_stream/$', 'main.user_views.get_more_recent_stream', name='get_more_recent_stream'),
+    url(r'^skip_tut/$', 'main.user_views.skip_tut', name='skip_tut'),
 )
 
 #Nomination Views

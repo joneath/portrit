@@ -144,6 +144,7 @@ class Nomination(models.Model):
         photo_data['small_width'] = photo.small_width
         photo_data['height'] = photo.height
         photo_data['width'] = photo.width
+        photo_data['album_fid'] = photo.get_album_fid()
             
         return photo_data
         
@@ -192,12 +193,30 @@ class Nomination(models.Model):
         
     def update_current_vote_count(self):
         self.current_vote_count = self.up_votes - self.down_votes
+        
+    def save(self):
+        if self.won == True and self.user_winning_noms.all().count() == 0:
+            self.nominatee.winning_noms.add(self)
+        
+        super(Nomination, self).save()
     
     def __unicode__(self):
         try:
             return u'%s - %s' % (self.nomination_category.name, self.created_date)
         except:
             return 'No nomination categories'
+            
+class Album(models.Model):
+    active = models.BooleanField(default=True)
+    fid = BigIntegerField(null=True, blank=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+    name = models.CharField(max_length=255, null=True, blank=True)
+
+    class Meta:
+        ordering = ['-created_date']
+
+    def __unicode__(self):
+        return u'%s_%s' % (self.fid, self.name)
 
 class Photo(models.Model):
     list_thumbnail_size = (150, 150)
@@ -223,6 +242,7 @@ class Photo(models.Model):
                                         null=True,
                                         blank=True,
                                     )
+    album = models.ForeignKey(Album, null=True, blank=True)
     nominations = models.ManyToManyField(Nomination, null=True, blank=True)
     
     class Meta:
@@ -235,19 +255,12 @@ class Photo(models.Model):
         thumbnail = self.photo.thumbnail.absolute_url
         medium = self.photo.extra_thumbnails['medium']
         large = self.photo.extra_thumbnails['large']
-
-class Album(models.Model):
-    active = models.BooleanField(default=True)
-    fid = BigIntegerField(null=True, blank=True)
-    created_date = models.DateTimeField(auto_now_add=True)
-    name = models.CharField(max_length=255, null=True, blank=True)
-    photos = models.ManyToManyField(Photo, null=True, blank=True)
-    
-    class Meta:
-        ordering = ['-created_date']
-    
-    def __unicode__(self):
-        return u'%s_%s' % (self.fid, self.name)
+        
+    def get_album_fid(self):
+        try:
+            return self.album.fid
+        except:
+            return None
         
 class Notification_Type(models.Model):
     active = models.BooleanField(default=True)
@@ -281,7 +294,7 @@ class FB_User(models.Model):
     created_date = models.DateField(auto_now_add=True)
     albums = models.ManyToManyField(Album, null=True, blank=True)
     friends = models.ManyToManyField("self", null=True, blank=True)
-    winning_photos = models.ManyToManyField(Photo, null=True, blank=True)
+    winning_noms = models.ManyToManyField(Nomination, blank=True, null=True, related_name="user_winning_noms")
     active_nominations = models.ManyToManyField(Nomination, null=True, blank=True)
     
     class Meta:
