@@ -131,12 +131,12 @@ div#wrapper{
     background-position:center 0px;
     min-height:         100%;
     height:             auto !important;
-    margin:             0 auto -40px;
+    margin:             0 auto -30px;
     overflow-x:         hidden;
 }
 
 #push{
-    height:             40px;
+    height:             30px;
 }
 
 #header{
@@ -2455,6 +2455,11 @@ div#user_profile_cont{
         top:                    0px;
         width:                  800px;
     }
+    
+    div#user_profile_cont #trophy_cont{
+        margin-top:             0px;
+        width:                  780px;
+    }
 
 div#info_wrap{
     background-color:       white;
@@ -3142,17 +3147,27 @@ div#album_wrap{
     max-width: 1200px;
 }    
     
-div#trophy_cont{
-    margin: 0px auto;
-    max-width: 1200px;
+div#album_cont div#trophy_cont{
+    background-color:       #222;
+    margin:                 0px auto;
+    margin-top:             5px;
+    margin-bottom:          10px;
+    max-width:              1100px;
+    padding-top:            10px;
+    -webkit-border-radius:  10px;
+    -moz-border-radius:     10px;
 }
 
-    div#trophy_cont > h1{
+    div#album_cont div#trophy_cont > h1{
         font-size:          24px;
         font-weight:        bold;
         margin-bottom:      10px;
         margin-left:        100px;
         text-align:         left;
+    }
+    
+    div#user_profile_cont div#album_cont h1{
+        margin-left:        10px;
     }
     
     div#trophy_cont .trophy_album{
@@ -3169,6 +3184,21 @@ div#trophy_cont{
             height:             175px;
         }
         
+        .trophy_album .trophy_count{
+            font-size:          18px;
+            font-weight:        bold;
+            line-height:        40px;
+            height:             40px;
+            width:              40px;
+            position:           absolute;
+            right:              30px;
+            bottom:             15px;
+            z-index:            100001;
+        	text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+            -webkit-border-radius:  40px;
+            -moz-border-radius:     40px;
+        }
+        
         div#trophy_cont div.album_title{
             font-size:          18px;
         }
@@ -3181,7 +3211,7 @@ div#trophy_cont{
         }
     
 div#album_cont{
-    max-width:          1200px;
+    max-width:          1100px;
     margin:             0 auto;
 }
 
@@ -4329,7 +4359,7 @@ div#payment_types_cont{
     overflow-y:         hidden;
     text-align:         center;
     padding-top:        5px;
-    position:           fixed;
+    position:           relative;
     width:              100%;
     z-index:            100000;
 }
@@ -4363,8 +4393,9 @@ div#payment_types_cont{
         #notification_footer_popup #notification_arrow{
             opacity:            1.0;
             position:           absolute;
-            top:                -12px;
+            top:                -8px;
             left:               110px;
+            z-index:            1001;
         }
     
         #footer_notification_cont > img{
@@ -4402,14 +4433,12 @@ div#payment_types_cont{
             display:                none;
             height:                 335px;
             left:                   -90px;
-            top:                    71px;
+            top:                    65px;
             position:               absolute;
             width:                  250px;
             z-index:                -1;
-            -webkit-border-bottom-left-radius:     10px;
-            -webkit-border-bottom-right-radius:    10px;
-            -moz-border-radius-bottomleft:         10px;
-            -moz-border-radius-bottomright:        10px;
+            -webkit-border-radius:  10px;
+            -moz-border-radius:     10px;
             -webkit-box-shadow:     rgba(0, 0, 0, 0.496094) 0px 0px 2px 3px;
             -moz-box-shadow:        0px 0px 2px 3px rgba(0, 0, 0, 0.5);
         }

@@ -1947,9 +1947,9 @@ $(document).ready(function(){
                 $('#clear_all_notifications').show();
             }
             
-            if (mobile){
-                notification_scroller = new iScroll('notification_footer_popup_cont');
-            }
+            // if (mobile){
+            //     notification_scroller = new iScroll('notification_footer_popup_cont');
+            // }
             
             $('#wrapper').live('click', function(){
                 footer_notification_shown = true;
@@ -2872,29 +2872,6 @@ $(document).ready(function(){
             }
         }
         
-        // if (mobile && !added_swipe_once){
-        //     addSwipeListener(document.body, function(e) {
-        //         var active_view = $('.main_control_active').attr('id');
-        //         if (e.direction == 'left'){
-        //             if (active_view == 'friend_view'){
-        //                 $('#wall_view').click();
-        //             }
-        //             else if (active_view == 'wall_view'){
-        //                 $('#profile_view').click();
-        //             }
-        //         }
-        //         else{
-        //             if (active_view == 'wall_view'){
-        //                 $('#friend_view').click();
-        //             }
-        //             else if (active_view == 'profile_view'){
-        //                 $('#wall_view').click();
-        //             }
-        //         }
-        //     });
-        //     added_swipe_once = true;
-        // }
-        
         $('#wall_cont').show();
         $('#friend_cont').show();
     }
@@ -3473,7 +3450,7 @@ $(document).ready(function(){
         if (data.winning_nom_objs.length > 0){
             var top = 4;
             var cat_underscore = '';
-            $('#album_cont').before('<div id="trophy_cont"><h1>Trophy Room</h1></div>');
+            $('#album_cont').prepend('<div id="trophy_cont"><h1>Trophy Room</h1></div>');
             var nom_cat_map = { };
             for (var i = 0; i < data.winning_nom_objs.length; i++){
                 if (nom_cat_map[data.winning_nom_objs[i].nom_cat] == undefined){
@@ -3498,7 +3475,7 @@ $(document).ready(function(){
                 for (var i = 0; i < top; i++){
                     album_html += '<img class="img_thumb img_thumb_' + i + '"  src="' + noms[i].photo.src_small + '"/>';
                 }
-                album_html += '</div><img class="trophy_img" src="/site_media/img/trophies/medium/' + cat_underscore + '.png"/></div>';
+                album_html += '</div><img class="trophy_img" src="/site_media/img/trophies/large/' + cat_underscore + '.png"/><div class="trophy_count nom_cat_' + cat_underscore + '">' + noms.length + '</div></div>';
                 $('#trophy_cont').append(album_html);
             }
         }
@@ -3524,7 +3501,7 @@ $(document).ready(function(){
     
     function get_user_noms(){
         var id = getUrlVars().user;
-        if (id == 'me'){
+        if (id == 'me' || id == undefined){
             id = me.id;
         }
         if (user_winning_noms_cache[selected_user] == undefined){
@@ -3532,7 +3509,7 @@ $(document).ready(function(){
                 if (data){
                     user_winning_noms_cache[selected_user] = data;
                     update_user_album_nom_cache(data.winning_nom_objs);
-                    if (view_active == 'album'){
+                    if (view_active == 'album' || default_view === 'profile'){
                         render_winning_photo_noms(data);
                     }
                     else if (view_active == 'list'){
@@ -3549,7 +3526,7 @@ $(document).ready(function(){
             });
         }
         else{
-            if (view_active == 'album'){
+            if (view_active == 'album' || default_view === 'profile'){
                 update_user_album_nom_cache(user_winning_noms_cache[selected_user].winning_nom_objs);
                 render_winning_photo_noms(user_winning_noms_cache[selected_user]);
             }
@@ -4979,6 +4956,8 @@ $(document).ready(function(){
             vote_count = 0,
             name = '',
             top_nom_html = '';
+            
+        $('#top_right_cont').append('<h1>The Daily <span class="strong">Leaderboard</h1>');
         for (var i = 0; i < top_noms.length; i++){
             nom = top_noms[i];
             nom_cat_text = nom.nomination_category;
@@ -5059,23 +5038,45 @@ $(document).ready(function(){
         $('#top_right_cont').append(top_html);
     }
     
+    function render_empty_nom_page(){
+        
+    }
+    
+    function hide_stream_fixtures(){
+        $('#active_stream_view').hide();
+        $('#active_stream_text_cont').hide();
+        $('#tab_nav').hide();
+    }
+    
+    function show_stream_fixtures(){
+        $('#active_stream_view').show();
+        $('#active_stream_text_cont').show();
+        $('#tab_nav').show();
+    }
+    
     function init_recent_view(){
         var recent_view_html = '<div id="recent_cont_1">' +
                                     '<div id="recent_left_cont">' +
                                     '</div>' +
                                     '<div id="top_right_cont">' +
-                                        '<h1>The Daily <span class="strong">Leaderboard</h1>' +
                                     '</div>' + 
                                 '</div>' +
                                 '<div class="clear"></div>';
         append_load($('#profile_cont'), 'light');
+        if (isEmpty(active_noms_cache)){
+            render_empty_nom_page();
+            hide_stream_fixtures();
+        }
         $('#profile_cont').append(recent_view_html);
         // if (isEmpty(recent_stream_map)){
             $.getJSON('/init_recent_stream/', function(data){
                 remove_load();
+                show_stream_fixtures();
                 render_recent_stream(data.recent);
-                render_top_noms(data.top);
-                render_top_users(data.top_users);
+                if (!mobile || tablet){
+                    render_top_noms(data.top);
+                    render_top_users(data.top_users);
+                }
                 if (!mobile){
                     $('#profile_cont').fadeIn();
                 }
@@ -5130,12 +5131,19 @@ $(document).ready(function(){
     function init_profile_view(){
         if($('#profile_cont').children().length === 0){
             // remove_load();
-            render_feed(my_feed);
-            if (!mobile){
-                $('#profile_cont').fadeIn();
+            if (my_feed.length == 0){
+                hide_stream_fixtures();
+                render_empty_nom_page();
             }
             else{
-                $('#profile_cont').show();
+                show_stream_fixtures();
+                render_feed(my_feed);
+                if (!mobile){
+                    $('#profile_cont').fadeIn();
+                }
+                else{
+                    $('#profile_cont').show();
+                }
             }
         }
     }
@@ -7502,7 +7510,7 @@ $(document).ready(function(){
     function transition_trophy_view(instant){
         var window_width = $(window).width();
         var album_cont_count = Math.floor(($('.photo_album').length) / 3);
-        var album_cont_height = album_cont_count * 330;
+        var album_cont_height = $('#album_cont').height();
         var profile_nav_control = $('#profile_nav_cont');
         $(profile_nav_control).attr('value', 'trophies');
         $('h2', profile_nav_control).text('Trophies');
@@ -7671,7 +7679,11 @@ $(document).ready(function(){
         
         $('.trophy_album').live('click', function(){
             var trophy = $(this).attr('name').replace(' ', '_').toLowerCase();
-            window.location.href = '/#/trophy/user=' + getUrlVars().user + '/trophy=' + trophy;
+            var user = getUrlVars().user;
+            if (!user){
+                user = me.id;
+            }
+            window.location.href = '/#/trophy/user=' + user + '/trophy=' + trophy;
         });
     }
     

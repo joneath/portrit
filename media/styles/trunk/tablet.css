@@ -149,11 +149,20 @@ div.latest_photos_overlay{
 	font-size:			16px;
 }
 
+div#album_cont div#trophy_cont{
+    margin-left:        10px;
+    margin-right:       10px;
+}
+
 #notification_footer_popup{
     left:           -125px;
     height:         350px;
     width:          325px;
 }
+
+    #notification_footer_popup #notification_arrow{
+        left:       145px;
+    }
 
     #notification_footer_popup_cont{
         height:     311px;

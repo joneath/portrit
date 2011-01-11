@@ -118,22 +118,28 @@ div#context_cont{
         width:      488px;
     }
     
+div#album_cont div#trophy_cont{
+    width:          510px;
+}
+    
 #footer_notification_cont{
     margin-left:    5px;
+    z-index:        100;
 }
     
 #notification_footer_popup{
     left:           -145px;
     height:         400px;
     width:          350px;
+    z-index:        101;
 }
     
     #notification_footer_popup #notification_arrow{
-        left:       160px;
+        left:       165px;
         opacity:    1;
         position:   absolute;
-        top:        -12px;
-        z-index:    100;
+        top:        -8px;
+        z-index:    1001;
     }
 
     #notification_footer_popup_cont{

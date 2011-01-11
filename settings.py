@@ -1,7 +1,7 @@
 import os
 import os.path
 
-DEBUG = True
+DEBUG = False
 ENV = "LOCAL"
 TEMPLATE_DEBUG = DEBUG
 
