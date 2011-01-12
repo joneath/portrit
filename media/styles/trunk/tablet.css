@@ -149,6 +149,28 @@ div.latest_photos_overlay{
 	font-size:			16px;
 }
 
+#clear_empty_search{
+    top:                    23px;
+    right:                  100px;
+}
+
+#new_photo_cont .winning_nom_cont, .empty_cont .winning_nom_cont{
+    width:                  200px;
+}
+
+    .winning_nom_cont > a >img{
+        width:                  200px;
+    }
+    
+    .winning_nom_cont .winning_nom_overlay{
+        width:                  200px;
+    }
+
+#search_empty_wrap .empty_cont{
+    position:           relative;
+    top:                -1px;
+}
+
 div#album_cont div#trophy_cont{
     margin-left:        10px;
     margin-right:       10px;

@@ -149,7 +149,6 @@ $(document).ready(function(){
                 }, 75);
             });
             $('#header').hide();
-            slideShow(4000);
             return;
         }
         $('#login_cont').remove();
@@ -170,69 +169,6 @@ $(document).ready(function(){
         watch_hashtag_interval = setInterval(watch_hashtag, 75);
         set_mobile_css();
         login_fb_user();
-    }
-
-    function slideShow(speed) {  
-        //append a LI item to the UL list for displaying caption  
-        $('ul.slideshow').append('<li id="slideshow-caption" class="caption"><div class="slideshow-caption-container"><h3></h3><p></p></div></li>');  
-
-        //Set the opacity of all images to 0  
-        $('ul.slideshow li').css({opacity: 0.0});  
-
-        //Get the first image and display it (set it to full opacity)  
-        $('ul.slideshow li:first').css({opacity: 1.0});  
-
-        //Get the caption of the first image from REL attribute and display it  
-        $('#slideshow-caption h3').html($('ul.slideshow a:first').find('img').attr('title'));  
-        $('#slideshow-caption p').html($('ul.slideshow a:first').find('img').attr('alt'));  
-
-        //Display the caption  
-        $('#slideshow-caption').css({opacity: 0.8, bottom:0});  
-
-        //Call the gallery function to run the slideshow      
-        var timer = setInterval('gallery()',speed);  
-
-        //pause the slideshow on mouse over  
-        $('ul.slideshow').hover(  
-            function () {  
-                clearInterval(timer);     
-            },    
-            function () {  
-                timer = setInterval('gallery()',speed);           
-            }  
-        );  
-
-    }  
-
-    function gallery() {
-        //if no IMGs have the show class, grab the first image  
-        var current = ($('ul.slideshow li.show')?  $('ul.slideshow li.show') : $('#ul.slideshow li:first'));  
-
-        //Get next image, if it reached the end of the slideshow, rotate it back to the first image  
-        var next = ((current.next().length) ? ((current.next().attr('id') == 'slideshow-caption')? $('ul.slideshow li:first') :current.next()) : $('ul.slideshow li:first'));  
-
-        //Get next image caption  
-        var title = next.find('img').attr('title');   
-        var desc = next.find('img').attr('alt');      
-
-        //Set the fade in effect for the next image, show class has higher z-index
-        if (!mobile){
-            next.css({opacity: 0.0}).addClass('show').animate({opacity: 1.0}, 500);
-        }
-        else{
-            next.css({opacity: 0.0}).addClass('show').css({opacity: 1.0});
-        }
-        
-
-        //Hide the caption first, and then set and display the caption  
-        $('#slideshow-caption').css({bottom:-70});  
-        //Display the content  
-        $('#slideshow-caption h3').html(title);  
-        $('#slideshow-caption p').html(desc);                 
-        $('#slideshow-caption').css({bottom:0});
-
-        //Hide the current image  
-        current.animate({opacity: 0.0}, 1000).removeClass('show');  
     }
     
     Array.prototype.remove = function(from, to) {
@@ -2443,7 +2379,7 @@ $(document).ready(function(){
                 
                 if (first_alpha){
                     image_html = '<div class="crop"><img class="friend_pic" src="https://graph.facebook.com/' + friend_array[i].id + '/picture?type=large"/></div>';
-                    name_html = '<div class="text_wrapper"><div class="text" onclick="void(0)"><h3>' + friend_array[i].name + '</h3></div><div class="friend_controls"></div></div>';
+                    name_html = '<div class="text_wrapper"><div class="text" onclick="void(0)"><h3>' + friend_array[i].name + '</h3></div></div>';
                     friend_html = '<div class="friend ' + alpha_class + '" name="' + friend_array[i].name + '" value="' + friend_array[i].id + '" onclick="void(0)">' + alpha_html + '<div class="img_cont">' + image_html + name_html + '</div></div>';
                     $('#wall_cont').append(friend_html);
                 }
@@ -2659,12 +2595,29 @@ $(document).ready(function(){
         });
     }
     
-    $('.main_control').live('click', function(){
+    if (!mobile){
+        $('.main_control').live('click', main_control_click);
+        $('#friend_view').live('click', friend_view_click);
+        $('#wall_view').live('click', wall_view_click);
+        $('#profile_view').live('click', profile_view_click);
+        $('#top_noms').live('click', top_noms_click);
+        $('#recent_noms').live('click', recent_noms_click);
+    }
+    else{
+        $('.main_control').live('touchend', main_control_click);
+        $('#friend_view').live('touchend', friend_view_click);
+        $('#wall_view').live('touchend', wall_view_click);
+        $('#profile_view').live('touchend', profile_view_click);
+        $('#top_noms').live('touchend', top_noms_click);
+        $('#recent_noms').live('touchend', recent_noms_click);
+    }
+    
+    function main_control_click(){
         $('.main_control_active').removeClass('main_control_active');
         $(this).addClass('main_control_active');
-    });
+    }
     
-    $('#friend_view').live('click', function(){
+    function friend_view_click(){
         if (default_view != 'friend'){
             default_view = 'friend';
             localStorage.removeItem('default_view');
@@ -2676,9 +2629,9 @@ $(document).ready(function(){
             main_view();
             $('html, body').scrollTop(0);
         }
-    });
+    }
     
-    $('#wall_view').live('click', function(){
+    function wall_view_click(){
         if (default_view != 'wall'){
             default_view = 'wall';
             localStorage.removeItem('default_view');
@@ -2690,9 +2643,9 @@ $(document).ready(function(){
             main_view();
             $('html, body').scrollTop(0);
         }
-    });
+    }
     
-    $('#profile_view').live('click', function(){
+    function profile_view_click(){
         if (default_view != 'profile'){
             default_view = 'profile';
             localStorage.removeItem('default_view');
@@ -2704,9 +2657,9 @@ $(document).ready(function(){
             main_view();
             $('html, body').scrollTop(0);
         }
-    });
+    }
     
-    $('#top_noms').live('click', function(){
+    function top_noms_click(){
         if (stream_view != 'top_noms'){
             stream_view = 'top_noms';
             localStorage.removeItem('stream_view');
@@ -2719,9 +2672,9 @@ $(document).ready(function(){
             main_view();
             $('html, body').scrollTop(0);
         }
-    });
+    }
     
-    $('#recent_noms').live('click', function(){
+    function recent_noms_click(){
         if (stream_view != 'recent_noms'){
             stream_view = 'recent_noms';
             localStorage.removeItem('stream_view');
@@ -2734,7 +2687,7 @@ $(document).ready(function(){
             main_view();
             $('html, body').scrollTop(0);
         }
-    });
+    }
     
     var added_swipe_once = false;
     //All friends view
@@ -3087,12 +3040,7 @@ $(document).ready(function(){
             nom_winning_text = 'Nominated for';
         }
         
-        if (mobile){
-            trophy_size = 'medium';
-        }
-        else{
-            trophy_size = 'large';
-        }
+        trophy_size = 'large';
         
         nom_main_cont_html ='<div id="main_nom_cont" value="' + nom.id + '">' +
                                 '<div id="main_nom_cont_left">' +
@@ -3314,7 +3262,7 @@ $(document).ready(function(){
                 
                 if (friend_array[i].name[0] == alpha_key){
                     image_html = '<div class="crop"><img class="friend_pic" src="https://graph.facebook.com/' + friend_array[i].id + '/picture?type=large"/></div>';
-                    name_html = '<div class="text_wrapper"><div class="text" onclick="void(0)"><h3>' + friend_array[i].name + '</h3></div><div class="friend_controls"></div></div>';
+                    name_html = '<div class="text_wrapper"><div class="text" onclick="void(0)"><h3>' + friend_array[i].name + '</h3></div></div>';
                     friend_html = '<div class="friend ' + alpha_class + '" name="' + friend_array[i].name + '" value="' + friend_array[i].id + '">' + alpha_html + '<div class="img_cont">' + image_html + name_html + '</div></div>';
                     $('#wall_cont').append(friend_html);
                 }
@@ -4646,6 +4594,7 @@ $(document).ready(function(){
                 $('#new_photo_cont').append(photo_html);
             }
         }
+        $('#wrapper').css('min-height', 900);
     }
     
     var photo_feed = null;
@@ -5039,19 +4988,243 @@ $(document).ready(function(){
     }
     
     function render_empty_nom_page(){
+        var empty_html = '';
         
+        function render_empty_recent(data){
+            var top = 6;
+            var count = 0;
+            for (var i = 0; i < data.length; i++){
+                for (var j = 0; j < data[i].attachment.media.length; j++){
+                    photo = data[i].attachment.media[j];
+                    photo_id = photo.photo.pid;
+                    owner_id = data[i].actor_id;
+                    if (friends[owner_id]){
+                        owner_name = friends[owner_id].name;
+                    }
+                    else{
+                        owner_name = '';
+                        for (var k = 0; k < data[i].tagged_ids.length; k++){
+                            if (friends[data[i].tagged_ids[k]]){
+                                owner_name = friends[data[i].tagged_ids[k]].name;
+                            }
+                        }
+                    }
+
+                    photo_html ='<div class="new_photo_cont" name="' + owner_name + '" value="' + photo_id + '">' +
+                                    '<img src="' + photo.src + '"/>' +
+                                '</div>';
+                    $('#latest_empty_wrap > .empty_cont').append(photo_html);
+                    count += 1;
+                    if (count == top){
+                        return;
+                    }
+                }
+            }
+        }
+        
+        //Empty Recent Winners
+        append_load($('#recent_empty_wrap > .empty_cont'), 'light');
+        get_user_feed(function(data){
+            remove_load();
+            var photo = null,
+                nom_cat = '',
+                nom_cat_underscore = '',
+                name = '',
+                winning_nom_html = '',
+                top = 5;
+                
+            if (data.length < top){
+                top = data.length;
+            }
+            
+            for (var i = 0; i < top; i++){
+                photo = data[i].photo;
+                nom_cat = data[i].nomination_category;
+                nom_cat_underscore = nom_cat.replace(' ', '_').toLowerCase();
+                if (friends[data[i].nominatee] !== undefined){
+                    name = friends[data[i].nominatee].name;
+                }
+                else if(data[i].nominatee == me.id){
+                    name = 'You';
+                }
+                else{
+                    name = '';
+                }
+                winning_nom_html =  '<div class="winning_nom_cont">' +
+                                        '<a href="/#/nom_id=' + data[i].id + '/won/">' +
+                                            '<img src="' + photo.src + '"/>' +
+                                        '</a>' +
+                                        '<div class="winning_nom_overlay">' +
+                                            '<a href="/#/user=' + data[i].nominatee + '">' +
+                                                '<p class="nom_cat_' + nom_cat_underscore + '_text">' + name + '</p>' +
+                                            '</a>' +
+                                            '<img src="/site_media/img/trophies/medium/' + nom_cat_underscore + '.png"/>' +
+                                        '</div>' +
+                                    '</div>';
+                $('#recent_empty_wrap > .empty_cont').append(winning_nom_html);
+            }
+            $('#recent_empty_wrap > .empty_cont').append('<div class="clear"></div>');
+        }, 'won');
+        
+        empty_html ='<div id="empty_noms_cont">' +
+                        '<h1>There are no <span class="strong">Active Nominations</span> available</h1>' +
+                        '<h2>Help us make this a happenin\' place and nominate your friends photos.</h2>' +
+                        '<div id="search_empty_wrap">' +
+                            '<div id="empty_search_cont">' +
+                                '<ul>' +
+                                    '<li>' +
+                                        '<p>1. Find your friends.</p>' +
+                                    '</li>' +
+                                    '<li>' +
+                                        '<p>2. Nominate their best photos.</p>' +
+                                    '</li>' +
+                                    '<li>' +
+                                        '<p>3. Vote on your favorite.</p>' +
+                                    '</li>' +
+                                '</ul>' +
+                                '<input id="empty_search" type="text" value="Find your Friends"/>' +
+                                '<img id="clear_empty_search" class="close_img" style="display:none;" src="/site_media/img/x.png">' +
+                            '</div>' +
+                            '<div class="empty_cont">' +
+                            '</div>' +
+                        '</div>' +
+                        '<div id="recent_empty_wrap">' +
+                            '<h3>Recent Winners</h3>' +
+                            '<p>These photos just won.</p>' +
+                            '<div class="empty_cont"></div>' +
+                        '</div>' +
+                        '<div id="latest_empty_wrap">' +
+                            '<h3>Latest Photos</h3>' +
+                            '<p>The newest photos on Facebook.</p>' +
+                            '<div class="empty_cont"></div>' +
+                        '</div>' +
+                    '</div>';
+                    
+        $('#scroller').append(empty_html);
+        
+        append_load($('#latest_empty_wrap > .empty_cont'), 'light');
+        
+        //Empty Recent Photos
+        $.getJSON('https://api.facebook.com/method/stream.get?access_token=' + fb_session.access_token + '&limit=30&filter_key=' + photo_filter + '&format=json&callback=?', function(data){
+            remove_load();
+            render_empty_recent(data.posts);
+        });
+        
+        //Unbind empty handlers
+        $('#empty_search').unbind('focus, blur, keyup');
+        $('#clear_empty_search').unbind('click');
+        //Bind empty handlers
+        $('#empty_search').bind('focus', function(){
+            comment_form_shown = true;
+            $(this).css('color', '#333');
+            if (this.value == this.defaultValue){
+                this.value = '';
+            }  
+            if(this.value != this.defaultValue){  
+                this.select();  
+            }
+        });
+        
+        $('#empty_search').bind('blur', function(){
+            comment_form_shown = false;
+            $(this).css('color', '#888');
+            if ($.trim(this.value) == ''){
+                this.value = (this.defaultValue ? this.defaultValue : '');  
+            }
+        });
+        
+        $('#clear_empty_search').bind('click', function(){
+            $('#empty_search').val('').trigger('keyup').trigger('focus');
+        });
+        
+        var friend_names = [ ];
+        for (var i = 0; i < friend_array.length; i++){
+            if (friend_array[i].hidden === false){
+                friend_names.push(friend_array[i].name);
+            }
+        }
+        
+        $('#empty_search').bind('keyup', function(){
+            var q = $(this).val();
+            var ret, arr, len, val, i;
+            if (q == ''){
+                $('#empty_search_cont').css({
+                    '-webkit-border-radius':  '10px',
+                    '-moz-border-radius':     '10px',
+                    '-webkit-box-shadow':     'none',
+                    '-moz-box-shadow': 'none',
+                    'padding': '15px'
+                });
+                $('#search_empty_wrap .empty_cont').css({
+                    'padding': '0px',
+                }).html('');
+                $('#clear_empty_search').hide();
+            }
+            else{
+                $('#clear_empty_search').show();
+                len = friend_names.length;
+                ret = [ ];
+                q = q.toLowerCase();
+                for(i=0; i< len; i++){
+                    val = friend_names[i];
+                    if(val.toLowerCase().indexOf(q) === 0){
+                        ret.push(val);
+                    }
+                }
+
+                $('#search_empty_wrap .empty_cont').html('');
+                
+                if (ret.length > 0){
+                    $('#search_empty_wrap .empty_cont').css({
+                        'padding': '10px 10px'
+                    });
+                    $('#empty_search_cont').css({
+                        '-webkit-border-bottom-left-radius':      '0px',
+                        '-webkit-border-bottom-right-radius':     '0px',
+                        '-moz-border-radius-bottomleft':          '0px',
+                        '-moz-border-radius-bottomruight':        '0px',
+                        '-webkit-box-shadow': 'rgba(0, 0, 0, 0.496094) 0px 9px 3px -4px',
+                        '-moz-box-shadow': '0 9px 3px -4px rgba(0, 0, 0, 0.5)',
+                        'padding-bottom': '0px'
+                    });
+                    var friend = null,
+                        image_html = '',
+                        name_html = '',
+                        friend_html = '';
+                    for (var i = 0; i < ret.length; i++){
+                        friend = friends[get_friend_id_by_name(ret[i])];
+
+                        image_html = '<div class="crop"><img class="friend_pic" src="https://graph.facebook.com/' + friend.id + '/picture?type=large"/></div>';
+                        name_html = '<div class="text_wrapper"><div class="text" onclick="void(0)"><h3>' + friend.name + '</h3></div></div>';
+                        friend_html = '<div class="friend" name="' + friend.name + '" value="' + friend.id + '" onclick="void(0)"><div class="img_cont">' + image_html + name_html + '</div></div>';
+
+                        $('#search_empty_wrap .empty_cont').append(friend_html);
+                    }
+                }
+                else{
+                    $('#empty_search_cont').css({
+                        '-webkit-border-radius':  '10px',
+                        '-moz-border-radius':     '10px'
+                    });
+                    $('#search_empty_wrap .empty_cont').css({
+                        'padding': '0px'
+                    });
+                }
+            }
+        });
+        attach_main_handlers();
     }
     
     function hide_stream_fixtures(){
         $('#active_stream_view').hide();
         $('#active_stream_text_cont').hide();
-        $('#tab_nav').hide();
+        // $('#tab_nav').hide();
     }
     
     function show_stream_fixtures(){
         $('#active_stream_view').show();
         $('#active_stream_text_cont').show();
-        $('#tab_nav').show();
+        // $('#tab_nav').show();
     }
     
     function init_recent_view(){
@@ -5063,14 +5236,10 @@ $(document).ready(function(){
                                 '</div>' +
                                 '<div class="clear"></div>';
         append_load($('#profile_cont'), 'light');
-        if (isEmpty(active_noms_cache)){
-            render_empty_nom_page();
-            hide_stream_fixtures();
-        }
         $('#profile_cont').append(recent_view_html);
-        // if (isEmpty(recent_stream_map)){
-            $.getJSON('/init_recent_stream/', function(data){
-                remove_load();
+        $.getJSON('/init_recent_stream/', function(data){
+            remove_load();
+            if (data.recent.length > 0){
                 show_stream_fixtures();
                 render_recent_stream(data.recent);
                 if (!mobile || tablet){
@@ -5083,11 +5252,12 @@ $(document).ready(function(){
                 else{
                     $('#profile_cont').show();
                 }
-            });
-        // }
-        // else{
-        //     render_recent_stream(recent_stream_map);
-        // }
+            }
+            else{
+                render_empty_nom_page();
+                hide_stream_fixtures();
+            }
+        });
     }
     
     function render_user_profile_trophies(){
@@ -5994,55 +6164,7 @@ $(document).ready(function(){
                         left_start = -200;
                     }
                     prev_photo_id = current_photo_id;
-                }
-                // $('.photo_thumbs').not($('#' + photo_id).parent()).filter(':hidden').css({
-                //     'left': left_start,
-                //     'top': '0px'
-                // });
-                // $('.photo_thumbs').attr('name', '');
-                // $('.photo_thumbs').not($('#' + photo_id).parent()).show();
-                // $('.photo_thumbs').not($('#' + photo_id).parent()).css({'opacity': 0.5, 'position': 'absolute'});
-                // $('#' + photo_id).parent().css({'opacity': 1.0, 'position': 'absolute'});
-                // $('#' + photo_id).parent().attr('name', 'selected');
-                // 
-                // $('.photo_thumbs:lt(' + before + ')').hide();
-                // $('.photo_thumbs:gt(' + after + ')').hide();
-                // 
-                // img_widths = [ ];
-                // slide_images = $('.photo_thumbs').slice(before, after+1);
-                // slide_center = 0;
-                // slide_img_width = 0;
-                // center_found = false;
-                // $(slide_images).each(function(j, selected){
-                //     slide_img_width = $(this).width();
-                //     if ($(this).attr('name') === 'selected'){
-                //         slide_center += (slide_img_width / 2);
-                //         center_found = true;
-                //     }
-                //     else if (center_found === false){
-                //         slide_center += slide_img_width + 40;
-                //     }
-                //     
-                //     img_widths.push(slide_img_width + 10);
-                // });
-                // 
-                // previous_x = 0;
-                // margin_offset = mid_screen - slide_center;
-                // $(slide_images).each(function(i, selected){
-                //     if (mobile === false){
-                //         $(this).animate({
-                //             left: previous_x + margin_offset,
-                //             top: 0
-                //         },300);   
-                //     }
-                //     else{
-                //         $(this).css({
-                //             'left': previous_x + margin_offset,
-                //             'top': 0
-                //         });
-                //     }
-                //     previous_x += img_widths[i];
-                // });  
+                } 
                 
                 $('.photo_thumbs[name="selected"]').css({'opacity': '0.6'}).attr('name', '');
                 $('.photo_thumbs').filter(':hidden').css({
@@ -6505,55 +6627,55 @@ $(document).ready(function(){
             selected_user = $(this).attr('value');
             update_urls();
         });
-        
-        $('.text_wrapper').live('click', function(e){
-            var friend_id = $(this).parent().parent().attr('value');
-            var that = this;
-            if ($(this).hasClass('text_expanded')){
-                $('.text_expanded').animate({
-                    bottom: '-100px'
-                }, 300, function(){
-                    $('.friend_controls', this).html('');
-                    $('.user_status').remove();
-                });
-                
-                diff_status = true;
-                $('.text_expanded').removeClass('text_expanded');
-            }
-            else{
-                var friend_controls_html = '';
-                diff_status = false;
-
-                $('.text_expanded').animate({
-                    bottom: '-100px'
-                }, 300, function(){
-                    $('.friend_controls', this).html('');
-                });
-                
-                $('.text_expanded').removeClass('text_expanded');
-                $('.friend_controls', this).append(friend_controls_html);
-                
-                $(this).addClass('text_expanded');
-                $(this).animate({
-                    bottom: '-60px'
-                }, 300);
-            }
-            e.stopPropagation();
-            return false;
-        });
-        
-        $('.control_click').live('click', function(e){
-            var name = $(this).attr('name');
-            var friend = $(this).parent().parent().parent().parent();
-            var cont = $(this).parent().parent();
-            var friend_fid = $(friend).attr('value');
-            var user_fid = me.id;
-            if (name == ''){
-            
-            }
-            e.stopPropagation();
-            return false;
-        });
+        // 
+        // $('.text_wrapper').live('click', function(e){
+        //     var friend_id = $(this).parent().parent().attr('value');
+        //     var that = this;
+        //     if ($(this).hasClass('text_expanded')){
+        //         $('.text_expanded').animate({
+        //             bottom: '-100px'
+        //         }, 300, function(){
+        //             $('.friend_controls', this).html('');
+        //             $('.user_status').remove();
+        //         });
+        //         
+        //         diff_status = true;
+        //         $('.text_expanded').removeClass('text_expanded');
+        //     }
+        //     else{
+        //         var friend_controls_html = '';
+        //         diff_status = false;
+        // 
+        //         $('.text_expanded').animate({
+        //             bottom: '-100px'
+        //         }, 300, function(){
+        //             $('.friend_controls', this).html('');
+        //         });
+        //         
+        //         $('.text_expanded').removeClass('text_expanded');
+        //         $('.friend_controls', this).append(friend_controls_html);
+        //         
+        //         $(this).addClass('text_expanded');
+        //         $(this).animate({
+        //             bottom: '-60px'
+        //         }, 300);
+        //     }
+        //     e.stopPropagation();
+        //     return false;
+        // });
+        // 
+        // $('.control_click').live('click', function(e){
+        //     var name = $(this).attr('name');
+        //     var friend = $(this).parent().parent().parent().parent();
+        //     var cont = $(this).parent().parent();
+        //     var friend_fid = $(friend).attr('value');
+        //     var user_fid = me.id;
+        //     if (name == ''){
+        //     
+        //     }
+        //     e.stopPropagation();
+        //     return false;
+        // });
     }
     
     function attach_alpha_handlers(){
@@ -6577,8 +6699,14 @@ $(document).ready(function(){
         var diff_status = false;
         
         $('.friend').live('click', function(){
-            var alpha_key = $('.alpha_key_wall', this).text();
-            window.location.hash = '/alpha_key=' + alpha_key;
+            if (default_view == 'wall'){
+                var user = $(this).attr('value');
+                window.location.href = '/#/user=' + user;
+            }
+            else{
+                var alpha_key = $('.alpha_key_wall', this).text();
+                window.location.href = '/#/alpha_key=' + alpha_key;
+            }
         });
     }
     
@@ -6712,7 +6840,8 @@ $(document).ready(function(){
             $('#context_overlay').hide();
             $('#context_overlay_cont').removeClass();
             $(that).next().html('');
-        }        
+        }
+        $('#wrapper').css('min-height', '');
     });
     
     var clear_profile = false;
@@ -8048,8 +8177,8 @@ $(document).ready(function(){
         $('.like_cont').die('mouseover mouseout');
         $('.like').die('mouseover mouseout');
         $('.friend').die('mousedown');
-        $('.text_wrapper').die('click');
-        $('.control_click').die('click');
+        // $('.text_wrapper').die('click');
+        // $('.control_click').die('click');
         $('.profile_link').die('click');
         $('.photo_album').die('click');
         

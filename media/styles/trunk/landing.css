@@ -3,12 +3,11 @@ div#wrapper{
 }
 
 #login_cont{
-    font-family:        'Lucida Grande', tahoma, verdana, arial, sans-serif;
+    font-family:        Arial, Helvetica, sans-serif;
 }
 
 div#tagline_cont p, div#key_cont p{
     color:              #5e5e5e;
-    font-size:          14px;
     margin-top:         10px;
     margin-bottom:      10px;
     text-align:         left;
@@ -40,11 +39,8 @@ div#login_content{
     }
     
 div#login_content div#login_right_cont{
-    background-color:   white;
     padding:            10px;
     width:              410px;
-    -webkit-border-radius:      10px;
-    -moz-border-radius:         10px;
 }
 
 #login_form_cont p{
@@ -77,6 +73,8 @@ div#login_content div#login_right_cont{
     
 #tagline_cont{
     text-align:         center;
+    margin-top:         30px;
+    margin-left:        30px;
     margin-bottom:      15px;
 }
 
@@ -155,8 +153,8 @@ input[type="text"]{
 
 ul.slideshow {  
     list-style:none;  
-    width:460px;  
-    height:320px;  
+    width:480px;  
+    height:340px;  
     overflow:hidden;  
     position:relative;  
     margin:0;  
@@ -166,8 +164,8 @@ ul.slideshow {
   
 ul.slideshow li {  
     position:absolute;  
-    left:0;  
-    right:0;  
+    top:        30px;
+    left:       40px;
 }  
   
 ul.slideshow li.show {  
