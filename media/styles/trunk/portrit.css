@@ -210,6 +210,7 @@ div#login_cont{
         div#login_content div#login_right_cont{
             float:              right;
             height:             320px;
+            overflow:           hidden;
             text-align:         right;
             width:              460px;
             position:           relative;
@@ -219,7 +220,7 @@ div#login_cont{
         }
         
             .slideshow .active{
-                z-index:        100;
+                z-index:        1000;
             }
         
             #landing_img_1 img{
@@ -262,7 +263,7 @@ div#login_cont{
                 text-align:         center;
             }
             
-            div#tagline_cont p{
+            div#tagline_cont_active p{
                 color:              #444;
                 line-height:        20px;
                 margin-top:         15px;
@@ -273,38 +274,52 @@ div#login_cont{
                 font-size:          20px;
             }
             
-            div#tagline_top{
+            div.tagline_top{
                 height:             150px;
                 margin-left:        20px;
             }
             
-                div#tagline_top #tagline_end{
+                div.tagline_top #tagline_end{
                     font-weight:    bold;
                     margin-top:     20px;
                 }
                 
             #landing_forward{
                 cursor:             pointer;
+                padding:            5px;
                 position:           absolute;
                 top:                80px;
                 right:              0px;
                 opacity:            0.6;
+                z-index:            100;
             }
             
                 #landing_forward:hover{
-                    opacity:            1.0;
+                    background-color:   #666;
+                    opacity:            1.0;                   
+                    -webkit-border-top-left-radius:         5px;
+                    -webkit-border-bottom-left-radius:      5px;
+                    -moz-border-radius-topleft:             5px;
+                    -moz-border-radius-bottomleft:          5px;
                 }
             
             #landing_back{
                 cursor:             pointer;
+                padding:            5px;
                 left:               -10px;
                 position:           absolute;
                 top:                80px;
                 opacity:            0.6;
+                z-index:            100;
             }
             
                 #landing_back:hover{
+                    background-color:   #666;
                     opacity:            1.0;
+                    -webkit-border-top-right-radius:         5px;
+                    -webkit-border-bottom-right-radius:      5px;
+                    -moz-border-radius-topright:             5px;
+                    -moz-border-radius-bottomright:          5px;
                 }
             
             div#tagline_bottom{
@@ -2497,10 +2512,10 @@ div#user_profile_cont{
     div#user_profile_cont #profile_nav_cont{
         background:             rgba(68,68,68,0.7);
         cursor:                 pointer;
-        padding:                15px;
+        padding:                8px 15px;
         position:               absolute;
         right:                  10px;
-        top:                    5px;
+        top:                    -42px;
         z-index:                100;
         -moz-border-radius:     15px;
         -webkit-border-radius:  15px;
@@ -2515,13 +2530,13 @@ div#user_profile_cont{
         div#user_profile_cont #profile_nav_cont img#album_right_arrow{
             position:               absolute;
             right:                  2px;
-            top:                    20px;
+            top:                    14px;
         }
         
         div#user_profile_cont #profile_nav_cont img#album_left_arrow{
             position:               absolute;
             left:                   2px;
-            top:                    20px;
+            top:                    13px;
         }
 
     div#user_profile_cont #user_profile{
@@ -2602,32 +2617,65 @@ div#user_profile_cont{
             text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
         }
         
-            #profile_right_cont > h2{
+            #profile_right_cont > h2 {
                 text-align:             center;
                 font-size:              24px;
                 padding-top:            20px;
+                padding-bottom:         16px;
+            }
+        
+            div#profile_right_cont .active_nom_cont{
+                margin-bottom:          10px;
+                position:               relative;
             }
             
-            #profile_right_cont .trophy_cont{
-                float:                  left;
-                margin:                 10px 15px;
-                -webkit-border-radius:      10px;
-                -moz-border-radius:         10px;
-            }
-            
-                .trophy_cont .trophy_win_count{
-                    margin-top:             5px;
-                    text-align:             center;
+                div#profile_right_cont .active_nom_cont .active_nom_nominator{
+                    float:                  left;
                 }
                 
-                    .trophy_win_count p{
-                        color:                  white;
-                        font-size:              18px;
-                        padding:                10px 5px;
-                        -webkit-border-radius:      10px;
-                        -moz-border-radius:         10px;
-                        text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+                div#profile_right_cont .active_nom_cont .active_nom_cont_left{
+                    float:                  left;
+                    margin-left:            10px;
+                }
+                
+                div#profile_right_cont .active_nom_cont_left p{
+                    float:                  left;
+                    margin-left:            10px;
+                    margin-top:             10px;
+                    width:                  200px;
+                }
+                
+                    div#profile_right_cont .active_nom_cont_left p a{
+                        color:              white;
+                        font-weight:        bold;
                     }
+                    
+                    div#profile_right_cont .active_nom_cont_left p a:hover{
+                        text-decoration:    underline;
+                    }
+                
+                div#profile_right_cont .active_nom_cont .trophy{
+                    position:               absolute;
+                    bottom:                 0px;
+                    right:                  3px;
+                }
+                
+                div#profile_right_cont .active_nom_cont .active_vote_count{
+                    color:                  white;
+                    line-height:            30px;
+                    text-align:             center;
+                    position:               absolute;
+                    top:                    3px;
+                    padding:                0px 8px;
+                    z-index:                1;
+                    -webkit-border-radius:      15px;
+                    -moz-border-radius:         15px;
+                }
+                
+                div#profile_right_cont .active_nom_cont .active_nom_photo{
+                    float:                  right;
+                }
+            
 
     div#user_profile_cont #album_cont{
         position:               absolute;
@@ -3860,7 +3908,14 @@ div#photo_cont{
         padding:            10px;
         -webkit-border-radius:    10px;
         -moz-border-radius:       10px;
-    }    
+    }
+    
+        div#photo_comments h2{
+            color:          #333;
+            font-size:      18px;
+            font-weight:    bold;
+            text-align:     left;
+        }
         
         div.comment{
             border-bottom:      1px solid #dedede;

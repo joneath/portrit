@@ -204,6 +204,11 @@ div#album_cont div#trophy_cont{
         .notification_text_cont span.time{
             font-size:  16px;
         }
+        
+div#profile_right_cont .active_nom_cont_left p{
+    margin-top:     -20px;
+    width:          85px;
+}
 
 div#left_nav #give_feedback{
     font-size:      18px;

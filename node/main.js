@@ -101,7 +101,7 @@ var Portrit = function(){
             console.log('long poll attached');
         }
         
-    }).listen(8080, '192.168.1.126');
+    }).listen(8080, '192.168.0.65');
 }
 
 var portrit = new Portrit();

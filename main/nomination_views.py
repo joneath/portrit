@@ -124,55 +124,22 @@ def get_recent_winners(request):
                     'vote_count': nom.current_vote_count,
                     'votes': votes,
                 })
-            
-            # nom_cats = Nomination_Category.objects.all()
-            # data = [ ]
-            # cat_count = 0
-            # for cat in nom_cats.iterator():
-            #     try:
-            #         data.append({
-            #             'cat_name': cat.name,
-            #             'noms': [ ],
-            #         })
-            #         
-            #         top_noms = cat.nomination_set.filter(
-            #             Q(nominatee__in=friends) |
-            #             Q(nominatee=fb_user) |
-            #             Q(nominator=fb_user),
-            #             active=True, won=True).distinct('id').order_by('-current_vote_count')
-            #         for nom in top_noms.iterator():
-            #             comment_count = nom.get_comment_count()
-            #             votes = [ ]
-            #             for vote in nom.votes.all().iterator():
-            #                 votes.append({
-            #                     'vote_user': vote.fid,
-            #                     'vote_name': vote.portrit_fb_user.all()[0].name,
-            #                 })
-            #             data[cat_count]['noms'].append({
-            #                 'id': nom.id,
-            #                 'nomination_category': nom.nomination_category.name,
-            #                 'nominator': nom.nominator.fid,
-            #                 'nominator_name': nom.nominator.portrit_fb_user.all()[0].name,
-            #                 'nominatee': nom.nominatee.fid,
-            #                 'nominatee_name': nom.nominatee.portrit_fb_user.all()[0].name,
-            #                 'won': nom.won,
-            #                 'time_remaining': nom.get_time_remaining(),
-            #                 'photo': nom.get_photo(),
-            #                 'caption': nom.caption,
-            #                 'comments': False,
-            #                 'comment_count': comment_count,
-            #                 'vote_count': nom.current_vote_count,
-            #                 'votes': votes,
-            #             })
-            #         cat_count += 1
-            #     except:
-            #         top_nom = None
-            # data = sorted(data, key=lambda k: len(k['noms']), reverse=True)
-            # if data.count() == 0:
-            #     data = "empty"
     except:
         pass
     
+    data = simplejson.dumps(data) 
+    return HttpResponse(data, mimetype='application/json')
+    
+def get_users_active_noms(request):
+    data = False
+    cookie = facebook.get_user_from_cookie(
+        request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
+    if cookie:
+        fid = request.GET.get('id')
+        fb_user = FB_User.objects.get(fid=int(fid))
+        active_noms = Nomination.objects.filter(nominatee=fb_user, active=True, won=False).order_by('-current_vote_count')
+        data = serialize_noms(active_noms)
+        
     data = simplejson.dumps(data) 
     return HttpResponse(data, mimetype='application/json')
     
@@ -736,3 +703,32 @@ def get_target_friends(fb_user, current_user):
         friends.append(friend.fb_user.fid)
         
     return friends
+    
+def serialize_noms(noms):
+    data = [ ]
+    for nom in noms.iterator():
+        comment_count = nom.get_comment_count()
+        votes = [ ]
+        for vote in nom.votes.all().iterator():
+            votes.append({
+                'vote_user': vote.fid,
+                'vote_name': vote.portrit_fb_user.all()[0].name,
+            })
+        data.append({
+            'id': nom.id,
+            'nomination_category': nom.nomination_category.name,
+            'nominator': nom.nominator.fid,
+            'nominator_name': nom.nominator.get_name(),
+            'nominatee': nom.nominatee.fid,
+            'nominatee_name': nom.nominatee.get_name(),
+            'won': nom.won,
+            'photo': nom.get_photo(),
+            'caption': nom.caption,
+            'comments': False,
+            'comment_count': comment_count,
+            'vote_count': nom.current_vote_count,
+            'votes': votes,
+        })
+        
+    return data
+    

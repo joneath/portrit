@@ -149,6 +149,7 @@ $(document).ready(function(){
                 }, 75);
             });
             $('#header').hide();
+            attach_login_handlers();
             return;
         }
         $('#login_cont').remove();
@@ -169,6 +170,79 @@ $(document).ready(function(){
         watch_hashtag_interval = setInterval(watch_hashtag, 75);
         set_mobile_css();
         login_fb_user();
+    }
+    
+    function attach_login_handlers(){
+        var active_page = 1,
+            last_page = 4,
+            active_cont = null,
+            next_cont = null,
+            active_image = null,
+            next_image = null,
+            z_index = 1000;
+        $('#landing_back').bind('click', function(){
+            active_cont = $('.tagline_top:visible');
+            active_image = $('.slideshow .active');
+            if (active_page == 1){
+                active_page = last_page;
+                next_cont = $('.tagline_top:last');
+                next_image = $('.slideshow li:last');
+            }
+            else{
+                active_page -= 1;
+                next_cont = $(active_cont).prev();
+                next_image = $(active_image).prev();
+            }
+            
+            $(next_image).animate({
+                'left': '500px'
+            }, 250, function(){
+                $(active_image).removeClass('active');
+                $(this).addClass('active').css('z-index', 1000);
+                $(active_image).css('z-index', z_index);
+                $(this).animate({
+                    'left': '41px'
+                }, 250);
+            });
+            
+            z_index -= 1;
+            
+            $(active_cont).fadeOut(250, function(){
+                $(next_cont).fadeIn(250);
+            });
+        });
+        
+        $('#landing_forward').bind('click', function(){
+            active_cont = $('.tagline_top:visible');
+            active_image = $('.slideshow .active');
+            if (active_page == last_page){
+                active_page = 1;
+                next_cont = $('.tagline_top:first');
+                next_image = $('.slideshow li:first');
+            }
+            else{
+                active_page += 1;
+                next_cont = $(active_cont).next();
+                next_image = $(active_image).next();
+            }
+            
+            $(next_image).animate({
+                'left': '500px'
+            }, 250, function(){
+                $(active_image).removeClass('active');
+                $(next_image).addClass('active').css('z-index', 1001);
+                // $(active_image).css('z-index', z_index);
+                $(this).animate({
+                    'left': '41px'
+                }, 250);
+            });
+            
+            z_index -= 1;
+            
+            $(active_cont).fadeOut(250, function(){
+                $(next_cont).fadeIn(250);
+            });
+        });
     }
     
     Array.prototype.remove = function(from, to) {
@@ -2884,12 +2958,72 @@ $(document).ready(function(){
                             '</div>' +
                         '</div>' +
                         '<div id="profile_right_cont">' +
-                            '<h2>Trophy Room</h2>' +
+                            '<h2>Active Nominations</h2>' +
                         '</div>' +
                         '<div class="clear"></div>';
         
         $('#user_profile').append(profile_html);
-        get_users_trophies(me.id, render_user_trophies);
+        // get_users_trophies(me.id, render_user_trophies);
+        get_users_active_noms(me.id, render_user_noms);
+    }
+    
+    function get_users_active_noms(id, fnc_ptr){
+        $.getJSON('/get_users_active_noms/', {'id': id}, function(data){
+            fnc_ptr(data);
+        });
+    }
+    
+    function render_user_noms(data){
+        if (data.length > 0){
+            var active_nom_html = '',
+                nominator_name = '',
+                nominatee_name = '',
+                cat = '',
+                cat_underscore = '',
+                vote_right = 0,
+                margin_top = 0;
+            for (var i = 0; i < data.length; i++){
+                cat = data[i].nomination_category;
+                cat_underscore = cat.replace(' ', '_').toLowerCase();
+                if (data[i].nominator == me.id){
+                    nominator_name = 'You';
+                }
+                else if (friends[data[i].nominator] == undefined){
+                    nominator_name = '';
+                }
+                else{
+                    nominator_name = friends[data[i].nominator].name;
+                }
+                
+                if (data[i].nominatee == me.id){
+                    if (data[i].nominator == me.id){
+                        nominatee_name = 'Yourself';
+                    }
+                    else{
+                        nominatee_name = 'You';
+                    }
+                }
+                
+                margin_top = (data[i].photo.small_height / 2) - 25;
+                vote_right = (data[i].photo.small_width / 2) - 38;
+                active_nom_html =   '<div class="active_nom_cont nom_cat_' + cat_underscore + '">' +
+                                        '<div class="active_nom_cont_left" style="margin-top: ' + margin_top + 'px;">' +
+                                            '<a href="/#/user=' + data[i].nominator  + '"><img class="active_nom_nominator" src="https://graph.facebook.com/' + data[i].nominator + '/picture?type=square"/></a>' +
+                                            '<p><a href="/#/user=' + data[i].nominator  + '">' + nominator_name + '</a> nominated ' + nominatee_name + ' for <span class="strong">' + cat + '</span></p>' +
+                                        '</div>' +
+                                        '<a href="/#/nom_id=' + data[i].id + '">' +
+                                            '<p class="active_vote_count nom_cat_' + cat_underscore + '" style="right: ' + vote_right + 'px;">Votes: <span class="strong">' + data[i].vote_count + '</span></p>' +
+                                            '<img class="trophy" src="/site_media/img/trophies/small/' + cat_underscore + '.png"/>' +
+                                            '<img class="active_nom_photo" src="' + data[i].photo.src_small + '" style="height: ' + data[i].photo.small_height + 'px; width: ' + data[i].photo.small_width +'px;"/>' +
+                                        '</a>' +
+                                        '<div class="clear"></div>' +
+                                    '</div>';
+                $('#profile_right_cont').append(active_nom_html);
+            }
+        }
+        else{
+            
+        }
     }
     
     function nom_detail_view(data){
@@ -5770,6 +5904,7 @@ $(document).ready(function(){
         var user_name = '';
         if (id == selected_photo){
             if (comments && comments.length > 0){
+                $('#photo_comments').append('<h2>Facebook Comments</h2>');
                 for (var j = 0; j < comments.length; j++){
                     if (comments[j].from != undefined){
                         user_name = comments[j].from.name;
@@ -7634,6 +7769,17 @@ $(document).ready(function(){
                 $(selected).prev().click();
             }
         });
+        
+        if (mobile && !tablet){
+            addSwipeListener(document.body, function(e) {
+                if (e.direction == 'left'){
+                    $('.next_photo').trigger('click');
+                }
+                else{
+                    $('.prev_photo').trigger('click');
+                }
+            });
+        }
     }
     
     function transition_trophy_view(instant){
@@ -7642,7 +7788,7 @@ $(document).ready(function(){
         var album_cont_height = $('#album_cont').height();
         var profile_nav_control = $('#profile_nav_cont');
         $(profile_nav_control).attr('value', 'trophies');
-        $('h2', profile_nav_control).text('Trophies');
+        $('h2', profile_nav_control).text('Profile');
         $('#album_right_arrow').hide();
         $('#album_left_arrow').show();
         $('#album_cont').show();
@@ -7839,14 +7985,16 @@ $(document).ready(function(){
     
     function attach_gallery_handlers(){
         if (mobile){
-            addSwipeListener(document.body, function(e) {
-                if (e.direction == 'left'){
-                    load_next_picture();
-                }
-                else{
-                    load_previous_picture();
-                }
-            });
+            if (!tablet){
+                addSwipeListener(document.body, function(e) {
+                    if (e.direction == 'left'){
+                        load_next_picture();
+                    }
+                    else{
+                        load_previous_picture();
+                    }
+                });
+            }
             
             $('#back_gallery, #back_gallery_mobile').live('touchend', function(e){
                 e.stopPropagation();

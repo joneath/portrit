@@ -6,7 +6,7 @@ div#wrapper{
     font-family:        Arial, Helvetica, sans-serif;
 }
 
-div#tagline_cont p, div#key_cont p{
+div#tagline_cont_active p, div#key_cont p{
     color:              #5e5e5e;
     margin-top:         10px;
     margin-bottom:      10px;
@@ -71,11 +71,12 @@ div#login_content div#login_right_cont{
     }
     
     
-#tagline_cont{
+#tagline_cont_active{
     text-align:         center;
     margin-top:         30px;
     margin-left:        30px;
     margin-bottom:      15px;
+    position:           relative;
 }
 
 input[type="text"]{
