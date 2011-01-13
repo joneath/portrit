@@ -2114,6 +2114,7 @@ $(document).ready(function(){
                 init_view(update_view);
             }
             $('#close_initial_tut, #tut_go_cont span').die('click');
+            $('#wrapper').css('min-height', '100%');
         });
     }
     
@@ -2161,6 +2162,7 @@ $(document).ready(function(){
                                     '</div>' +
                                 '</div>';
         $('body').append(initial_tut_html);
+        $('#wrapper').css('min-height', '1150px');
         
         attach_initial_tut_handlers(tut_counts);
     }
