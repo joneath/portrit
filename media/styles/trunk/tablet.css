@@ -154,6 +154,10 @@ div.latest_photos_overlay{
     right:                  100px;
 }
 
+.target_message_box{
+    bottom:                 -29px;
+}
+
 #new_photo_cont .winning_nom_cont, .empty_cont .winning_nom_cont{
     width:                  200px;
 }

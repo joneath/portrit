@@ -72,9 +72,10 @@ div#login_content div#login_right_cont{
     
     
 #tagline_cont_active{
+    height:             365px;
     text-align:         center;
     margin-top:         30px;
-    margin-left:        30px;
+    margin-left:        25px;
     margin-bottom:      15px;
     position:           relative;
 }
@@ -88,11 +89,6 @@ input[type="text"]{
     line-height:        30px;
     padding:            0px 7px;
     width:              200px;
-}
-
-#login{
-    height:             25px;
-    line-height:        27px;
 }
 
 #submit_login{
@@ -153,19 +149,18 @@ input[type="text"]{
 .yellow.awesome:hover							{ background-color: #fc9200; }
 
 ul.slideshow {  
-    list-style:none;  
-    width:480px;  
-    height:340px;  
-    overflow:hidden;  
-    position:relative;  
-    margin:0;  
-    padding:0;  
-      
+    list-style: none;  
+    width:      480px;  
+    height:     420px;  
+    overflow:   hidden;  
+    position:   relative;  
+    margin:     0;  
+    padding:    0;
 }     
   
 ul.slideshow li {  
-    position:absolute;  
-    top:        30px;
+    position:   absolute;  
+    top:        50px;
     left:       40px;
 }  
   

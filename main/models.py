@@ -298,7 +298,7 @@ class FB_User(models.Model):
     active_nominations = models.ManyToManyField(Nomination, null=True, blank=True)
     
     class Meta:
-        ordering = ['-created_date']
+        ordering = ['fid']
         verbose_name_plural = "FB Users"
         verbose_name = "FB User"
         

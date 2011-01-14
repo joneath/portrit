@@ -21,8 +21,11 @@ import facebook, json, socket, time
 def notification_read(request):
     data = False
     notification_id = request.POST.get('notification_id')
-    notification_ids = request.POST.get('notification_ids').split(',')
-    
+    notification_ids = None
+    try:
+        notification_ids = request.POST.get('notification_ids').split(',')
+    except:
+        pass
     if notification_ids:
         try:
             ids = []
@@ -35,7 +38,9 @@ def notification_read(request):
     else:
         try:
             notification = Notification.objects.get(id=notification_id)
+            print notification
             notification.read = True
+            notification.active = False
             notification.save()
             data = True
         except:
@@ -60,7 +65,7 @@ def get_active_notifications(user):
             'create_time': time.mktime(notification.created_date.utctimetuple()),
             'read': notification.read,
             'source_id': notification.source.fid,
-            'source_name': Portrit_User.objects.get(fb_user=notification.source).name,
+            'source_name': notification.source.get_name(),
             'nomination': notification.nomination.id,
             'notification_id': notification.id,
             'nomination_category': notification.nomination.nomination_category.name,

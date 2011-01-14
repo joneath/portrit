@@ -116,9 +116,9 @@ $(document).ready(function(){
         FB.logout(function(){
             window.location.href = '/';
         });
-        setTimeout(function(){
-            window.location.href = '/';
-        }, 500);
+        // setTimeout(function(){
+        //     window.location.href = '/';
+        // }, 500);
         if (window.localStorage !== undefined){
             localStorage.clear();
             sessionStorage.clear();
@@ -174,12 +174,12 @@ $(document).ready(function(){
     
     function attach_login_handlers(){
         var active_page = 1,
-            last_page = 4,
+            last_page = 5,
             active_cont = null,
             next_cont = null,
             active_image = null,
             next_image = null,
-            z_index = 1000;
+            z_index = 955;
         $('#landing_back').bind('click', function(){
             active_cont = $('.tagline_top:visible');
             active_image = $('.slideshow .active');
@@ -194,18 +194,32 @@ $(document).ready(function(){
                 next_image = $(active_image).prev();
             }
             
-            $(next_image).animate({
-                'left': '500px'
-            }, 250, function(){
+            if (!mobile || tablet){
+                $(next_image).animate({
+                    'left': '500px'
+                }, 250, function(){
+                    $(active_image).removeClass('active');
+                    $(this).addClass('active').css('z-index', (parseInt($(active_image).css('z-index')) + 1));
+                    // $(active_image).css('z-index', z_index + 4);
+                    $(this).animate({
+                        'left': '41px'
+                    }, 250);
+                });
+            }
+            else{
+                $(next_image).css({
+                    '-moz-transform': 'translate(0px, 400px)',
+                    '-webkit-transform': 'translate(0px, 400px)'
+                });
                 $(active_image).removeClass('active');
-                $(this).addClass('active').css('z-index', 1000);
-                $(active_image).css('z-index', z_index);
-                $(this).animate({
-                    'left': '41px'
+                setTimeout(function(){
+                    $(next_image).addClass('active').css('z-index', (parseInt($(active_image).css('z-index')) + 1));
+                    $(next_image).css({
+                        '-moz-transform': 'translate(0px, 0px)',
+                        '-webkit-transform': 'translate(0px, 0px)'
+                    });
                 }, 250);
-            });
-            
-            z_index -= 1;
+            }
             
             $(active_cont).fadeOut(250, function(){
                 $(next_cont).fadeIn(250);
@@ -226,16 +240,34 @@ $(document).ready(function(){
                 next_image = $(active_image).next();
             }
             
-            $(next_image).animate({
-                'left': '500px'
-            }, 250, function(){
+            if (!mobile || tablet){
+                $(active_image).animate({
+                    'left': '500px'
+                }, 250, function(){
+                    $(active_image).removeClass('active');
+                    $(next_image).addClass('active');//.css('z-index', parseInt($(active_image).css('z-index')));
+                    $(active_image).css('z-index', z_index);
+                    $(this).animate({
+                        'left': '41px'
+                    }, 250);
+                });
+            }
+            else{
+                $(active_image).css({
+                    '-moz-transform': 'translate(0px, 400px)',
+                    '-webkit-transform': 'translate(0px, 400px)'
+                });
                 $(active_image).removeClass('active');
-                $(next_image).addClass('active').css('z-index', 1001);
-                // $(active_image).css('z-index', z_index);
-                $(this).animate({
-                    'left': '41px'
+                setTimeout(function(){
+                    $(next_image).addClass('active');
+                    $(active_image).css('z-index', z_index);
+                    $(active_image).css({
+                        '-moz-transform': 'translate(0px, 0px)',
+                        '-webkit-transform': 'translate(0px, 0px)'
+                    });
                 }, 250);
-            });
+            }
+            
             
             z_index -= 1;
             
@@ -564,7 +596,6 @@ $(document).ready(function(){
             'width': window_width,
             'max-width': window_width
         });
-
 
         if(window.orientation != 0){
             var window_width = 720;
@@ -1573,7 +1604,7 @@ $(document).ready(function(){
             
             method_html =   '<div class="nom_cat_' + data.nomination_category.replace(' ', '_').toLowerCase() + ' notification_color"></div>' +
                             '<div class="notification_text_cont">' +
-                                '<p class="strong">' + nominator + '</p>' + '<span> nominated your photo for the </span><p class="strong">' + data.nomination_category + '</p><span> trohpy!</span>' +
+                                '<p class="strong">' + nominator + '</p>' + '<span> nominated your photo for the </span><p class="strong">' + data.nomination_category + '</p><span> trophy!</span>' +
                             '</div>';
                             
             user_notifications.new_noms[data.id] = data;
@@ -1606,15 +1637,19 @@ $(document).ready(function(){
                                 '</div>';
             }
             else{
+                var name = '';
+                if (!data.nominatee_name){
+                    name = friends[data.nominatee].name;
+                }
                 method_html =   '<div class="nom_cat_' + data.nomination_category.replace(' ', '_').toLowerCase() + ' notification_color"></div>' +
                                 '<div class="notification_text_cont">' +
-                                    '<p class="strong">' + data.nominatee_name + '\'s</p>' + '<span> photo won the <p class="strong">' + data.nomination_category + '</p> nomination!</span>' +
+                                    '<p class="strong">' + name + '\'s</p>' + '<span> photo won the <p class="strong">' + data.nomination_category + '</p> nomination!</span>' +
                                 '</div>';
             }
         }
         
         notification_html = '<div class="notification_popup" style="display:none;" value="' + data.id + '">' +
-                                '<img class="close_notification" class="close_img" src="/site_media/img/x.png">' +
+                                '<img class="close_notification close_img" src="/site_media/img/x.png">' +
                                 '<div class="notification_cont">' +
                                     method_html +
                                 '</div>' +
@@ -1651,22 +1686,24 @@ $(document).ready(function(){
         }, 350);
     });
     
-    $('.notification_popup').live('mouseover mouseout', function(event) {
-        var that = this;
-        if (event.type == 'mouseover') {
-            clearTimeout(notification_popup_fade_timeout);
-            clearTimeout(notification_popup_remove_timeout);
-        } else {
-            notification_popup_fade_timeout = setTimeout(function(){
-                $(that).css({
-                    'opacity': 0
-                });
-                notification_popup_remove_timeout = setTimeout(function(){
-                    $(that).remove();
-                }, 350);
-            }, 7500);
-        } 
-    });
+    if (!mobile){
+        $('.notification_popup').live('mouseover mouseout', function(event) {
+            var that = this;
+            if (event.type == 'mouseover') {
+                clearTimeout(notification_popup_fade_timeout);
+                clearTimeout(notification_popup_remove_timeout);
+            } else {
+                notification_popup_fade_timeout = setTimeout(function(){
+                    $(that).css({
+                        'opacity': 0
+                    });
+                    notification_popup_remove_timeout = setTimeout(function(){
+                        $(that).remove();
+                    }, 350);
+                }, 7500);
+            } 
+        });
+    }
     
     $('.close_notification').live('click', function(e){
         var that_parent = $(this).parent();
@@ -1736,6 +1773,9 @@ $(document).ready(function(){
             if (data.nominatee == me.id){
                 name = 'Your';
             }
+            else if(!data.nominatee_name){
+                name = friends[data.nominatee].name + '\'s';
+            }
             else{
                 name = data.nominatee_name + '\'s';
             }
@@ -1776,6 +1816,9 @@ $(document).ready(function(){
                     name = 'You';
                 }
             }
+            else if(!data[i].source_name){
+                name = friends[data[i].source_id].name + '\'s';
+            }
             else{
                 name = data[i].source_name;
             }
@@ -1801,7 +1844,7 @@ $(document).ready(function(){
                                         '<div class="notification_text_cont">' +
                                             '<p class="strong">' + name + '</p><span> nominated your photo for the </span><p class="strong">' + data[i].nomination_category + '</p><span> trophy!</span><span class="time"> - ' + time_str + '</span>' +
                                         '</div>' +
-                                        '<img class="kill_notification" value="' + data[i].notification_id + '" src="/site_media/img/x.png" style="display:none;"/>' +
+                                        '<img class="kill_notification close_img" value="' + data[i].notification_id + '" src="/site_media/img/x.png" style="display:none;"/>' +
                                     '</div>'
             }
             else if (data[i].notification_type == 'new_comment'){
@@ -1810,7 +1853,7 @@ $(document).ready(function(){
                                         '<div class="notification_text_cont">' +
                                             '<p class="strong">' + name + '</p><span> commented your photo nominated for the </span><p class="strong">' + data[i].nomination_category + '</p><span> trophy!</span><span class="time"> - ' + time_str + '</span>' +
                                         '</div>' +
-                                        '<img class="kill_notification" value="' + data[i].notification_id + '" src="/site_media/img/x.png" style="display:none;"/>' +
+                                        '<img class="kill_notification close_img" value="' + data[i].notification_id + '" src="/site_media/img/x.png" style="display:none;"/>' +
                                     '</div>'
             }
             else if (data[i].notification_type == 'nom_won'){
@@ -1819,7 +1862,7 @@ $(document).ready(function(){
                                         '<div class="notification_text_cont">' +
                                             '<p class="strong">' + name + '</p><span> photo won the </span><p class="strong">' + data[i].nomination_category + '</p><span> trophy!</span><span class="time"> - ' + time_str + '</span>' +
                                         '</div>' +
-                                        '<img class="kill_notification" value="' + data[i].notification_id + '" src="/site_media/img/x.png" style="display:none;"/>' +
+                                        '<img class="kill_notification close_img" value="' + data[i].notification_id + '" src="/site_media/img/x.png" style="display:none;"/>' +
                                     '</div>'
             }
             notifcation_cache.unshift({
@@ -1876,11 +1919,11 @@ $(document).ready(function(){
         var read = $(this).parent().attr('read');
         var notification_id = $(this).attr('value');
         
-        if (read == '0'){
-            $.post('/notification_read/', {'notification_id': notification_id}, function(){
-                
-            });
-        }
+        // if (read == '0'){
+        $.post('/notification_read/', {'notification_id': notification_id}, function(){
+            
+        });
+        // }
         $(this).parent().remove();
         e.stopPropagation();
         return false;
@@ -1932,12 +1975,14 @@ $(document).ready(function(){
                     $(this).removeClass('nom_cat_' + cat_name);
                     read_ids += $(this).attr('id').replace('notification_', '') + ',';
                 });
-                $.post('/notification_read/', {'notification_ids': read_ids}, function(){
+                if (read_ids){
+                    $.post('/notification_read/', {'notification_ids': read_ids}, function(){
 
-                });
-                setTimeout(function(){
-                    $('.notification_popup_cont').removeClass('color_transition');
-                }, 3000);
+                    });
+                    setTimeout(function(){
+                        $('.notification_popup_cont').removeClass('color_transition');
+                    }, 3000);
+                }
             }
             
             var now = new Date();
@@ -2182,6 +2227,7 @@ $(document).ready(function(){
                 first = data.first;
                 
                 if (first){
+                    $('#right_nav').prepend('<a id="activate_tut">Tutorial</a>');
                     render_initial_tutorial(tut_counts);
                 }
                 else{
@@ -2919,11 +2965,11 @@ $(document).ready(function(){
     }
     
     function render_user_trophies(data){
-        var trohpy_name = '',
+        var trophy_name = '',
             trophy_name_underscore = '',
             trophy_html = '';
         for (var i = 0; i < data.length; i++){
-            trohpy_name = data[i].cat_name;
+            trophy_name = data[i].cat_name;
             trophy_name_underscore = data[i].cat_name.replace(' ', '_').toLowerCase();
             trophy_html =   '<div class="trophy_cont nom_cat_' + trophy_name_underscore + '_hover">' +
                                 '<a href="#/trophy/user=me/trophy=' + trophy_name_underscore + '">' +
@@ -2940,9 +2986,14 @@ $(document).ready(function(){
     function render_user_profile(){
         var profile_html = '',
             portrit_friends_html = '';
-            
-        for (var i = 0; i < portrit_friends.length; i++){
-            portrit_friends_html += '<a href="#/user=' + portrit_friends[i].id + '" name="' + portrit_friends[i].name + '"><img src="https://graph.facebook.com/' + portrit_friends[i].id + '/picture?type=square"/></a>';
+        
+        if (portrit_friends.length > 0){
+            for (var i = 0; i < portrit_friends.length; i++){
+                portrit_friends_html += '<a href="#/user=' + portrit_friends[i].id + '" name="' + portrit_friends[i].name + '"><img src="https://graph.facebook.com/' + portrit_friends[i].id + '/picture?type=square"/></a>';
+            }
+        }
+        else{
+            portrit_friends_html = '<h3>None of your facebook friends are on Portrit. Send them a invitation by nominating their photos.</h2>';
         }
         
         profile_html =  '<div id="profile_left_cont">' +
@@ -2960,7 +3011,7 @@ $(document).ready(function(){
                             '</div>' +
                         '</div>' +
                         '<div id="profile_right_cont">' +
-                            '<h2>Active Nominations</h2>' +
+                            '<h2>Your Active Nominations</h2>' +
                         '</div>' +
                         '<div class="clear"></div>';
         
@@ -3024,7 +3075,7 @@ $(document).ready(function(){
             }
         }
         else{
-            
+            $('#profile_right_cont').append('<p>You have no active nominations.</p>');
         }
     }
     
@@ -3199,7 +3250,7 @@ $(document).ready(function(){
                                             '<div id="nomination_text_cont">' +
                                                 '<a href="/#/user=' + nom.nominatee + '"><span class="strong">' + name + '</span></a><p>' + nom_winning_text + '</p>' +
                                                 '<h3>' + nom.nomination_category + '</h3>' +
-                                                '<img id="nom_trohpy_icon" src="/site_media/img/trophies/' + trophy_size + '/' + nom.nomination_category.replace(' ', '_').toLowerCase() + '.png"/>' +
+                                                '<img id="nom_trophy_icon" src="/site_media/img/trophies/' + trophy_size + '/' + nom.nomination_category.replace(' ', '_').toLowerCase() + '.png"/>' +
                                             '</div>' +
                                         '</div>' +
                                     '</div>' +
@@ -3979,7 +4030,7 @@ $(document).ready(function(){
             stream_width = 690;
         }
         else{
-            stream_width = 500;
+            stream_width = 430;
         }
         
         for (var i = 0; i < data.length; i++){
@@ -4706,7 +4757,6 @@ $(document).ready(function(){
             owner_id = null,
             owner_name = '',
             photo_html = '';
-        $('#context_overlay_cont > div').append('<div id="new_photo_cont"><h1>Latest Photos</h1><p class="tooltip"></p></div>');
         for (var i = 0; i < data.length; i++){
             for (var j = 0; j < data[i].attachment.media.length; j++){
                 photo = data[i].attachment.media[j];
@@ -4736,6 +4786,7 @@ $(document).ready(function(){
     var photo_feed = null;
     function init_latest_photos(){
         view_active = 'latest_photos';
+        $('#context_overlay_cont > div').append('<div id="new_photo_cont"><h1>Latest Photos</h1><p class="tooltip"></p></div>');
         append_load($('#context_overlay_cont > div'), 'light');
         if (!photo_feed){
             //Get newest photo feed from server
@@ -4759,33 +4810,38 @@ $(document).ready(function(){
             winning_nom_html = '';
             
         $('#context_overlay_cont > div').append('<div id="new_photo_cont"><h1>Recent Winners</h1></div>');
-        for (var i = 0; i < data.length; i++){
-            photo = data[i].photo;
-            nom_cat = data[i].nomination_category;
-            nom_cat_underscore = nom_cat.replace(' ', '_').toLowerCase();
-            if (friends[data[i].nominatee] !== undefined){
-                name = friends[data[i].nominatee].name;
-            }
-            else if(data[i].nominatee == me.id){
-                name = 'You';
-            }
-            else{
-                name = '';
-            }
-            winning_nom_html =  '<div class="winning_nom_cont">' +
-                                    '<a href="/#/nom_id=' + data[i].id + '/won/">' +
-                                        '<img src="' + photo.src + '"/>' +
-                                    '</a>' +
-                                    '<div class="winning_nom_overlay">' +
-                                        '<a href="/#/user=' + data[i].nominatee + '">' +
-                                            '<p class="nom_cat_' + nom_cat_underscore + '_text">' + name + '</p>' +
+        if (data.length > 0){
+            for (var i = 0; i < data.length; i++){
+                photo = data[i].photo;
+                nom_cat = data[i].nomination_category;
+                nom_cat_underscore = nom_cat.replace(' ', '_').toLowerCase();
+                if (friends[data[i].nominatee] !== undefined){
+                    name = friends[data[i].nominatee].name;
+                }
+                else if(data[i].nominatee == me.id){
+                    name = 'You';
+                }
+                else{
+                    name = '';
+                }
+                winning_nom_html =  '<div class="winning_nom_cont">' +
+                                        '<a href="/#/nom_id=' + data[i].id + '/won/">' +
+                                            '<img src="' + photo.src + '"/>' +
                                         '</a>' +
-                                        '<img src="/site_media/img/trophies/medium/' + nom_cat_underscore + '.png"/>' +
-                                    '</div>' +
-                                '</div>';
-            $('#new_photo_cont').append(winning_nom_html);
+                                        '<div class="winning_nom_overlay">' +
+                                            '<a href="/#/user=' + data[i].nominatee + '">' +
+                                                '<p class="nom_cat_' + nom_cat_underscore + '_text">' + name + '</p>' +
+                                            '</a>' +
+                                            '<img src="/site_media/img/trophies/medium/' + nom_cat_underscore + '.png"/>' +
+                                        '</div>' +
+                                    '</div>';
+                $('#new_photo_cont').append(winning_nom_html);
+            }
+            $('#new_photo_cont').append('<div class="clear"></div>');
         }
-        $('#new_photo_cont').append('<div class="clear"></div>');
+        else{
+            $('#new_photo_cont').append('<h2>No Recent Winners.</h2>');
+        }
     }
     
     var winner_feed = null;
@@ -4871,7 +4927,7 @@ $(document).ready(function(){
                                             '<div class="recent_nom_vote_count nom_vote_' + nom.id + '">' +
                                                 '<img src="/site_media/img/trophies/medium/' + nom_cat_underscore + '.png">' + 
                                                 '<a href="#/nom_id=' + nom.id + '/votes">' +
-                                                    '<h2 class="nom_cat_' + nom_cat_underscore + '">Votes: ' + nom.vote_count + '</h2>' +
+                                                    '<h2 class="nom_cat_' + nom_cat_underscore + '">Votes: <span class="strong">' + nom.vote_count + '</span></h2>' +
                                                 '</a>' +
                                             '</div>' +
                                             '<div class="clear"></div>' +
@@ -5000,7 +5056,7 @@ $(document).ready(function(){
                                             '<div class="recent_nom_vote_count nom_vote_' + nom.id + '">' +
                                                 '<img src="/site_media/img/trophies/large/' + nom_cat_underscore + '.png">' + 
                                                 '<a href="#/nom_id=' + nom.id + '/votes">' +
-                                                    '<h2 class="nom_cat_' + nom_cat_underscore + '">Votes: ' + nom.vote_count + '</h2>' +
+                                                    '<h2 class="nom_cat_' + nom_cat_underscore + '">Votes: <span class="strong">' + nom.vote_count + '</span></h2>' +
                                                 '</a>' +
                                             '</div>' +
                                             '<div class="clear"></div>' +
@@ -5106,21 +5162,23 @@ $(document).ready(function(){
     function render_top_users(top_users){
         var user_html = '';
         var top_html = '';
-        top_html = '<h1>All Time <span class="strong">Leaderboard</span></h1><div id="top_friends">';
-        for (var i = 0; i < top_users.length; i++){
-            user_html = '<div class="top_friend">' +
-                            '<p class="nom_cat_' + top_users[i].top_nom_cat.replace(' ', '_').toLowerCase() + '">' + (i + 1) + '</p>' +
-                            '<a href="/#/user=' + top_users[i].fid + '">' +
-                                '<h2>' + friends[top_users[i].fid].name + '</h2>' +
-                            '</a>' +
-                            '<a href="/#/user=' + top_users[i].fid + '">' +
-                                '<img src="https://graph.facebook.com/' + top_users[i].fid + '/picture?type=square"/>' +
-                            '</a>' +
-                        '</div>';
-            top_html += user_html;
+        if (top_users.length > 0){
+            top_html = '<h1>All Time <span class="strong">Leaderboard</span></h1><div id="top_friends">';
+            for (var i = 0; i < top_users.length; i++){
+                user_html = '<div class="top_friend">' +
+                                '<p class="nom_cat_' + top_users[i].top_nom_cat.replace(' ', '_').toLowerCase() + '">' + (i + 1) + '</p>' +
+                                '<a href="/#/user=' + top_users[i].fid + '">' +
+                                    '<h2>' + friends[top_users[i].fid].name + '</h2>' +
+                                '</a>' +
+                                '<a href="/#/user=' + top_users[i].fid + '">' +
+                                    '<img src="https://graph.facebook.com/' + top_users[i].fid + '/picture?type=square"/>' +
+                                '</a>' +
+                            '</div>';
+                top_html += user_html;
+            }
+            top_html += '</div>';
+            $('#top_right_cont').append(top_html);
         }
-        top_html += '</div>';
-        $('#top_right_cont').append(top_html);
     }
     
     function render_empty_nom_page(){
@@ -5129,6 +5187,7 @@ $(document).ready(function(){
         function render_empty_recent(data){
             var top = 6;
             var count = 0;
+            
             for (var i = 0; i < data.length; i++){
                 for (var j = 0; j < data[i].attachment.media.length; j++){
                     photo = data[i].attachment.media[j];
@@ -5152,6 +5211,9 @@ $(document).ready(function(){
                     $('#latest_empty_wrap > .empty_cont').append(photo_html);
                     count += 1;
                     if (count == top){
+                        if (!mobile){
+                            $('#latest_empty_wrap > .empty_cont').append('<p class="tooltip"></p>');
+                        }
                         return;
                     }
                 }
@@ -5168,42 +5230,48 @@ $(document).ready(function(){
                 name = '',
                 winning_nom_html = '',
                 top = 5;
-                
-            if (data.length < top){
-                top = data.length;
-            }
             
-            for (var i = 0; i < top; i++){
-                photo = data[i].photo;
-                nom_cat = data[i].nomination_category;
-                nom_cat_underscore = nom_cat.replace(' ', '_').toLowerCase();
-                if (friends[data[i].nominatee] !== undefined){
-                    name = friends[data[i].nominatee].name;
+            if (data.length > 0){
+                $('#recent_empty_wrap > h3').after('<p>These photos just won.</p>');
+                if (data.length < top){
+                    top = data.length;
                 }
-                else if(data[i].nominatee == me.id){
-                    name = 'You';
-                }
-                else{
-                    name = '';
-                }
-                winning_nom_html =  '<div class="winning_nom_cont">' +
-                                        '<a href="/#/nom_id=' + data[i].id + '/won/">' +
-                                            '<img src="' + photo.src + '"/>' +
-                                        '</a>' +
-                                        '<div class="winning_nom_overlay">' +
-                                            '<a href="/#/user=' + data[i].nominatee + '">' +
-                                                '<p class="nom_cat_' + nom_cat_underscore + '_text">' + name + '</p>' +
+                for (var i = 0; i < top; i++){
+                    photo = data[i].photo;
+                    nom_cat = data[i].nomination_category;
+                    nom_cat_underscore = nom_cat.replace(' ', '_').toLowerCase();
+                    if (friends[data[i].nominatee] !== undefined){
+                        name = friends[data[i].nominatee].name;
+                    }
+                    else if(data[i].nominatee == me.id){
+                        name = 'You';
+                    }
+                    else{
+                        name = '';
+                    }
+                    winning_nom_html =  '<div class="winning_nom_cont">' +
+                                            '<a href="/#/nom_id=' + data[i].id + '/won/">' +
+                                                '<img src="' + photo.src + '"/>' +
                                             '</a>' +
-                                            '<img src="/site_media/img/trophies/medium/' + nom_cat_underscore + '.png"/>' +
-                                        '</div>' +
-                                    '</div>';
-                $('#recent_empty_wrap > .empty_cont').append(winning_nom_html);
+                                            '<div class="winning_nom_overlay">' +
+                                                '<a href="/#/user=' + data[i].nominatee + '">' +
+                                                    '<p class="nom_cat_' + nom_cat_underscore + '_text">' + name + '</p>' +
+                                                '</a>' +
+                                                '<img src="/site_media/img/trophies/medium/' + nom_cat_underscore + '.png"/>' +
+                                            '</div>' +
+                                        '</div>';
+                    $('#recent_empty_wrap > .empty_cont').append(winning_nom_html);
+                }
+                $('#recent_empty_wrap > .empty_cont').append('<div class="clear"></div>');
             }
-            $('#recent_empty_wrap > .empty_cont').append('<div class="clear"></div>');
+            else{
+                $('#recent_empty_wrap > h3').after('<h1>No Recent Winners.</h1>');
+                $('#recent_empty_wrap > h3').after('<p>These photos just won.</p>');
+            }
         }, 'won');
         
         empty_html ='<div id="empty_noms_cont">' +
-                        '<h1>There are no <span class="strong">Active Nominations</span> available</h1>' +
+                        '<h1>There are no <span class="strong">Active Nominations</span></h1>' +
                         '<h2>Help us make this a happenin\' place and nominate your friends photos.</h2>' +
                         '<div id="search_empty_wrap">' +
                             '<div id="empty_search_cont">' +
@@ -5226,7 +5294,6 @@ $(document).ready(function(){
                         '</div>' +
                         '<div id="recent_empty_wrap">' +
                             '<h3>Recent Winners</h3>' +
-                            '<p>These photos just won.</p>' +
                             '<div class="empty_cont"></div>' +
                         '</div>' +
                         '<div id="latest_empty_wrap">' +
@@ -5241,7 +5308,7 @@ $(document).ready(function(){
         append_load($('#latest_empty_wrap > .empty_cont'), 'light');
         
         //Empty Recent Photos
-        $.getJSON('https://api.facebook.com/method/stream.get?access_token=' + fb_session.access_token + '&limit=30&filter_key=' + photo_filter + '&format=json&callback=?', function(data){
+        $.getJSON('https://api.facebook.com/method/stream.get?access_token=' + fb_session.access_token + '&limit=50&filter_key=' + photo_filter + '&format=json&callback=?', function(data){
             remove_load();
             render_empty_recent(data.posts);
         });
@@ -5338,16 +5405,26 @@ $(document).ready(function(){
                     }
                 }
                 else{
-                    $('#empty_search_cont').css({
-                        '-webkit-border-radius':  '10px',
-                        '-moz-border-radius':     '10px'
-                    });
-                    $('#search_empty_wrap .empty_cont').css({
-                        'padding': '0px'
-                    });
+                    // $('#empty_search_cont').css({
+                    //     '-webkit-border-radius':  '10px',
+                    //     '-moz-border-radius':     '10px'
+                    // });
+                    // $('#search_empty_wrap .empty_cont').css({
+                    //     'padding': '0px'
+                    // });
+                    $('#search_empty_wrap .empty_cont').html('<h1>No friend\'s with first name starting in: ' + q + '</h1>');
                 }
             }
         });
+        
+        $('.new_photo_cont').live('mouseover mouseout', function(event) {
+            if (event.type == 'mouseover') {
+                show_like_tooltip(this);
+            } else {
+                hide_like_tooltip(this);
+            }
+        });
+        
         attach_main_handlers();
     }
     

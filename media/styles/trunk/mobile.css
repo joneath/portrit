@@ -27,6 +27,62 @@ div#wrapper{
 /*	top:				-70px;*/
 }
 
+div#login_cont{
+    width:                  520px;
+}
+
+div#login_content div#login_right_cont{
+    width:                  500px
+}
+
+#tagline_cont_active{
+    height:                 385px;
+    margin-top:             10px;
+}
+
+div#login_right_cont h2{
+    font-size:              36px;
+}
+
+#tageline_large{
+    font-size:              22px;
+}
+
+div.tagline_top #tagline_end{
+    font-size:              18px;
+}
+
+div#tagline_bottom{
+    width:                  440px;
+}
+
+div#tagline_bottom p{
+    font-size:              18px;
+}
+
+#trophy_landing{
+    position:           relative;
+    right:              15px;
+    width:              auto;
+}
+
+div#login_content{
+    margin-top:             10px;
+    margin-bottom:          -10px;
+}
+
+ul.slideshow{
+    height:                 360px;
+}
+
+ul.slideshow li {  
+    position:               absolute;
+    top:                    20px;
+    left:                   0px;
+    -webkit-transition:     -webkit-transform .25s ease-out;
+    -moz-transition:        -moz-transform .25s ease-out;
+}
+
 div#cont{
     padding-top:        0px;
 }
@@ -43,7 +99,7 @@ div#search_cont #query{
 }
 
 .close_img{
-    height:             46px;
+    height:             38px;
 }
 
 div.autocomplete{
@@ -184,7 +240,7 @@ div#album_cont div#trophy_cont{
     }
 
     #notification_footer_popup_cont{
-        height:     361px;
+        height:     320px;
     }
 
     #notification_footer_popup_heading{
@@ -312,8 +368,39 @@ div#active_stream_text_cont > span{
     font-size:          16px;
 }
 
+.feed_post_cont .empty_nom_overlay{
+    height:             366px;
+    right:              0px;
+    top:                40px;
+    width:              520px;
+}
+
+.empty_nom_overlay .empty_message_box{
+    left:               50px;
+    top:                80px;
+    font-size:          22px;
+}
+
+.target_message_box{
+    bottom:             -29px;
+}
+
+.empty_trophy{
+    right:              80px;
+}
+
+.recent_nom_photo_right_cont .recent_nom_vote_count{
+    margin-top:         10px;
+}
+
+.recent_nom_cont .recent_nom_top_cont{
+    -webkit-box-shadow: rgba(0, 0, 0, 0.496094) 0px 7px 4px -3px;
+    -moz-box-shadow:    0px 7px 4px -3px rgba(0, 0, 0, 0.5);
+}
+
 .recent_nom_top_cont h3{
     font-size:          16px;
+    margin-top:         5px;
     width:              240px;
 }
 
@@ -398,6 +485,40 @@ div#new_comment_cont .comment_body{
 .main_control:hover{
     
 }
+
+#notification_popup_cont{
+    position:           relative;
+    width:              100%;
+    right:              0px;
+    top:                0px;
+}
+
+    #notification_popup_cont .notification_popup{
+        float:          none;
+        margin-bottom:  0px;
+        width:          100%;
+        -webkit-border-radius:  0px;
+        -moz-border-radius:     0px;
+        -webkit-transition:     none;
+        -moz-transition:        none;
+    }
+    
+    .notification_cont{
+        min-height:     50px;
+        font-size:      20px;
+        padding:        5px 0px;
+        margin-bottom:  5px;
+        margin-right:   45px;
+    }
+    
+    .notification_cont .notification_color{
+        min-height:     50px;
+    }
+    
+    .notification_popup .close_notification{
+        top:            6px;
+        right:          5px;
+    }
 
 .feed_post_cont{
     margin-right:       0px;

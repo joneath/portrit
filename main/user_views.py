@@ -50,7 +50,6 @@ def login_fb_user(request):
         elif user.access_token != cookie["access_token"]:
             user.access_token = cookie["access_token"]
             user.save()
-            
             graph = facebook.GraphAPI(cookie["access_token"])
             portrit = Portrit_FB(graph, fb_user, cookie["access_token"])
             portrit.load_user_friends(True)

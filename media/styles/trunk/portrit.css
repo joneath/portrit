@@ -174,6 +174,7 @@ div#wrapper{
 div#login_cont{
     height:             100%;
     margin:             0 auto;
+    margin-bottom:      20px;
     width:              960px;
 }
 
@@ -209,38 +210,34 @@ div#login_cont{
     
         div#login_content div#login_right_cont{
             float:              right;
-            height:             320px;
+            height:             400px;
             overflow:           hidden;
             text-align:         right;
             width:              460px;
             position:           relative;
-            z-index:            10;
+            z-index:            10000;
             -webkit-box-shadow:         rgba(0, 0, 0, 0.496094) 0px 4px 4px 6px;
             -moz-box-shadow:            0px 4px 4px 6px rgba(0, 0, 0, 0.5);
         }
         
-            .slideshow .active{
-                z-index:        1000;
-            }
-        
             #landing_img_1 img{
-                -webkit-transform: rotate(10deg);
-                -moz-transform: rotate(10deg);
-            }
-            
-            #landing_img_2 img{
-                -webkit-transform: rotate(18deg);
-                -moz-transform: rotate(18deg);
-            }
-            
-            #landing_img_3 img{
                 -webkit-transform: rotate(-10deg);
                 -moz-transform: rotate(-10deg);
             }
             
+            #landing_img_2 img{
+                -webkit-transform: rotate(-5deg);
+                -moz-transform: rotate(-5deg);
+            }
+            
+            #landing_img_3 img{
+                -webkit-transform: rotate(5deg);
+                -moz-transform: rotate(5deg);
+            }
+            
             #landing_img_4 img{
-                -webkit-transform: rotate(-18deg);
-                -moz-transform: rotate(-18deg);
+                -webkit-transform: rotate(10deg);
+                -moz-transform: rotate(10deg);
             }
             
             #landing_img_5{
@@ -266,22 +263,29 @@ div#login_cont{
             div#tagline_cont_active p{
                 color:              #444;
                 line-height:        20px;
-                margin-top:         15px;
+                margin-top:         5px;
+                margin-right:       45px;
                 text-align:         left;
             }
             
+            #trophy_landing{
+                position:           relative;
+                right:              20px;
+                max-width:              400px;
+            }
+            
             #tageline_large{
-                font-size:          20px;
+                font-size:          18px;
             }
             
             div.tagline_top{
-                height:             150px;
+                height:             225px;
                 margin-left:        20px;
             }
             
                 div.tagline_top #tagline_end{
                     font-weight:    bold;
-                    margin-top:     20px;
+                    margin-top:     10px;
                 }
                 
             #landing_forward{
@@ -324,8 +328,11 @@ div#login_cont{
             
             div#tagline_bottom{
                 border-top:         1px solid #CECECE;
-                margin-right:      25px;
+                margin-right:       35px;
                 padding-top:        30px;
+                position:           absolute;
+                bottom:             0px;
+                width:              400px;
             }
             
                 div#tagline_bottom p{
@@ -1596,6 +1603,7 @@ div.upgrade_tooltip_cont:hover{
 
 div#profile_cont_wrap{
     height:             100%;
+    margin-bottom:      10px;
     position:           relative;
     width:              auto;
     z-index:            1;
@@ -1708,6 +1716,13 @@ div#new_comment_cont{
         margin-left:            -10px;
     }
     
+    #recent_empty_wrap > h1{
+        font-size:              24px;
+        font-weight:            bold;
+        margin-top:             10px;
+        text-align:             center;
+    }
+    
     #latest_empty_wrap .empty_cont{
         min-height:             165px;
     }
@@ -1723,6 +1738,12 @@ div#new_comment_cont{
         -moz-border-radius-bottomleft:          10px;
         -moz-border-radius-bottomright:         10px;
     }
+    
+        #search_empty_wrap .empty_cont > h1{
+            color:          white;
+            font-size:      18px;
+            padding:        10px 0px;
+        }
     
     #empty_search_cont{
         background-color:       #777;
@@ -2202,13 +2223,20 @@ div#profile_cont{
         text-align:             center;
     }
     
-    #new_photo_cont > h1{
-        color:                  #333;
-        font-size:              30px;
-        padding-left:           10px;
-        padding-top:            15px;
-        text-align:             left;
-    }
+        #new_photo_cont > h1{
+            color:                  #333;
+            font-size:              30px;
+            padding-left:           10px;
+            padding-top:            15px;
+            text-align:             left;
+        }
+    
+        #new_photo_cont > h2{
+            color:                  #333;
+            font-size:              26px;
+            margin-top:             100px;
+            text-align:             center;
+        }
     
     #new_photo_cont .new_photo_cont, .empty_cont .new_photo_cont{
         cursor:                 pointer;
@@ -2617,6 +2645,12 @@ div#user_profile_cont{
             text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
         }
         
+            #user_profile div#profile_right_cont > p{
+                font-size:              18px;
+                margin-top:             50px;
+                text-align:             center;
+            }
+        
             #profile_right_cont > h2 {
                 text-align:             center;
                 font-size:              24px;
@@ -2985,6 +3019,10 @@ div#wall_cont div#profile_wrap{
     width:              645px;
     -webkit-box-shadow: rgba(0, 0, 0, 0.496094) 5px 5px 3px;
     -moz-box-shadow:    5px 5px 3px rgba(0, 0, 0, 0.5);
+    -webkit-border-bottom-right-radius:     10px;
+    -webkit-border-bottom-left-radius:      10px;
+    -moz-border-radius-bottomleft:          10px;
+    -moz-border-radius-bottomright:         10px;
 }
 
     #recent_left_cont #load_more_noms_cont{
@@ -3151,6 +3189,8 @@ div#wall_cont div#profile_wrap{
     background-color:       #333;
     float:                  left;
     height:                 100%;
+    -webkit-border-bottom-right-radius:  8px;
+    -moz-border-radius-bottomright:      8px;
 }
 
 .recent_nom_cont{
@@ -3158,8 +3198,8 @@ div#wall_cont div#profile_wrap{
 }
 
     .recent_nom_cont .recent_nom_top_cont{
-        -webkit-box-shadow: rgba(0, 0, 0, 0.496094) 6px 7px 4px -3px;
-        -moz-box-shadow:    6px 7px 4px -3px rgba(0, 0, 0, 0.5);
+        -webkit-box-shadow: rgba(0, 0, 0, 0.496094) 5px 7px 4px -3px;
+        -moz-box-shadow:    5px 7px 4px -3px rgba(0, 0, 0, 0.5);
         color:                  white;
         min-height:             50px;
         position:               relative;
@@ -3170,7 +3210,6 @@ div#wall_cont div#profile_wrap{
             font-size:              14px;
             margin-top:             18px;
             margin-right:           10px;
-            text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
         }
         
             .recent_nom_top_cont h3 span{
@@ -3234,14 +3273,12 @@ div#wall_cont div#profile_wrap{
         
             .recent_nom_vote_count h2{
                 font-size:              18px;
-                font-weight:            bold;
                 margin:                 0px 20px;
                 margin-bottom:          20px;
                 padding:                10px 20px;
                 text-align:             center;
                 -webkit-border-radius:  15px;
                 -moz-border-radius:     15px;
-                text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
             }
             
             .recent_nom_vote_count a{
@@ -4022,7 +4059,7 @@ div#all_friends {
     margin:             20px auto;
     padding:            20px;
     text-align:         left;
-    width:              880px;
+    width:              920px;
     -webkit-border-radius:  10px;
     -moz-border-radius:     10px;
 }
