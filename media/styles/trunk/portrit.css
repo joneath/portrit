@@ -240,10 +240,6 @@ div#login_cont{
                 -moz-transform: rotate(10deg);
             }
             
-            #landing_img_5{
-                left:           200px;
-            }
-            
             #landing_img_5 img{
                 -webkit-transform: rotate(-25deg);
                 -moz-transform: rotate(-25deg);
@@ -279,7 +275,6 @@ div#login_cont{
             }
             
             div.tagline_top{
-                height:             225px;
                 margin-left:        20px;
             }
             
@@ -489,6 +484,16 @@ div#left_nav{
     
     #logout{
         margin-left:        10px;
+    }
+    
+div#logout_cont{
+    
+}
+
+    #logout_cont > h1{
+        font-size:              26px;
+        font-weight:            bold;
+        margin-top:             20px;
     }
 
 div#search{
@@ -1098,8 +1103,6 @@ div#nom_detail_cont{
         -webkit-border-top-right-radius:    10px;
         -moz-border-radius-topleft:         10px;
         -moz-border-radius-topright:        10px;
-        -moz-box-shadow:        0 3px 3px rgba(0, 0, 0, 0.5);
-        -webkit-box-shadow:     rgba(0, 0, 0, 0.496094) 0px 3px 3px;
     }
     
         div#main_nom_cont_left{
@@ -1114,6 +1117,7 @@ div#nom_detail_cont{
             div#main_nom_cont_left_wrap{
                 display:            table-cell;
                 height:             490px;
+                position:           relative;
                 width:              700px;
                 vertical-align:     middle;
             }
@@ -1122,6 +1126,40 @@ div#nom_detail_cont{
                     max-height:         490px;
                     max-width:          590px;
                 }
+                
+                div#nominator_overlay_cont{
+                    background:         rgba(0,0,0,0.7);
+                    bottom:             0px;
+                    height:             50px;
+                    position:           absolute;
+                    text-align:         left;
+                    width:              700px;
+                }
+                
+                    div#nominator_overlay_cont img{
+                        float:              left;
+                        -webkit-border-top-right-radius:    15px;
+                        -webkit-border-bottom-left-radius:  15px;
+                        -moz-border-radius-topright:        15px;
+                        -moz-border-radius-bottomleft:      15px;
+                    }
+                    
+                    div#nominator_overlay_cont h2{
+                        font-size:          20px;
+                        margin-left:        55px;
+                    }
+                    
+                    div#nominator_overlay_cont p{
+                        margin-left:        55px;
+                    }
+                    
+                    div#nominator_overlay_cont a{
+                        color:              white;
+                    }
+                    
+                    div#nominator_overlay_cont a:hover{
+                        text-decoration:    underline;
+                    }
         
         div#main_nom_cont_right{
             float:              right;
@@ -1151,7 +1189,7 @@ div#nom_detail_cont{
             
                 div#vote_cont_left{
                     float:                  left;
-                    margin-left:            105px;
+                    margin-left:            85px;
                     position:               relative;
                 }
                 
@@ -1166,9 +1204,10 @@ div#nom_detail_cont{
                     color:                  #CB6698;
                     font-size:              40px;
                     font-weight:            bold;
-                    position:               absolute;
-                    right:                  80px;
-                    top:                    50px;
+                    min-width:              50px;
+                    position:               relative;
+                    right:                  70px;
+                    top:                    -110px;
                 }
                 
                 div#vote_cont_left .vote:hover{
@@ -1218,11 +1257,10 @@ div#nom_detail_cont{
                         }
                 
                     div#nomination_text_cont{
-                        float:              left;
+                        margin-right:       5px;
                         margin-left:        5px;
-                        margin-top:         35px;
+                        margin-top:         25px;
                         text-align:         left;
-                        width:              185px;
                         text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
                     }
                     
@@ -1245,9 +1283,19 @@ div#nom_detail_cont{
                         }
                         
                         div#nomination_text_cont img{
-                            bottom:                 0px;
+                            bottom:                 150px;
                             position:               absolute;
                             right:                  0px;
+                        }
+                        
+                        div#nomination_text_cont .user_img{
+                            float:                  left;
+                            margin-right:           5px;
+                            position:               static;
+                            -webkit-border-top-right-radius:    15px;
+                            -webkit-border-bottom-left-radius:  15px;
+                            -moz-border-radius-topright:        15px;
+                            -moz-border-radius-bottomleft:      15px;
                         }
             
             div#main_nom_cont_right #nom_votes_cont{
@@ -1265,6 +1313,7 @@ div#nom_detail_cont{
     div#main_nom_bottom_cont{
         background-color:   white;
         float:              right;
+        min-height:         105px;
         position:           relative;
         top:                -5px;
         width:              960px;
@@ -1991,6 +2040,7 @@ div#profile_cont{
             .nom_stream_left_cont .voted_cont{
                 background-color:   white;
                 margin:             0px 20px 20px;
+                min-height:         82px;
                 padding:            15px 10px 5px;
                 -webkit-border-bottom-left-radius:      5px;
                 -webkit-border-bottom-right-radius:     5px;
@@ -2028,6 +2078,8 @@ div#profile_cont{
         
             .nom_cat_user_cont img{
                 float:              left;
+                width:              50px;
+                height:             50px;
             }
         
             .nom_cat_user_cont h3{
@@ -2249,7 +2301,7 @@ div#profile_cont{
         }
         
     #new_photo_cont .winning_nom_cont, .empty_cont .winning_nom_cont{
-        float:                  left;
+        display:                inline-block;
         height:                 150px;
         margin:                 10px;
         overflow:               hidden;
@@ -3017,8 +3069,6 @@ div#wall_cont div#profile_wrap{
     padding-left:       15px;
     min-height:         300px;
     width:              645px;
-    -webkit-box-shadow: rgba(0, 0, 0, 0.496094) 5px 5px 3px;
-    -moz-box-shadow:    5px 5px 3px rgba(0, 0, 0, 0.5);
     -webkit-border-bottom-right-radius:     10px;
     -webkit-border-bottom-left-radius:      10px;
     -moz-border-radius-bottomleft:          10px;
@@ -3050,8 +3100,6 @@ div#wall_cont div#profile_wrap{
         text-align:         center;
         -webkit-border-radius:  15px;
         -moz-border-radius:     15px;
-        -webkit-box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 8px 1px;
-        -moz-box-shadow:    0px 0px 8px 1px rgba(0, 0, 0, 0.5);
     }
 
     #top_right_cont .top_nom_cont{
@@ -3189,8 +3237,10 @@ div#wall_cont div#profile_wrap{
     background-color:       #333;
     float:                  left;
     height:                 100%;
-    -webkit-border-bottom-right-radius:  8px;
-    -moz-border-radius-bottomright:      8px;
+    -webkit-border-bottom-right-radius:     8px;
+    -webkit-border-bottom-left-radius:      8px;
+    -moz-border-radius-bottomright:         8px;
+    -moz-border-radius-bottomleft:          8px;
 }
 
 .recent_nom_cont{
@@ -3198,8 +3248,6 @@ div#wall_cont div#profile_wrap{
 }
 
     .recent_nom_cont .recent_nom_top_cont{
-        -webkit-box-shadow: rgba(0, 0, 0, 0.496094) 5px 7px 4px -3px;
-        -moz-box-shadow:    5px 7px 4px -3px rgba(0, 0, 0, 0.5);
         color:                  white;
         min-height:             50px;
         position:               relative;
@@ -3218,6 +3266,8 @@ div#wall_cont div#profile_wrap{
     
         .recent_nom_top_cont img{
             float:                  left;
+            width:                  50px;
+            height:                 50px;
         }
         
         .recent_nom_top_cont h2{
@@ -3255,7 +3305,7 @@ div#wall_cont div#profile_wrap{
         
             .recent_nom_photo_left_wrap img{
                 max-height:                 350px;
-                max-width:                  485px;
+                max-width:                  466px;
             }
     
     .recent_nom_cont .recent_nom_photo_right_cont{
@@ -3298,7 +3348,7 @@ div#wall_cont div#profile_wrap{
     .recent_nom_cont .recent_nom_comment_cont{
         margin:             0 auto;
         margin-top:         20px;
-        width:              560px;
+        width:              610px;
     }
     
         .comment_empty{
@@ -3334,7 +3384,7 @@ div#wall_cont div#profile_wrap{
             font-size:              20px;
             padding:                10px;
             position:               relative;
-            width:                  538px;
+            width:                  588px;
             height:                 84px;
             z-index:                20001;
         }
@@ -3410,7 +3460,86 @@ div#user_peek_cont{
 div#album_wrap{
     margin: 0px auto;
     max-width: 1200px;
-}    
+}
+
+div#album_cont div#active_cont{
+    background-color:       #444;
+    margin:                 0px auto;
+    margin-top:             5px;
+    margin-bottom:          10px;
+    max-width:              1100px;
+    padding-top:            10px;
+    -webkit-border-radius:  10px;
+    -moz-border-radius:     10px;
+}
+
+    div#album_cont div#active_cont #loader{
+        padding-top:            0px;
+    }
+    
+    #active_cont .active_left_cont{
+        float:              left;
+        height:             200px;
+        position:           relative;
+        width:              50px;
+    }
+    
+    #active_cont .active_trophy_img{
+        position:           absolute;
+        bottom:             0px;
+        left:               0px;
+    }
+        
+    #active_cont .active_img_cont{
+        display:            table-cell;
+        vertical-align:     middle;
+        text-align:         center;
+        height:             160px;
+        width:              250px;
+    }
+    
+    div#active_cont .active_nom_cont{
+        background-color:   black;
+        display:            inline-block;
+        height:             200px;
+        margin:             10px;
+        position:           relative;
+        width:              300px;
+    }
+    
+        div#active_cont .active_nom_cont p{
+            color:          #333;
+            font-size:      18px;
+            margin-top:     10px;
+            text-align:     center;
+        }
+        
+        div#active_cont .active_nom_cont p:hover{
+            text-decoration:    underline;
+        }
+    
+    div#active_cont .active_nom_image{
+        display:            block;
+        margin:             0 auto;
+        max-height:         160px;
+        max-width:          250px;
+    }
+    
+    #active_cont .active_comment_cont{
+        background-color:   #DEDEDE;
+        float:              left;
+        height:             40px;
+        text-align:         left;
+        width:              125px;
+    }
+    
+    #active_cont .active_vote_cont{
+        background-color:   white;
+        float:              left;
+        height:             40px;
+        text-align:         left;
+        width:              125px;
+    }
     
 div#album_cont div#trophy_cont{
     background-color:       #222;
@@ -3423,12 +3552,22 @@ div#album_cont div#trophy_cont{
     -moz-border-radius:     10px;
 }
 
-    div#album_cont div#trophy_cont > h1{
+    div#album_cont div#trophy_cont #loader{
+        padding-top:            0px;
+    }
+
+    div#album_cont div#trophy_cont > h1, div#album_cont div#active_cont > h1{
         font-size:          24px;
         font-weight:        bold;
-        margin-bottom:      10px;
-        margin-left:        100px;
+        padding-bottom:     10px;
+        margin-left:        20px;
         text-align:         left;
+    }
+    
+    div#album_cont div#trophy_cont > h2, div#album_cont div#active_cont > h2{
+        font-size:          18px;
+        font-weight:        bold;
+        padding-bottom:     10px;
     }
     
     div#user_profile_cont div#album_cont h1{
@@ -3484,7 +3623,7 @@ div#album_cont{
         font-size:          24px;
         font-weight:        bold;
         margin-bottom:      10px;
-        margin-left:        100px;
+        margin-left:        20px;
         text-align:         left;
     }
 
@@ -3706,7 +3845,7 @@ div#photo_cont{
         text-align:         left;
         padding:            10px;
         position:           relative;
-        width:              920px;
+        width:              960px;
 /*        -webkit-box-shadow: rgba(0, 0, 0, 0.496094) 0px 0px 8px 3px;
         -moz-box-shadow:    0px 0px 8px 3px rgba(0, 0, 0, 0.5);*/
     }
@@ -3714,6 +3853,7 @@ div#photo_cont{
         #new_nomination_cont #trophy_cont_top{
             background:         rgba(0, 0, 0, 0.75);
             padding:            5px;
+            text-align:         center;
             -webkit-border-radius:    10px;
             -moz-border-radius:       10px;
             -webkit-box-shadow: rgba(0, 0, 0, 0.496094) 0px 0px 3px 2px;
@@ -3745,7 +3885,7 @@ div#photo_cont{
         }
         
         #new_nomination_cont li{
-            float:          left;
+            display:        inline-block;
             list-style:     none;
             padding:        5px;
             text-align:     center;
@@ -4622,8 +4762,6 @@ div#payment_types_cont{
 #footer{
     background:         -moz-linear-gradient(center top , #333333, #111111) repeat scroll 0 0 transparent;
     background-color:   black;
-    -webkit-box-shadow: rgba(0, 0, 0, 0.496094) 0px -2px 2px;
-    -moz-box-shadow:    0 -2px 2px rgba(0, 0, 0, 0.5);
     bottom:             0px;
     height:             20px;
     color:              #AEAEAE;
@@ -4708,7 +4846,7 @@ div#payment_types_cont{
             top:                    65px;
             position:               absolute;
             width:                  250px;
-            z-index:                -1;
+            z-index:                10101;
             -webkit-border-radius:  10px;
             -moz-border-radius:     10px;
             -webkit-box-shadow:     rgba(0, 0, 0, 0.496094) 0px 0px 2px 3px;

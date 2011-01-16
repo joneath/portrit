@@ -1,11 +1,11 @@
 .large.awesome, .large.awesome:visited 			{ font-size: 15px; padding: 8px 14px 9px; }
 
 div#wrapper{
-    margin:             0 auto -20px;
+    margin:             0 auto -30px;
 }
 
 #push{
-    height:             20px;
+    height:             30px;
 }
 
 #header{
@@ -158,6 +158,14 @@ div.latest_photos_overlay{
     bottom:                 -29px;
 }
 
+div#tab_nav{
+    top:                    191px;
+}
+
+#top_right_cont > h1{
+    margin:                 20px 10px;
+}
+
 #new_photo_cont .winning_nom_cont, .empty_cont .winning_nom_cont{
     width:                  200px;
 }
@@ -175,7 +183,7 @@ div.latest_photos_overlay{
     top:                -1px;
 }
 
-div#album_cont div#trophy_cont{
+div#album_cont div#trophy_cont, div#album_cont div#active_cont{
     margin-left:        10px;
     margin-right:       10px;
 }

@@ -161,7 +161,7 @@ ul.slideshow {
 ul.slideshow li {  
     position:   absolute;  
     top:        50px;
-    left:       40px;
+    left:       10px;
 }  
   
 ul.slideshow li.show {  

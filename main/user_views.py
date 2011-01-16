@@ -124,7 +124,7 @@ def get_user_data(user):
     
 def get_user_stream(fb_user):
     data = False
-    PAGE_SIZE = 4
+    PAGE_SIZE = 8
     try:
         friends = fb_user.friends.all()
         nom_cats = Nomination_Category.objects.all()
@@ -142,7 +142,7 @@ def get_user_stream(fb_user):
                     Q(nominatee__in=friends) |
                     Q(nominatee=fb_user) |
                     Q(nominator=fb_user),
-                    active=True, won=False).distinct('id').order_by('-current_vote_count')[:PAGE_SIZE]
+                    active=True, won=False).distinct('id').order_by('-current_vote_count', '-created_date')#[:PAGE_SIZE]
                 for nom in top_noms.iterator():
                     comment_count = nom.get_comment_count()
                     votes = [ ]

@@ -410,30 +410,28 @@ def get_user_album_nom_data(request):
         if cookie:
             owner = FB_User.objects.get(fid=int(cookie["uid"]))
             user = FB_User.objects.get(fid=user_id)
-            winning_nominations = Nomination.objects.filter(nominatee=user, won=True)
-            photos = Photo.objects.filter(album__fb_user__fid=user_id, nominations__isnull=False).exclude(nominations__won=True, nominations__active=False).distinct('id')
-        
+            winning_nominations = Nomination.objects.filter(nominatee=user, won=True).order_by('-created_date')
+            active_nominations = Nomination.objects.filter(nominatee=user, won=False, active=True).order_by('-current_vote_count')
+            
             winning_nom_objs = [ ]
-            photo_objs = [ ]
+            active_nom_objs = [ ]
         
             for nom in winning_nominations.iterator():
                 winning_nom_objs.append({'id': nom.id, 
-                                        'up_votes': nom.up_votes, 
-                                        'down_votes': nom.down_votes,
-                                        'nom_cat': nom.nomination_category.name,
+                                        'vote_count': nom.current_vote_count,
+                                        'nomination_category': nom.nomination_category.name,
                                         'photo': nom.get_photo()})
             
-            for photo in photos.iterator():
-                nom_objs = [ ]
-                for nom in photo.nominations.all().iterator():
-                    nom_objs.append({'up_votes': nom.up_votes, 'down_votes': nom.down_votes, 
-                                    'time_remaining': nom.get_time_remaining(), 'nom_cat': nom.nomination_category.name})
-                
-                photo_objs.append({'fid': photo.fid, 'nom_objs': nom_objs})
+            for nom in active_nominations.iterator():
+                active_nom_objs.append({'id': nom.id, 
+                                        'vote_count': nom.current_vote_count,
+                                        'comment_count': nom.get_comment_count(),
+                                        'nomination_category': nom.nomination_category.name,
+                                        'photo': nom.get_photo()})
             
             data = {
                 'winning_nom_objs': winning_nom_objs,
-                'photo_objs': photo_objs
+                'active_nom_objs': active_nom_objs,
             }
     except:
         pass
@@ -480,6 +478,7 @@ def vote_on_nomination(request):
             'method': 'vote',
             'payload': {
                 'nom_id': nomination.id,
+                'nominatee': nomination.nominatee.fid,
                 'nomination_category': nomination.nomination_category.name,
                 'vote_count': nomination.current_vote_count,
                 'vote_user': owner.fid,
@@ -495,7 +494,9 @@ def vote_on_nomination(request):
         sock.send(node_data)
         sock.close()
         
-        data = {'vote_count': nomination.current_vote_count}
+        data = {'vote_count': nomination.current_vote_count,
+                'nominatee': nomination.nominatee.fid,}
+        print data
     
     # Send update to event listeners
     

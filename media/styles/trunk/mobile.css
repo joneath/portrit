@@ -199,10 +199,36 @@ div.text h3{
     margin-left:    0px;
     width:          450px;
 }
-    
-div#album_cont div#trophy_cont{
+
+div#album_cont div#trophy_cont > h2, div#album_cont div#active_cont > h2{
+    font-size:      18px;
+    margin:         0px 10px;
+}
+
+div#album_cont div#trophy_cont, div#album_cont div#active_cont{
     width:          510px;
 }
+
+div#active_cont .active_nom_cont{
+    margin:         5px;
+    width:          240px;
+}
+
+    #active_cont .active_img_cont{
+        width:      190px;
+    }
+    
+    div#active_cont .active_nom_image{
+        max-width:      190px;
+    }
+    
+    #active_cont .active_comment_cont{
+        width:      110px;
+    }
+    
+    #active_cont .active_vote_cont{
+        width:      80px;
+    }
 
 #clear_empty_search{
     right:          20px;
@@ -228,7 +254,7 @@ div#album_cont div#trophy_cont{
     left:           -145px;
     height:         400px;
     width:          350px;
-    z-index:        101;
+    z-index:        10101;
 }
     
     #notification_footer_popup #notification_arrow{
@@ -585,12 +611,28 @@ div#nom_detail_cont{
     } 
        
     div#main_nom_cont_left_wrap{
+        position:       relative;
         width:          500px;
     }
 
     div#main_nom_cont_left_wrap #main_nom_photo{
         max-width:      500px;
     }
+    
+    div#nominator_overlay_cont{
+        bottom:         250px;
+        width:          500px;
+    }
+    
+        div#nominator_overlay_cont h2{
+            font-size:      24px;
+            line-height:    20px;
+            margin-top:     3px;
+        }
+        
+        div#nominator_overlay_cont p{
+            font-size:      18px;
+        }
     
     div#main_nom_cont_right{
         width:          500px;
@@ -607,7 +649,7 @@ div#nom_detail_cont{
         div#vote_cont{
             margin-top:     0px;
             position:       absolute;
-            right:          110px;
+            right:          80px;
             top:            70px;
         }
     
@@ -629,8 +671,30 @@ div#nom_detail_cont{
         margin-left:    60px;
     }
     
+    div#nomination_text_cont .user_img{
+        top:            20px;
+    }
+    
     div#nomination_text_cont{
-        width:          150px;
+        margin-top:     20px;
+/*        width:          130px;*/
+    }
+    
+    div#nomination_text_cont img{
+        bottom:         0px;
+        left:           200px;
+    }
+    
+    div#nomination_text_cont span{
+        font-size:      26px;
+    }
+    
+    div#nomination_text_cont p{
+        font-size:      22px;
+    }
+    
+    div#nomination_text_cont h3{
+        font-size:      32px;
     }
     
     div#main_nom_bottom_cont{
