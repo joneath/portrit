@@ -8581,6 +8581,12 @@ $(document).ready(function(){
                             $('#nom_complete_cont').append(nom_complete_html);
                             if (active_noms_cache){
                                 active_noms_cache[data[i].id] = data[i];
+                                if (active_nom_cats_map[data[i].nomination_category.replace(' ', '_').toLowerCase()]){
+                                    active_nom_cats_map[data[i].nomination_category.replace(' ', '_').toLowerCase()].push(data[i].id);
+                                }
+                                else{
+                                    active_nom_cats_map[data[i].nomination_category.replace(' ', '_').toLowerCase()] = [data[i].id];
+                                }
                             }
                             if (user_winning_noms_cache[selected_user]){
                                 user_winning_noms_cache[selected_user].active_nom_objs.push(data[i]);
@@ -9078,12 +9084,12 @@ $(document).ready(function(){
         else if (url_vars.nom_id !== undefined){
             clear_canvas(url_vars);
             attach_nom_detail_handlers();
-            // if (isEmpty(active_noms_cache)){
+            if (isEmpty(active_noms_cache)){
                 get_user_feed(nom_detail_view, 'user_stream');
-            // }
-            // else{
-            //     nom_detail_view();
-            // }
+            }
+            else{
+                nom_detail_view();
+            }
             $('html, body').scrollTop(0);
         }
         else if (url_vars['recent-winners'] != undefined){
