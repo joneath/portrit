@@ -158,6 +158,10 @@ div#context_cont{
         width:      400px;
     }
     
+    div.recent_nom_photo_left_cont div#nominator_overlay_cont{
+        width:      400px;
+    }
+    
     .recent_nom_photo_left_wrap img{
         max-width:  400px;
     }
@@ -229,6 +233,10 @@ div#active_cont .active_nom_cont{
     #active_cont .active_vote_cont{
         width:      80px;
     }
+    
+/*div#album_cont div.photo_album{
+    margin:             30px;
+}*/
 
 #clear_empty_search{
     right:          20px;
@@ -416,7 +424,7 @@ div#active_stream_text_cont > span{
 }
 
 .recent_nom_photo_right_cont .recent_nom_vote_count{
-    margin-top:         10px;
+    margin-top:         40px;
 }
 
 .recent_nom_cont .recent_nom_top_cont{
@@ -439,6 +447,7 @@ div#active_stream_text_cont > span{
 }
 
 .recent_nom_top_cont h2{
+    margin-top:         3px;
     width:              200px;
 }
     
@@ -619,7 +628,7 @@ div#nom_detail_cont{
         max-width:      500px;
     }
     
-    div#nominator_overlay_cont{
+    div#main_nom_cont_left_wrap div#nominator_overlay_cont{
         bottom:         250px;
         width:          500px;
     }

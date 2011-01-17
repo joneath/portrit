@@ -27,10 +27,20 @@ def get_trophy_wins(request):
             data = [ ]
             user_id = request.GET.get('user')
             cat = request.GET.get('cat')
-            
             cat = cat.replace('_', ' ').title()
-            user = FB_User.objects.get(fid=user_id)
-            winning_noms = Nomination.objects.filter(won=True, nominatee=user, nomination_category__name=cat).order_by('-current_vote_count')
+            if user_id:
+                user = FB_User.objects.get(fid=user_id)
+                winning_noms = Nomination.objects.filter(won=True, nominatee=user, nomination_category__name=cat).order_by('-current_vote_count', '-created_date')
+            else:
+                user = FB_User.objects.get(fid=int(cookie["uid"]))
+                friends = user.friends.all()
+                winning_noms = Nomination.objects.filter(
+                        Q(nominatee__in=friends) |
+                        Q(nominatee=user) |
+                        Q(nominator=user),
+                        won=False,
+                        active=True,
+                        nomination_category__name=cat).distinct('id').order_by('-current_vote_count', '-created_date')
             for nom in winning_noms.iterator():
                 comment_count = nom.get_comment_count()
                 votes = [ ]
@@ -53,7 +63,7 @@ def get_trophy_wins(request):
                     'comment_count': comment_count,
                     'vote_count': nom.current_vote_count,
                     'votes': votes,
-                })    
+                })
     except:
         pass
         
@@ -646,7 +656,7 @@ def get_top_stream(fb_user):
             Q(nominatee__in=friends) |
             Q(nominatee=fb_user) |
             Q(nominator=fb_user),
-            active=True, won=False).distinct('id').order_by('-current_vote_count')[:PAGE_SIZE]
+            active=True, won=False).distinct('id').order_by('-current_vote_count')#[:PAGE_SIZE]
             
         for nom in nominations.iterator():
             comment_count = nom.get_comment_count()

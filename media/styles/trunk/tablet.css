@@ -177,6 +177,11 @@ div#tab_nav{
     .winning_nom_cont .winning_nom_overlay{
         width:                  200px;
     }
+    
+.nom_photo_thumbnail p{
+    bottom:             -2px;
+    right:              -1px;
+}
 
 #search_empty_wrap .empty_cont{
     position:           relative;
@@ -186,6 +191,10 @@ div#tab_nav{
 div#album_cont div#trophy_cont, div#album_cont div#active_cont{
     margin-left:        10px;
     margin-right:       10px;
+}
+
+div#album_cont div.photo_album{
+    margin:             30px;
 }
 
 #notification_footer_popup{

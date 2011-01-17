@@ -1041,6 +1041,14 @@ div#wall_cont{
     font-size:          36px;
     text-align:         left;
 }
+
+    #canvas_cont .title a{
+        color:              white;
+    }
+    
+    #canvas_cont .title a:hover{
+        text-decoration:    underline;
+    }
     
 div#nom_detail_cont{
     margin:             0px auto;
@@ -1127,7 +1135,7 @@ div#nom_detail_cont{
                     max-width:          590px;
                 }
                 
-                div#nominator_overlay_cont{
+                div#main_nom_cont_left_wrap div#nominator_overlay_cont{
                     background:         rgba(0,0,0,0.7);
                     bottom:             0px;
                     height:             50px;
@@ -1145,11 +1153,15 @@ div#nom_detail_cont{
                     }
                     
                     div#nominator_overlay_cont h2{
-                        font-size:          20px;
+                        color:              white;
+                        font-size:          16px;
                         margin-left:        55px;
+                        margin-top:         5px;
                     }
                     
                     div#nominator_overlay_cont p{
+                        color:              white;
+                        font-size:          15px;
                         margin-left:        55px;
                     }
                     
@@ -1200,6 +1212,19 @@ div#nom_detail_cont{
                     opacity:                0.8;
                 }
                 
+                div#vote_cont_left .vote:hover{
+                    opacity:                1.0;
+                }
+                
+                div#vote_cont_left .won{
+                    cursor:                 default;
+                    opacity:                0.4;
+                }
+                
+                div#vote_cont_left .won:hover{
+                    opacity:                0.4;
+                }
+                
                 div#vote_cont_left p{
                     color:                  #CB6698;
                     font-size:              40px;
@@ -1208,10 +1233,6 @@ div#nom_detail_cont{
                     position:               relative;
                     right:                  70px;
                     top:                    -110px;
-                }
-                
-                div#vote_cont_left .vote:hover{
-                    opacity:                1.0;
                 }
                 
                 div#main_nom_cont_right_wrap div#trophy_cont{
@@ -1274,7 +1295,7 @@ div#nom_detail_cont{
                         }
                 
                         div#nomination_text_cont p{
-
+                            font-size:              18px;
                         }
                     
                         div#nomination_text_cont h3{
@@ -2706,8 +2727,8 @@ div#user_profile_cont{
             #profile_right_cont > h2 {
                 text-align:             center;
                 font-size:              24px;
-                padding-top:            20px;
-                padding-bottom:         16px;
+                padding-top:            26px;
+                padding-bottom:         11px;
             }
         
             div#profile_right_cont .active_nom_cont{
@@ -3095,7 +3116,7 @@ div#wall_cont div#profile_wrap{
         background-color:   white;
         font-size:          20px;
         padding:            14px;
-        margin:             20px 25px;
+        margin:             15px 25px;
         position:           relative;
         text-align:         center;
         -webkit-border-radius:  15px;
@@ -3155,7 +3176,7 @@ div#wall_cont div#profile_wrap{
             }
         
         .top_nom_cont .top_nom_bottom_cont{
-            height:             45px;
+            height:             35px;
         }
         
             .top_nom_bottom_cont a{
@@ -3169,26 +3190,51 @@ div#wall_cont div#profile_wrap{
             .top_nom_bottom_cont .top_nom_comment_cont{
                 background-color:       #dedede;
                 float:                  left;
-                height:                 45px;
+                height:                 35px;
                 text-align:             center;
                 width:                  165px;
             }
             
                 .top_nom_comment_cont p{
-                    margin-top:             15px;
+                    margin-top:             10px;
                 }
             
             .top_nom_bottom_cont .top_nom_vote_count{
                 background-color:       white;
                 float:                  left;
-                height:                 45px;
+                height:                 35px;
                 text-align:             center;
                 width:                  115px;
             }
             
                 .top_nom_vote_count p{
-                    margin-top:             15px;
+                    margin-top:             10px;
                 }
+                
+        #top_right_cont #portrit_friends_cont{
+            margin:             0px 25px;
+            position:           relative;
+        }
+        
+            #portrit_friends_cont h2{
+                color:          white;
+                font-size:      18px;
+                font-weight:    bold;
+                text-align:     center;
+            }
+            
+            #portrit_friends_cont p{
+                color:          white;
+                font-size:      13px;
+                text-align:     center;
+            }
+        
+            #portrit_friends_cont a{
+                display: inline-block;
+                height: 50px;
+                padding: 5px;
+                width: 50px;
+            }
                 
         #top_right_cont #top_friends{
             text-align:         center;
@@ -3290,35 +3336,44 @@ div#wall_cont div#profile_wrap{
     .recent_nom_cont .recent_nom_photo_left_cont{
         background-color:           black;
         float:                      left;
-        height:                     350px;
+        height:                     250px;
+        position:                   relative;
         width:                      466px;
     }
+    
+        div.recent_nom_photo_left_cont div#nominator_overlay_cont{
+            background:         rgba(0,0,0,0.7);
+            bottom:             0px;
+            height:             50px;
+            position:           absolute;
+            text-align:         left;
+            width:              466px;
+        }
     
         .recent_nom_photo_left_cont .recent_nom_photo_left_wrap{
             display:                    table-cell;
             position:                   relative;
             text-align:                 center;
             vertical-align:             middle;
-            height:                     350px;
+            height:                     250px;
             width:                      466px;
         }
         
             .recent_nom_photo_left_wrap img{
-                max-height:                 350px;
+                max-height:                 250px;
                 max-width:                  466px;
             }
     
     .recent_nom_cont .recent_nom_photo_right_cont{
         background-color:       #aeaeae;
         float:                  left;
-        height:                 350px;
+        height:                 250px;
         text-align:             center;
         width:                  179px;
     }
     
         .recent_nom_photo_right_cont .recent_nom_vote_count{
             color:                  white;
-            margin-top:             40px;
         }
         
             .recent_nom_vote_count h2{
@@ -3642,7 +3697,7 @@ div#album_cont{
         display:            inline-block;
         position:           relative;
         width:              175px;
-        margin:             40px 40px 50px 40px;
+        margin:             40px
     }
     
     div.photo_album:hover{

@@ -2282,7 +2282,7 @@ $(document).ready(function(){
     }
     
     function init_view(func_ptr){
-        $('#cont').append('<img id="login_loader" src="/site_media/img/loader_main.gif"/>');
+        $('#cont').append('<img id="login_loader" src="/site_media/img/album-loader-dark.gif"/>');
         if (window.localStorage !== undefined){
             me = localStorage.getItem('me');
             photo_filter = localStorage.getItem('photo_filter');
@@ -2321,12 +2321,14 @@ $(document).ready(function(){
                 });
                 wait_for_message();
                 load_user_data();
+                render_notifications(notification_data);
             });
         }
         else{
             me = JSON.parse(me);
             wait_for_message();
             load_user_data();
+            render_notifications(notification_data);
         }
         if (window.sessionStorage !== undefined){
             friends = sessionStorage.getItem('friends');   
@@ -2343,7 +2345,6 @@ $(document).ready(function(){
                 $('#header').css({'border-bottom': '1px solid #1E1E1E'});
                 
                 load_friends();
-                render_notifications(notification_data);
                 //Run func ptr
                 func_ptr();
             });   
@@ -2357,7 +2358,6 @@ $(document).ready(function(){
             $('#header').css({'border-bottom': '1px solid #1E1E1E'});
             
             load_friends();
-            render_notifications(notification_data);
             func_ptr();
         }
     }
@@ -2843,6 +2843,7 @@ $(document).ready(function(){
         user_books = null;
         selected_user = '';
         selected_album_id = '';
+        albums = null;
         photo_comment_cache = { };
         $('#main_view_control').remove();
         var friend_view_selected = '';
@@ -3101,6 +3102,21 @@ $(document).ready(function(){
         }
     }
     
+    function sort_noms_by_votes(nom_dict, nom_list){
+        var temp_array = [ ];
+        for (var i = 0; i < nom_list.length; i++){
+            temp_array.push(nom_dict[nom_list[i]]);
+        }
+        temp_array.sort(function(a, b){
+            return b.vote_count - a.vote_count;
+        });
+        nom_list = [ ];
+        for (var i = 0; i < temp_array.length; i++){
+            nom_list.push(temp_array[i].id);
+        }
+        return nom_list;
+    }
+    
     function nom_detail_view(data){
         view_active = 'nom_detail';
         var nom_id = getUrlVars().nom_id,
@@ -3117,7 +3133,8 @@ $(document).ready(function(){
             voted_cont_html = '',
             nom_winning_text = '',
             selected_nom_photo = null,
-            trophy_size = '';
+            trophy_size = '',
+            vote_class = '',
             title = '';
             
         if (trophy != undefined){
@@ -3125,6 +3142,7 @@ $(document).ready(function(){
             nom = data[0];
             noms_in_cat = data
             active_cache = data;
+            vote_class = "won";
             
             var name = '';
             if (friends[nom.nominatee]){
@@ -3141,12 +3159,13 @@ $(document).ready(function(){
                 winning_name = name.split(' ')[0] + '\'s';
             }
             
-            title = '<h1 class="title" name="' + nom.nomination_category + '">' + winning_name + ' Winning <span class="nom_cat_' + nom.nomination_category.replace(' ', '_').toLowerCase() + '_text">' + nom.nomination_category + '</span> Photos</h1>';
+            title = '<h1 class="title" name="' + nom.nomination_category + '"><a href="/#/user=' + nom.nominatee + '">' + winning_name + '</a> Winning <span class="nom_cat_' + nom.nomination_category.replace(' ', '_').toLowerCase() + '_text">' + nom.nomination_category + '</span> Photos</h1>';
         }
         else if (won != undefined){
             won = true;
             nom = winning_noms_cache[nom_id];
             active_cache = winning_noms_cache;
+            vote_class = "won";
             
             var name = '';
             if (friends[nom.nominatee]){
@@ -3163,7 +3182,7 @@ $(document).ready(function(){
                 winning_name = name.split(' ')[0] + '\'s';
             }
             
-            title = '<h1 class="title" name="' + nom.nomination_category + '">' + winning_name + ' Winning <span class="nom_cat_' + nom.nomination_category.replace(' ', '_').toLowerCase() + '_text">' + nom.nomination_category + '</span> Photo</h1>';
+            title = '<h1 class="title" name="' + nom.nomination_category + '"><a href="/#/user=' + nom.nominatee + '">' + winning_name + '</a> Winning <span class="nom_cat_' + nom.nomination_category.replace(' ', '_').toLowerCase() + '_text">' + nom.nomination_category + '</span> Photo</h1>';
         }
         else{
             nom = active_noms_cache[nom_id];
@@ -3206,13 +3225,13 @@ $(document).ready(function(){
                     selected_nom_photo = 'nom_photo_' + nom_in_cat.id;
                     nom_stream_html +=  '<div id="nom_photo_' + nom_in_cat.id + '" class="nom_photo_thumbnail" style="height:' + nom_in_cat.photo.small_height + 'px; opacity: 1.0;" name="selected">' +
                                             '<img src="' + nom_in_cat.photo.src_small + '"/>' +
-                                            '<p class="nom_cat_' + nom_in_cat.nomination_category.replace(' ', '_').toLowerCase() + '">' + nom_in_cat.vote_count + '</p>' +
+                                            // '<p class="nom_cat_' + nom_in_cat.nomination_category.replace(' ', '_').toLowerCase() + '">' + nom_in_cat.vote_count + '</p>' +
                                         '</div>';
                 }
                 else{
                     nom_stream_html +=  '<div id="nom_photo_' + nom_in_cat.id + '" class="nom_photo_thumbnail" style="height:' + nom_in_cat.photo.small_height + 'px; opacity: 0.6;">' +
                                             '<img src="' + nom_in_cat.photo.src_small + '"/>' +
-                                            '<p class="nom_cat_' + nom_in_cat.nomination_category.replace(' ', '_').toLowerCase() + '">' + nom_in_cat.vote_count + '</p>' +
+                                            // '<p class="nom_cat_' + nom_in_cat.nomination_category.replace(' ', '_').toLowerCase() + '">' + nom_in_cat.vote_count + '</p>' +
                                         '</div>';            
                 }        
             }
@@ -3220,19 +3239,20 @@ $(document).ready(function(){
         }
         else if (!won){
             nom_stream_html = '<div id="nom_cat_stream"><img class="prev_photo" src="/site_media/img/backgallery-small.png"><img class="next_photo" src="/site_media/img/forwardgallery-small.png">';
+            noms_in_cat = sort_noms_by_votes(active_cache, noms_in_cat);
             for (var i = 0; i < noms_in_cat.length; i++){
                 nom_in_cat = active_cache[noms_in_cat[i]];
                 if (nom_in_cat.id == nom.id){
                     selected_nom_photo = 'nom_photo_' + nom_in_cat.id;
                     nom_stream_html +=  '<div id="nom_photo_' + nom_in_cat.id + '" class="nom_photo_thumbnail" style="height:' + nom_in_cat.photo.small_height + 'px; opacity: 1.0;" name="selected">' +
                                             '<img src="' + nom_in_cat.photo.src_small + '"/>' +
-                                            '<p class="nom_cat_' + nom_in_cat.nomination_category.replace(' ', '_').toLowerCase() + '">' + nom_in_cat.vote_count + '</p>' +
+                                            '<p class="nom_cat_' + nom_in_cat.nomination_category.replace(' ', '_').toLowerCase() + '">' + getGetOrdinal(i + 1) + '</p>' +
                                         '</div>';
                 }
                 else{
                     nom_stream_html +=  '<div id="nom_photo_' + nom_in_cat.id + '" class="nom_photo_thumbnail" style="height:' + nom_in_cat.photo.small_height + 'px; opacity: 0.6;">' +
                                             '<img src="' + nom_in_cat.photo.src_small + '"/>' +
-                                            '<p class="nom_cat_' + nom_in_cat.nomination_category.replace(' ', '_').toLowerCase() + '">' + nom_in_cat.vote_count + '</p>' +
+                                            '<p class="nom_cat_' + nom_in_cat.nomination_category.replace(' ', '_').toLowerCase() + '">' + getGetOrdinal(i + 1) + '</p>' +
                                         '</div>';            
                 }        
             }
@@ -3284,16 +3304,19 @@ $(document).ready(function(){
                                         '<h2>Votes</h2>' +
                                         '<div id="vote_cont">' +
                                             '<div id="vote_cont_left">' +
-                                                '<img class="vote vote_up" name="' + nom.id + '" src="/site_media/img/up_detailed.png"/>' +
-                                                '<img class="vote vote_down" name="' + nom.id + '" src="/site_media/img/down_detailed.png"/>' +
+                                                '<img class="vote vote_up ' + vote_class + '" name="' + nom.id + '" src="/site_media/img/up_detailed.png"/>' +
+                                                '<img class="vote vote_down ' + vote_class + '" name="' + nom.id + '" src="/site_media/img/down_detailed.png"/>' +
                                                 '<p id="nom_vote_count">' + nom.vote_count + '</p>' +
                                             '</div>' +
                                             '<div class="clear"></div>' +
                                         '</div>' +
                                         '<div id="trophy_cont" class="nom_cat_' + nom.nomination_category.replace(' ', '_').toLowerCase() + '">' +
                                             '<div id="nomination_text_cont">' +
-                                                '<img class="user_img" src="https://graph.facebook.com/' + nom.nominatee + '/picture?type=square"/>' +
-                                                '<a href="/#/user=' + nom.nominatee + '"><span class="strong">' + name + '</span></a><p>' + nom_winning_text + '</p>' +
+                                                '<a href="/#/user=' + nom.nominatee + '">' +
+                                                    '<img class="user_img" src="https://graph.facebook.com/' + nom.nominatee + '/picture?type=square"/>' +
+                                                    '<span class="strong">' + name + '</span>' +
+                                                '</a>' + 
+                                                '<p>' + nom_winning_text + '</p>' +
                                                 '<h3>' + nom.nomination_category + '</h3>' +
                                                 '<img id="nom_trophy_icon" src="/site_media/img/trophies/' + trophy_size + '/' + nom.nomination_category.replace(' ', '_').toLowerCase() + '.png"/>' +
                                             '</div>' +
@@ -3656,7 +3679,7 @@ $(document).ready(function(){
                                                 '<a href="/#/nom_id=' + data.active_nom_objs[i].id + '">' +
                                                     '<p>Comments: <span class="strong">' + data.active_nom_objs[i].comment_count + '</span></p>' +
                                                 '</a>' +
-                                            '</div' +
+                                            '</div>' +
                                             '<div class="active_vote_cont">' +
                                                 '<a href="/#/nom_id=' + data.active_nom_objs[i].id + '">' +
                                                     '<p>Votes: <span class="strong">' + data.active_nom_objs[i].vote_count + '</span></p>' +
@@ -4201,9 +4224,7 @@ $(document).ready(function(){
                                                     '</a>' +
                                                 '</div>' +
                                                 '<div class="nom_cat_text_cont">' +
-                                                    '<a href="#/trophy/cat=' +  nom_cat_underscore + '">' +
-                                                        '<h1>' + nom_data[k].nomination_category + '</h1>' +
-                                                    '</a>' +
+                                                    '<h1>' + nom_data[k].nomination_category + '</h1>' +
                                                 '</div>' +
                                                 '<div class="clear"></div>' +
                                             '</div>';
@@ -4218,7 +4239,7 @@ $(document).ready(function(){
                                         '<div class="nom_cat_stream_cont">' + 
                                             '<div id="nom_photo_' + nom_data[k].id + '" class="nom_photo_thumbnail" name="selected" style="opacity: 1.0; left:' + small_photo_offset + 'px;">' +
                                                 '<img id="nom_photo_' + nom_data[k].id + '" src="' + nom_data[k].photo.src_small + '"/>' +
-                                                '<p class="nom_cat_' + nom_data[k].nomination_category.replace(' ', '_').toLowerCase() + '">' + nom_data[k].vote_count + '</p>' +
+                                                '<p class="nom_cat_' + nom_data[k].nomination_category.replace(' ', '_').toLowerCase() + '">' + getGetOrdinal(k + 1) + '</p>' +
                                             '</div>' +
                                         '</div>' +
                                         '<div class="nom_cat_main_photo_cont">' +
@@ -4248,7 +4269,7 @@ $(document).ready(function(){
                         small_photo_offset = first_offset + prev_offset_width;
                         var img_scroller_html = '<div id="nom_photo_' + nom_data[k].id + '" class="nom_photo_thumbnail" style="opacity: 0.6; left:' + small_photo_offset + 'px;">' +
                                                     '<img id="nom_photo_' + nom_data[k].id + '" src="' + nom_data[k].photo.src_small + '"/>' +
-                                                    '<p class="nom_cat_' + nom_data[k].nomination_category.replace(' ', '_').toLowerCase() + '">' + nom_data[k].vote_count + '</p>' +
+                                                    '<p class="nom_cat_' + nom_data[k].nomination_category.replace(' ', '_').toLowerCase() + '">' + getGetOrdinal(k + 1) + '</p>' +
                                                 '</div>';
                         $('.nom_cat_stream_cont:last').append(img_scroller_html);
                     }
@@ -4982,7 +5003,14 @@ $(document).ready(function(){
             time_diff = null,
             now = new Date(),
             comment_html = '',
-            recent_nom_html = '';
+            recent_nom_html = '',
+            nominator_name = '',
+            nominator_caption = '',
+            trophy_size = 'large';
+            
+        if (mobile && !tablet){
+            trophy_size = 'medium';
+        }
         for (var i = 0; i < noms.length; i++){
             nom = noms[i]
             nom_cat_text = nom.nomination_category;
@@ -5005,6 +5033,22 @@ $(document).ready(function(){
             else{
                 name = '';
             }
+            nominator_name = '';
+            nominator_caption = '';
+            if (nom.nominator == me.id){
+                nominator_name = 'You';
+            }
+            else if (friends[nom.nominator]){
+                nominator_name = friends[nom.nominator].name;
+            }
+            else{
+                nominator_name = '';
+            }
+            
+            if (nom.caption){
+                nominator_caption = nom.caption;
+            }
+            
             user_thumbnail = '<img src="https://graph.facebook.com/' + nom.nominatee + '/picture?type=square"/>';
             photo_thumbnail = '<img src="' + nom.photo.src + '"/>';
             
@@ -5028,12 +5072,19 @@ $(document).ready(function(){
                                             '<div class="recent_nom_photo_left_wrap">' +
                                                 '<a href="#/nom_id=' + nom.id + '">' +
                                                     photo_thumbnail +
+                                                    '<div id="nominator_overlay_cont">' +
+                                                        '<a href="/#/user=' + nom.nominator + '"><img class="user_img" src="https://graph.facebook.com/' + nom.nominator + '/picture?type=square"/></a>' +
+                                                        '<h2>Nominated by <span class="strong"><a href="/#/user=' + nom.nominator + '">' + nominator_name + '</a></span></h2>' +
+                                                        '<p>' + nominator_caption + '</p>' +
+                                                    '</div>' +
                                                 '</a>' +
                                             '</div>' +
                                         '</div>' +
                                         '<div class="recent_nom_photo_right_cont">' +
                                             '<div class="recent_nom_vote_count nom_vote_' + nom.id + '">' +
-                                                '<img src="/site_media/img/trophies/medium/' + nom_cat_underscore + '.png">' + 
+                                                '<a href="/#/trophy=' + nom_cat_underscore + '">' +
+                                                    '<img src="/site_media/img/trophies/' + trophy_size + '/' + nom_cat_underscore + '.png">' +
+                                                '</a>' 
                                                 '<a href="#/nom_id=' + nom.id + '/votes">' +
                                                     '<h2 class="nom_cat_' + nom_cat_underscore + '">Votes: <span class="strong">' + nom.vote_count + '</span></h2>' +
                                                 '</a>' +
@@ -5077,7 +5128,14 @@ $(document).ready(function(){
             comment_html = '',
             more_comment_html = '',
             commentor_name = '',
-            recent_nom_html = '';
+            recent_nom_html = '',
+            nominator_name = '',
+            nominator_caption = '',
+            trophy_size = 'large';
+            
+        if (mobile && !tablet){
+            trophy_size = 'medium';
+        }
         for (var i = 0; i < recent_noms.length; i++){
             nom = recent_noms[i]
             nom_cat_text = nom.nomination_category;
@@ -5141,6 +5199,22 @@ $(document).ready(function(){
                                 '</div>';
             }
             
+            nominator_name = '';
+            nominator_caption = '';
+            if (nom.nominator == me.id){
+                nominator_name = 'You';
+            }
+            else if (friends[nom.nominator]){
+                nominator_name = friends[nom.nominator].name;
+            }
+            else{
+                nominator_name = '';
+            }
+            
+            if (nom.caption){
+                nominator_caption = nom.caption;
+            }
+            
             time = new Date(nom.created_time * 1000);
             time_diff = now - time;
             time_diff /= 1000;
@@ -5157,12 +5231,19 @@ $(document).ready(function(){
                                             '<div class="recent_nom_photo_left_wrap">' +
                                                 '<a href="#/nom_id=' + nom.id + '">' +
                                                     photo_thumbnail +
+                                                    '<div id="nominator_overlay_cont">' +
+                                                        '<a href="/#/user=' + nom.nominator + '"><img class="user_img" src="https://graph.facebook.com/' + nom.nominator + '/picture?type=square"/></a>' +
+                                                        '<h2>Nominated by <span class="strong"><a href="/#/user=' + nom.nominator + '">' + nominator_name + '</a></span></h2>' +
+                                                        '<p>' + nominator_caption + '</p>' +
+                                                    '</div>' +
                                                 '</a>' +
                                             '</div>' +
                                         '</div>' +
                                         '<div class="recent_nom_photo_right_cont">' +
                                             '<div class="recent_nom_vote_count nom_vote_' + nom.id + '">' +
-                                                '<img src="/site_media/img/trophies/large/' + nom_cat_underscore + '.png">' + 
+                                                '<a href="/#/trophy=' + nom_cat_underscore + '" title="' + nom_cat_text + '">' +
+                                                    '<img src="/site_media/img/trophies/' + trophy_size + '/' + nom_cat_underscore + '.png">' +
+                                                '</a>' +
                                                 '<a href="#/nom_id=' + nom.id + '/votes">' +
                                                     '<h2 class="nom_cat_' + nom_cat_underscore + '">Votes: <span class="strong">' + nom.vote_count + '</span></h2>' +
                                                 '</a>' +
@@ -5196,6 +5277,22 @@ $(document).ready(function(){
         }
     }
     
+    function render_users_friends(friends){
+        $('#top_right_cont').append('<h1><span class="strong">Portrit</span> Friends</h1><div id="portrit_friends_cont"><p class="tooltip"></p></div>');
+        var friend_html = '';
+        if (friends.length > 1){
+            for (var i = 0; i < friends.length; i++){
+                friend_html =   '<a href="/#/user=' + friends[i].id + '" name="' + friends[i].name + '">' +
+                                    '<img src="https://graph.facebook.com/' + friends[i].id + '/picture?type=square"/>' +
+                                '</a>';
+                $('#portrit_friends_cont').append(friend_html);
+            }
+        }
+        else{
+            $('#portrit_friends_cont').append('<h2>You have no Portrit friends :(</h2><p>Nominate some photos to make it a party.</p>');
+        }
+    }
+    
     function render_top_noms(top_noms){
         var nom = null,
             nom_cat_text = '',
@@ -5204,9 +5301,13 @@ $(document).ready(function(){
             photo_thumbnail = '',
             vote_count = 0,
             name = '',
-            top_nom_html = '';
+            top_nom_html = '',
+            top = 5;
             
         $('#top_right_cont').append('<h1>The Daily <span class="strong">Leaderboard</h1>');
+        if (top_noms.length < top){
+            top = top_noms.length;
+        }
         for (var i = 0; i < top_noms.length; i++){
             nom = top_noms[i];
             nom_cat_text = nom.nomination_category;
@@ -5220,50 +5321,52 @@ $(document).ready(function(){
                     active_nom_cats_map[nom_cat_underscore] = [nom.id];
                 }
             }
-            if (friends[nom.nominatee]){
-                name = friends[nom.nominatee].name;
-            }
-            else if (nom.nominatee == me.id){
-                name = 'You';
-            }
-            else{
-                name = '';
-            }
-            user_thumbnail = '<img src="https://graph.facebook.com/' + nom.nominatee + '/picture?type=square"/>';
-            photo_thumbnail = '<img src="' + nom.photo.src_small + '"/>';
-            
-            top_nom_html =  '<div class="top_nom_cont">' +
-                                '<a href="#/user=' + nom.nominatee + '"><h2>' + name + '</h2></a>' +
-                                    '<div class="top_nom_wrap">' +
-                                    '<div class="top_nom_left_cont nom_cat_' + nom_cat_underscore + '">' +
-                                        '<a href="#/user=' + nom.nominatee + '" name="' + name + '">' +
-                                            user_thumbnail +
-                                        '</a>' +
-                                        '<p class="vote_count">' + getGetOrdinal(i + 1) + '</p>' +
-                                    '</div>' +
-                                    '<div class="top_nom_right_cont">' +
-                                        '<a href="#/nom_id=' + nom.id + '">' +
-                                            photo_thumbnail +
-                                        '</a>' +
-                                    '</div>' +
-                                    '<div class="clear"></div>' +
-                                    '<div class="top_nom_bottom_cont">' +
-                                        '<div class="top_nom_comment_cont nom_comment_' + nom.id + '">' +
-                                            '<a href="#/nom_id=' + nom.id + '">' +
-                                                '<p>Comments: <span class="strong">' + nom.comment_count + '</span></p>' +
+            if (i < top){
+                if (friends[nom.nominatee]){
+                    name = friends[nom.nominatee].name;
+                }
+                else if (nom.nominatee == me.id){
+                    name = 'You';
+                }
+                else{
+                    name = '';
+                }
+                user_thumbnail = '<img src="https://graph.facebook.com/' + nom.nominatee + '/picture?type=square"/>';
+                photo_thumbnail = '<img src="' + nom.photo.src_small + '"/>';
+
+                top_nom_html =  '<div class="top_nom_cont">' +
+                                    '<a href="#/user=' + nom.nominatee + '"><h2>' + name + '</h2></a>' +
+                                        '<div class="top_nom_wrap">' +
+                                        '<div class="top_nom_left_cont nom_cat_' + nom_cat_underscore + '">' +
+                                            '<a href="#/user=' + nom.nominatee + '" name="' + name + '">' +
+                                                user_thumbnail +
                                             '</a>' +
+                                            '<p class="vote_count">' + getGetOrdinal(i + 1) + '</p>' +
                                         '</div>' +
-                                        '<div class="top_nom_vote_count nom_vote_' + nom.id + '">' +
+                                        '<div class="top_nom_right_cont">' +
                                             '<a href="#/nom_id=' + nom.id + '">' +
-                                                '<p>Votes: <span class="strong">' + nom.vote_count + '</span></p>' +
+                                                photo_thumbnail +
                                             '</a>' +
                                         '</div>' +
                                         '<div class="clear"></div>' +
+                                        '<div class="top_nom_bottom_cont">' +
+                                            '<div class="top_nom_comment_cont nom_comment_' + nom.id + '">' +
+                                                '<a href="#/nom_id=' + nom.id + '">' +
+                                                    '<p>Comments: <span class="strong">' + nom.comment_count + '</span></p>' +
+                                                '</a>' +
+                                            '</div>' +
+                                            '<div class="top_nom_vote_count nom_vote_' + nom.id + '">' +
+                                                '<a href="#/nom_id=' + nom.id + '">' +
+                                                    '<p>Votes: <span class="strong">' + nom.vote_count + '</span></p>' +
+                                                '</a>' +
+                                            '</div>' +
+                                            '<div class="clear"></div>' +
+                                        '</div>' +
                                     '</div>' +
-                                '</div>' +
-                            '</div>';
-                            
-            $('#top_right_cont').append(top_nom_html);
+                                '</div>';
+
+                $('#top_right_cont').append(top_nom_html);
+            }
         }
     }
     
@@ -5564,6 +5667,7 @@ $(document).ready(function(){
                 show_stream_fixtures();
                 render_recent_stream(data.recent);
                 if (!mobile || tablet){
+                    render_users_friends(portrit_friends);
                     render_top_noms(data.top);
                     render_top_users(data.top_users);
                 }
@@ -7119,52 +7223,60 @@ $(document).ready(function(){
     function vote_up_handler(){
         var that = this;
         var nomination_id = $(this).attr('name');
-        $.post('/vote/', {'method': 'up', 'nomination_id': nomination_id}, function(data){
-            if (data){
-                var vote_count_elm = $(that).parent().children().filter('p');
-                $(vote_count_elm).text(data.vote_count);
-                active_noms_cache[nomination_id].vote_count = data.vote_count;
-                active_noms_cache[nomination_id].votes.push({'vote_user': me.id, 'vote_name': me.name});
-                
-                var vote_profile_pic_html = '<a href="#/user=' + me.id + '" class="clear_profile" id="voted_' + me.id + '" name="' + me.name + '">' +
-                                                '<img src="https://graph.facebook.com/' + me.id + '/picture?type=square"/>' +
-                                            '</a>';
-                if (view_active == 'nom_detail'){
-                    $('#nom_votes_wrap').append(vote_profile_pic_html);
-                    $('.nom_photo_thumbnail[name="selected"] p').text(data.vote_count);
+        if ($(this).hasClass('won') == false){
+            $.post('/vote/', {'method': 'up', 'nomination_id': nomination_id}, function(data){
+                if (data){
+                    var vote_count_elm = $(that).parent().children().filter('p');
+                    $(vote_count_elm).text(data.vote_count);
+                    if (active_noms_cache[nomination_id]){
+                        active_noms_cache[nomination_id].vote_count = data.vote_count;
+                        active_noms_cache[nomination_id].votes.push({'vote_user': me.id, 'vote_name': me.name});
+                    }
+
+                    var vote_profile_pic_html = '<a href="#/user=' + me.id + '" class="clear_profile" id="voted_' + me.id + '" name="' + me.name + '">' +
+                                                    '<img src="https://graph.facebook.com/' + me.id + '/picture?type=square"/>' +
+                                                '</a>';
+                    if (view_active == 'nom_detail'){
+                        $('#nom_votes_wrap').append(vote_profile_pic_html);
+                        // $('.nom_photo_thumbnail[name="selected"] p').text(data.vote_count);
+                    }
+                    else{
+                        $('#nom_' + nomination_id + ' .voted_cont').append(vote_profile_pic_html);
+                    }
+                    update_nom_stream_vote_count(nomination_id, data);
                 }
-                else{
-                    $('#nom_' + nomination_id + ' .voted_cont').append(vote_profile_pic_html);
-                }
-                update_nom_stream_vote_count(nomination_id, data);
-            }
-        });
+            });
+        }
     }
     
     function vote_down_handler(){
         var that = this;
         var nomination_id = $(this).attr('name');
-        $.post('/vote/', {'method': 'down', 'nomination_id': nomination_id}, function(data){
-            if (data){
-                var vote_count_elm = $(that).parent().children().filter('p');
-                $(vote_count_elm).text(data.vote_count);
-                active_noms_cache[nomination_id].vote_count = data.vote_count;
-                active_noms_cache[nomination_id].votes.push({'vote_user': me.id, 'vote_name': me.name});
+        if ($(this).hasClass('won') == false){
+            $.post('/vote/', {'method': 'down', 'nomination_id': nomination_id}, function(data){
+                if (data){
+                    var vote_count_elm = $(that).parent().children().filter('p');
+                    $(vote_count_elm).text(data.vote_count);
+                    if (active_noms_cache[nomination_id]){
+                        active_noms_cache[nomination_id].vote_count = data.vote_count;
+                        active_noms_cache[nomination_id].votes.push({'vote_user': me.id, 'vote_name': me.name});
+                    }
                 
-                var vote_profile_pic_html = '<a href="#/user=' + me.id + '" class="clear_profile" id="voted_' + me.id + '" name="' + me.name + '">' +
-                                                '<img src="https://graph.facebook.com/' + me.id + '/picture?type=square"/>' +
-                                            '</a>';
+                    var vote_profile_pic_html = '<a href="#/user=' + me.id + '" class="clear_profile" id="voted_' + me.id + '" name="' + me.name + '">' +
+                                                    '<img src="https://graph.facebook.com/' + me.id + '/picture?type=square"/>' +
+                                                '</a>';
                 
-                if (view_active == 'nom_detail'){
-                    $('#nom_votes_wrap').append(vote_profile_pic_html);
-                    $('.nom_photo_thumbnail[name="selected"] p').text(data.vote_count);
+                    if (view_active == 'nom_detail'){
+                        $('#nom_votes_wrap').append(vote_profile_pic_html);
+                        // $('.nom_photo_thumbnail[name="selected"] p').text(data.vote_count);
+                    }
+                    else{
+                        $('#nom_' + nomination_id + ' .voted_cont').append(vote_profile_pic_html);
+                    }
+                    update_nom_stream_vote_count(nomination_id, data);
                 }
-                else{
-                    $('#nom_' + nomination_id + ' .voted_cont').append(vote_profile_pic_html);
-                }
-                update_nom_stream_vote_count(nomination_id, data);
-            }
-        });
+            });
+        }
     }
     
     $('#close_overlay').live('click', function(){
@@ -7593,6 +7705,14 @@ $(document).ready(function(){
         //     }
         // }
         
+        $('#portrit_friends_cont > a').live('mouseover mouseout', function(event) {
+            if (event.type == 'mouseover') {
+                show_like_tooltip(this);
+            } else {
+                hide_like_tooltip(this);
+            }
+        });
+        
         $('.add_new_comment').live('click', function(){
             var nom_id = $(this).parent().attr('value');
             var new_comment_html =  '<div class="new_comment_cont" style="display:none;">' +
@@ -7605,7 +7725,7 @@ $(document).ready(function(){
             $(this).parent().after(new_comment_html);
             if (!mobile){
                 $(this).fadeOut();
-                $(this).parent().parent().find('.new_comment_cont').slideDown(function(){
+                $(this).parent().parent().find('.new_comment_cont').slideDown('fast', function(){
                     $('.comment_body', this).focus();
                 });
             }
@@ -7619,7 +7739,7 @@ $(document).ready(function(){
         $('.cancel_new_comment').live('click', function(){
             var comment_cont = $(this).parent().parent();
             if (!mobile){
-                $(comment_cont).slideUp(function(){
+                $(comment_cont).slideUp('fast', function(){
                     $(this).remove();
                 });
                 $(comment_cont).parent().find('.add_new_comment').fadeIn();
@@ -8568,6 +8688,7 @@ $(document).ready(function(){
         // $('.control_click').die('click');
         $('.profile_link').die('click');
         $('.photo_album').die('click');
+        $('#load_more').die('click');
         
         //Info
         $('#show_all_mutual').die('click');
@@ -8618,6 +8739,7 @@ $(document).ready(function(){
         $('#upload_photo_button').die('change');
         $('.winning_trophy_cont').die('mouseover mouseout');
         $('.trophy_album').die('click');
+        $('#portrit_friends_cont > a').die('mouseover mouseout');
         
         //Nom Detail
         $('.nom_photo_thumbnail').die('click');
@@ -8810,7 +8932,7 @@ $(document).ready(function(){
                     else if (selected_user !== undefined && selected_user != '' && selected_user != undefined){
                         user_name = friends[selected_user].name.split(" ", 1)
                     }
-                    $('#photo_list').append('<div id="album_link_loader"><h2>Loading ' + user_name + '\'s Albums...</h2><img src="/site_media/img/loader_main.gif"/></div>');
+                    $('#photo_list').append('<div id="album_link_loader"><h2>Loading ' + user_name + '\'s Albums...</h2><img src="/site_media/img/album-loader-dark.gif"/></div>');
                     clearInterval(photo_load_wait);
                     photo_load_wait = setInterval(function(){
                         if (album_completed || url_vars.album == 'tagged'){
@@ -8904,12 +9026,12 @@ $(document).ready(function(){
         else if (url_vars.nom_id !== undefined){
             clear_canvas(url_vars);
             attach_nom_detail_handlers();
-            if (isEmpty(active_noms_cache)){
+            // if (isEmpty(active_noms_cache)){
                 get_user_feed(nom_detail_view, 'user_stream');
-            }
-            else{
-                nom_detail_view();
-            }
+            // }
+            // else{
+            //     nom_detail_view();
+            // }
             $('html, body').scrollTop(0);
         }
         else if (url_vars['recent-winners'] != undefined){
