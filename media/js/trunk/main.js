@@ -1448,32 +1448,34 @@ $(document).ready(function(){
                     if (data.method == 'new_nom'){
                         for (var i = 0; i < data.payload.nom_data.length; i++){
                             //Check if notification is user
-                            if (data.payload.nom_data[i].nominatee == me.id){
-                                render_notification("new_nom", data.payload.nom_data[i]);
-                                update_notifications(data.payload.nom_data[i], 'new_nom');
-                                notifcation_cache.unshift({
-                                    'data': data.payload.nom_data[i],
-                                    'method': 'new_nom'
-                                });
-                            }
+                            if (data.payload.nom_data[i].nominator != me.id){
+                                if (data.payload.nom_data[i].nominatee == me.id){
+                                    render_notification("new_nom", data.payload.nom_data[i]);
+                                    update_notifications(data.payload.nom_data[i], 'new_nom');
+                                    notifcation_cache.unshift({
+                                        'data': data.payload.nom_data[i],
+                                        'method': 'new_nom'
+                                    });
+                                }
                             
-                            //Update my feed
-                            if (my_feed){
-                                active_noms_cache[data.payload.nom_data[i].id] = data.payload.nom_data[i];
-                                if (active_nom_cats_map[data.payload.nom_data[i].nomination_category.replace(' ', '_').toLowerCase()]){
-                                    active_nom_cats_map[data.payload.nom_data[i].nomination_category.replace(' ', '_').toLowerCase()].push(data.payload.nom_data[i].id);
-                                }
-                                else{
-                                    active_nom_cats_map[data.payload.nom_data[i].nomination_category.replace(' ', '_').toLowerCase()] = [data.payload.nom_data[i].id];
-                                }
-                                for (var k = 0; k < my_feed.length; k++){
-                                    if (my_feed[k].cat_name == data.payload.nom_data[i].nomination_category){
-                                        my_feed[k].noms.push(data.payload.nom_data[i]);
+                                //Update my feed
+                                if (my_feed){
+                                    active_noms_cache[data.payload.nom_data[i].id] = data.payload.nom_data[i];
+                                    if (active_nom_cats_map[data.payload.nom_data[i].nomination_category.replace(' ', '_').toLowerCase()]){
+                                        active_nom_cats_map[data.payload.nom_data[i].nomination_category.replace(' ', '_').toLowerCase()].push(data.payload.nom_data[i].id);
+                                    }
+                                    else{
+                                        active_nom_cats_map[data.payload.nom_data[i].nomination_category.replace(' ', '_').toLowerCase()] = [data.payload.nom_data[i].id];
+                                    }
+                                    for (var k = 0; k < my_feed.length; k++){
+                                        if (my_feed[k].cat_name == data.payload.nom_data[i].nomination_category){
+                                            my_feed[k].noms.push(data.payload.nom_data[i]);
+                                        }
                                     }
                                 }
-                            }
-                            if (user_winning_noms_cache[data.payload.nom_data[i].nominatee] && data.payload.nom_data[i].nominator != me.id){
-                                user_winning_noms_cache[data.payload.nom_data[i].nominatee].active_nom_objs.push(data.payload.nom_data[i]);
+                                if (user_winning_noms_cache[data.payload.nom_data[i].nominatee] && data.payload.nom_data[i].nominator != me.id){
+                                    user_winning_noms_cache[data.payload.nom_data[i].nominatee].active_nom_objs.push(data.payload.nom_data[i]);
+                                }
                             }
                         }
                         if (view_active == 'main' && default_view == 'wall' && stream_view == 'recent_noms'){
@@ -8577,6 +8579,9 @@ $(document).ready(function(){
                                                     'View Nomination</a>' +
                                                 '</div>';
                             $('#nom_complete_cont').append(nom_complete_html);
+                            if (active_noms_cache){
+                                active_noms_cache[data[i].id] = data[i];
+                            }
                             if (user_winning_noms_cache[selected_user]){
                                 user_winning_noms_cache[selected_user].active_nom_objs.push(data[i]);
                             }
@@ -8645,7 +8650,7 @@ $(document).ready(function(){
         $('#active_nominations_cont').html('');
         $('#nomination_comment').text('Tell your friend\'s why this photo rocks!');
         $('#nom_complete_cont').hide();
-        $('#nom_complete_cont .nom_complete_cat_cont').html('');
+        $('#nom_complete_cont .nom_complete_cat_cont').remove();
     }
     
     function append_wall_html(view_to_activate){
