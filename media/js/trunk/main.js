@@ -2808,8 +2808,8 @@ $(document).ready(function(){
             stream_view = 'top_noms';
             localStorage.removeItem('stream_view');
             localStorage.setItem('stream_view', JSON.stringify(stream_view));
-            $('#recent_noms').removeClass('strong');
-            $(this).addClass('strong');
+            $('#recent_noms').removeClass('selected');
+            $(this).addClass('selected');
             $('#profile_cont_wrap').html('<div id="scroller">' +
                                             '<div id="profile_cont"></div>' +
                                         '</div>');
@@ -2823,8 +2823,8 @@ $(document).ready(function(){
             stream_view = 'recent_noms';
             localStorage.removeItem('stream_view');
             localStorage.setItem('stream_view', JSON.stringify(stream_view));
-            $('#top_noms').removeClass('strong');
-            $(this).addClass('strong');
+            $('#top_noms').removeClass('selected');
+            $(this).addClass('selected');
             $('#profile_cont_wrap').html('<div id="scroller">' +
                                             '<div id="profile_cont"></div>' +
                                         '</div>');
@@ -2913,9 +2913,8 @@ $(document).ready(function(){
                                         // '</div>' +
                                     '</ul>' +
                                     '<div id="active_stream_text_cont">' +
-                                        '<h3 id="top_noms">Top</h3>' +
-                                        '<span> · </span>' +
-                                        '<h3 id="recent_noms">Most Recent</h3>' +
+                                        '<a id="top_noms" class="awesome large">Top</a>' +
+                                        '<a id="recent_noms" class="awesome large">Most Recent</a>' +
                                     '</div>' +
                                     '<div class="clear"></div>' +
                                     '<div id="profile_cont_wrap">' +
@@ -2935,10 +2934,10 @@ $(document).ready(function(){
                     $('#wall_cont').show();
                 }
                 if (stream_view == 'top_noms'){
-                    $('#top_noms').addClass('strong');
+                    $('#top_noms').addClass('selected');
                 }
                 else{
-                    $('#recent_noms').addClass('strong');
+                    $('#recent_noms').addClass('selected');
                 }
             }
             $('#profile_cont').hide();
@@ -4155,6 +4154,8 @@ $(document).ready(function(){
             time = null,
             time_diff = 0,
             now = new Date(),
+            caption = '',
+            nominator_name = '',
             first_offset = 0;
             
         if (!mobile || tablet){
@@ -4208,6 +4209,21 @@ $(document).ready(function(){
                         else{
                             name = '';
                         }
+                        
+                        caption = '';
+                        if (nom_data[k].caption){
+                            caption = 'Caption: ' + nom_data[k].caption;
+                        }
+                        nominator_name = '';
+                        if (nom_data[k].nominator == me.id){
+                            nominator_name = 'You';
+                        }
+                        else if (friends[nom_data[k].nominator].name){
+                            nominator_name = friends[nom_data[k].nominator].name;
+                        }
+                        else{
+                            nominator_name = '';
+                        }
 
                         for (var j = 0; j < nom_data[k].votes.length; j++){
                             friend_name = nom_data[k].votes[j].vote_name;
@@ -4252,10 +4268,17 @@ $(document).ready(function(){
                                             '</div>' +
                                         '</div>' +
                                         '<div class="nom_photo_bottom_wrap">' +
-                                            '<a href="#/nom_id=' + nom_data[k].id +'">' +
-                                                '<p class="left nom_cat_' + nom_cat_underscore + '">Comments: ' + nom_data[k].comment_count + '</p>' +
+                                            '<a href="#/user=' + nom_data[k].nominator + '" class="clear_profile">' +
+                                                '<img class="user_img" src="https://graph.facebook.com/' + nom_data[k].nominator + '/picture?type=square"/>' +
                                             '</a>' +
+                                            '<div class="nominator_cont">' +
+                                                '<h3>Nominated by <span class="strong"><a href="#/user=' + nom_data[k].nominator + '" class="clear_profile">' + nominator_name + '</a></span></h3>' +
+                                                '<p class="caption">' + caption + '</p>' +
+                                            '</div>' +
                                             '<span value="' + (nom_data[k].created_time * 1000) + '">' + secondsToHms(time_diff) + '</span>' + 
+                                            '<a href="#/nom_id=' + nom_data[k].id +'">' +
+                                                '<p class="comments nom_cat_' + nom_cat_underscore + '">Comments: ' + nom_data[k].comment_count + '</p>' +
+                                            '</a>' +
                                         '</div>' +
                                         '<div class="clear"></div>' +
                                     '</div>';
@@ -4432,13 +4455,32 @@ $(document).ready(function(){
         else if (nom_data.nominatee == me.id){
             name = 'You';
         }
+        
+        var caption = '';
+        var nominator_name = '';
+        
+        if (nom_data.caption){
+            caption = 'Caption: ' + nom_data.caption;
+        }
+        if (nom_data.nominator == me.id){
+            nominator_name = 'You';
+        }
+        else if (friends[nom_data.nominator]){
+            nominator_name = friends[nom_data.nominator].name;
+        }
+        else{
+            nominator_name = '';
+        }
 
         // $('#nom_' + active_id + ' .target_wrap h3:first').text(name);
         $('#nom_' + active_id + ' .nom_cat_user_cont h3').text(name);
-        $('#nom_' + active_id + ' .nom_photo_bottom_wrap p').text('Comments: ' + nom_data.comment_count);
-        $('#nom_' + active_id + ' .nom_photo_bottom_wrap a').attr('href', '#/nom_id=' + nom_data.id);
+        $('#nom_' + active_id + ' .nom_photo_bottom_wrap > a.clear_profile').attr('href', '/#/user=' + nom_data.nominator);
+        $('#nom_' + active_id + ' .nom_photo_bottom_wrap img.user_img').attr('src', 'https://graph.facebook.com/' + nom_data.nominator + '/picture?type=square');
+        $('#nom_' + active_id + ' .nom_photo_bottom_wrap p.comments').text('Comments: ' + nom_data.comment_count).parent().attr('href', '/#/nom_id=' + nom_data.id);
+        $('#nom_' + active_id + ' .nom_photo_bottom_wrap p.caption').text(caption);
+        $('#nom_' + active_id + ' .nom_photo_bottom_wrap .nominator_cont a').attr('href', '/#/user=' + nom_data.nominator).text(nominator_name);
         $('#nom_' + active_id + ' .vote_cont p').text(nom_data.vote_count);
-        $('#nom_' + active_id + ' .nom_cat_main_photo_wrap a').attr('href', '#/nom_id=' + nom_data.id);
+        $('#nom_' + active_id + ' .nom_cat_main_photo_wrap a').attr('href', '/#/nom_id=' + nom_data.id);
         
         var now = new Date();
         var time = new Date(nom_data.created_time * 1000);
@@ -5046,7 +5088,7 @@ $(document).ready(function(){
             }
             
             if (nom.caption){
-                nominator_caption = nom.caption;
+                nominator_caption = 'Caption: ' + nom.caption;
             }
             
             user_thumbnail = '<img src="https://graph.facebook.com/' + nom.nominatee + '/picture?type=square"/>';
@@ -5064,7 +5106,7 @@ $(document).ready(function(){
                                     '<div class="recent_nom_top_cont nom_cat_' + nom_cat_underscore + '">' +
                                         '<a href="#/user=' + nom.nominatee + '">' + user_thumbnail + '</a>' +
                                         '<a href="#/user=' + nom.nominatee + '"><h2>' + name + '</h2></a>' +
-                                        '<h3>Nominated for <a href="#/trophy=' + nom_cat_underscore + '"><span class="strong">' + nom_cat_text + '</span></a>, ' + secondsToHms(time_diff) + '</h3>' +
+                                        '<h3>Nominated for <a href="#/trophy=' + nom_cat_underscore + '"><span class="strong">' + nom_cat_text + '</span></a><span>' + secondsToHms(time_diff) + '</span></h3>' +
                                         '<div class="clear"></div>' +
                                     '</div>' +
                                     '<div class="recent_nom_photo_cont">' +
@@ -5084,7 +5126,7 @@ $(document).ready(function(){
                                             '<div class="recent_nom_vote_count nom_vote_' + nom.id + '">' +
                                                 '<a href="/#/trophy=' + nom_cat_underscore + '">' +
                                                     '<img src="/site_media/img/trophies/' + trophy_size + '/' + nom_cat_underscore + '.png">' +
-                                                '</a>' 
+                                                '</a>' +
                                                 '<a href="#/nom_id=' + nom.id + '/votes">' +
                                                     '<h2 class="nom_cat_' + nom_cat_underscore + '">Votes: <span class="strong">' + nom.vote_count + '</span></h2>' +
                                                 '</a>' +
@@ -5223,7 +5265,7 @@ $(document).ready(function(){
                                     '<div class="recent_nom_top_cont nom_cat_' + nom_cat_underscore + '">' +
                                         '<a href="#/user=' + nom.nominatee + '">' + user_thumbnail + '</a>' +
                                         '<a href="#/user=' + nom.nominatee + '"><h2>' + name + '</h2></a>' +
-                                        '<h3>Nominated for <a href="#/trophy=' + nom_cat_underscore + '"><span class="strong">' + nom_cat_text + '</span></a>, ' + secondsToHms(time_diff) + '</h3>' +
+                                        '<h3>Nominated for <a href="#/trophy=' + nom_cat_underscore + '"><span class="strong">' + nom_cat_text + '</span></a><span>' + secondsToHms(time_diff) + '</span></h3>' +
                                         '<div class="clear"></div>' +
                                     '</div>' +
                                     '<div class="recent_nom_photo_cont">' +
@@ -5280,7 +5322,7 @@ $(document).ready(function(){
     function render_users_friends(friends){
         $('#top_right_cont').append('<h1><span class="strong">Portrit</span> Friends</h1><div id="portrit_friends_cont"><p class="tooltip"></p></div>');
         var friend_html = '';
-        if (friends.length > 1){
+        if (friends.length > 0){
             for (var i = 0; i < friends.length; i++){
                 friend_html =   '<a href="/#/user=' + friends[i].id + '" name="' + friends[i].name + '">' +
                                     '<img src="https://graph.facebook.com/' + friends[i].id + '/picture?type=square"/>' +
@@ -8643,9 +8685,8 @@ $(document).ready(function(){
                                 '</div>' +
                             '</ul>' +
                             '<div id="active_stream_text_cont" style="display:none;">' +
-                                '<h3 id="top_noms">Top</h3>' +
-                                '<span> · </span>' +
-                                '<h3 id="recent_noms">Most Recent</h3>' +
+                                '<a id="top_noms" class="awesome large">Top</a>' +
+                                '<a id="recent_noms" class="awesome large">Most Recent</a>' +
                             '</div>' +
                             '<div class="clear"></div>' +
                             '<div id="profile_cont_wrap">' +
@@ -8657,10 +8698,10 @@ $(document).ready(function(){
         $('#wall_cont').append(wall_html);
         
         if (stream_view == 'top_noms'){
-            $('#top_noms').addClass('strong');
+            $('#top_noms').addClass('selected');
         }
         else{
-            $('#recent_noms').addClass('strong');
+            $('#recent_noms').addClass('selected');
         }
     }
     

@@ -385,9 +385,14 @@ div#feedback div#feedback_cont{
         height:             6em;
     }
     
+.nom_photo_bottom_wrap .nominator_cont{
+    width:              150px;
+}
+    
 div#active_stream_text_cont{
     font-size:          22px;
-    margin-top:         27px;
+    margin-top:         22px;
+    margin-right:       10px;
 }
 
 div#active_stream_text_cont > span{
@@ -428,14 +433,13 @@ div#active_stream_text_cont > span{
 }
 
 .recent_nom_cont .recent_nom_top_cont{
-    -webkit-box-shadow: rgba(0, 0, 0, 0.496094) 0px 7px 4px -3px;
-    -moz-box-shadow:    0px 7px 4px -3px rgba(0, 0, 0, 0.5);
+
 }
 
 .recent_nom_top_cont h3{
     font-size:          16px;
     margin-top:         5px;
-    width:              240px;
+/*    width:              240px;*/
 }
 
 .recent_nom_vote_count h2{
@@ -580,7 +584,7 @@ div#new_comment_cont .comment_body{
 }
 
     .nom_cat_main_photo_wrap .nom_main_photo{
-        max-height:     259px;
+        max-height:     249px;
     }
 
 .stream_photo_cont .nom_cat_main_photo_cont{
@@ -610,6 +614,15 @@ div#new_comment_cont .comment_body{
             width:              500px;
         }
         
+.recent_nom_comment_cont .recent_nom_comment_heading{
+    height:         40px;
+}
+
+div.comment_top_head a.cancel_new_comment{
+    position:       absolute;
+    left:           0px;
+}
+        
 div#nom_detail_cont{
     width:          520px;
 }
@@ -634,7 +647,7 @@ div#nom_detail_cont{
     }
     
         div#nominator_overlay_cont h2{
-            font-size:      24px;
+            font-size:      18px;
             line-height:    20px;
             margin-top:     3px;
         }
@@ -737,6 +750,7 @@ div#nom_detail_cont{
         
 .comment_empty h2{
     font-size:      20px;
+    padding:        5px 0px;
 }
 
 div#user_profile_cont #user_profile{
