@@ -3767,6 +3767,15 @@ $(document).ready(function(){
         }
     }
     
+    var active_user_nom_cache = { };
+    function update_user_active_nom_cache(active_noms){
+        active_user_nom_cache = { };
+        for (var i = 0; i < active_noms.length; i++){
+            active_user_nom_cache[active_noms[i].photo.fid] = {'nom_id': active_noms[i].id,
+                                                                    'cat': active_noms[i].nomination_category};
+        }
+    }
+    
     function get_user_noms(){
         var id = getUrlVars().user;
         if (id == 'me' || id == undefined){
@@ -3777,6 +3786,7 @@ $(document).ready(function(){
                 if (data){
                     user_winning_noms_cache[selected_user] = data;
                     update_user_album_nom_cache(data.winning_nom_objs);
+                    update_user_active_nom_cache(data.active_nom_objs);
                     if (view_active == 'album' || default_view === 'profile'){
                         render_winning_photo_noms(data);
                         render_active_photo_noms(data);
@@ -6549,7 +6559,10 @@ $(document).ready(function(){
             var cat_underscore = winning_user_photo_dict[selected_photo].cat.replace(' ', '_').toLowerCase();
             // $('#nominate_photo').hide();
             $('#nominate_photo, #go_nom_detail').attr('id', 'go_nom_detail').attr('value', winning_user_photo_dict[selected_photo].nom_id).text('Details');
-            $('#photo_large_inline_cont').append('<img class="trophy_cont_gallery" src="/site_media/img/trophies/large/' + cat_underscore + '.png"/>')
+            $('#photo_large_inline_cont').append('<img class="trophy_cont_gallery" src="/site_media/img/trophies/large/' + cat_underscore + '.png"/>');
+        }
+        else if(active_user_nom_cache[selected_photo]){
+            $('#nominate_photo, #go_nom_detail').attr('id', 'go_nom_detail').attr('value', active_user_nom_cache[selected_photo].nom_id).text('Active');
         }
         else{
             if ($('#go_nom_detail').length > 0){
@@ -8455,7 +8468,13 @@ $(document).ready(function(){
         
         $('#go_nom_detail').live('click', function(){
             var nom_id = $(this).attr('value');
-            window.location.href = '/#/nom_id=' + nom_id + '/won';
+            if (winning_user_photo_dict[selected_photo]){
+                window.location.href = '/#/nom_id=' + nom_id + '/won';
+            }
+            else{
+                window.location.href = '/#/nom_id=' + nom_id;
+            }
+            
         });
         
         $('#cancel_nominate_photo, #cancel_nomination').live('click', function(){
@@ -8587,6 +8606,13 @@ $(document).ready(function(){
                                 else{
                                     active_nom_cats_map[data[i].nomination_category.replace(' ', '_').toLowerCase()] = [data[i].id];
                                 }
+                                if (my_feed){
+                                    for (var k = 0; k < my_feed.length; k++){
+                                        if (my_feed[k].cat_name == data[i].nomination_category){
+                                            my_feed[k].noms.push(data[i]);
+                                        }
+                                    }
+                                }
                             }
                             if (user_winning_noms_cache[selected_user]){
                                 user_winning_noms_cache[selected_user].active_nom_objs.push(data[i]);
@@ -8600,6 +8626,9 @@ $(document).ready(function(){
                         }
                         $('#nom_complete_cont').fadeIn();
                     });
+                    // FB.api('/me', function(response) {
+                    //     
+                    // }
                 });
             }
         });
