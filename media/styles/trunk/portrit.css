@@ -1687,7 +1687,6 @@ div#profile_cont_wrap{
 
     div#profile_cont_wrap div#scroller{
         position:               relative;
-        min-height:             500px;
     }
 
 div#new_comment_cont{

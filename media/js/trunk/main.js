@@ -3737,7 +3737,7 @@ $(document).ready(function(){
         }
         else{
             var user = getUrlVars().user;
-            if (user != me.id){
+            if (user != undefined && user != me.id){
                 var first_name = friends[user].name.split(' ')[0];
                 $('#trophy_cont').append('<h2>' + first_name + ' has not won any trophies. Help ' + first_name + ' out by nominating a photo.</h2>');
             }
@@ -8644,6 +8644,8 @@ $(document).ready(function(){
         }
         $('#active_nominations_cont').html('');
         $('#nomination_comment').text('Tell your friend\'s why this photo rocks!');
+        $('#nom_complete_cont').hide();
+        $('#nom_complete_cont .nom_complete_cat_cont').html('');
     }
     
     function append_wall_html(view_to_activate){
