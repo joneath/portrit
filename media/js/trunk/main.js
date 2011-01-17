@@ -3120,6 +3120,7 @@ $(document).ready(function(){
         view_active = 'nom_detail';
         var nom_id = getUrlVars().nom_id,
             won = getUrlVars().won,
+            user_url = getUrlVars().user,
             trophy = getUrlVars().trophy,
             nom = null,
             active_cache = null;
@@ -3136,7 +3137,7 @@ $(document).ready(function(){
             vote_class = '',
             title = '';
             
-        if (trophy != undefined){
+        if (trophy != undefined && user_url != undefined){
             won = true;
             nom = data[0];
             noms_in_cat = data
@@ -3734,7 +3735,7 @@ $(document).ready(function(){
         }
         else{
             var user = getUrlVars().user;
-            if (!user == me.id){
+            if (user != me.id){
                 var first_name = friends[user].name.split(' ')[0];
                 $('#trophy_cont').append('<h2>' + first_name + ' has not won any trophies. Help ' + first_name + ' out by nominating a photo.</h2>');
             }
