@@ -2229,7 +2229,9 @@ $(document).ready(function(){
                                     '</div>' +
                                 '</div>';
         $('body').append(initial_tut_html);
-        $('#wrapper').css('min-height', '1150px');
+        if ($(window).height() < 1150){
+            $('#wrapper').css('min-height', '1150px');
+        }
         
         attach_initial_tut_handlers(tut_counts);
     }
@@ -4952,7 +4954,9 @@ $(document).ready(function(){
                 $('#new_photo_cont').append(photo_html);
             }
         }
-        $('#wrapper').css('min-height', 900);
+        if ($(window).height() < 900){
+            $('#wrapper').css('min-height', 900);
+        }
     }
     
     var photo_feed = null;
@@ -7411,7 +7415,6 @@ $(document).ready(function(){
             else{
                 $('#context_overlay').show();
             }
-            
             init_recent_winners();
         });
         
