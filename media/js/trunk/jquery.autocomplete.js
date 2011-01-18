@@ -44,6 +44,7 @@
       params: {},
       fnFormatResult: fnFormatResult,
       delimiter: null,
+      mobile: false,
       zIndex: 9999
     };
     this.initialize();
@@ -116,8 +117,15 @@
 
     fixPosition: function() {
       var offset = this.el.offset();
-      var position_off = this.el.parent().position().top + this.el.height() + 61;
-      var left_diff = offset.left - 10;
+      if (!mobile){
+          var position_off = this.el.parent().position().top + this.el.height() + 63;
+          var left_diff = offset.left - 10;
+      }
+      else{
+          var position_off = this.el.parent().position().top + this.el.height() + 60;
+          var left_diff = offset.left - 10;
+      }
+      
       $('#' + this.mainContainerId).css({ top: (position_off + this.el.innerHeight()) + 'px', left: left_diff + 'px' });
     },
 

@@ -80,17 +80,6 @@ div#login_content div#login_right_cont{
     position:           relative;
 }
 
-input[type="text"]{
-    border:             1px solid #7e7e7e;
-    color:              #3e3e3e;
-    float:              left;
-    font-size:          14px;
-    height:             30px;
-    line-height:        30px;
-    padding:            0px 7px;
-    width:              200px;
-}
-
 #submit_login{
     padding: 6px 15px 7px; 
 }

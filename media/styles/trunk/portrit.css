@@ -554,7 +554,7 @@ div#feedback{
         color:              #333;
         display:            inline-block;
         margin-top:         40px;
-        padding:            20px;
+        padding:            20px 20px 10px 20px;
         position:           relative;
         text-align:         left;
         width:              600px;
@@ -584,9 +584,11 @@ div#feedback{
     
     div#feedback_cont #error_text{
         float:              left;
+        margin-top:         13px;
     }
     
     div#feedback_cont #submit_feedback{
+        margin-top:         5px;
         float:              right;
     }
     
@@ -601,6 +603,7 @@ div#feedback{
     position:           absolute;
     top:                -10px;
     right:              -10px;
+    z-index:            10000;
 }
     
 div#photo_upload{
@@ -777,6 +780,7 @@ div.autocomplete{
         cursor:             pointer;
         clear:              both;
         height:             50px;
+        overflow-y:         hidden;
         padding-bottom:     5px;
         opacity:            .75;
     }
@@ -792,10 +796,9 @@ div.autocomplete{
     }
     
     div.autocomplete div p{
-        float:              left;
         font-size:          1.4em;
-        margin-top:         13px;
-        margin-left:        20px;
+        padding-top:        13px;
+        margin-left:        60px;
         vertical-align:     middle;
     }
     
@@ -863,7 +866,6 @@ div#initial_tut_cont{
     
         div#initial_tut_top_wrap{
             background-color:   #eeeeee;
-            height:             650px;
             margin-bottom:      10px;
             padding:            40px 40px 0px;
             -webkit-border-top-right-radius:    5px;
@@ -879,7 +881,7 @@ div#initial_tut_cont{
             }
             
             div#initial_tut_top_wrap .tut_point{
-                margin-bottom:      50px;
+                padding-bottom:     30px;
                 width:              650px;
             }
             
@@ -1218,6 +1220,10 @@ div#nom_detail_cont{
                     opacity:                0.8;
                 }
                 
+                div#vote_cont_left .vote.voted{
+                    opacity:                1.0;
+                }
+                
                 div#vote_cont_left .vote:hover{
                     opacity:                1.0;
                 }
@@ -1231,7 +1237,7 @@ div#nom_detail_cont{
                     opacity:                0.4;
                 }
                 
-                div#vote_cont_left p{
+                div#vote_cont_left p#nom_vote_count{
                     color:                  #CB6698;
                     font-size:              40px;
                     font-weight:            bold;
@@ -1686,6 +1692,7 @@ div#profile_cont_wrap{
 }
 
     div#profile_cont_wrap div#scroller{
+        min-height:             400px;
         position:               relative;
     }
 
@@ -1833,8 +1840,8 @@ div#new_comment_cont{
     }
     
         #clear_empty_search{
-            top:                    30px;
-            right:                  100px;
+            top:                    32px;
+            right:                  108px;
         }
     
         #empty_search_cont input{
@@ -1843,6 +1850,7 @@ div#new_comment_cont{
             font-size:              30px;
             height:                 50px;
             margin-left:            20px;
+            padding:                0px 5px;
             width:                  580px;
             -webkit-box-shadow:     inset 0 0 0 1px rgba(0, 0, 0, 0.4), inset 0 2px 1px 0 rgba(0, 0, 0, 0.2), inset 0 2px 3px 0 rgba(0, 0, 0, 0.2), 0 0px 0 0 rgba(255, 255, 255, 0.8);
             -moz-box-shadow:        inset 0 0 0 1px rgba(0, 0, 0, 0.4), inset 0 2px 1px 0 rgba(0, 0, 0, 0.2), inset 0 2px 3px 0 rgba(0, 0, 0, 0.2), 0 0px 0 0 rgba(255, 255, 255, 0.8);
@@ -2552,7 +2560,7 @@ div#profile_cont{
         font-size:              11px;
     }
 
-    .tooltip{
+/*    .tooltip{
         background-color:       #333;
         color:                  white;
         font-weight:            bold;
@@ -2571,7 +2579,7 @@ div#profile_cont{
         -moz-transition:        top .35s ease-out, left .2s ease-out, opacity .35s ease-out;
         -webkit-box-shadow:     rgba(0, 0, 0, 0.496094) 0px 3px 7px;
         -moz-box-shadow:        0 3px 7px rgba(0, 0, 0, 0.5);
-    }
+    }*/
     
 .tooltip{
     background-color:       #333;
@@ -2584,8 +2592,6 @@ div#profile_cont{
     z-index:                1000;
     -webkit-border-radius:  5px;
     -moz-border-radius:     5px;
-    -webkit-transition:     top .35s ease-out, left .2s ease-out, opacity .35s ease-out;
-    -moz-transition:        top .35s ease-out, left .2s ease-out, opacity .35s ease-out;
     -webkit-box-shadow:     rgba(0, 0, 0, 0.496094) 0px 3px 7px;
     -moz-box-shadow:        0 3px 7px rgba(0, 0, 0, 0.5);
 }
@@ -4325,13 +4331,11 @@ div#all_friends {
     
     #context_cont h1{
         font-size:          28px;
-        margin-bottom:      15px;
+        margin-bottom:      10px;
     }
     
     #context_cont h2{
-        color:              #689ac9;
         font-size:          22px;
-        margin-top:         20px;
         margin-bottom:      10px;
     }
     
@@ -4345,17 +4349,12 @@ div#all_friends {
     #context_cont input[type="text"]{
         border:             1px solid #DEDEDE;
         font-size:          14px;
-        height:             20px;
-        padding:            3px;
+        padding:            8px;
         width:              250px;
     }
     
     #context_cont select{
         margin-top:         5px;
-    }
-    
-    #about_title{
-        color:              #fac86e;
     }
     
         #about_left_cont{
@@ -4377,18 +4376,40 @@ div#all_friends {
         
         #about_right_cont{
             float:              right;
-            height:             100px;
             width:              300px;
-            height:             590px;
             text-align:         right;
         }
-    
-    #contact_title{
-        color:              #69CCCB;
-    }
+        
+            #find_us{
+                margin-left:    10px;
+                text-align:     left;
+            }
+            
+                #find_us ul{
+                    list-style:     none;
+                    margin-left:    10px;
+                }
+                
+                #find_us li{
+                    margin-bottom:  10px;
+                }
+            
+                #find_us h3{
+                    font-size:      22px;
+                    margin-bottom:  10px;
+                }
+                
+                #find_us h4{
+                    font-weight:    bold;
+                    margin-bottom:  5px;
+                }
+        
+        #facebook_frame{
+            height:             590px;
+        }
     
         #context_cont #contact_explain{
-            height:             50px;
+
         }
     
         #contact_nav li{
@@ -4456,14 +4477,6 @@ div#all_friends {
         #tab_bug{
             background-color:   #99cb6e;
         }
-    
-    #terms_title{
-        color:              #99CB6E;
-    }
-    
-    #privacy_title{
-        color:              #cb6698;
-    }
     
     #privacy_cont{
         
@@ -4897,7 +4910,7 @@ div#payment_types_cont{
     padding-top:        5px;
     position:           relative;
     width:              100%;
-    z-index:            100000;
+    z-index:            0;
 }
 
     #footer a{
@@ -4929,7 +4942,7 @@ div#payment_types_cont{
         #notification_footer_popup #notification_arrow{
             opacity:            1.0;
             position:           absolute;
-            top:                -8px;
+            top:                -11px;
             left:               110px;
             z-index:            1001;
         }
@@ -4969,7 +4982,7 @@ div#payment_types_cont{
             display:                none;
             height:                 335px;
             left:                   -90px;
-            top:                    65px;
+            top:                    71px;
             position:               absolute;
             width:                  250px;
             z-index:                10101;

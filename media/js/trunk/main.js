@@ -109,18 +109,19 @@ $(document).ready(function(){
     });
     
     $('#login').bind('click', function() {
-        if (window.localStorage !== undefined){
-            if (localStorage['me'] != undefined){
-                localStorage.removeItem('me'); 
-            }
+        if (window.sessionStorage !== undefined){
+            // if (sessionStorage['me'] != undefined){
+                sessionStorage.removeItem('me');
+                sessionStorage.removeItem('friends');
+            // }
         }
         FB.login(handleSessionResponse, {perms:'read_stream,publish_stream,user_photos,user_videos,friends_photos,friends_videos,friends_status,user_photo_video_tags,friends_photo_video_tags'});
     });
     
     $('#logout').bind('click', function() {
         FB.logout(function(){
-            if (window.localStorage !== undefined){
-                localStorage.clear();
+            if (window.sessionStorage !== undefined){
+                sessionStorage.clear();
                 sessionStorage.clear();
             }
             window.location.href = '/';
@@ -143,7 +144,7 @@ $(document).ready(function(){
         clearInterval(watch_hashtag_interval);
         $('#content_loading').remove();
         if (window.location.hash == ''){
-            window.location.hash = '/';
+            window.location.hash = '#/';
         }
         if (!response.session) {
             view_active = 'login';
@@ -164,12 +165,13 @@ $(document).ready(function(){
             return;
         }
         $('#login_cont').remove();
-        if (window.location.hash == '' || getUrlVars().context){
-            window.location.hash = '/';
-        }
-        else{
+        // if (window.location.hash == '' || getUrlVars().context){
+        //     global_hash_tag = '#/';
+        //     window.location.hash = '#/';
+        // }
+        // else{
             global_hash_tag = window.location.hash;
-        }
+        // }
         $('#header').show();
         $('.footer_hover').unbind('click');
         fb_session = response.session;
@@ -678,7 +680,6 @@ $(document).ready(function(){
         
         setttings_html = '<div id="settings_cont">' +
                             '<h1>Settings</h1>' +
-                            '<h2>Current Account Level: <span ' + style + '>' + capitaliseFirstLetter(account_type.toLowerCase()) + '</span></h2>' +
                             '<div class="clear"></div>' +
                             '<a id="clear_db" class="awesome large">Clear cache</a><span> - Only use when in dire straits!</span>' +
                         '</div>';
@@ -690,10 +691,10 @@ $(document).ready(function(){
     function attach_settings_handlers(){
         //Settings container options
         $('#clear_db').live('click', function(){
-            if (window.localStorage !== undefined){
+            if (window.sessionStorage !== undefined){
                 $(this).next().text('Cache has been cleared. Good luck!').delay(4500).fadeOut();
                 $(this).remove();
-                localStorage.clear();
+                sessionStorage.clear();
                 sessionStorage.clear();   
             }
         });
@@ -897,25 +898,42 @@ $(document).ready(function(){
     
     function render_about(){
         var pitch_html = '';
-        if (account_type == 'BASIC' && view_active != 'login'){
-            pitch_html =    '<div id="pitch_cont">' +
-                                '<h3>Want to be more social?</h3>' +
-                                '<a href="#/upgrade=social"><h4>Check out what you can unlock here</h4></a>' +
-                            '</div>';
-        }
-        else if(account_type == 'SOCIAL' && view_active != 'login'){
-            pitch_html = '<div id="pitch_cont"><h3>Want to pwn the world?</h3></div>';
-        }
-        else if(account_type == 'PLUS' && view_active != 'login'){
-            pitch_html = '<div id="pitch_cont"><h3>You pwn the world</h3></div>';
+        // if (account_type == 'BASIC' && view_active != 'login'){
+        //     pitch_html =    '<div id="pitch_cont">' +
+        //                         '<h3>Want to be more social?</h3>' +
+        //                         '<a href="#/upgrade=social"><h4>Check out what you can unlock here</h4></a>' +
+        //                     '</div>';
+        // }
+        // else if(account_type == 'SOCIAL' && view_active != 'login'){
+        //     pitch_html = '<div id="pitch_cont"><h3>Want to pwn the world?</h3></div>';
+        // }
+        // else if(account_type == 'PLUS' && view_active != 'login'){
+        //     pitch_html = '<div id="pitch_cont"><h3>You pwn the world</h3></div>';
+        // }
+        var facebook_frame = '<div id="facebook_frame"><iframe src="http://www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2Fapps%2Fapplication.php%3Fid%3D126374870731237&amp;width=292&amp;connections=10&amp;stream=true&amp;header=true&amp;height=587" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:292px; height:587px;" allowTransparency="true"></iframe></div>';
+        if (mobile && !tablet){
+            facebook_frame = '';
         }
         pitch_html = '';
-        var about_html ='<h1 id="about_title">What\'s Portrit?</h1>' + 
+        var about_html ='<h1 id="about_title">About</h1>' + 
                         '<div id="about_right_cont">' +
-                            '<iframe src="http://www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2Fapps%2Fapplication.php%3Fid%3D126374870731237&amp;width=292&amp;connections=10&amp;stream=true&amp;header=true&amp;height=587" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:292px; height:587px;" allowTransparency="true"></iframe>' +
+                            '<div id="find_us">' +
+                                '<h3>Find us on the tubes</h3>' +
+                                '<ul>' +
+                                    '<li>' +
+                                        '<h4>Blog</h4>' +
+                                        '<a target="_blank" href="http://blog.portrit.com">Posterous</a>' +
+                                    '</li>' +
+                                    '<li>' +
+                                        '<h4>Twitter</h4>' +
+                                        '<a target="_blank" href="http://twitter.com/#!/portritinc">@portritinc</a>' +
+                                    '</li>' +
+                                '</ul>' +
+                            '</div>' +
+                            facebook_frame + 
                         '</div>' +
                         '<div id="about_left_cont">' +
-                            '<h2>Portrit brings you your Facebook in photos</h2>' +
+                            '<h2>Finding the best photos between your friends</h2>' +
                             '<p>We are visual people so why do we settle for lists of text with the occasional photo? Portrit brings you your facebook friends in a human friendly way, because we can\'t all be robots. Everything is done with a picture!</p>' +
                             '<p>Portrit is a visual re-imagination of facebook. Gone are the list of information and text. In Portrit you view everything as a photo. Quickly move through your friend’s photos and videos to discover what your friends have been up to.</p>' +
                             '<p>Check out the newest happenings on Portrit on our <a href="http://blog.portrit.com" target="_blank">blog</a></p>' +
@@ -1039,7 +1057,7 @@ $(document).ready(function(){
                 if (!isValidEmailAddress(email)){
                     error = true;
                     $('#contact_email_cont .invalid_data').remove();
-                    $('#contact_email_cont').append('<img class="invalid_data" src="/site_media/img/cross_24.png"/>')
+                    $('#contact_email').after('<img class="invalid_data" src="/site_media/img/cross_24.png"/>')
                 }
                 else{
                     $('#contact_email_cont .invalid_data').remove();
@@ -1047,7 +1065,7 @@ $(document).ready(function(){
                 if (reason < 1 || reason > 6){
                     error = true;
                     $('#contact_reason_cont .invalid_data').remove();
-                    $('#contact_reason_cont').append('<img class="invalid_data" src="/site_media/img/cross_24.png"/>');
+                    $('#contact_reason').after('<img class="invalid_data" src="/site_media/img/cross_24.png"/>');
                 }
                 else{
                     $('#contact_reason_cont .invalid_data').remove();
@@ -1055,7 +1073,7 @@ $(document).ready(function(){
                 if (message == ''){
                     error = true;
                     $('#contact_message_cont .invalid_data').remove();
-                    $('#contact_message_cont').append('<img class="invalid_data" src="/site_media/img/cross_24.png"/>');
+                    $('#contact_message_cont > textarea').after('<img class="invalid_data" src="/site_media/img/cross_24.png"/>');
                     
                 }
                 else{
@@ -1095,7 +1113,7 @@ $(document).ready(function(){
                 if (!isValidEmailAddress(email)){
                     error = true;
                     $('#bug_email_cont .invalid_data').remove();
-                    $('#bug_email_cont').append('<img class="invalid_data" src="/site_media/img/cross_24.png"/>')
+                    $('#bug_email').after('<img class="invalid_data" src="/site_media/img/cross_24.png"/>')
                 }
                 else{
                     $('#bug_email_cont .invalid_data').remove();
@@ -1103,7 +1121,7 @@ $(document).ready(function(){
                 if (where == ''){
                     error = true;
                     $('#bug_where_cont .invalid_data').remove();
-                    $('#bug_where_cont').append('<img class="invalid_data" src="/site_media/img/cross_24.png"/>');
+                    $('#bug_where').after('<img class="invalid_data" src="/site_media/img/cross_24.png"/>');
                 }
                 else{
                     $('#bug_where_cont .invalid_data').remove();
@@ -1111,7 +1129,7 @@ $(document).ready(function(){
                 if (message == ''){
                     error = true;
                     $('#bug_what_cont .invalid_data').remove();
-                    $('#bug_what_cont').append('<img class="invalid_data" src="/site_media/img/cross_24.png"/>');
+                    $('#bug_what').after('<img class="invalid_data" src="/site_media/img/cross_24.png"/>');
                     
                 }
                 else{
@@ -1120,7 +1138,7 @@ $(document).ready(function(){
                 if (os == ''){
                     error = true;
                     $('#bug_op_cont .invalid_data').remove();
-                    $('#bug_op_cont').append('<img class="invalid_data" src="/site_media/img/cross_24.png"/>');
+                    $('#bug_op').after('<img class="invalid_data" src="/site_media/img/cross_24.png"/>');
                     
                 }
                 else{
@@ -1129,7 +1147,7 @@ $(document).ready(function(){
                 if (browser == ''){
                     error = true;
                     $('#bug_browser_cont .invalid_data').remove();
-                    $('#bug_browser_cont').append('<img class="invalid_data" src="/site_media/img/cross_24.png"/>');
+                    $('#bug_browser').after('<img class="invalid_data" src="/site_media/img/cross_24.png"/>');
                     
                 }
                 else{
@@ -1486,6 +1504,12 @@ $(document).ready(function(){
                         }
                         else if (view_active == 'nom_detail'){
                             inject_nom_detail(data.payload.nom_data);
+                        }
+                        if ($('#empty_noms_cont').length > 0){
+                            // $('#empty_noms_cont').fadeOut(function(){
+                            //     $(this).remove();
+                            //     $('#profile_cont').fadeIn();
+                            // });
                         }
                     }
                     else if (data.method == 'vote'){
@@ -2172,18 +2196,20 @@ $(document).ready(function(){
                 });
                 $('#wrapper').animate({
                     'opacity': '1.0'
-                }, 350);
+                }, 350, function(){
+                    $(this).css('min-height', '100%');
+                });
             }
             else{
                 $('#initial_tut_cont').remove();
                 $('#wrapper').css({
-                    'opacity': '1.0'
+                    'opacity': '1.0',
+                    'min-height': '100%'
                 });
                 render_tut(tut_counts);
                 init_view(update_view);
             }
             $('#close_initial_tut, #tut_go_cont span').die('click');
-            $('#wrapper').css('min-height', '100%');
         });
     }
     
@@ -2224,15 +2250,16 @@ $(document).ready(function(){
                                                 '<span class="awesome large green">Go</span>' +
                                             '</div>' +
                                         '</div>' +
-                                        '<div id="trophy_landing_strip"></div>' +
                                         '<img id="box_img" src="/site_media/img/boxtrophy.png"/>' +
                                         '<img id="landfill_img" src="/site_media/img/landfilltrophy.png"/>' +
                                         '<img id="close_initial_tut" class="close_img" src="/site_media/img/x.png"/>' +
                                     '</div>' +
                                 '</div>';
         $('body').append(initial_tut_html);
-        if ($(window).height() < 1150){
-            $('#wrapper').css('min-height', '1150px');
+        if (!mobile || tablet){
+            if ($(window).height() < 1150){
+                $('#wrapper').css('min-height', '1150px');
+            }
         }
         
         attach_initial_tut_handlers(tut_counts);
@@ -2251,7 +2278,6 @@ $(document).ready(function(){
                 my_feed = JSON.parse(data.stream);
                 tut_counts = data.tut_counts;
                 first = data.first;
-                
                 if (first){
                     $('#right_nav').prepend('<a id="activate_tut">Tutorial</a>');
                     render_initial_tutorial(tut_counts);
@@ -2287,30 +2313,30 @@ $(document).ready(function(){
     
     function init_view(func_ptr){
         $('#cont').append('<img id="login_loader" src="/site_media/img/album-loader-dark.gif"/>');
-        if (window.localStorage !== undefined){
-            me = localStorage.getItem('me');
-            photo_filter = localStorage.getItem('photo_filter');
-            default_view = localStorage.getItem('default_view');
-            stream_view = localStorage.getItem('stream_view');
+        if (window.sessionStorage !== undefined){
+            me = sessionStorage.getItem('me');
+            photo_filter = sessionStorage.getItem('photo_filter');
+            default_view = sessionStorage.getItem('default_view');
+            stream_view = sessionStorage.getItem('stream_view');
         }
         if (default_view === null){
             default_view = 'friend';
-            localStorage['default_view'] = JSON.stringify(default_view);
+            sessionStorage['default_view'] = JSON.stringify(default_view);
         }
         else{
             default_view = JSON.parse(default_view);
         }
         if (stream_view === null){
             stream_view = 'top';
-            localStorage['stream_view'] = JSON.stringify(stream_view);
+            sessionStorage['stream_view'] = JSON.stringify(stream_view);
         }
         else{
             stream_view = JSON.parse(stream_view);
         }
         if (me === null){
             FB.api('/me', function(response) {
-                if (window.localStorage !== undefined){
-                    localStorage.setItem('me', JSON.stringify(response));
+                if (window.sessionStorage !== undefined){
+                    sessionStorage.setItem('me', JSON.stringify(response));
                 }
                 me = response;
                 
@@ -2318,7 +2344,7 @@ $(document).ready(function(){
                     for (var i = 0; i < data.length; i++){
                         if (data[i].name == 'Photos'){
                             photo_filter = data[i].filter_key;
-                            localStorage['photo_filter'] = photo_filter;
+                            sessionStorage['photo_filter'] = photo_filter;
                             break;
                         }
                     }
@@ -2388,11 +2414,13 @@ $(document).ready(function(){
             _gaq.push(['_trackEvent', 'Search', 'Shown', '']);
         }
         
+        // $('#query').bind('blur', hide_search_view);
         $(document).bind('click', hide_search_view);
     }
     
     function hide_search_view(){
         $(document).unbind('click', hide_search_view);
+        // $('#query').unbind('blur', hide_search_view);
         $('.autocomplete').hide();
         if (!mobile){
             $('#search').fadeOut();
@@ -2549,7 +2577,7 @@ $(document).ready(function(){
 		if (!mobile){
 			$('#query').autocomplete({
 	           lookup: friend_names,
-	           width: 411,
+	           width: 401,
 	           maxHeight:270,
 	           fnFormatResult: format_result,
 	           onSelect: load_selected
@@ -2558,8 +2586,9 @@ $(document).ready(function(){
 		else{
 			$('#query').autocomplete({
 	           lookup: friend_names,
-	           width: 370,
+	           width: 376,
 	           maxHeight:270,
+	           mobile: true,
 	           fnFormatResult: format_result,
 	           onSelect: load_selected
 	        });
@@ -2766,10 +2795,10 @@ $(document).ready(function(){
     }
     
     function friend_view_click(){
-        if (default_view != 'friend'){
-            default_view = 'friend';
-            localStorage.removeItem('default_view');
-            localStorage.setItem('default_view', JSON.stringify(default_view));
+        default_view = 'friend';
+        sessionStorage.removeItem('default_view');
+        sessionStorage.setItem('default_view', JSON.stringify(default_view));
+        if (window.location.hash == '#/' || window.location.hash == '#' || window.location.hash == ''){
             var url_vars = getUrlVars();
             clear_canvas(url_vars);
             clear_event_handles();
@@ -2777,13 +2806,16 @@ $(document).ready(function(){
             main_view();
             $('html, body').scrollTop(0);
         }
+        else{
+            window.location.hash = '#/';
+        }
     }
     
     function wall_view_click(){
-        if (default_view != 'wall'){
-            default_view = 'wall';
-            localStorage.removeItem('default_view');
-            localStorage.setItem('default_view', JSON.stringify(default_view));
+        default_view = 'wall';
+        sessionStorage.removeItem('default_view');
+        sessionStorage.setItem('default_view', JSON.stringify(default_view));
+        if (window.location.hash == '#/' || window.location.hash == '#' || window.location.hash == ''){
             var url_vars = getUrlVars();
             clear_canvas(url_vars);
             clear_event_handles();
@@ -2791,13 +2823,16 @@ $(document).ready(function(){
             main_view();
             $('html, body').scrollTop(0);
         }
+        else{
+            window.location.hash = '#/';
+        }
     }
     
     function profile_view_click(){
-        if (default_view != 'profile'){
-            default_view = 'profile';
-            localStorage.removeItem('default_view');
-            localStorage.setItem('default_view', JSON.stringify(default_view));
+        default_view = 'profile';
+        sessionStorage.removeItem('default_view');
+        sessionStorage.setItem('default_view', JSON.stringify(default_view));
+        if (window.location.hash == '#/' || window.location.hash == '#' || window.location.hash == ''){
             var url_vars = getUrlVars();
             clear_canvas(url_vars);
             clear_event_handles();
@@ -2805,13 +2840,16 @@ $(document).ready(function(){
             main_view();
             $('html, body').scrollTop(0);
         }
+        else{
+            window.location.hash = '#/';
+        }
     }
     
     function top_noms_click(){
         if (stream_view != 'top_noms'){
             stream_view = 'top_noms';
-            localStorage.removeItem('stream_view');
-            localStorage.setItem('stream_view', JSON.stringify(stream_view));
+            sessionStorage.removeItem('stream_view');
+            sessionStorage.setItem('stream_view', JSON.stringify(stream_view));
             $('#recent_noms').removeClass('selected');
             $(this).addClass('selected');
             $('#profile_cont_wrap').html('<div id="scroller">' +
@@ -2825,8 +2863,8 @@ $(document).ready(function(){
     function recent_noms_click(){
         if (stream_view != 'recent_noms'){
             stream_view = 'recent_noms';
-            localStorage.removeItem('stream_view');
-            localStorage.setItem('stream_view', JSON.stringify(stream_view));
+            sessionStorage.removeItem('stream_view');
+            sessionStorage.setItem('stream_view', JSON.stringify(stream_view));
             $('#top_noms').removeClass('selected');
             $(this).addClass('selected');
             $('#profile_cont_wrap').html('<div id="scroller">' +
@@ -3139,6 +3177,7 @@ $(document).ready(function(){
             selected_nom_photo = null,
             trophy_size = '',
             vote_class = '',
+            vote_tooltip_text = 'Already voted',
             title = '';
             
         if (trophy != undefined && user_url != undefined){
@@ -3170,6 +3209,7 @@ $(document).ready(function(){
             nom = winning_noms_cache[nom_id];
             active_cache = winning_noms_cache;
             vote_class = "won";
+            vote_tooltip_text = 'Already won';
             
             var name = '';
             if (friends[nom.nominatee]){
@@ -3308,8 +3348,9 @@ $(document).ready(function(){
                                         '<h2>Votes</h2>' +
                                         '<div id="vote_cont">' +
                                             '<div id="vote_cont_left">' +
-                                                '<img class="vote vote_up ' + vote_class + '" name="' + nom.id + '" src="/site_media/img/up_detailed.png"/>' +
-                                                '<img class="vote vote_down ' + vote_class + '" name="' + nom.id + '" src="/site_media/img/down_detailed.png"/>' +
+                                                '<p class="tooltip"></p>' +
+                                                '<img class="vote vote_up ' + vote_class + '" value="' + nom.id + '" name="' + vote_tooltip_text + '" src="/site_media/img/up_detailed.png"/>' +
+                                                '<img class="vote vote_down ' + vote_class + '" value="' + nom.id + '" name="' + vote_tooltip_text + '" src="/site_media/img/down_detailed.png"/>' +
                                                 '<p id="nom_vote_count">' + nom.vote_count + '</p>' +
                                             '</div>' +
                                             '<div class="clear"></div>' +
@@ -3423,11 +3464,21 @@ $(document).ready(function(){
     function render_nom_votes(votes){
         var voted_cont_html = '';
         var name = '';
+        var user_voted = false;
         for (var i = 0; i < votes.length; i++){
             name = votes[i].vote_name;
             voted_cont_html +=  '<a href="#/user=' + votes[i].vote_user + '" class="clear_profile" id="voted_' + votes[i].vote_user + '" name="' + name + '">' +
                                     '<img src="https://graph.facebook.com/' + votes[i].vote_user + '/picture?type=square"/>' +
                                 '</a>';
+            if (votes[i].vote_user == me.id){
+                user_voted = true
+            }
+        }
+        if (user_voted){
+            $('.vote').addClass('won');
+        }
+        else{
+            $('.vote').removeClass('won');
         }
         $('#nom_votes_wrap').append(voted_cont_html);
     }
@@ -3505,7 +3556,10 @@ $(document).ready(function(){
         var first_alpha = true;
         var alpha_class = "";
         
-        $('#wall_cont').html('');
+        // $('#wall_cont').html('');
+        if ($('#main_view_control').length == 0){
+            $('#cont').prepend('<div id="main_view_control"><a id="friend_view" class="main_control awesome large main_control_active">Friends</a><a id="wall_view" class="main_control awesome large  ">Stream</a><a id="profile_view" class="main_control awesome large ">Profile</a></div>');
+        }
         $('#wall_cont').show();
         $('#friend_cont').show();
         
@@ -5607,7 +5661,7 @@ $(document).ready(function(){
         });
         
         $('#clear_empty_search').bind('click', function(){
-            $('#empty_search').val('').trigger('keyup').trigger('focus');
+            $('#empty_search').val('').trigger('keyup').trigger('blur');
         });
         
         var friend_names = [ ];
@@ -5699,15 +5753,27 @@ $(document).ready(function(){
     }
     
     function hide_stream_fixtures(){
+        if (tablet){
+            $('#profile_wrap').css({
+                'width': '960px',
+                'right': '0px'
+            });
+        }
         $('#active_stream_view').hide();
         $('#active_stream_text_cont').hide();
-        // $('#tab_nav').hide();
+        $('#tab_nav').hide();
     }
     
     function show_stream_fixtures(){
+        if (tablet){
+            $('#profile_wrap').css({
+                'width': '940px',
+                'right': '20px'
+            });
+        }
         $('#active_stream_view').show();
         $('#active_stream_text_cont').show();
-        // $('#tab_nav').show();
+        $('#tab_nav').show();
     }
     
     function init_recent_view(){
@@ -6764,13 +6830,9 @@ $(document).ready(function(){
     function hide_like_tooltip(that){
         if (!mobile){
             $(that).parent().find('.tooltip').css({
-                'opacity': '0'
+                'opacity': '0',
+                'z-index': '-1'
             });
-            like_tooltip_timeout = setTimeout(function(){
-                $(that).parent().find('.tooltip').css({
-                    'z-index': '-1'
-                });
-            }, 350);
         }
     }
     
@@ -7284,7 +7346,7 @@ $(document).ready(function(){
     
     function vote_up_handler(){
         var that = this;
-        var nomination_id = $(this).attr('name');
+        var nomination_id = $(this).attr('value');
         if ($(this).hasClass('won') == false){
             $.post('/vote/', {'method': 'up', 'nomination_id': nomination_id}, function(data){
                 if (data){
@@ -7313,7 +7375,7 @@ $(document).ready(function(){
     
     function vote_down_handler(){
         var that = this;
-        var nomination_id = $(this).attr('name');
+        var nomination_id = $(this).attr('value');
         if ($(this).hasClass('won') == false){
             $.post('/vote/', {'method': 'down', 'nomination_id': nomination_id}, function(data){
                 if (data){
@@ -8061,6 +8123,14 @@ $(document).ready(function(){
             update_nom_detail(nom, won);
         });
         
+        $('.won').live('mouseover mouseout', function(event) {
+            if (event.type == 'mouseover') {
+                show_like_tooltip(this);
+            } else {
+                hide_like_tooltip(this);
+            }
+        });
+        
         $('#nom_votes_cont a').live('mouseover mouseout', function(event) {
             if (event.type == 'mouseover') {
                 show_like_tooltip(this);
@@ -8587,8 +8657,26 @@ $(document).ready(function(){
                 $.post('/nominate_photo/', data, function(data){
                     var nom_cat_text = '',
                         nom_cat_underscore = '',
-                        nom_complete_html = '';
+                        nom_complete_html = '',
+                        nominatee_id = '',
+                        nominatee_name = '',
+                        nominator_id = '',
+                        nominator_name = '';
                     $('#new_nomination_cont').fadeOut(function(){
+                        nominatee_id = data[0].nominatee;
+                        nominator_id = data[0].nominator;
+                        if (nominator_id == me.id){
+                            nominator_name = me.name;
+                        }
+                        else{
+                            nominator_name = friends[nominator_id].name;
+                        }
+                        if (nominatee_id == me.id){
+                            nominatee_name = me.name;
+                        }
+                        else{
+                            nominatee_name = friends[nominatee_id].name;
+                        }
                         for (var i = 0; i < data.length; i++){
                             nom_cat_text = data[i].nomination_category;
                             nom_cat_underscore = data[i].nomination_category.replace(' ', '_').toLowerCase();
@@ -8624,11 +8712,17 @@ $(document).ready(function(){
                                 }
                             }
                         }
+                        // var trophy_img_src = 'http://test.portrit.com/site_media/img/invite/' + nom_cat_underscore + '.png';
+                        // var link = 'http://test.portrit.com/#/nom_id=' + data[i - 1].id + '/ref=facebook';
+                        // var name = nominator_name.split(' ')[0] + ' nominated one of your photos for the ' + nom_cat_text + ' trophy.';
+                        // var caption = 'Click the trophy to see you and your friend\'s photo nominations';
+                        // var description = '';
+                        // 
+                        // $.post('https://graph.facebook.com/' + nominatee_id + '/feed', {'access_token': fb_session.access_token, 'picture': trophy_img_src, 'link': link, 'name': name, 'caption': caption}, function(response){
+                        //     var test = response;
+                        // });
                         $('#nom_complete_cont').fadeIn();
                     });
-                    // FB.api('/me', function(response) {
-                    //     
-                    // }
                 });
             }
         });
@@ -9095,6 +9189,8 @@ $(document).ready(function(){
         }
         else if (url_vars.alpha_key !== undefined){
             clear_canvas(url_vars);
+            attach_main_handlers();
+            attach_profile_handlers();
             attach_mobile_alpha_handlers();
             render_alpha_wall(url_vars.alpha_key);
             $('html, body').scrollTop(0);

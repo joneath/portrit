@@ -103,8 +103,6 @@ div#search_cont #query{
 }
 
 div.autocomplete{
-    margin-top:         2px;
-    margin-left:        3px;
     overflow-y:         hidden;
 }
 
@@ -136,12 +134,12 @@ div#push{
 }
 
 div#context_cont{
-    width:          460px;
+    width:          480px;
 }
 
 #contact_form textarea, #bug_form textarea{
-    width:              32em; 
-    height:             16em;
+    width:              25em; 
+    height:             12em;
 }
 
 #recent_left_cont{
@@ -201,7 +199,7 @@ div.text h3{
 
 #empty_search_cont input{
     margin-left:    0px;
-    width:          450px;
+    width:          455px;
 }
 
 div#album_cont div#trophy_cont > h2, div#album_cont div#active_cont > h2{
@@ -239,8 +237,9 @@ div#active_cont .active_nom_cont{
 }*/
 
 #clear_empty_search{
-    right:          20px;
-    top:            78px;
+    right:          17px;
+    top:            73px;
+    padding:        10px;
 }
 
 #empty_noms_cont ul li{
@@ -386,7 +385,7 @@ div#feedback div#feedback_cont{
     }
     
 .nom_photo_bottom_wrap .nominator_cont{
-    width:              150px;
+    width:              140px;
 }
     
 div#active_stream_text_cont{
@@ -932,6 +931,7 @@ div#info_wrap h3{
 
 #context_cont div.submit_cont{
     margin-left:        0px;
+    margin-right:       30px;
     float:              right;
 }
 
@@ -956,11 +956,61 @@ div#photo_comments p{
     padding-left:       50px;
 }
 
+#context_cont input[type="text"]{
+    font-size:          18px;
+    padding:            0px;
+}
+
+#contact_form textarea, #bug_form textarea{
+    font-size:          18px;
+    padding:            0px;
+}
+
+#about_right_cont{
+    display:            none;
+}
+
+div#initial_tut_cont{
+    overflow-x:         hidden;
+    top:                75px;
+}
+
+div#initial_tut_wrap{
+    width:              520px;
+}
+
+    #close_initial_tut{
+        top:                0px;
+        right:              0px;
+    }
+
+    div#initial_tut_top_wrap{
+        padding:            20px 20px 0px;
+    }
+
+    div#initial_tut_top_wrap .tut_point{
+        padding-bottom:     20px;
+        width:              380px;
+    }
+    
+        div#initial_tut_top_wrap .tut_point p{
+            font-size:      22px;
+            margin-left:    60px;   
+        }
+    
+    div#initial_tut_wrap #box_img{
+        right:              -10px;
+    }
+    
+    div#initial_tut_wrap #landfill_img{
+        right:              -30px;
+    }
+
 #footer{
     background:         -moz-linear-gradient(center top , #333333, #111111) repeat scroll 0 0 transparent;
-    height:             20px;
+    height:             50px;
     color:              #AEAEAE;
-    font-size:          16px;
+    font-size:          18px;
     font-weight:        bold;
     margin:             0px;
     text-align:         center;
@@ -968,5 +1018,4 @@ div#photo_comments p{
     padding-bottom:     5px;
     position:           relative;
     width:              100%;
-    z-index:            100000;
 }
