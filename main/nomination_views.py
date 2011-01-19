@@ -86,7 +86,7 @@ def get_recent_winners(request):
             if not nom_id:
                 fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
                 friends = fb_user.friends.all()
-                winning_noms = Nomination.objects.filter(nominatee__in=friends, won=True).order_by('-created_date')[(per_page*(page-1)):(per_page*page)]
+                winning_noms = Nomination.objects.filter(Q(nominatee__in=friends) | Q(nominatee=fb_user), won=True).order_by('-created_date')[(per_page*(page-1)):(per_page*page)]
                 for nom in winning_noms.iterator():
                     comment_count = nom.get_comment_count()
                     votes = [ ]

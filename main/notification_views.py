@@ -32,13 +32,13 @@ def notification_read(request):
             for id in notification_ids:
                 if id:
                     ids.append(int(id))
-            Notification.objects.filter(pk__in=ids).update(read=True)
+            print ids
+            Notification.objects.filter(pk__in=ids).update(read=True, active=False)
         except:
             pass
     else:
         try:
             notification = Notification.objects.get(id=notification_id)
-            print notification
             notification.read = True
             notification.active = False
             notification.save()

@@ -902,6 +902,17 @@ div#initial_tut_cont{
                     font-size:              18px;
                     margin-left:            100px;
                 }
+                
+            div#initial_tut_top_wrap #allow_notifications_cont{
+                margin-left:            100px;
+                padding-bottom:         20px;
+                position:               relative;
+                z-index:                2;
+            }
+            
+                div#initial_tut_top_wrap label{
+                    font-size:              20px;
+                }
             
         div#initial_tut_bottom_wrap{
             background-color:   #333;
@@ -2362,7 +2373,7 @@ div#profile_cont{
         }
         
     #new_photo_cont .winning_nom_cont, .empty_cont .winning_nom_cont{
-        display:                inline-block;
+        float:                  left;
         height:                 150px;
         margin:                 10px;
         overflow:               hidden;
@@ -2946,6 +2957,7 @@ div#context_overlay{
 
     div#context_overlay_cont{
         background-color:       white;
+        color:                  #333;
         margin:                 0 auto;
         position:               relative;
         -webkit-border-radius:  10px;
@@ -3179,6 +3191,13 @@ div#wall_cont div#profile_wrap{
         text-align:         center;
         -webkit-border-radius:  15px;
         -moz-border-radius:     15px;
+    }
+    
+    #top_right_cont #time_countdown{
+        color:              white;
+        font-size:          20px;
+        font-weight:        bold;
+        text-align:         center;
     }
 
     #top_right_cont .top_nom_cont{
@@ -4498,42 +4517,47 @@ div#all_friends {
         
     }
     
-        #settings_cont #hidden_friend_cont{
-            float:              left;
-            margin-bottom:      20px;
-            width:              300px;
+        #settings_cont > div{
+            margin-bottom:      10px;
         }
         
-        #hidden_friend_cont #hidden_friends{
-            position:           relative;
-        }
-        
-        #settings_cont #favorite_friends_cont{
-            float:              left;
-            width:              300px;
-        }
-    
-        #favorite_friends_cont #favorite_friends{
-            position:           relative;
-        }
-    
-        #settings_cont .hidden_friend{
-            display:            inline-block;
-            margin-right:       5px;
-            position:           relative;
+        #settings_cont label{
+            font-size:          18px;
         }
         
         #settings_cont #clear_db{
             color:              white;
         }
         
-            .hidden_friend .hide{
-                cursor:             pointer;
-                position:           absolute;
-                top:                -5px;
-                right:              -5px;
-                z-index:            10000;
-            }
+#publish_story_cont{
+    padding:            15px;
+}
+
+    #publish_story_cont h1{
+        font-size:          24px;
+        font-weight:        bold;
+    }
+    
+    #publish_story_cont h2{
+        font-size:          20px;
+    }
+    
+    #publish_story_cont #publish_controls{
+        margin-top:         10px;
+    }
+    
+        #publish_controls #skip_publish{
+            float:              left;
+        }
+    
+        #publish_controls #publish_story{
+            color:              #99CB6E;
+            float:              right;
+        }
+
+.publish_story_overlay{
+    width:              600px;
+}
         
 
 img.small_profile_pic{

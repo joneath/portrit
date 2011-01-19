@@ -320,6 +320,7 @@ class FB_User(models.Model):
 
 class Portrit_User(models.Model):
     active = models.BooleanField(default=True)
+    allow_notifications = models.BooleanField(default=True)
     created_date = models.DateField(auto_now_add=True)
     access_token = models.CharField(max_length=255, null=True)
     fb_user = models.ForeignKey(FB_User, related_name="portrit_fb_user")

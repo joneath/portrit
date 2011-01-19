@@ -14,7 +14,7 @@ from settings import ENV, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET
 
 from portrit_fb import Portrit_FB
 from notification_views import get_active_notifications
-from nomination_views import get_recent_stream
+from nomination_views import get_recent_stream, serialize_noms
 
 from datetime import datetime
 import facebook, time
@@ -80,6 +80,26 @@ def skip_tut(request):
     data = simplejson.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
+def change_user_notifications(request):
+    data = False
+    cookie = facebook.get_user_from_cookie(
+        request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
+    if cookie:
+        allow_notifications = request.POST.get('allow_notifications')
+        fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
+        user = fb_user.portrit_fb_user.all()[0]
+        
+        if allow_notifications == 'true':
+            user.allow_notifications = True
+        else:
+            user.allow_notifications = False
+            
+        user.save()
+        data = True
+        
+    data = simplejson.dumps(data)
+    return HttpResponse(data, mimetype='application/json')
+    
 def get_more_recent_stream(request):
     data = []
     create_time = request.GET.get('create_time')
@@ -115,7 +135,8 @@ def get_user_data(user):
             'notifications': notifications,
             'stream': stream,
             'portrit_friends': portrit_friends,
-            'tut_counts': tut_counts
+            'allow_notifications': user.allow_notifications,
+            'tut_counts': tut_counts,
         }
     except:
         pass
@@ -176,6 +197,21 @@ def get_user_stream(fb_user):
         pass
     data = simplejson.dumps(data) 
     return data
+    
+def get_user_win_stream(request):
+    data = [ ]
+    cookie = facebook.get_user_from_cookie(
+        request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
+    if cookie:
+        try:
+            fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
+            winning_noms = Nomination.objects.filter(nominatee=fb_user, won=True).order_by('-created_date')
+            data = serialize_noms(winning_noms)
+        except:
+            pass
+    
+    data = simplejson.dumps(data)
+    return HttpResponse(data, mimetype='application/json')
     
 def get_user_trophies(request):
     data = [ ]
