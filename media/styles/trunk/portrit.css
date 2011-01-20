@@ -1794,7 +1794,7 @@ div#new_comment_cont{
 
     #empty_noms_cont > div > h3{
         color:                  #666;
-        font-size:              18px;
+        font-size:              22px;
         font-weight:            bold;
     }
     
@@ -1852,7 +1852,7 @@ div#new_comment_cont{
     
         #clear_empty_search{
             top:                    32px;
-            right:                  108px;
+            right:                  25px;
         }
     
         #empty_search_cont input{
@@ -1862,7 +1862,7 @@ div#new_comment_cont{
             height:                 50px;
             margin-left:            20px;
             padding:                0px 5px;
-            width:                  580px;
+            width:                  660px;
             -webkit-box-shadow:     inset 0 0 0 1px rgba(0, 0, 0, 0.4), inset 0 2px 1px 0 rgba(0, 0, 0, 0.2), inset 0 2px 3px 0 rgba(0, 0, 0, 0.2), 0 0px 0 0 rgba(255, 255, 255, 0.8);
             -moz-box-shadow:        inset 0 0 0 1px rgba(0, 0, 0, 0.4), inset 0 2px 1px 0 rgba(0, 0, 0, 0.2), inset 0 2px 3px 0 rgba(0, 0, 0, 0.2), 0 0px 0 0 rgba(255, 255, 255, 0.8);
         }
@@ -2341,7 +2341,6 @@ div#profile_cont{
                     top:                    150px;
                     z-index:                100;
                 }
-                
 
     #profile_cont #new_photo_cont{
         text-align:             center;
@@ -2373,7 +2372,7 @@ div#profile_cont{
         }
         
     #new_photo_cont .winning_nom_cont, .empty_cont .winning_nom_cont{
-        float:                  left;
+        display:                inline-block;
         height:                 150px;
         margin:                 10px;
         overflow:               hidden;
@@ -2382,7 +2381,7 @@ div#profile_cont{
     }
     
         .winning_nom_cont > a >img{
-            width:                  212px;
+            height:                 150px;
         }
         
         .winning_nom_cont .winning_nom_overlay{
@@ -2840,6 +2839,12 @@ div#user_profile_cont{
         margin-top:             0px;
         width:                  780px;
     }
+    
+#album_link_loader{
+    font-size:              28px;
+    font-weight:            bold;
+    margin-top:             100px;
+}
 
 div#info_wrap{
     background-color:       white;

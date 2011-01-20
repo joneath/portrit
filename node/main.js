@@ -3,7 +3,9 @@ var events = require('events'),
     http = require('http'),
     url = require("url"),
     net = require('net'),
-    events = require("events");
+    events = require("events"),
+    path = require("path"),
+    ws = require('./lib/ws/server');;
 
 var Portrit = function(){
     var self = this;
@@ -28,7 +30,7 @@ var Portrit = function(){
             for (var i = 0; i < data.payload.friends.length; i++){
                 console.log('emitting event for: ' + data.payload.friends[i]);
                 nomination_emitter.emit(data.payload.friends[i], data);
-                nomination_emitter.removeAllListeners(data.payload.friends[i]);
+                // nomination_emitter.removeAllListeners(data.payload.friends[i]);
             }
             data_stream = '';
             stream.end();
@@ -36,7 +38,36 @@ var Portrit = function(){
     });
     tcp_server.listen(8124, 'localhost');
     
-    //Django Proxy Server
+    var websock_server = ws.createServer({
+        websock_server: http
+    });
+    
+    websock_server.addListener("listening", function(){
+        sys.log("Listening for connections.");
+    });
+    
+    // Handle WebSocket Requests
+    websock_server.addListener("connection", function(conn){
+        var event_user = '';
+        var nom_callback = function(data){
+            // nomination_emitter.removeAllListeners(event_user);
+            console.log('websocket event sent');
+            conn.write(JSON.stringify(data));
+        }
+        conn.addListener("message", function(data){
+            event_user = data;
+            console.log(event_user);
+            nomination_emitter.removeAllListeners(event_user);
+            nomination_emitter.addListener(event_user, nom_callback);
+        });
+    });
+    
+    websock_server.addListener("close", function(conn){
+        websock_server.broadcast("<"+conn.id+"> disconnected");
+    });
+    
+    websock_server.listen(8123);
+    
     http.createServer(function(request, response) {
         var proxy = http.createClient(8000, "127.0.0.1");
         var path = url.parse(request.url).pathname;
@@ -47,6 +78,7 @@ var Portrit = function(){
                     // nomination_emitter.removeAllListeners(event_user);
                     console.log('event sent');
                     clearTimeout(nom_timeout);
+                    nomination_emitter.removeAllListeners(event_user);
                     response.writeHead(200, { "Content-Type": "text/plain" });
             		response.end(JSON.stringify(data));
                 }
@@ -86,6 +118,7 @@ var Portrit = function(){
                 // nomination_emitter.removeAllListeners(event_user);
                 console.log('event sent');
                 clearTimeout(nom_timeout);
+                nomination_emitter.removeListener(event_user, nom_callback);
                 response.writeHead(200, { "Content-Type": "text/plain" });
         		response.end(JSON.stringify(data));
             }
@@ -101,7 +134,7 @@ var Portrit = function(){
             console.log('long poll attached');
         }
         
-    }).listen(8080, '192.168.0.65');
+    }).listen(8080, '192.168.1.126');
 }
 
 var portrit = new Portrit();

@@ -1455,165 +1455,201 @@ $(document).ready(function(){
     
     var notifcation_cache = [ ];
     function wait_for_message(){
-        $.ajax({
-            type: "GET",
-            url: '/watch_update/',
-            data: {'user': me.id},
-            dataType: "json",
-            async: true,
-            cache: false,
-            timeout: 30000,
-            
-            success: function(data){
-                if (data && data.method){
-                    if (data.method == 'new_nom'){
-                        for (var i = 0; i < data.payload.nom_data.length; i++){
-                            //Check if notification is user
-                            if (data.payload.nom_data[i].nominator != me.id){
-                                if (data.payload.nom_data[i].nominatee == me.id){
-                                    render_notification("new_nom", data.payload.nom_data[i]);
-                                    update_notifications(data.payload.nom_data[i], 'new_nom');
-                                    notifcation_cache.unshift({
-                                        'data': data.payload.nom_data[i],
-                                        'method': 'new_nom'
-                                    });
-                                }
-                            
-                                //Update my feed
-                                if (my_feed){
-                                    active_noms_cache[data.payload.nom_data[i].id] = data.payload.nom_data[i];
-                                    if (active_nom_cats_map[data.payload.nom_data[i].nomination_category.replace(' ', '_').toLowerCase()]){
-                                        active_nom_cats_map[data.payload.nom_data[i].nomination_category.replace(' ', '_').toLowerCase()].push(data.payload.nom_data[i].id);
-                                    }
-                                    else{
-                                        active_nom_cats_map[data.payload.nom_data[i].nomination_category.replace(' ', '_').toLowerCase()] = [data.payload.nom_data[i].id];
-                                    }
-                                    for (var k = 0; k < my_feed.length; k++){
-                                        if (my_feed[k].cat_name == data.payload.nom_data[i].nomination_category){
-                                            my_feed[k].noms.push(data.payload.nom_data[i]);
-                                        }
-                                    }
-                                }
-                                if (user_winning_noms_cache[data.payload.nom_data[i].nominatee] && data.payload.nom_data[i].nominator != me.id){
-                                    user_winning_noms_cache[data.payload.nom_data[i].nominatee].active_nom_objs.push(data.payload.nom_data[i]);
-                                }
-                            }
+        if (window["WebSocket"]) {
+            //Has websockets
+            try{
+                recvd = 0;
+                //host = (document.location.host != "" ? document.location.host : "localhost:8000");
+                host = "192.168.1.126:8123";
+                conn = new WebSocket("ws://"+host);
+                conn.onmessage = function(event) {
+                    handle_update(JSON.parse(event.data), true);
+                };
+
+                conn.onerror = function() {
+                    console.log("error", arguments);
+                };
+
+                conn.onclose = function() {
+                    console.log("closed");
+                    conn.send(me.id);
+                };
+
+                conn.onopen = function() {
+                    console.log("opened");
+                    conn.send(me.id);
+                };
+            } 
+            catch(exception){  
+                 // message('<p>Error'+exception);  
+            }
+        }
+        else{
+            //No websockets
+            $.ajax({
+                type: "GET",
+                url: '/watch_update/',
+                data: {'user': me.id},
+                dataType: "json",
+                async: true,
+                cache: false,
+                timeout: 30000,
+
+                success: handle_update,
+                error: function(XMLHttpRequest, textStatus, errorThrown){
+                    //Setup new request
+                    setTimeout(wait_for_message, 5000);
+                }
+            });
+        }
+    }
+    
+    function handle_update(data, long_poll){
+        if (data && data.method){
+            if (data.method == 'new_nom'){
+                for (var i = 0; i < data.payload.nom_data.length; i++){
+                    //Check if notification is user
+                    if (data.payload.nom_data[i].nominator != me.id){
+                        if (data.payload.nom_data[i].nominatee == me.id){
+                            render_notification("new_nom", data.payload.nom_data[i]);
+                            update_notifications(data.payload.nom_data[i], 'new_nom');
+                            notifcation_cache.unshift({
+                                'data': data.payload.nom_data[i],
+                                'method': 'new_nom'
+                            });
                         }
-                        if (view_active == 'main' && default_view == 'wall' && stream_view == 'recent_noms'){
-                            inject_nom_stream(data.payload.nom_data);
-                        }
-                        else if (view_active == 'main' && default_view == 'wall'){
-                            update_feed(data.payload);
-                        }
-                        else if (view_active == 'nom_detail'){
-                            inject_nom_detail(data.payload.nom_data);
-                        }
-                        if ($('#empty_noms_cont').length > 0){
-                            // $('#empty_noms_cont').fadeOut(function(){
-                            //     $(this).remove();
-                            //     $('#profile_cont').fadeIn();
-                            // });
-                        }
-                    }
-                    else if (data.method == 'vote'){
-                        if (data.payload.vote_user != me.id){
-                            if (my_feed){
-                                active_noms_cache[data.payload.nom_id].vote_count = data.payload.vote_count;
-                                active_noms_cache[data.payload.nom_id].votes.push({'vote_user': data.payload.vote_user, 'vote_name': data.payload.vote_name});
-                                // for (var i = 0; i < my_feed.length; i++){
-                                //     if (my_feed[i].cat_name == data.payload.nomination_category){
-                                //         for (var j = 0; j < my_feed[i].noms.length; j++){
-                                //             if (my_feed[i].noms[j].id == data.payload.nom_id){
-                                //                 // my_feed[i].noms[j].vote_count = data.payload.vote_count;
-                                //                 // my_feed[i].noms[j].votes.push({'vote_user': data.payload.vote_user, 'vote_name': data.payload.vote_name});
-                                //             }
-                                //         }
-                                //     }
-                                // }
-                            }
-                            if (view_active == 'main' && default_view == 'wall' && stream_view == 'recent_noms'){
-                                update_vote_count(data.payload);
-                            }
-                            else if (view_active == 'main' && default_view == 'wall'){
-                                update_vote_count(data.payload);
-                            }
-                            else if (view_active == 'nom_detail'){
-                                update_vote_count(data.payload);
-                            }
-                        }
-                        if (user_winning_noms_cache[data.payload.nominatee]){
-                            var active_nom_objs = user_winning_noms_cache[data.payload.nominatee].active_nom_objs;
-                            for (var i = 0; i < active_nom_objs.length; i++){
-                                if (data.payload.nom_id == active_nom_objs[i].id){
-                                    active_nom_objs[i].vote_count = data.payload.vote_count;
-                                }
-                            }
-                        }
-                    }
-                    else if (data.method == 'new_comment'){                        
-                        if (data.payload.comment_sender_id != me.id){
-                            if (data.payload.won){
-                                winning_noms_cache[data.payload.id].comment_count += 1;
-                                if (winning_noms_cache[data.payload.id].comments){
-                                    winning_noms_cache[data.payload.id].comments.unshift({
-                                       'comments': {
-                                           'comment': data.payload.comment,
-                                           'id': data.payload.comment_id,
-                                           'owner_id': data.payload.comment_sender_id,
-                                           'owner_name': data.payload.comment_sender_name,
-                                           'create_datetime': data.payload.create_datetime
-                                       } 
-                                    });
-                                }
+
+                        //Update my feed
+                        if (my_feed){
+                            active_noms_cache[data.payload.nom_data[i].id] = data.payload.nom_data[i];
+                            if (active_nom_cats_map[data.payload.nom_data[i].nomination_category.replace(' ', '_').toLowerCase()]){
+                                active_nom_cats_map[data.payload.nom_data[i].nomination_category.replace(' ', '_').toLowerCase()].push(data.payload.nom_data[i].id);
                             }
                             else{
-                                active_noms_cache[data.payload.id].comment_count += 1;
-                                if (active_noms_cache[data.payload.id].comments){
-                                    active_noms_cache[data.payload.id].comments.unshift({
-                                       'comments': {
-                                           'comment': data.payload.comment,
-                                           'id': data.payload.comment_id,
-                                           'owner_id': data.payload.comment_sender_id,
-                                           'owner_name': data.payload.comment_sender_name,
-                                           'create_datetime': data.payload.create_datetime
-                                       } 
-                                    });
-                                }
+                                active_nom_cats_map[data.payload.nom_data[i].nomination_category.replace(' ', '_').toLowerCase()] = [data.payload.nom_data[i].id];
                             }
-                            
-                            render_notification("new_comment", data.payload);
-                            update_notifications(data.payload, 'new_comment');
-                            notifcation_cache.unshift({
-                                'data': data.payload,
-                                'method': 'new_comment'
-                            });
-                            if (view_active == 'nom_detail'){
-                                if (data.payload.id == $('#main_nom_cont').attr('value') && data.payload.comment_sender_id != me.id){
-                                    render_comment_update(data.payload);
+                            for (var k = 0; k < my_feed.length; k++){
+                                if (my_feed[k].cat_name == data.payload.nom_data[i].nomination_category){
+                                    my_feed[k].noms.push(data.payload.nom_data[i]);
                                 }
-                            }
-                            else if (view_active == 'main' && default_view == 'wall'){
-                                update_comment_count(data.payload);
                             }
                         }
-                    }
-                    else if (data.method == 'nom_won'){
-                        notifcation_cache.unshift({
-                            'data': data.payload,
-                            'method': 'nom_won'
-                        });
-                        render_notification("nom_won", data.payload);
-                        update_notifications(data.payload, 'nom_won');
+                        if (user_winning_noms_cache[data.payload.nom_data[i].nominatee] && data.payload.nom_data[i].nominator != me.id){
+                            user_winning_noms_cache[data.payload.nom_data[i].nominatee].active_nom_objs.push(data.payload.nom_data[i]);
+                        }
                     }
                 }
-                //Setup new request
-                wait_for_message();
-            },
-            error: function(XMLHttpRequest, textStatus, errorThrown){
-                //Setup new request
-                setTimeout(wait_for_message, 5000);
+                if (view_active == 'main' && default_view == 'wall' && stream_view == 'recent_noms'){
+                    inject_nom_stream(data.payload.nom_data);
+                }
+                else if (view_active == 'main' && default_view == 'wall'){
+                    update_feed(data.payload);
+                }
+                else if (view_active == 'nom_detail'){
+                    inject_nom_detail(data.payload.nom_data);
+                }
+                if ($('#empty_noms_cont').length > 0){
+                    // $('#empty_noms_cont').fadeOut(function(){
+                    //     $(this).remove();
+                    //     $('#profile_cont').fadeIn();
+                    // });
+                }
             }
-        });
+            else if (data.method == 'vote'){
+                if (data.payload.vote_user != me.id){
+                    if (my_feed){
+                        active_noms_cache[data.payload.nom_id].vote_count = data.payload.vote_count;
+                        active_noms_cache[data.payload.nom_id].votes.push({'vote_user': data.payload.vote_user, 'vote_name': data.payload.vote_name});
+                        // for (var i = 0; i < my_feed.length; i++){
+                        //     if (my_feed[i].cat_name == data.payload.nomination_category){
+                        //         for (var j = 0; j < my_feed[i].noms.length; j++){
+                        //             if (my_feed[i].noms[j].id == data.payload.nom_id){
+                        //                 // my_feed[i].noms[j].vote_count = data.payload.vote_count;
+                        //                 // my_feed[i].noms[j].votes.push({'vote_user': data.payload.vote_user, 'vote_name': data.payload.vote_name});
+                        //             }
+                        //         }
+                        //     }
+                        // }
+                    }
+                    if (view_active == 'main' && default_view == 'wall' && stream_view == 'recent_noms'){
+                        update_vote_count(data.payload);
+                    }
+                    else if (view_active == 'main' && default_view == 'wall'){
+                        update_vote_count(data.payload);
+                    }
+                    else if (view_active == 'nom_detail'){
+                        update_vote_count(data.payload);
+                    }
+                }
+                if (user_winning_noms_cache[data.payload.nominatee]){
+                    var active_nom_objs = user_winning_noms_cache[data.payload.nominatee].active_nom_objs;
+                    for (var i = 0; i < active_nom_objs.length; i++){
+                        if (data.payload.nom_id == active_nom_objs[i].id){
+                            active_nom_objs[i].vote_count = data.payload.vote_count;
+                        }
+                    }
+                }
+            }
+            else if (data.method == 'new_comment'){                        
+                if (data.payload.comment_sender_id != me.id){
+                    if (data.payload.won){
+                        winning_noms_cache[data.payload.id].comment_count += 1;
+                        if (winning_noms_cache[data.payload.id].comments){
+                            winning_noms_cache[data.payload.id].comments.unshift({
+                               'comments': {
+                                   'comment': data.payload.comment,
+                                   'id': data.payload.comment_id,
+                                   'owner_id': data.payload.comment_sender_id,
+                                   'owner_name': data.payload.comment_sender_name,
+                                   'create_datetime': data.payload.create_datetime
+                               } 
+                            });
+                        }
+                    }
+                    else{
+                        active_noms_cache[data.payload.id].comment_count += 1;
+                        if (active_noms_cache[data.payload.id].comments){
+                            active_noms_cache[data.payload.id].comments.unshift({
+                               'comments': {
+                                   'comment': data.payload.comment,
+                                   'id': data.payload.comment_id,
+                                   'owner_id': data.payload.comment_sender_id,
+                                   'owner_name': data.payload.comment_sender_name,
+                                   'create_datetime': data.payload.create_datetime
+                               } 
+                            });
+                        }
+                    }
+
+                    render_notification("new_comment", data.payload);
+                    update_notifications(data.payload, 'new_comment');
+                    notifcation_cache.unshift({
+                        'data': data.payload,
+                        'method': 'new_comment'
+                    });
+                    if (view_active == 'nom_detail'){
+                        if (data.payload.id == $('#main_nom_cont').attr('value') && data.payload.comment_sender_id != me.id){
+                            render_comment_update(data.payload);
+                        }
+                    }
+                    else if (view_active == 'main' && default_view == 'wall'){
+                        update_comment_count(data.payload);
+                    }
+                }
+            }
+            else if (data.method == 'nom_won'){
+                notifcation_cache.unshift({
+                    'data': data.payload,
+                    'method': 'nom_won'
+                });
+                render_notification("nom_won", data.payload);
+                update_notifications(data.payload, 'nom_won');
+            }
+        }
+        if (typeof(long_poll) !== "undefined"){
+            //Setup new request
+            wait_for_message();
+        }
     }
     
     function render_comment_update(data){
@@ -1689,9 +1725,12 @@ $(document).ready(function(){
             }
             else{
                 var name = '';
-                if (!data.nominatee_name){
+                // if (!data.nominatee_name){
                     name = friends[data.nominatee].name;
-                }
+                // }
+                // else{
+                //     name = data.nominatee_name;
+                // }
                 method_html =   '<div class="nom_cat_' + data.nomination_category.replace(' ', '_').toLowerCase() + ' notification_color"></div>' +
                                 '<div class="notification_text_cont">' +
                                     '<p class="strong">' + name + '\'s</p>' + '<span> photo won the <p class="strong">' + data.nomination_category + '</p> nomination!</span>' +
@@ -2940,6 +2979,9 @@ $(document).ready(function(){
                                         '</div>');
             main_view();
             $('html, body').scrollTop(0);
+            if (typeof(_gaq) !== "undefined"){
+                _gaq.push(['_trackEvent', 'Top Noms', 'Click', '']);
+            }
         }
     }
     
@@ -2955,6 +2997,9 @@ $(document).ready(function(){
                                         '</div>');
             main_view();
             $('html, body').scrollTop(0);
+            if (typeof(_gaq) !== "undefined"){
+                _gaq.push(['_trackEvent', 'Recent Noms', 'Shown', '']);
+            }
         }
     }
     
@@ -3269,6 +3314,7 @@ $(document).ready(function(){
             noms_in_cat = data
             active_cache = data;
             vote_class = "won";
+            vote_tooltip_text = 'Already won';
             
             var name = '',
                 winning_name = '';
@@ -3825,7 +3871,7 @@ $(document).ready(function(){
     
     function render_active_photo_noms(data){
         var user = getUrlVars().user;
-        if (user != me.id && user != undefined){
+        if (user != me.id && user != 'me' && user != undefined){
             var first_name = friends[user].name.split(' ')[0],
                 active_nom_html = '',
                 cat_underscore = '';
@@ -5311,9 +5357,7 @@ $(document).ready(function(){
                                         '</div>' +
                                         '<div class="recent_nom_photo_right_cont">' +
                                             '<div class="recent_nom_vote_count nom_vote_' + nom.id + '">' +
-                                                '<a href="/#/trophy=' + nom_cat_underscore + '">' +
-                                                    '<img src="/site_media/img/trophies/' + trophy_size + '/' + nom_cat_underscore + '.png">' +
-                                                '</a>' +
+                                                '<img src="/site_media/img/trophies/' + trophy_size + '/' + nom_cat_underscore + '.png">' +
                                                 '<a href="#/nom_id=' + nom.id + '/votes">' +
                                                     '<h2 class="nom_cat_' + nom_cat_underscore + '">Votes: <span class="strong">' + nom.vote_count + '</span></h2>' +
                                                 '</a>' +
@@ -5470,9 +5514,7 @@ $(document).ready(function(){
                                         '</div>' +
                                         '<div class="recent_nom_photo_right_cont">' +
                                             '<div class="recent_nom_vote_count nom_vote_' + nom.id + '">' +
-                                                '<a href="/#/trophy=' + nom_cat_underscore + '" title="' + nom_cat_text + '">' +
-                                                    '<img src="/site_media/img/trophies/' + trophy_size + '/' + nom_cat_underscore + '.png">' +
-                                                '</a>' +
+                                                '<img src="/site_media/img/trophies/' + trophy_size + '/' + nom_cat_underscore + '.png">' +
                                                 '<a href="#/nom_id=' + nom.id + '/votes">' +
                                                     '<h2 class="nom_cat_' + nom_cat_underscore + '">Votes: <span class="strong">' + nom.vote_count + '</span></h2>' +
                                                 '</a>' +
@@ -5669,7 +5711,7 @@ $(document).ready(function(){
                 nom_cat_underscore = '',
                 name = '',
                 winning_nom_html = '',
-                top = 5;
+                top = 8;
             
             if (data.length > 0){
                 $('#recent_empty_wrap > h3').after('<p>These photos just won.</p>');
@@ -6262,8 +6304,11 @@ $(document).ready(function(){
                     $('.photo_thumbs').show().css({
                         'opacity': '1.0',
                         'display': 'inline-block',
-                        'position': 'static'
+                        'position': 'relative',
+                        'top': '0px',
+                        'left': '0px',
                     });
+                    $('#title').html('<h3>' + selected_album.album.name + '</h3>').show();
                     if ($('#photo_list').children().length == 0){
                         init_list_view(hidden);
                     }
@@ -6306,7 +6351,7 @@ $(document).ready(function(){
                 var photo_count = 0;
                 var album_count = selected_album.album.count;
                 
-                $('#title').html('<h3>' + selected_album.album.name + '</h3>');
+                $('#title').html('<h3>' + selected_album.album.name + '</h3>').show();
                 
                 if ($('#photo_list .photo_thumbs').length == 0){
                     if (top > photos.length){
@@ -7535,6 +7580,9 @@ $(document).ready(function(){
                     update_nom_stream_vote_count(nomination_id, data);
                 }
             });
+            if (typeof(_gaq) !== "undefined"){
+                _gaq.push(['_trackEvent', 'Vote', 'Up', '']);
+            }
         }
     }
     
@@ -7565,6 +7613,9 @@ $(document).ready(function(){
                     update_nom_stream_vote_count(nomination_id, data);
                 }
             });
+            if (typeof(_gaq) !== "undefined"){
+                _gaq.push(['_trackEvent', 'Vote', 'Down', '']);
+            }
         }
     }
     
@@ -7663,6 +7714,10 @@ $(document).ready(function(){
             $('#context_overlay_cont').removeClass().addClass('latest_photos_overlay');
             show_context_overlay();
             init_latest_photos();
+            
+            if (typeof(_gaq) !== "undefined"){
+                _gaq.push(['_trackEvent', 'Latest Photos', 'Shown', '']);
+            }
         });
         
         $('#activate_recent_winners').live('click', function(){
@@ -7671,6 +7726,10 @@ $(document).ready(function(){
             $('#context_overlay_cont').removeClass().addClass('latest_photos_overlay');
             show_context_overlay();
             init_recent_winners();
+            
+            if (typeof(_gaq) !== "undefined"){
+                _gaq.push(['_trackEvent', 'Recent Winners', 'Shown', '']);
+            }
         });
         
         $('.voted_cont a, .new_photo_cont').live('mouseover mouseout', function(event) {
@@ -8035,6 +8094,10 @@ $(document).ready(function(){
                 $(this).parent().parent().find('.new_comment_cont').show();
                 $(this).parent().parent().find('.comment_body').focus();
             }
+            
+            if (typeof(_gaq) !== "undefined"){
+                _gaq.push(['_trackEvent', 'Comment', 'Shown', '']);
+            }
         });
         
         $('.cancel_new_comment').live('click', function(){
@@ -8105,6 +8168,9 @@ $(document).ready(function(){
                     });
                 }
             });
+            if (typeof(_gaq) !== "undefined"){
+                _gaq.push(['_trackEvent', 'Comment', 'Posted', '']);
+            }
         });
         
         $('.comment_body').live('focus', function(){
@@ -8125,6 +8191,10 @@ $(document).ready(function(){
                 $('#profile_loading').remove();
                 render_recent_stream(data);
             });
+            
+            if (typeof(_gaq) !== "undefined"){
+                _gaq.push(['_trackEvent', 'Stream', 'Load More', '']);
+            }
         });
         
         if (mobile){
@@ -8899,6 +8969,9 @@ $(document).ready(function(){
                                     user_winning_noms_cache[selected_user].winning_nom_objs = [ ];
                                 }
                             }
+                            active_user_nom_cache[data[i].photo.fid] = {'cat': data[i].nomination_category,
+                                                                        'nom_id': data[i].id};
+                            $('#nominate_photo, #go_nom_detail').attr('id', 'go_nom_detail').attr('value', active_user_nom_cache[selected_photo].nom_id).text('Active');
                         }
                         // var trophy_img_src = 'http://test.portrit.com/site_media/img/invite/' + nom_cat_underscore + '.png';
                         // var link = 'http://test.portrit.com/#/nom_id=' + data[i - 1].id + '/ref=facebook';
@@ -8912,6 +8985,9 @@ $(document).ready(function(){
                         $('#nom_complete_cont').fadeIn();
                     });
                 });
+                if (typeof(_gaq) !== "undefined"){
+                    _gaq.push(['_trackEvent', 'Post Nom', 'Click', '']);
+                }
             }
         });
         
@@ -8920,12 +8996,12 @@ $(document).ready(function(){
                 $('#nom_complete_cont').fadeOut('fast', function(){
                     $('.nom_complete_cat_cont').remove();
                 });
-                $('#nominate_photo').fadeIn('fast');
+                $('#nominate_photo, #go_nom_detail').fadeIn('fast');
             }
             else{
                 $('#nom_complete_cont').hide();
                 $('.nom_complete_cat_cont').remove();
-                $('#nominate_photo').show();
+                $('#nominate_photo, #go_nom_detail').show();
             }
             $('#new_nomination_cont li').removeClass('selected').addClass('unselected');
             $('.inactive').removeClass('inactive');
@@ -9384,12 +9460,18 @@ $(document).ready(function(){
         else if (url_vars.won !== undefined && url_vars.nom_id !== undefined && url_vars.user !== undefined){
             clear_canvas(url_vars);
             attach_nom_detail_handlers();
+            if (typeof(_gaq) !== "undefined"){
+                _gaq.push(['_trackEvent', 'User Nom Won', 'Shown', '']);
+            }
             get_user_feed(nom_detail_view, 'temp');
             $('html, body').scrollTop(0);
         }
         else if (url_vars.won !== undefined && url_vars.nom_id !== undefined){
             clear_canvas(url_vars);
             attach_nom_detail_handlers();
+            if (typeof(_gaq) !== "undefined"){
+                _gaq.push(['_trackEvent', 'Nom Won', 'Shown', '']);
+            }
             if (isEmpty(winners_feed) || winning_noms_cache[url_vars.nom_id] == undefined){
                 get_user_feed(nom_detail_view, 'won');
             }
@@ -9401,6 +9483,9 @@ $(document).ready(function(){
         else if (url_vars.nom_id !== undefined){
             clear_canvas(url_vars);
             attach_nom_detail_handlers();
+            if (typeof(_gaq) !== "undefined"){
+                _gaq.push(['_trackEvent', 'Nom Detail', 'Shown', '']);
+            }
             if (isEmpty(active_noms_cache)){
                 get_user_feed(nom_detail_view, 'user_stream');
             }
