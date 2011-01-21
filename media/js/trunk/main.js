@@ -9343,7 +9343,7 @@ $(document).ready(function(){
                             '<div id="activate_recent_winners">Recent Winners</div>' +
                             '<div id="activate_latest_photos">Latest Photos</div>' +
                             '<ul>' +
-                                '<h1 id="active_stream_view" name="' + active_view_name + '">' + active_view_text + '<img id="stream_triangle" src="/site_media/img/downtriangle.png"/></h1>' +
+                                '<h1 id="active_stream_view" name="' + active_view_name + '">' + active_view_text + '</h1>' +
                                 '<div class="clear"></div>' +
                                 '<div id="drop_down_cont" style="display:none;">' +
                                     '<li name="' + replace_view_name + '" class="activate_stream">' +
