@@ -664,17 +664,19 @@ $(document).ready(function(){
     
     function render_settings(){
         var setttings_html = '';
-        var allow_notification_checked = '';
+        var allow_notification_src = '/site_media/img/unchecked_box.png';
+        var checked = 'false';
         
         if (allow_notifications){
-            allow_notification_checked = 'checked';
+            allow_notification_src = '/site_media/img/checked_box.png';
+            checked = 'true';
         }
         
         setttings_html = '<div id="settings_cont">' +
                             '<h1>Settings</h1>' +
                             '<div id="allow_notifications_cont">' +
                                 '<label for="allow_notifications">Allow Portrit to post on your wall when you win a trophy: </label>' +
-                                '<input id="allow_notifications" type="checkbox" ' + allow_notification_checked + ' name="allow_notifications"/>' +
+                                '<img id="allow_notifications" checked="' + checked + '" src="' + allow_notification_src + '"/>' +
                             '</div>' +
                             '<a id="clear_db" class="awesome large">Clear cache</a><span> - Only use when in dire straits!</span>' +
                         '</div>';
@@ -694,10 +696,19 @@ $(document).ready(function(){
             }
         });
         
-        $('#allow_notifications').live('change', function(){
-            var checked = $(this).is(':checked');
-            allow_notifications = checked;
-            $.post('/change_user_notifications/', {'allow_notifications': checked}, function(data){
+        $('#allow_notifications').live('click', function(){
+            var checked = $(this).attr('checked');
+            if (checked == 'true'){
+                allow_notifications = false;
+                $(this).attr('checked', 'false');
+                $(this).attr('src', '/site_media/img/unchecked_box.png');
+            }
+            else{
+                allow_notifications = true;
+                $(this).attr('checked', 'true');
+                $(this).attr('src', '/site_media/img/checked_box.png');
+            }
+            $.post('/change_user_notifications/', {'allow_notifications': allow_notifications}, function(data){
                 
             });
         });
@@ -1739,7 +1750,7 @@ $(document).ready(function(){
         }
         
         notification_html = '<div class="notification_popup" style="display:none;" value="' + data.id + '">' +
-                                '<img class="close_notification close_img" src="/site_media/img/x.png">' +
+                                '<img class="close_notification close_img" src="/site_media/img/x_medium.png">' +
                                 '<div class="notification_cont">' +
                                     method_html +
                                 '</div>' +
@@ -1935,7 +1946,7 @@ $(document).ready(function(){
                                         '<div class="notification_text_cont">' +
                                             '<p class="strong">' + name + '</p><span> nominated your photo for the </span><p class="strong">' + data[i].nomination_category + '</p><span> trophy!</span><span class="time"> - ' + time_str + '</span>' +
                                         '</div>' +
-                                        '<img class="kill_notification close_img" value="' + data[i].notification_id + '" src="/site_media/img/x.png" style="display:none;"/>' +
+                                        '<img class="kill_notification close_img" value="' + data[i].notification_id + '" src="/site_media/img/x_medium.png" style="display:none;"/>' +
                                     '</div>';
             }
             else if (data[i].notification_type == 'new_comment'){
@@ -1944,7 +1955,7 @@ $(document).ready(function(){
                                         '<div class="notification_text_cont">' +
                                             '<p class="strong">' + name + '</p><span> commented your photo nominated for the </span><p class="strong">' + data[i].nomination_category + '</p><span> trophy!</span><span class="time"> - ' + time_str + '</span>' +
                                         '</div>' +
-                                        '<img class="kill_notification close_img" value="' + data[i].notification_id + '" src="/site_media/img/x.png" style="display:none;"/>' +
+                                        '<img class="kill_notification close_img" value="' + data[i].notification_id + '" src="/site_media/img/x_medium.png" style="display:none;"/>' +
                                     '</div>';
             }
             else if (data[i].notification_type == 'nom_won'){
@@ -1953,7 +1964,7 @@ $(document).ready(function(){
                                         '<div class="notification_text_cont">' +
                                             '<p class="strong">' + name + '</p><span> photo won the </span><p class="strong">' + data[i].nomination_category + '</p><span> trophy!</span><span class="time"> - ' + time_str + '</span>' +
                                         '</div>' +
-                                        '<img class="kill_notification close_img" value="' + data[i].notification_id + '" src="/site_media/img/x.png" style="display:none;"/>' +
+                                        '<img class="kill_notification close_img" value="' + data[i].notification_id + '" src="/site_media/img/x_medium.png" style="display:none;"/>' +
                                     '</div>';
                 if (data[i].source_id == me.id){
                     my_winnings.push({'fb_user': data[i].source_id, 'cat': data[i].nomination_category, 'nom_id': data[i].nomination, 'notification_id': data[i].notification_id});
@@ -2275,6 +2286,7 @@ $(document).ready(function(){
         }
     });
     
+    var tut_on = false;
     function render_tut(tut_counts){
         function get_color_class(count){
             var color_class = '';
@@ -2293,6 +2305,7 @@ $(document).ready(function(){
             return color_class;
         }
         if (tut_counts){
+            tut_on = true;
             var start_count = 3;
             var current_count = 0;
             var count_class = '';
@@ -2342,6 +2355,7 @@ $(document).ready(function(){
                 });
                 hide_tut();
                 $('#activate_tut').remove();
+                tut_on = false;
             });
         }
         else{
@@ -2350,7 +2364,9 @@ $(document).ready(function(){
     }
     
     function update_tut(){
-        
+        if (tut_on){
+            
+        }
     }
     
     function toggle_tut(){
@@ -2378,7 +2394,7 @@ $(document).ready(function(){
             if (!mobile){
                 $('#initial_tut_cont').fadeOut(function(){
                     $(this).remove();
-                    render_tut(tut_counts);
+                    // render_tut(tut_counts);
                     init_view(update_view);
                 });
                 $('#wrapper').animate({
@@ -2393,16 +2409,26 @@ $(document).ready(function(){
                     'opacity': '1.0',
                     'min-height': '100%'
                 });
-                render_tut(tut_counts);
+                // render_tut(tut_counts);
                 init_view(update_view);
             }
             $('#close_initial_tut, #tut_go_cont span').die('click');
         });
         
-        $('#allow_notifications').live('change', function(){
-            var checked = $(this).is(':checked');
-            allow_notifications = checked;
-            $.post('/change_user_notifications/', {'allow_notifications': checked}, function(data){
+        $('#allow_notifications').live('click', function(){
+            var checked = $(this).attr('checked')
+            
+            if (checked == 'true'){
+                allow_notifications = false;
+                $(this).attr('checked', 'false');
+                $(this).attr('src', '/site_media/img/unchecked_box.png');
+            }
+            else{
+                allow_notifications = true;
+                $(this).attr('checked', 'true');
+                $(this).attr('src', '/site_media/img/checked_box.png');
+            }
+            $.post('/change_user_notifications/', {'allow_notifications': allow_notifications}, function(data){
                 
             });
         });
@@ -2478,7 +2504,7 @@ $(document).ready(function(){
                                             '</div>' +
                                             '<div id="allow_notifications_cont">' +
                                                 '<label for="allow_notifications">Allow Portrit to post on your wall when you win a trophy: </label>' +
-                                                '<img src="/site_media/img/checked_box.png"/>' +
+                                                '<img id="allow_notifications" checked="true" src="/site_media/img/checked_box.png"/>' +
                                                 // '<input id="allow_notifications" type="checkbox" checked="checked" name="allow_notifications"/>' +
                                             '</div>' +
                                         '</div>' +
@@ -2490,7 +2516,7 @@ $(document).ready(function(){
                                         '</div>' +
                                         '<img id="box_img" src="/site_media/img/boxtrophy.png"/>' +
                                         '<img id="landfill_img" src="/site_media/img/landfilltrophy.png"/>' +
-                                        '<img id="close_initial_tut" class="close_img" src="/site_media/img/x.png"/>' +
+                                        '<img id="close_initial_tut" class="close_img" src="/site_media/img/x_medium.png"/>' +
                                     '</div>' +
                                 '</div>';
         $('body').append(initial_tut_html);
@@ -2520,13 +2546,13 @@ $(document).ready(function(){
                 first = data.first;
                 first = true;
                 if (first){
-                    $('#right_nav').prepend('<a id="activate_tut">Tutorial</a>');
+                    //$('#right_nav').prepend('<a id="activate_tut">Tutorial</a>');
                     render_initial_tutorial(tut_counts);
                 }
                 else{
                     if (tut_counts){
-                        $('#right_nav').prepend('<a id="activate_tut">Tutorial</a>');
-                        render_tut(tut_counts);
+                        //$('#right_nav').prepend('<a id="activate_tut">Tutorial</a>');
+                        //render_tut(tut_counts);
                     }
                     init_view(update_view);
                 }
@@ -5900,7 +5926,7 @@ $(document).ready(function(){
                                     '</li>' +
                                 '</ul>' +
                                 '<input id="empty_search" type="text" value="Find your Friends"/>' +
-                                '<img id="clear_empty_search" class="close_img" style="display:none;" src="/site_media/img/x.png">' +
+                                '<img id="clear_empty_search" class="close_img" style="display:none;" src="/site_media/img/x_medium.png">' +
                             '</div>' +
                             '<div class="empty_cont">' +
                             '</div>' +
@@ -7475,7 +7501,7 @@ $(document).ready(function(){
             
             var ref_freiend_html =  '<div class="reffed_friend" id="' + id + '" value="' + fid + '" name="' + name + '">' +
                                         '<img src="https://graph.facebook.com/' + fid + '/picture?type=square">' +
-                                        '<img class="kill_referral" src="/site_media/img/x.png">' +
+                                        '<img class="kill_referral" src="/site_media/img/x_medium.png">' +
                                     '</div>';
             
             if ($('#refer_button').length === 0){
@@ -8975,7 +9001,7 @@ $(document).ready(function(){
                     }
                     var active_nom_html =   '<div id="' + title + '">' +
                                                 title_elm +
-                                                '<img class="kill_nomination" class="close_img" src="/site_media/img/x.png">' + 
+                                                '<img class="kill_nomination" class="close_img" src="/site_media/img/x_medium.png">' + 
                                             '</div>';
                     $('#active_nominations_cont').append(active_nom_html);
                     //Fade in CSS3 hack
@@ -9381,7 +9407,7 @@ $(document).ready(function(){
         
         //Settings
         $('#clear_db').die('click');
-        $('#allow_notifications').die('change');
+        $('#allow_notifications').die('click');
         
         //Main
         $('.friend').die('click');

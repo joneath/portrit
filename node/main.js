@@ -56,14 +56,9 @@ var Portrit = function(){
         }
         conn.addListener("message", function(data){
             event_user = data;
-            console.log(event_user);
             nomination_emitter.removeAllListeners(event_user);
             nomination_emitter.addListener(event_user, nom_callback);
         });
-    });
-    
-    websock_server.addListener("close", function(conn){
-        websock_server.broadcast("<"+conn.id+"> disconnected");
     });
     
     websock_server.listen(8123);

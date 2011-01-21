@@ -94,6 +94,8 @@ def change_user_notifications(request):
         fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
         user = fb_user.portrit_fb_user.all()[0]
         
+        print allow_notifications
+        
         if allow_notifications == 'true':
             user.allow_notifications = True
         else:
