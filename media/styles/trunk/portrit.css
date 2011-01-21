@@ -898,7 +898,27 @@ div#initial_tut_cont{
                     text-shadow: rgba(0, 0, 0, 0.246094) 0px -1px 1px;
                 }
                 
-                div#initial_tut_top_wrap .tut_point p{
+                div#initial_tut_top_wrap .tut_point h3{
+                    font-size:              18px;
+                    font-weight:            bold;
+                    margin-left:            100px;
+                    margin-bottom:          5px;
+                }
+                
+                div#initial_tut_top_wrap .tut_point ul{
+                    list-style:             none;
+                    margin-left:            100px;
+                    text-align:             center;
+                }
+                
+                div#initial_tut_top_wrap .tut_point li{
+                    display:                inline-block;
+                    margin:                 0px 5px;
+                    margin-top:             5px;
+                    position:               relative;
+                }
+                
+                div#initial_tut_top_wrap .tut_point > p{
                     font-size:              18px;
                     margin-left:            100px;
                 }
@@ -909,6 +929,12 @@ div#initial_tut_cont{
                 position:               relative;
                 z-index:                2;
             }
+            
+                div#initial_tut_top_wrap #allow_notifications_cont img{
+                    cursor:                 pointer;
+                    position:               relative;
+                    top:                    9px;
+                }
             
                 div#initial_tut_top_wrap label{
                     font-size:              20px;
@@ -1131,6 +1157,8 @@ div#nom_detail_cont{
         -webkit-border-top-right-radius:    10px;
         -moz-border-radius-topleft:         10px;
         -moz-border-radius-topright:        10px;
+        -moz-box-shadow:        0 3px 3px rgba(0, 0, 0, 0.5);
+        -webkit-box-shadow:     rgba(0, 0, 0, 0.496094) 0px 3px 3px;
     }
     
         div#main_nom_cont_left{
@@ -1914,17 +1942,17 @@ div#profile_cont{
     
         .feed_post_cont .empty_nom_overlay{
             background-color:       black;
-            height:                 350px;
+            height:                 384px;
             position:               absolute;
-            right:                  30px;
-            top:                    34px;
-            width:                  735px;
+            right:                  0px;
+            top:                    0px;
+            width:                  690px;
             z-index:                100;
         }
         
             .empty_nom_overlay .empty_message_box{
                 background-color:       white;
-                left:                   150px;
+                left:                   125px;
                 padding:                30px;
                 position:               relative;
                 top:                    100px;
@@ -2377,6 +2405,7 @@ div#profile_cont{
         margin:                 10px;
         overflow:               hidden;
         position:               relative;
+        text-align:             center;
         width:                  212px;
     }
     
@@ -2609,7 +2638,7 @@ div#profile_cont{
     p.tooltip{
         color:                  white;
         font-weight:            bold;
-        font-size:              12px;
+        font-size:              14px;
         text-align:             center;
     }
       
@@ -4150,6 +4179,7 @@ div#photo_cont{
             margin:             0 auto;
             margin-top:         20px;
             position:           relative;
+            text-align:         center;
             width:              500px;
             -webkit-border-radius:    10px;
             -moz-border-radius:       10px;
@@ -4547,8 +4577,81 @@ div#all_friends {
         font-size:          20px;
     }
     
-    #publish_story_cont #publish_controls{
+    #publish_story_cont #story_cont{
+        margin:             15px 20px 10px 20px;
+    }
+    
+        #story_cont img{
+            height:             50px;
+            width:              50px;
+        }
+    
+        #story_cont textarea{
+            border:             1px solid #DEDEDE;
+            color:              #333;
+            font-size:          18px;
+            height:             38px;
+            padding:            5px;
+            width:              455px;
+            margin-left:        10px;
+        }
+        
+    #publish_story_cont #story_preview{
+        margin-left:        80px;
+    }
+    
+        #story_preview #preview_left{
+            float:              left;
+        }
+        
+            #story_preview #preview_left > img{
+                height:             96px;
+                width:              96px;
+            }
+            
+        #story_preview #preview_left_bottom img, #story_preview #preview_left_bottom span{
+            float:              left;
+        }
+        
+        #story_preview #preview_left_bottom span{
+            font-size:          14px;
+            padding-left:       5px;
+        }
+        
+        #story_preview #preview_right{
+            float:              left;
+            margin-left:        15px;
+            margin-top:         5px;
+            width:              355px;
+        }
+        
+            #story_preview #preview_right a{
+                color:              #3B5998;
+                cursor:             default;
+                font-weight:        bold;
+                font-size:          12px;
+            }
+            
+            #story_preview #preview_right span{
+                color:              #999;
+                display:            block;
+                font-size:          12px;
+            }
+            
+            #story_preview #preview_right p{
+                color:              black;
+                font-size:          12px;
+                margin-top:         5px;
+            }
+    
+    #publish_controls{
         margin-top:         10px;
+        padding:            15px;
+        background-color:   #222;
+        -webkit-border-bottom-right-radius:     8px;
+        -webkit-border-bottom-left-radius:      8px;
+        -moz-border-radius-bottomright:         8px;
+        -moz-border-radius-bottomleft:          8px;
     }
     
         #publish_controls #skip_publish{

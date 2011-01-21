@@ -1,1 +1,157 @@
-404
+<!DOCTYPE html>
+<html>
+<head id="my_head">
+	<title>Portrit - </title>
+    <meta charset="utf-8" />
+
+    <style>
+        html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, canvas{
+        border:0 none;
+        font-family:inherit;
+        font-size:100%;
+        font-style:inherit;
+        font-weight:inherit;
+        margin:0;
+        outline-color:-moz-use-text-color;
+        outline-style:none;
+        outline-width:0;
+        padding:0;
+        vertical-align:baseline;
+        }
+
+        tr, th, td{
+            font-family:inherit;
+            font-size:100%;
+            font-style:inherit;
+            font-weight:inherit;
+            margin:0;
+            outline-color:-moz-use-text-color;
+            outline-style:none;
+            outline-width:0;
+            padding:0;
+            vertical-align:baseline;
+        }
+
+        html, body{
+            height:             100%;
+        }
+
+        body{
+            background-color:   #000000;
+            color:              #ffffff;
+            font-family:        Arial, Helvetica, sans-serif;
+            width:              100%;
+            min-width:          900px;
+        }
+        
+        div#wrapper{
+            background:         url(/site_media/img/landing_back.jpg) no-repeat;
+            background-position:center 0px;
+            min-height:         100%;
+            height:             auto !important;
+            margin:             0 auto -30px;
+            overflow-x:         hidden;
+        }
+        
+        div#cont{
+            margin:             0 auto;
+            width:              800px;
+        }
+        
+        div#login_header{
+            margin:             0 auto;
+            min-height:         103px;
+            padding-top:        55px;
+            padding-bottom:     30px;
+            position:           relative;
+            text-align:         center;
+        }
+        
+        #error_cont{
+            background-color:   white;
+            color:              #333;
+            -moz-border-radius: 10px; 
+        	-webkit-border-radius: 10px;
+        }
+        
+        h1{
+            font-size:          28px;
+            font-weight:        bold;
+            text-align:         center;
+            padding:            20px;
+        }
+        
+        ul{
+            list-style:         none;
+            min-height:         104px;
+            position:           relative;
+            text-align:         center;
+            top:                4px;
+        }
+        
+        li{
+            display:            inline-block;
+            margin:             0px 10px;
+        }
+    </style>
+
+    {% if analytics %}
+        <script type="text/javascript">
+
+          var _gaq = _gaq || [];
+          _gaq.push(['_setAccount', 'UA-17124785-1']);
+          _gaq.push(['_trackPageview']);
+
+          (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+          })();
+
+        </script>
+    {% endif %}
+</head>
+<body>
+    <div id="wrapper">
+        <div id="cont">
+            <div id="login_header">
+                <a href="/">
+                    <img id="login_logo" src="/site_media/img/logo_blank.png">
+                </a>
+            </div>
+            <div id="mid_cont">
+                <div id="trophy_cont">
+                    <ul>
+                        <li>
+                            <img src="/site_media/img/trophies/medium/artsy.png/">
+                        </li>
+                        <li>
+                            <img src="/site_media/img/trophies/medium/wtf.png/">
+                        </li>
+                        <li>
+                            <img src="/site_media/img/trophies/medium/party_animal.png/">
+                        </li>
+                        <li>
+                            <img src="/site_media/img/trophies/medium/lol.png/">
+                        </li>
+                        <li>
+                            <img src="/site_media/img/trophies/medium/hot.png/">
+                        </li>
+                        <li>
+                            <img src="/site_media/img/trophies/medium/fail.png/">
+                        </li>
+                        <li>
+                            <img src="/site_media/img/trophies/medium/cute.png/">
+                        </li>
+                        <li>
+                            <img src="/site_media/img/trophies/medium/creepy.png/">
+                        </li>
+                    </ul>
+                </div>
+                <div id="error_cont">
+                    <h1>404</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

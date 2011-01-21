@@ -1976,8 +1976,12 @@ $(document).ready(function(){
             trophy_count_text = 'trophies',
             nom_id = '',
             notification_ids = '',
+            trophy_html = '',
+            trophy_won_text = '',
+            name = '',
             publish_story_html = '';
             
+        name = me.name.split(' ')[0];
         nom_id = data[0].nom_id;
         for (var i = 0; i < data.length; i++){
             cat_underscore = data[i].cat.replace(' ', '_').toLowerCase();
@@ -1991,37 +1995,118 @@ $(document).ready(function(){
         
         if (data.length == 1){
             trophy_count_text = 'trophy';
+            trophy_won_text = 'won the ' + data[0].cat + ' trophy for his rockin\' photo!';
+            trophy_html = '<img src="/site_media/img/invite/' + cat_underscore + '.png"/>';
+        }
+        else{
+            //Blank trophy
+            trophy_html = '';
+            trophy_won_text = '';
         }
         
         publish_story_html ='<div id="publish_story_cont">' +
                                 '<h1>Congratulations!</h1>' +
                                 '<h2>You have won ' + data.length + ' ' + trophy_count_text + ' since your last visit.</h2>' +
-                                '<div id="publish_controls">' + 
-                                    '<span class="awesome large" value="' + nom_id + '" name="' + notification_ids + '" id="skip_publish">Skip & View</span>' +
-                                    '<span class="awesome large" value="' + nom_id + '" name="' + notification_ids + '" id="publish_story">Publish & View</span>' +
+                                '<div id="story_cont">' +
+                                    '<img src="https://graph.facebook.com/' + me.id + '/picture?type=square"/>' +
+                                    '<textarea></textarea>' +
                                 '</div>' +
+                                '<div id="story_preview">' +
+                                    '<div id="preview_left">' +
+                                        trophy_html +
+                                        '<div id="preview_left_bottom">' +
+                                            '<img src="/site_media/img/favicon.png"/>' +
+                                            '<span>via Portrit</span>' +
+                                            '<div class="clear"></div>' +
+                                        '</div>' +
+                                    '</div>' +
+                                    '<div id="preview_right">' +
+                                        '<a>' + name + ', ' + trophy_won_text + '</a>' +
+                                        '<span>Click the trophy to see ' + name + '\'s winning photos.</span>' +
+                                        '<p></p>' +
+                                    '</div>' +
+                                    '<div class="clear"></div>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div id="publish_controls">' + 
+                                '<span class="awesome large" value="' + nom_id + '" name="' + notification_ids + '" id="skip_publish">Skip & View</span>' +
+                                '<span class="awesome large" value="' + nom_id + '" name="' + notification_ids + '" id="publish_story">Share & View</span>' +
                                 '<div class="clear"></div>' +
-                            '</div>';
+                            '</div>';;
         $('#context_overlay_cont').addClass('publish_story_overlay');
         $('#context_overlay_cont > div').append(publish_story_html);
         show_context_overlay(true);
-    }
-    
-    $('#publish_story').live('click', function(){
-        var nom_ids = $(this).attr('value');
-        close_context_overlay();
-        window.location.href = '/#/nom_id=' + nom_ids;
-    });
-    
-    $('#skip_publish').live('click', function(){
-        var nom_ids = $(this).attr('value');
-        var notification_ids = $(this).attr('name');
-        close_context_overlay();
-        $.post('/notification_read/', {'notification_ids': notification_ids}, function(){
-
+        
+        $('#publish_story').bind('click', function(){
+            var nom_ids = $(this).attr('value');
+            close_context_overlay();
+            
+            $('#story_cont textarea').unbind('focus');
+            $('#story_cont textarea').unbind('blur');
+            $('#story_cont textarea').unbind('keyup');
+            $('#skip_publish').unbind('click');
+            $('#publish_story').unbind('click');
+            $('#close_overlay').unbind('click');
+            
+            // var trophy_img_src = 'http://test.portrit.com/site_media/img/invite/' + nom_cat_underscore + '.png';
+            // var link = 'http://test.portrit.com/#/nom_id=' + data[i - 1].id + '/ref=facebook';
+            // var name = nominator_name.split(' ')[0] + ' nominated one of your photos for the ' + nom_cat_text + ' trophy.';
+            // var caption = 'Click the trophy to see you and your friend\'s photo nominations';
+            // var description = '';
+            // 
+            // $.post('https://graph.facebook.com/' + nominatee_id + '/feed', {'access_token': fb_session.access_token, 'picture': trophy_img_src, 'link': link, 'name': name, 'caption': caption}, function(response){
+            //     var test = response;
+            // });
+            
+            window.location.href = '/#/nom_id=' + nom_ids;
         });
-        window.location.href = '/#/nom_id=' + nom_ids + '/won/user=' + me.id;
-    });
+
+        $('#skip_publish').bind('click', function(){
+            var nom_ids = $(this).attr('value');
+            var notification_ids = $(this).attr('name');
+            close_context_overlay();
+            
+            $('#story_cont textarea').unbind('focus');
+            $('#story_cont textarea').unbind('blur');
+            $('#story_cont textarea').unbind('keyup');
+            $('#skip_publish').unbind('click');
+            $('#publish_story').unbind('click');
+            $('#close_overlay').unbind('click');
+            
+            $.post('/notification_read/', {'notification_ids': notification_ids}, function(){
+
+            });
+            window.location.href = '/#/nom_id=' + nom_ids + '/won/user=' + me.id;
+        });
+        
+        $('#close_overlay').bind('click', function(){
+            var notification_ids = $('#skip_publish').attr('name');
+            close_context_overlay();
+            
+            $('#story_cont textarea').unbind('focus');
+            $('#story_cont textarea').unbind('blur');
+            $('#story_cont textarea').unbind('keyup');
+            $('#skip_publish').unbind('click');
+            $('#publish_story').unbind('click');
+            $('#close_overlay').unbind('click');
+            
+            $.post('/notification_read/', {'notification_ids': notification_ids}, function(){
+
+            });
+        })
+        
+        $('#story_cont textarea').bind('focus', function(){
+            comment_form_shown = true;
+        });
+        
+        $('#story_cont textarea').bind('blur', function(){
+            comment_form_shown = false
+        });
+
+        $('#story_cont textarea').bind('keyup', function(){
+            $('#preview_right p').text($(this).val());
+        });
+    }
     
     $('.notification_popup_cont').live('click', function(){
         var nom_id = $(this).attr('value');
@@ -2321,6 +2406,14 @@ $(document).ready(function(){
                 
             });
         });
+        
+        $('.tut_point li').live('mouseover mouseout', function(event) {
+            if (event.type == 'mouseover') {
+                show_like_tooltip(this);
+            } else {
+                hide_like_tooltip(this);
+            }
+        });
     }
     
     function render_initial_tutorial(tut_counts){
@@ -2340,22 +2433,53 @@ $(document).ready(function(){
                                             '<h1>Welcome to Portrit. Let\'s Get Started.</h1>' +
                                             '<div class="tut_point">' +
                                                 '<h2 class="tut_point_num nom_cat_fail">1</h2>' +
-                                                '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse consectetur, enim at consequat consequat, risus leo dictum risus, nec luctus enim mauris vitae ante. Nulla facilisi. Donec eget arcu magna. Curabitur volutpat est at nunc rhoncus pellentesque. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Praesent pharetra feugiat porta. Praesent dignissim libero et erat egestas laoreet vitae sit amet orci.</p>' +
+                                                '<h3>Nominate Your Friends</h3>' + 
+                                                '<p>Portrit is all about finding the best photos between your friends. Look through your friend\'s photos, or your own and find those rockin\' pics. Go with your gut and choose one of the trophies bellow.</p>' +
+                                                '<ul>' +
+                                                    '<p class="tooltip"></p>' +
+                                                    '<li name="Hot">' +
+                                                        '<img src="/site_media/img/trophies/medium/hot.png"/>' +
+                                                    '</li>' +
+                                                    '<li name="LOL">' +
+                                                        '<img src="/site_media/img/trophies/medium/lol.png"/>' +
+                                                    '</li>' +
+                                                    '<li name="Artsy">' +
+                                                        '<img src="/site_media/img/trophies/medium/artsy.png"/>' +
+                                                    '</li>' +
+                                                    '<li name="FAIL">' +
+                                                        '<img src="/site_media/img/trophies/medium/fail.png"/>' +
+                                                    '</li>' +
+                                                    '<li name="Party Animal">' +
+                                                        '<img src="/site_media/img/trophies/medium/party_animal.png"/>' +
+                                                    '</li>' +
+                                                    '<li name="Cute">' +
+                                                        '<img src="/site_media/img/trophies/medium/cute.png"/>' +
+                                                    '</li>' +
+                                                    '<li name="WTF">' +
+                                                        '<img src="/site_media/img/trophies/medium/wtf.png"/>' +
+                                                    '</li>' +
+                                                    '<li name="Creepy">' +
+                                                        '<img src="/site_media/img/trophies/medium/creepy.png"/>' +
+                                                    '</li>' +
+                                                '</ul>' +
                                                 '<div class="clear"></div>' + 
                                             '</div>' +
                                             '<div class="tut_point">' +
                                                 '<h2 class="tut_point_num nom_cat_lol">2</h2>' +
-                                                '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse consectetur, enim at consequat consequat, risus leo dictum risus, nec luctus enim mauris vitae ante. Nulla facilisi. Donec eget arcu magna. Curabitur volutpat est at nunc rhoncus pellentesque. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Praesent pharetra feugiat porta. Praesent dignissim libero et erat egestas laoreet vitae sit amet orci.</p>' +
+                                                '<h3>Vote On Your Favorite</h3>' + 
+                                                '<p>It\'s up to you and your friends to decide who deserves the trophy. Take a look through all the Hot, WTF, FAIL, etc photos and give your opinion. Love it, vote it up. Hate it, vote it down.</p>' +
                                                 '<div class="clear"></div>' +
                                             '</div>' +
                                             '<div class="tut_point">' +
                                                 '<h2 class="tut_point_num nom_cat_party_animal">3</h2>' +
-                                                '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse consectetur, enim at consequat consequat, risus leo dictum risus, nec luctus enim mauris vitae ante. Nulla facilisi. Donec eget arcu magna. Curabitur volutpat est at nunc rhoncus pellentesque. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Praesent pharetra feugiat porta. Praesent dignissim libero et erat egestas laoreet vitae sit amet orci.</p>' +
+                                                '<h3>Build Up Your Trophy Room</h3>' + 
+                                                '<p>Got amazing photos? Earn trophies for your hard work. Friends see your winning photos first, so your best photos are always in their face.</p>' +
                                                 '<div class="clear"></div>' +
                                             '</div>' +
                                             '<div id="allow_notifications_cont">' +
                                                 '<label for="allow_notifications">Allow Portrit to post on your wall when you win a trophy: </label>' +
-                                                '<input id="allow_notifications" type="checkbox" checked="checked" name="allow_notifications"/>' +
+                                                '<img src="/site_media/img/checked_box.png"/>' +
+                                                // '<input id="allow_notifications" type="checkbox" checked="checked" name="allow_notifications"/>' +
                                             '</div>' +
                                         '</div>' +
                                         '<div id="initial_tut_bottom_wrap">' +
@@ -2394,6 +2518,7 @@ $(document).ready(function(){
                 tut_counts = data.tut_counts;
                 allow_notifications = data.allow_notifications;
                 first = data.first;
+                first = true;
                 if (first){
                     $('#right_nav').prepend('<a id="activate_tut">Tutorial</a>');
                     render_initial_tutorial(tut_counts);
@@ -2443,7 +2568,7 @@ $(document).ready(function(){
             default_view = JSON.parse(default_view);
         }
         if (stream_view === null){
-            stream_view = 'top';
+            stream_view = 'recent';
             sessionStorage['stream_view'] = JSON.stringify(stream_view);
         }
         else{
@@ -3628,7 +3753,7 @@ $(document).ready(function(){
             }
         }
         if (user_voted){
-            $('.vote').addClass('won');
+            $('.vote').addClass('won').attr('name', 'Already voted');
         }
         else{
             $('.vote').removeClass('won');
@@ -4379,6 +4504,8 @@ $(document).ready(function(){
             caption = '',
             nominator_name = '',
             first_offset = 0;
+            
+        stream_view = 'top_noms';
             
         if (!mobile || tablet){
             stream_width = 690;
@@ -5160,26 +5287,28 @@ $(document).ready(function(){
             owner_name = '',
             photo_html = '';
         for (var i = 0; i < data.length; i++){
-            for (var j = 0; j < data[i].attachment.media.length; j++){
-                photo = data[i].attachment.media[j];
-                photo_id = photo.photo.pid;
-                owner_id = data[i].actor_id;
-                if (friends[owner_id]){
-                    owner_name = friends[owner_id].name;
-                }
-                else{
-                    owner_name = '';
-                    for (var k = 0; k < data[i].tagged_ids.length; k++){
-                        if (friends[data[i].tagged_ids[k]]){
-                            owner_name = friends[data[i].tagged_ids[k]].name;
+            if (friends[data[i].source_id]){
+                for (var j = 0; j < data[i].attachment.media.length; j++){
+                    photo = data[i].attachment.media[j];
+                    photo_id = photo.photo.pid;
+                    owner_id = data[i].actor_id;
+                    if (friends[owner_id]){
+                        owner_name = friends[owner_id].name;
+                    }
+                    else{
+                        owner_name = '';
+                        for (var k = 0; k < data[i].tagged_ids.length; k++){
+                            if (friends[data[i].tagged_ids[k]]){
+                                owner_name = friends[data[i].tagged_ids[k]].name;
+                            }
                         }
                     }
-                }
                 
-                photo_html ='<div class="new_photo_cont" name="' + owner_name + '" value="' + photo_id + '">' +
-                                '<img src="' + photo.src + '"/>' +
-                            '</div>';
-                $('#new_photo_cont').append(photo_html);
+                    photo_html ='<div class="new_photo_cont" name="' + owner_name + '" value="' + photo_id + '">' +
+                                    '<img src="' + photo.src + '"/>' +
+                                '</div>';
+                    $('#new_photo_cont').append(photo_html);
+                }
             }
         }
         if ($(window).height() < 900){
@@ -5672,31 +5801,33 @@ $(document).ready(function(){
             
             for (var i = 0; i < data.length; i++){
                 for (var j = 0; j < data[i].attachment.media.length; j++){
-                    photo = data[i].attachment.media[j];
-                    photo_id = photo.photo.pid;
-                    owner_id = data[i].actor_id;
-                    if (friends[owner_id]){
-                        owner_name = friends[owner_id].name;
-                    }
-                    else{
-                        owner_name = '';
-                        for (var k = 0; k < data[i].tagged_ids.length; k++){
-                            if (friends[data[i].tagged_ids[k]]){
-                                owner_name = friends[data[i].tagged_ids[k]].name;
+                    if (friends[data[i].source_id]){
+                        photo = data[i].attachment.media[j];
+                        photo_id = photo.photo.pid;
+                        owner_id = data[i].actor_id;
+                        if (friends[owner_id]){
+                            owner_name = friends[owner_id].name;
+                        }
+                        else{
+                            owner_name = '';
+                            for (var k = 0; k < data[i].tagged_ids.length; k++){
+                                if (friends[data[i].tagged_ids[k]]){
+                                    owner_name = friends[data[i].tagged_ids[k]].name;
+                                }
                             }
                         }
-                    }
 
-                    photo_html ='<div class="new_photo_cont" name="' + owner_name + '" value="' + photo_id + '">' +
-                                    '<img src="' + photo.src + '"/>' +
-                                '</div>';
-                    $('#latest_empty_wrap > .empty_cont').append(photo_html);
-                    count += 1;
-                    if (count == top){
-                        if (!mobile){
-                            $('#latest_empty_wrap > .empty_cont').append('<p class="tooltip"></p>');
+                        photo_html ='<div class="new_photo_cont" name="' + owner_name + '" value="' + photo_id + '">' +
+                                        '<img src="' + photo.src + '"/>' +
+                                    '</div>';
+                        $('#latest_empty_wrap > .empty_cont').append(photo_html);
+                        count += 1;
+                        if (count == top){
+                            if (!mobile){
+                                $('#latest_empty_wrap > .empty_cont').append('<p class="tooltip"></p>');
+                            }
+                            return;
                         }
-                        return;
                     }
                 }
             }
@@ -5946,6 +6077,7 @@ $(document).ready(function(){
         $('#profile_cont').append(recent_view_html);
         $.getJSON('/init_recent_stream/', function(data){
             remove_load();
+            stream_view = 'recent_noms';
             if (data.recent.length > 0){
                 show_stream_fixtures();
                 render_recent_stream(data.recent);
@@ -6014,7 +6146,7 @@ $(document).ready(function(){
     }
     
     function render_countdown_clock(){
-        $('#top_right_cont').prepend('<h1>Time Remaining</h1><h2 id="time_countdown"></h2></h1>');
+        $('#top_right_cont').prepend('<h1>Time <span class="strong">Remaining</strong></h1><h2 id="time_countdown"></h2></h1>');
         GetCount();
     }
     
@@ -7572,6 +7704,7 @@ $(document).ready(function(){
                                                 '</a>';
                     if (view_active == 'nom_detail'){
                         $('#nom_votes_wrap').append(vote_profile_pic_html);
+                        $('.vote').addClass('won');
                         // $('.nom_photo_thumbnail[name="selected"] p').text(data.vote_count);
                     }
                     else{
@@ -7605,6 +7738,7 @@ $(document).ready(function(){
                 
                     if (view_active == 'nom_detail'){
                         $('#nom_votes_wrap').append(vote_profile_pic_html);
+                        $('.vote').addClass('won');
                         // $('.nom_photo_thumbnail[name="selected"] p').text(data.vote_count);
                     }
                     else{
@@ -7657,6 +7791,7 @@ $(document).ready(function(){
             }
             $('#context_overlay').show();
         }
+        $('#context_overlay').css('top', 150);
     }
     
     var clear_profile = false;
@@ -8269,7 +8404,7 @@ $(document).ready(function(){
         
         $('.comment').remove();
         $('#nom_votes_wrap a').remove();
-        $('.vote').attr('name', nom.id);
+        $('.vote').attr('value', nom.id);
         $('#main_nom_cont').attr('value', nom.id);
         
         var name = '',
@@ -8982,7 +9117,8 @@ $(document).ready(function(){
                         // $.post('https://graph.facebook.com/' + nominatee_id + '/feed', {'access_token': fb_session.access_token, 'picture': trophy_img_src, 'link': link, 'name': name, 'caption': caption}, function(response){
                         //     var test = response;
                         // });
-                        $('#nom_complete_cont').fadeIn();
+                        
+                        render_share_nom(data);
                     });
                 });
                 if (typeof(_gaq) !== "undefined"){
@@ -9031,6 +9167,134 @@ $(document).ready(function(){
         
         $('.upgrade_tooltip_cont').live('mouseout', function(){
             upgrade_timeout = setTimeout(remove_tooltip_after, 3000);
+        });
+    }
+    
+    function render_share_nom(data){
+        var cat_underscore = '',
+            trophy_count_text = 'trophies',
+            nom_id = '',
+            notification_ids = '',
+            trophy_html = '',
+            trophy_won_text = '',
+            name = '',
+            friend_name = '',
+            reason_text = '',
+            publish_story_html = '';
+            
+        name = me.name.split(' ')[0];
+        nom_id = data[0].id;
+        
+        if (data[0].nominatee == me.id){
+            friend_name = name;
+            reason_text = 'Share your nomination with your friends.';
+        }
+        else{
+            friend_name = friends[data[0].nominatee].name.split(' ')[0];
+            reason_text = 'You nominated ' + friend_name + '\'s photo. Let them know on facebook.';
+        }
+        
+        for (var i = 0; i < data.length; i++){
+            cat_underscore = data[i].nomination_category.replace(' ', '_').toLowerCase();
+        }
+        
+        if (data.length == 1){
+            trophy_count_text = 'trophy';
+            if (data[0].nominatee == me.id){
+                trophy_won_text = 'I nominated one of my photos for the ' + data[0].nomination_category + ' trophy';
+            }
+            else{
+                trophy_won_text = name + ' nominated one of ' + friend_name + '\'s photos for the ' + data[0].nomination_category + ' trophy';
+            }
+            trophy_html = '<img src="/site_media/img/invite/' + cat_underscore + '.png"/>';
+        }
+        else{
+            //Blank trophy
+            trophy_html = '';
+            trophy_won_text = '';
+        }
+        
+        publish_story_html ='<div id="publish_story_cont">' +
+                                '<h1>Share with your friends.</h1>' +
+                                '<h2>' + reason_text + '</h2>' +
+                                '<div id="story_cont">' +
+                                    '<img src="https://graph.facebook.com/' + me.id + '/picture?type=square"/>' +
+                                    '<textarea></textarea>' +
+                                '</div>' +
+                                '<div id="story_preview">' +
+                                    '<div id="preview_left">' +
+                                        trophy_html +
+                                        '<div id="preview_left_bottom">' +
+                                            '<img src="/site_media/img/favicon.png"/>' +
+                                            '<span>via Portrit</span>' +
+                                            '<div class="clear"></div>' +
+                                        '</div>' +
+                                    '</div>' +
+                                    '<div id="preview_right">' +
+                                        '<a>' + trophy_won_text + '</a>' +
+                                        '<span>Click the trophy to see ' + friend_name + '\'s nominated photo.</span>' +
+                                        '<p></p>' +
+                                    '</div>' +
+                                    '<div class="clear"></div>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div id="publish_controls">' + 
+                                '<span class="awesome large" id="skip_publish">Skip</span>' +
+                                '<span class="awesome large" id="publish_story">Share</span>' +
+                                '<div class="clear"></div>' +
+                            '</div>';;
+        $('#context_overlay_cont').addClass('publish_story_overlay');
+        $('#context_overlay_cont > div').append(publish_story_html);
+        show_context_overlay(true);
+        $('div#context_overlay').css('top', 260);
+        
+        $('#publish_story').bind('click', function(){
+            var nom_ids = $(this).attr('value');
+            close_context_overlay();
+            $('#nom_complete_cont').fadeIn();
+            
+            $('#story_cont textarea').unbind('focus');
+            $('#story_cont textarea').unbind('blur');
+            $('#story_cont textarea').unbind('keyup');
+            $('#skip_publish').unbind('click');
+            $('#publish_story').unbind('click');
+            $('#close_overlay').unbind('click');
+        });
+
+        $('#skip_publish').bind('click', function(){
+            close_context_overlay();
+            $('#nom_complete_cont').fadeIn();
+            
+            $('#story_cont textarea').unbind('focus');
+            $('#story_cont textarea').unbind('blur');
+            $('#story_cont textarea').unbind('keyup');
+            $('#skip_publish').unbind('click');
+            $('#publish_story').unbind('click');
+            $('#close_overlay').unbind('click');
+        });
+        
+        $('#close_overlay').bind('click', function(){
+            close_context_overlay();
+            $('#nom_complete_cont').fadeIn();
+            
+            $('#story_cont textarea').unbind('focus');
+            $('#story_cont textarea').unbind('blur');
+            $('#story_cont textarea').unbind('keyup');
+            $('#skip_publish').unbind('click');
+            $('#publish_story').unbind('click');
+            $('#close_overlay').unbind('click');
+        })
+        
+        $('#story_cont textarea').bind('focus', function(){
+            comment_form_shown = true;
+        });
+        
+        $('#story_cont textarea').bind('blur', function(){
+            comment_form_shown = false
+        });
+
+        $('#story_cont textarea').bind('keyup', function(){
+            $('#preview_right p').text($(this).val());
         });
     }
     

@@ -985,7 +985,11 @@ div#initial_tut_wrap{
     }
 
     div#initial_tut_top_wrap{
-        padding:            20px 20px 0px;
+        padding:            10px 10px 0px;
+    }
+    
+    div#initial_tut_top_wrap > h1{
+        width:              450px;
     }
 
     div#initial_tut_top_wrap .tut_point{
@@ -993,9 +997,18 @@ div#initial_tut_wrap{
         width:              380px;
     }
     
+        div#initial_tut_top_wrap .tut_point h3{
+            margin-left:    65px;
+            font-size:      22px;
+        }
+        
+        div#initial_tut_top_wrap .tut_point ul{
+            margin-left:    65px;
+        }
+    
         div#initial_tut_top_wrap .tut_point p{
             font-size:      22px;
-            margin-left:    60px;   
+            margin-left:    65px;   
         }
     
     div#initial_tut_wrap #box_img{

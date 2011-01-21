@@ -408,9 +408,17 @@ def submit_bug_report(request):
         return HttpResponse(data, mimetype='application/json')
         
 def handle404(request, template="404.html"):
-    payload = {}
+    analytics = True
+    
+    if ENV == 'LOCAL' or ENV == 'TEST':
+        analytics = None
+    payload = {'analytics': analytics,}
     return render_to_response(template, payload, context_instance=RequestContext(request))
 
 def handle500(request, template="500.html"):
-    payload = {}
+    analytics = True
+    
+    if ENV == 'LOCAL' or ENV == 'TEST':
+        analytics = None
+    payload = {'analytics': analytics,}
     return render_to_response(template, payload, context_instance=RequestContext(request))

@@ -36,12 +36,17 @@ def login_fb_user(request):
             graph = facebook.GraphAPI(cookie["access_token"])
             profile = graph.get_object("me")
             fb_user, created = FB_User.objects.get_or_create(fid=str(profile["id"]))
-            if created:
-                fb_user.save()
                 
             user = Portrit_User(fb_user=fb_user, name=profile['name'],
                         access_token=cookie["access_token"])
             user.save()
+            
+            for winning_nom in fb_user.winning_noms.all():
+                notification_type = Notification_Type.objects.get(name="nom_won")
+                notification = Notification(source=winning_nom.nominatee, nomination=winning_nom, notification_type=notification_type)
+                notification.save()
+                user.notifications.add(notification)
+            
             first = True
             
             portrit = Portrit_FB(graph, fb_user, cookie["access_token"])
