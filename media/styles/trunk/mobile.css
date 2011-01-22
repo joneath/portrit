@@ -268,7 +268,7 @@ div#active_cont .active_nom_cont{
         left:       165px;
         opacity:    1;
         position:   absolute;
-        top:        -8px;
+        top:        -11px;
         z-index:    1001;
     }
 
@@ -385,7 +385,7 @@ div#feedback div#feedback_cont{
     }
     
 .nom_photo_bottom_wrap .nominator_cont{
-    width:              140px;
+    width:              120px;
 }
     
 div#active_stream_text_cont{
@@ -424,11 +424,11 @@ div#active_stream_text_cont > span{
 }
 
 .empty_trophy{
-    right:              80px;
+    right:              70px;
 }
 
 .recent_nom_photo_right_cont .recent_nom_vote_count{
-    margin-top:         40px;
+    margin-top:         5px;
 }
 
 .recent_nom_cont .recent_nom_top_cont{
@@ -443,6 +443,10 @@ div#active_stream_text_cont > span{
 
 .recent_nom_vote_count h2{
     padding:            10px 5px;
+}
+
+.recent_nom_vote_count .trophy_img{
+    margin-left:        30px;
 }
 
 .recent_nom_comment_heading h1{

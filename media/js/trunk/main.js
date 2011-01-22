@@ -100,6 +100,7 @@ $(document).ready(function(){
     
     $('#search_control').click(function(e){
         e.stopPropagation();
+        $('#close_search').removeClass().addClass('close_img ' + close_size);
         show_search_view();
     });
     
@@ -578,10 +579,12 @@ $(document).ready(function(){
         'new_noms': { },
         'comments': { }
     },
+    close_size = 'normal',
     me = null;
     
     if (DetectMobileQuick() === true){
         mobile = true;
+        close_size = 'mobile'
         
         if (typeof(_gaq) !== "undefined"){
             var meta_html = '<link rel="stylesheet" href="/site_media/styles/production/mobile_landing.css"/>' +
@@ -618,6 +621,7 @@ $(document).ready(function(){
         }
     }
     else if (DetectIpad() === true){
+        close_size = 'mobile';
         mobile = true;
         tablet = true;
     }
@@ -666,17 +670,20 @@ $(document).ready(function(){
         var setttings_html = '';
         var allow_notification_src = '/site_media/img/unchecked_box.png';
         var checked = 'false';
+        var checked_class = 'unchecked';
         
         if (allow_notifications){
             allow_notification_src = '/site_media/img/checked_box.png';
             checked = 'true';
+            checked_class = 'checked';
         }
         
         setttings_html = '<div id="settings_cont">' +
                             '<h1>Settings</h1>' +
                             '<div id="allow_notifications_cont">' +
                                 '<label for="allow_notifications">Allow Portrit to post on your wall when you win a trophy: </label>' +
-                                '<img id="allow_notifications" checked="' + checked + '" src="' + allow_notification_src + '"/>' +
+                                '<div id="allow_notifications" class="' + checked_class + '" checked="' + checked + '"></div>' +
+                                '<div class="clear"></div>' +
                             '</div>' +
                             '<a id="clear_db" class="awesome large">Clear cache</a><span> - Only use when in dire straits!</span>' +
                         '</div>';
@@ -701,12 +708,13 @@ $(document).ready(function(){
             if (checked == 'true'){
                 allow_notifications = false;
                 $(this).attr('checked', 'false');
-                $(this).attr('src', '/site_media/img/unchecked_box.png');
+                $(this).removeClass().addClass('unchecked');
             }
             else{
                 allow_notifications = true;
                 $(this).attr('checked', 'true');
                 $(this).attr('src', '/site_media/img/checked_box.png');
+                $(this).removeClass().addClass('checked');
             }
             $.post('/change_user_notifications/', {'allow_notifications': allow_notifications}, function(data){
                 
@@ -1374,6 +1382,7 @@ $(document).ready(function(){
         $('#feedback').show();
         $('#feedback_message').focus();
         $(document).bind('click', hide_feedback);
+        $('#close_feedback').removeClass().addClass('close_img ' + close_size);
         $('#close_feedback, #close_feedback_button').bind('click', hide_feedback);
         return false;
     }
@@ -2421,12 +2430,13 @@ $(document).ready(function(){
             if (checked == 'true'){
                 allow_notifications = false;
                 $(this).attr('checked', 'false');
-                $(this).attr('src', '/site_media/img/unchecked_box.png');
+                $(this).removeClass().addClass('unchecked');
             }
             else{
                 allow_notifications = true;
                 $(this).attr('checked', 'true');
                 $(this).attr('src', '/site_media/img/checked_box.png');
+                $(this).removeClass().addClass('checked');
             }
             $.post('/change_user_notifications/', {'allow_notifications': allow_notifications}, function(data){
                 
@@ -2464,28 +2474,28 @@ $(document).ready(function(){
                                                 '<ul>' +
                                                     '<p class="tooltip"></p>' +
                                                     '<li name="Hot">' +
-                                                        '<img src="/site_media/img/trophies/medium/hot.png"/>' +
+                                                        '<div class="trophy_img medium hot"></div>' +
                                                     '</li>' +
                                                     '<li name="LOL">' +
-                                                        '<img src="/site_media/img/trophies/medium/lol.png"/>' +
+                                                        '<div class="trophy_img medium lol"></div>' +
                                                     '</li>' +
                                                     '<li name="Artsy">' +
-                                                        '<img src="/site_media/img/trophies/medium/artsy.png"/>' +
+                                                        '<div class="trophy_img medium artsy"></div>' +
                                                     '</li>' +
                                                     '<li name="FAIL">' +
-                                                        '<img src="/site_media/img/trophies/medium/fail.png"/>' +
+                                                        '<div class="trophy_img medium fail"></div>' +
                                                     '</li>' +
                                                     '<li name="Party Animal">' +
-                                                        '<img src="/site_media/img/trophies/medium/party_animal.png"/>' +
+                                                        '<div class="trophy_img medium party_animal"></div>' +
                                                     '</li>' +
                                                     '<li name="Cute">' +
-                                                        '<img src="/site_media/img/trophies/medium/cute.png"/>' +
+                                                        '<div class="trophy_img medium cute"></div>' +
                                                     '</li>' +
                                                     '<li name="WTF">' +
-                                                        '<img src="/site_media/img/trophies/medium/wtf.png"/>' +
+                                                        '<div class="trophy_img medium wtf"></div>' +
                                                     '</li>' +
                                                     '<li name="Creepy">' +
-                                                        '<img src="/site_media/img/trophies/medium/creepy.png"/>' +
+                                                        '<div class="trophy_img medium creepy"></div>' +
                                                     '</li>' +
                                                 '</ul>' +
                                                 '<div class="clear"></div>' + 
@@ -2493,7 +2503,7 @@ $(document).ready(function(){
                                             '<div class="tut_point">' +
                                                 '<h2 class="tut_point_num nom_cat_lol">2</h2>' +
                                                 '<h3>Vote On Your Favorite</h3>' + 
-                                                '<p>It\'s up to you and your friends to decide who deserves the trophy. Take a look through all the Hot, WTF, FAIL, etc photos and give your opinion. Love it, vote it up. Hate it, vote it down.</p>' +
+                                                '<p>It\'s up to you and your friends to decide who earns a trophy. Take a look through all the Hot, WTF, FAIL, etc photos and give your opinion. Love it, vote it up. Hate it, vote it down.</p>' +
                                                 '<div class="clear"></div>' +
                                             '</div>' +
                                             '<div class="tut_point">' +
@@ -2504,8 +2514,8 @@ $(document).ready(function(){
                                             '</div>' +
                                             '<div id="allow_notifications_cont">' +
                                                 '<label for="allow_notifications">Allow Portrit to post on your wall when you win a trophy: </label>' +
-                                                '<img id="allow_notifications" checked="true" src="/site_media/img/checked_box.png"/>' +
-                                                // '<input id="allow_notifications" type="checkbox" checked="checked" name="allow_notifications"/>' +
+                                                '<div id="allow_notifications" class="checked" checked="true"></div>' +
+                                                '<div class="clear"></div>' +
                                             '</div>' +
                                         '</div>' +
                                         '<div id="initial_tut_bottom_wrap">' +
@@ -2516,7 +2526,7 @@ $(document).ready(function(){
                                         '</div>' +
                                         '<img id="box_img" src="/site_media/img/boxtrophy.png"/>' +
                                         '<img id="landfill_img" src="/site_media/img/landfilltrophy.png"/>' +
-                                        '<img id="close_initial_tut" class="close_img" src="/site_media/img/x_medium.png"/>' +
+                                        '<p id="close_initial_tut" class="close_img ' + close_size +'"></p>' +
                                     '</div>' +
                                 '</div>';
         $('body').append(initial_tut_html);
@@ -2544,7 +2554,6 @@ $(document).ready(function(){
                 tut_counts = data.tut_counts;
                 allow_notifications = data.allow_notifications;
                 first = data.first;
-                first = true;
                 if (first){
                     //$('#right_nav').prepend('<a id="activate_tut">Tutorial</a>');
                     render_initial_tutorial(tut_counts);
@@ -2587,7 +2596,7 @@ $(document).ready(function(){
             stream_view = sessionStorage.getItem('stream_view');
         }
         if (default_view === null){
-            default_view = 'friend';
+            default_view = 'wall';
             sessionStorage['default_view'] = JSON.stringify(default_view);
         }
         else{
@@ -2822,8 +2831,8 @@ $(document).ready(function(){
                 
                 if (first_alpha){
                     image_html = '<div class="crop"><img class="friend_pic" src="https://graph.facebook.com/' + friend_array[i].id + '/picture?type=large"/></div>';
-                    name_html = '<div class="text_wrapper"><div class="text" onclick="void(0)"><h3>' + friend_array[i].name + '</h3></div></div>';
-                    friend_html = '<div class="friend ' + alpha_class + '" name="' + friend_array[i].name + '" value="' + friend_array[i].id + '" onclick="void(0)">' + alpha_html + '<div class="img_cont">' + image_html + name_html + '</div></div>';
+                    // name_html = '<div class="text_wrapper"><div class="text" onclick="void(0)"><h3>' + friend_array[i].name + '</h3></div></div>';
+                    friend_html = '<div class="friend ' + alpha_class + '" name="' + friend_array[i].name + '" value="' + friend_array[i].id + '" onclick="void(0)">' + alpha_html + '<div class="img_cont">' + image_html  + '</div></div>';
                     $('#wall_cont').append(friend_html);
                 }
             }
@@ -3409,7 +3418,7 @@ $(document).ready(function(){
                                         '</div>' +
                                         '<a href="/#/nom_id=' + data[i].id + '">' +
                                             '<p class="active_vote_count nom_cat_' + cat_underscore + '" style="right: ' + vote_right + 'px;">Votes: <span class="strong">' + data[i].vote_count + '</span></p>' +
-                                            '<img class="trophy" src="/site_media/img/trophies/small/' + cat_underscore + '.png"/>' +
+                                            '<div class="trophy trophy_img small ' + cat_underscore + '"></div>' +
                                             '<img class="active_nom_photo" src="' + data[i].photo.src_small + '" style="height: ' + data[i].photo.small_height + 'px; width: ' + data[i].photo.small_width +'px;"/>' +
                                         '</a>' +
                                         '<div class="clear"></div>' +
@@ -3457,7 +3466,8 @@ $(document).ready(function(){
             trophy_size = '',
             vote_class = '',
             vote_tooltip_text = 'Already voted',
-            title = '';
+            title = '',
+            nom_cat_underscore = '';
             
         if (trophy != undefined && user_url != undefined){
             won = true;
@@ -3565,7 +3575,7 @@ $(document).ready(function(){
         }
         
         if (trophy || (won && user_url)){
-            nom_stream_html = '<div id="nom_cat_stream"><img class="prev_photo" src="/site_media/img/backgallery-small.png"><img class="next_photo" src="/site_media/img/forwardgallery-small.png">';
+            nom_stream_html = '<div id="nom_cat_stream"><div class="prev_photo"><div class="prev_photo_img"></div></div><div class="next_photo"><div class="next_photo_img"></div></div></div>';
             for (var i = 0; i < active_cache.length; i++){
                 nom_in_cat = active_cache[i];
                 if (nom_in_cat.id == nom.id){
@@ -3585,7 +3595,7 @@ $(document).ready(function(){
             nom_stream_html += '</div>';
         }
         else if (!won){
-            nom_stream_html = '<div id="nom_cat_stream"><img class="prev_photo" src="/site_media/img/backgallery-small.png"><img class="next_photo" src="/site_media/img/forwardgallery-small.png">';
+            nom_stream_html = '<div id="nom_cat_stream"><div class="prev_photo"><div class="prev_photo_img"></div></div><div class="next_photo"><div class="next_photo_img"></div></div>';
             noms_in_cat = sort_noms_by_votes(active_cache, noms_in_cat);
             for (var i = 0; i < noms_in_cat.length; i++){
                 nom_in_cat = active_cache[noms_in_cat[i]];
@@ -3634,6 +3644,7 @@ $(document).ready(function(){
         }
         
         trophy_size = 'large';
+        nom_cat_underscore = nom.nomination_category.replace(' ', '_').toLowerCase();
         
         nom_main_cont_html ='<div id="main_nom_cont" value="' + nom.id + '">' +
                                 '<div id="main_nom_cont_left">' +
@@ -3652,13 +3663,13 @@ $(document).ready(function(){
                                         '<div id="vote_cont">' +
                                             '<div id="vote_cont_left">' +
                                                 '<p class="tooltip"></p>' +
-                                                '<img class="vote vote_up ' + vote_class + '" value="' + nom.id + '" name="' + vote_tooltip_text + '" src="/site_media/img/up_detailed.png"/>' +
-                                                '<img class="vote vote_down ' + vote_class + '" value="' + nom.id + '" name="' + vote_tooltip_text + '" src="/site_media/img/down_detailed.png"/>' +
+                                                '<span class="vote vote_up ' + vote_class + '" value="' + nom.id + '" name="' + vote_tooltip_text + '"></span>' +
+                                                '<span class="vote vote_down ' + vote_class + '" value="' + nom.id + '" name="' + vote_tooltip_text + '"></span>' +
                                                 '<p id="nom_vote_count">' + nom.vote_count + '</p>' +
                                             '</div>' +
                                             '<div class="clear"></div>' +
                                         '</div>' +
-                                        '<div id="trophy_cont" class="nom_cat_' + nom.nomination_category.replace(' ', '_').toLowerCase() + '">' +
+                                        '<div id="trophy_cont" class="nom_cat_' + nom_cat_underscore + '">' +
                                             '<div id="nomination_text_cont">' +
                                                 '<a href="/#/user=' + nom.nominatee + '">' +
                                                     '<img class="user_img" src="https://graph.facebook.com/' + nom.nominatee + '/picture?type=square"/>' +
@@ -3666,7 +3677,7 @@ $(document).ready(function(){
                                                 '</a>' + 
                                                 '<p>' + nom_winning_text + '</p>' +
                                                 '<h3>' + nom.nomination_category + '</h3>' +
-                                                '<img id="nom_trophy_icon" src="/site_media/img/trophies/' + trophy_size + '/' + nom.nomination_category.replace(' ', '_').toLowerCase() + '.png"/>' +
+                                                '<div id="nom_trophy_icon" class="trophy_img ' + trophy_size + ' ' + nom_cat_underscore + '"></div>' +
                                             '</div>' +
                                         '</div>' +
                                     '</div>' +
@@ -4047,7 +4058,7 @@ $(document).ready(function(){
                                                     '<p>Votes: <span class="strong">' + data.active_nom_objs[i].vote_count + '</span></p>' +
                                                 '</a>' +
                                             '</div>' +
-                                            '<img class="active_trophy_img" src="/site_media/img/trophies/medium/' + cat_underscore + '.png"/>' +
+                                            '<div class="active_trophy_img trophy_img medium ' + cat_underscore + '"></div>' +
                                             '<div class="clear"></div>' +
                                         '</div>';
 
@@ -4090,7 +4101,7 @@ $(document).ready(function(){
                 for (var i = 0; i < top; i++){
                     album_html += '<img class="img_thumb img_thumb_' + i + '"  src="' + noms[i].photo.src_small + '"/>';
                 }
-                album_html += '</div><img class="trophy_img" src="/site_media/img/trophies/large/' + cat_underscore + '.png"/><div class="trophy_count nom_cat_' + cat_underscore + '">' + noms.length + '</div></div>';
+                album_html += '</div><div class="trophy_img large ' + cat_underscore + '"></div><div class="trophy_count nom_cat_' + cat_underscore + '">' + noms.length + '</div></div>';
                 $('#trophy_cont').append(album_html);
             }
             // $('#trophy_cont').fadeIn();
@@ -4184,10 +4195,10 @@ $(document).ready(function(){
         for (var i = 0; i < photos.length; i++){
             cat_underscore = photos[i]['cat'].replace(' ', '_').toLowerCase();
             if (view_active == 'gallery'){
-                $('#' + photos[i]['fid']).parent().append('<img class="trophy_cat" src="/site_media/img/trophies/medium/' + cat_underscore +'.png"/>');
+                $('#' + photos[i]['fid']).parent().append('<div class="trophy_cat trophy_img medium ' + cat_underscore +'"></div>');
             }
             else{
-                $('#' + photos[i]['fid']).parent().css({'position': 'relative', 'left': '0px'}).append('<img class="trophy_cat" src="/site_media/img/trophies/medium/' + cat_underscore +'.png"/>');
+                $('#' + photos[i]['fid']).parent().css({'position': 'relative', 'left': '0px'}).append('<div class="trophy_cat trophy_img medium ' + cat_underscore +'"></div>');
             }
         }
     }
@@ -4634,8 +4645,12 @@ $(document).ready(function(){
                                             '</div>' +
                                         '</div>' +
                                         '<div class="nom_cat_main_photo_cont">' +
-                                            '<img class="prev_photo" src="/site_media/img/backgallery-small.png"/>' +
-                                            '<img class="next_photo" src="/site_media/img/forwardgallery-small.png"/>' +
+                                            '<div class="prev_photo">' +
+                                                '<div class="prev_photo_img"></div>' +
+                                            '</div>' +
+                                            '<div class="next_photo">' +
+                                                '<div class="next_photo_img"></div>' +
+                                            '</div>' +
                                             '<div class="nom_cat_main_photo_wrap">' +
                                                 '<a href="#/nom_id=' + nom_data[k].id +'">' +
                                                     '<img class="nom_main_photo" src="' + nom_data[k].photo.src  + '"/>' +
@@ -4687,9 +4702,9 @@ $(document).ready(function(){
                 empty_html ='<div class="empty_nom_overlay">' +
                                 '<div class="empty_message_box">' +
                                     '<p>None of your friends are currently nominated for </p><p class="strong">' + data[i].cat_name + '</p>' +
-                                    '<img class="target_message_box" src="/site_media/img/commentboxtarget.png"/>' +
+                                    '<div class="target_message_box"></div>' +
                                 '</div>' +
-                                '<img class="empty_trophy" src="/site_media/img/trophies/large/' + data[i].cat_name.replace(' ', '_').toLowerCase() +'.png"/>' +
+                                '<div class="empty_trophy trophy_img large ' + data[i].cat_name.replace(' ', '_').toLowerCase() + '"></div>' +
                             '</div>';
 
                 photo_html ='<div class="stream_photo_cont">' +
@@ -5238,8 +5253,12 @@ $(document).ready(function(){
                                                 photo_stream_html +
                                             '</div>' +
                                             '<div class="winning_nom_cat_main_photo_cont">' +
-                                                '<img class="prev_photo" src="/site_media/img/backgallery-small.png">' +
-                                                '<img class="next_photo" src="/site_media/img/forwardgallery-small.png">' +
+                                                '<div class="prev_photo">' +
+                                                    '<div class="prev_photo_img"></div>' +
+                                                '</div>' +
+                                                '<div class="next_photo">' +
+                                                    '<div class="next_photo_img"></div>' +
+                                                '</div>' +
                                                 '<div class="winning_nom_cat_main_photo_wrap">' +
                                                     '<a href="#/nom_id=' + data[i].noms[0].id + '/won">' +
                                                         '<img class="nom_main_photo" src="' + data[i].noms[0].photo.src + '">' + 
@@ -5391,7 +5410,7 @@ $(document).ready(function(){
                                             '<a href="/#/user=' + data[i].nominatee + '">' +
                                                 '<p class="nom_cat_' + nom_cat_underscore + '_text">' + name + '</p>' +
                                             '</a>' +
-                                            '<img src="/site_media/img/trophies/medium/' + nom_cat_underscore + '.png"/>' +
+                                            '<div class="trophy_img medium ' + nom_cat_underscore + '"></div>' +
                                         '</div>' +
                                     '</div>';
                 $('#new_photo_cont').append(winning_nom_html);
@@ -5512,7 +5531,7 @@ $(document).ready(function(){
                                         '</div>' +
                                         '<div class="recent_nom_photo_right_cont">' +
                                             '<div class="recent_nom_vote_count nom_vote_' + nom.id + '">' +
-                                                '<img src="/site_media/img/trophies/' + trophy_size + '/' + nom_cat_underscore + '.png">' +
+                                                '<div class="trophy_img ' + trophy_size + ' ' + nom_cat_underscore + '">' +
                                                 '<a href="#/nom_id=' + nom.id + '/votes">' +
                                                     '<h2 class="nom_cat_' + nom_cat_underscore + '">Votes: <span class="strong">' + nom.vote_count + '</span></h2>' +
                                                 '</a>' +
@@ -5669,7 +5688,7 @@ $(document).ready(function(){
                                         '</div>' +
                                         '<div class="recent_nom_photo_right_cont">' +
                                             '<div class="recent_nom_vote_count nom_vote_' + nom.id + '">' +
-                                                '<img src="/site_media/img/trophies/' + trophy_size + '/' + nom_cat_underscore + '.png">' +
+                                                '<div class="trophy_img ' + trophy_size + ' ' + nom_cat_underscore + '"></div>' +
                                                 '<a href="#/nom_id=' + nom.id + '/votes">' +
                                                     '<h2 class="nom_cat_' + nom_cat_underscore + '">Votes: <span class="strong">' + nom.vote_count + '</span></h2>' +
                                                 '</a>' +
@@ -5896,7 +5915,7 @@ $(document).ready(function(){
                                                 '<a href="/#/user=' + data[i].nominatee + '">' +
                                                     '<p class="nom_cat_' + nom_cat_underscore + '_text">' + name + '</p>' +
                                                 '</a>' +
-                                                '<img src="/site_media/img/trophies/medium/' + nom_cat_underscore + '.png"/>' +
+                                                '<div class="trophy_img medium ' + nom_cat_underscore + '"></div>' +
                                             '</div>' +
                                         '</div>';
                     $('#recent_empty_wrap > .empty_cont').append(winning_nom_html);
@@ -5926,7 +5945,7 @@ $(document).ready(function(){
                                     '</li>' +
                                 '</ul>' +
                                 '<input id="empty_search" type="text" value="Find your Friends"/>' +
-                                '<img id="clear_empty_search" class="close_img" style="display:none;" src="/site_media/img/x_medium.png">' +
+                                '<div id="clear_empty_search" class="close_img mobile" style="display:none;"></div>' +
                             '</div>' +
                             '<div class="empty_cont">' +
                             '</div>' +
@@ -6941,13 +6960,13 @@ $(document).ready(function(){
                 }
                 else{
                     if ($('#back_gallery').length <= 0){
-                        $('#photo_large').html('<img id="back_gallery" src="/site_media/img/backgallery.png" onclick="void(0)"/>' +
+                        $('#photo_large').html('<div id="back_gallery" onclick="void(0)"><div id="back_gallery_img"></div></div>' +
                                                 '<div id="photo_large_inline_cont">' +
                                                     '<img style="display: none;" id="photo_large_inline" src="' + photo.source + '"/>' +
                                                     '<span id="nominate_photo" class="awesome_abs magenta large">Nominate</span> ' +
                                                     '<div id="like_cont"></div>' +
                                                 '</div>' +
-                                                '<img id="forward_gallery" src="/site_media/img/forwardgallery.png" onclick="void(0)"/>' +
+                                                '<div id="forward_gallery" onclick="void(0)"><div id="forward_gallery_img"></div></div>' +
                                                 '<div id="photo_comments" style="display:none;"></div>');
                     }
                     else{
@@ -6994,7 +7013,7 @@ $(document).ready(function(){
             var cat_underscore = winning_user_photo_dict[selected_photo].cat.replace(' ', '_').toLowerCase();
             // $('#nominate_photo').hide();
             $('#nominate_photo, #go_nom_detail').attr('id', 'go_nom_detail').attr('value', winning_user_photo_dict[selected_photo].nom_id).text('Details');
-            $('#photo_large_inline_cont').append('<img class="trophy_cont_gallery" src="/site_media/img/trophies/large/' + cat_underscore + '.png"/>');
+            $('#photo_large_inline_cont').append('<div class="trophy_cont_gallery trophy_img large ' + cat_underscore + '"></div>');
         }
         else if(active_user_nom_cache[selected_photo]){
             $('#nominate_photo, #go_nom_detail').attr('id', 'go_nom_detail').attr('value', active_user_nom_cache[selected_photo].nom_id).text('Active');
@@ -7143,7 +7162,7 @@ $(document).ready(function(){
                 $('#photo_large').css({'min-height': 350, 'z-index': 10000});
                 if ($('#video_large_inline').length > 0){
                     $('#video_large_inline').fadeOut('fast', function(){
-                        $('#photo_large').html('<img id="back_gallery" src="/site_media/img/backgallery.png" onclick="void(0)"/><div id="video_large_inline" style="display:none;">' + video.embed_html + '</div><img id="forward_gallery" src="/site_media/img/forwardgallery.png" onclick="void(0)"/>');
+                        $('#photo_large').html('<div id="back_gallery" onclick="void(0)"><div id="back_gallery_img"></div></div><div id="video_large_inline" style="display:none;">' + video.embed_html + '</div><div id="forward_gallery" onclick="void(0)"><div id="forward_gallery_img"></div></div>');
                         if (mobile === false){
                             $('#video_large_inline').fadeIn('fast');
                         }
@@ -7154,7 +7173,7 @@ $(document).ready(function(){
                     });
                 }
                 else{
-                    $('#photo_large').html('<img id="back_gallery" src="/site_media/img/backgallery.png" onclick="void(0)"/><div id="video_large_inline" style="display:none;">' + video.embed_html + '</div><img id="forward_gallery" src="/site_media/img/forwardgallery.png" onclick="void(0)"/>');
+                    $('#photo_large').html('<div id="back_gallery" onclick="void(0)"><div id="back_gallery_img"></div></div><div id="video_large_inline" style="display:none;">' + video.embed_html + '</div><div id="forward_gallery" onclick="void(0)"><div id="forward_gallery_img"></div></div>');
                     if (mobile === false){
                         $('#video_large_inline').fadeIn('fast');
                     }
@@ -7447,6 +7466,8 @@ $(document).ready(function(){
             peeked_photos.push({'photo': this, 'rot': rot});
         });
         
+        $(photos).parent().next().css('z-index', 100);
+        
         if (typeof(_gaq) !== "undefined"){
             _gaq.push(['_trackEvent', 'Peek', 'Shown', '']);
         }
@@ -7466,6 +7487,7 @@ $(document).ready(function(){
                 '-webkit-transform': rot_string
             });
         }
+        $(photo).parent().next().css('z-index', 1001);
         peeked_photos = [ ];
     }
     
@@ -7790,19 +7812,20 @@ $(document).ready(function(){
             }, 300);
             $('#context_overlay').fadeOut(function(){
                 $('#context_overlay_cont').removeClass();
-                $(that).next().html('');
+                $('#context_overlay_cont > div').html('');
             });
         }
         else{
             $('#wrapper').css('opacity', 1.0);
             $('#context_overlay').hide();
             $('#context_overlay_cont').removeClass();
-            $(that).next().html('');
+            $('#context_overlay_cont > div').html('');
         }
         $('#wrapper').css('min-height', '');
     }
     
     function show_context_overlay(darken){
+        $('#close_overlay').removeClass().addClass('close_img ' + close_size);
         if (!mobile){
             if (typeof(darken) !== "undefined"){
                 $('#wrapper').animate({
@@ -8470,7 +8493,7 @@ $(document).ready(function(){
         
         $('#trophy_cont').removeClass().addClass('nom_cat_' + cat_underscore);
         $('#nomination_text_cont h3').text(nom.nomination_category);
-        $('#nom_trophy_icon').attr('src', '/site_media/img/trophies/large/' + cat_underscore + '.png');
+        $('#nom_trophy_icon').removeClass().addClass('trophy_img large ' + cat_underscore);//.attr('src', '/site_media/img/trophies/large/' + cat_underscore + '.png');
         $('#nominator_overlay_cont a').attr('href', '/#/user=' + nom.nominator);
         $('#nominator_overlay_cont > h2 > a').text(nominator_name);
         $('#nominator_overlay_cont p').text(caption);
@@ -8849,6 +8872,15 @@ $(document).ready(function(){
             }
         });
         
+        $('.photo_album').live('mouseover mouseout', function(event) {
+            var that = this;
+            if (event.type == 'mouseover') {
+                $(this).children('.album_title').css('background-color', '#222');
+            } else {
+                $(this).children('.album_title').css('background-color', '#444');
+            } 
+        });
+        
         $('.trophy_album').live('click', function(){
             var trophy = $(this).attr('name').replace(' ', '_').toLowerCase();
             var user = getUrlVars().user;
@@ -9001,7 +9033,7 @@ $(document).ready(function(){
                     }
                     var active_nom_html =   '<div id="' + title + '">' +
                                                 title_elm +
-                                                '<img class="kill_nomination" class="close_img" src="/site_media/img/x_medium.png">' + 
+                                                '<span class="kill_nomination close_img ' + close_size + '"></span>' + 
                                             '</div>';
                     $('#active_nominations_cont').append(active_nom_html);
                     //Fade in CSS3 hack
@@ -9125,7 +9157,7 @@ $(document).ready(function(){
                                 user_winning_noms_cache[selected_user].active_nom_objs.push(data[i]);
                             }
                             else{
-                                user_winning_noms_cache[selected_user].active_nom_objs = [data[i]];
+                                user_winning_noms_cache[selected_user] = {'active_nom_objs': [data[i]], 'winning_nom_objs': []};
                                 if (!user_winning_noms_cache[selected_user].winning_nom_objs){
                                     user_winning_noms_cache[selected_user].winning_nom_objs = [ ];
                                 }
@@ -9150,6 +9182,7 @@ $(document).ready(function(){
                 if (typeof(_gaq) !== "undefined"){
                     _gaq.push(['_trackEvent', 'Post Nom', 'Click', '']);
                 }
+                $('#close_nom_success').removeClass().addClass('close_img ' + close_size);
             }
         });
         

@@ -396,7 +396,34 @@ div#right_nav{
         position:           relative;
         cursor:             pointer;
         opacity:            0.9;
+        height:             60px;
+        width:              60px;
     }
+    
+        #back{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -12px -12px;
+        }
+        
+        #home{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -84px -12px;
+        }
+        
+        #search_control{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -156px -12px;
+        }
+        
+        #settings{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -298px -12px;
+        }
+        
+        #logout{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -369px -12px;
+        }
     
     .nav_icon:hover{
         cursor:             pointer;
@@ -603,10 +630,25 @@ div#feedback{
 .close_img{
     cursor:             pointer;
     position:           absolute;
-    top:                -15px;
-    right:              -15px;
     z-index:            10000;
-    height:             26px;
+}
+
+.close_img.normal{
+    background-image:       url(/site_media/img/sprite.png);
+    background-position:    -529px -649px;
+    height:             25px;
+    width:              25px;
+    top:                -13px;
+    right:              -12px;
+}
+
+.close_img.mobile{
+    background-image:       url(/site_media/img/sprite.png);
+    background-position:    -487px -638px;
+    height:             38px;
+    width:              38px;
+    top:                -16px;
+    right:              -12px;
 }
     
 div#photo_upload{
@@ -933,13 +975,30 @@ div#initial_tut_cont{
                 z-index:                2;
             }
             
-                div#initial_tut_top_wrap #allow_notifications_cont img{
+                div#initial_tut_top_wrap #allow_notifications{
+                    float:                  left;
                     cursor:                 pointer;
                     position:               relative;
-                    top:                    9px;
+                    top:                    -3px;
+                    left:                   5px;
+                }
+                
+                #allow_notifications.checked{
+                    background-image:       url(/site_media/img/sprite.png);
+                    background-position:    -346px -641px;
+                    height:                 28px;
+                    width:                  28px;
+                }
+                
+                #allow_notifications.unchecked{
+                    background-image:       url(/site_media/img/sprite.png);
+                    background-position:    -322px -641px;
+                    height:                 28px;
+                    width:                  28px;
                 }
             
                 div#initial_tut_top_wrap label{
+                    float:                  left;
                     font-size:              20px;
                 }
             
@@ -996,6 +1055,132 @@ div#initial_tut_cont{
             right:              0px;
             bottom:             -40px;
             z-index:            1;
+        }
+        
+.trophy_img{
+    margin:         0 auto;
+}
+
+    .trophy_img.large{
+        height:         200px;
+        width:          100px;
+    }
+    
+        .trophy_img.large.artsy{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -16px -84px;
+        }
+        .trophy_img.large.wtf{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -119px -84px;
+        }
+        .trophy_img.large.party_animal{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -219px -84px;
+        }
+        .trophy_img.large.lol{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -316px -84px;
+        }
+        .trophy_img.large.blank{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -416px -84px;
+        }
+        .trophy_img.large.fail{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -24px -295px;
+        }
+        .trophy_img.large.creepy{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -123px -295px;
+        }
+        .trophy_img.large.hot{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -222px -295px;
+        }
+        .trophy_img.large.cute{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -322px -295px;
+        }
+    
+    .trophy_img.medium{
+        height:         100px;
+        width:          50px;
+    }
+    
+        .trophy_img.medium.wtf{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -17px -509px;
+        }
+        .trophy_img.medium.party_animal{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -70px -509px;
+        }
+        .trophy_img.medium.lol{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -123px -509px;
+        }
+        .trophy_img.medium.fail{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -177px -509px;
+        }
+        .trophy_img.medium.blank{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -230px -509px;
+        }
+        .trophy_img.medium.hot{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -282px -509px;
+        }
+        .trophy_img.medium.cute{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -334px -509px;
+        }
+        .trophy_img.medium.creepy{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -386px -509px;
+        }
+        .trophy_img.medium.artsy{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -438px -509px;
+        }
+    
+    .trophy_img.small{
+        height:         50px;
+        width:          25px;
+    }
+    
+        .trophy_img.small.artsy{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -25px -621px;
+        }
+        .trophy_img.small.wtf{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -59px -621px;
+        }
+        .trophy_img.small.party_animal{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -93px -621px;
+        }
+        .trophy_img.small.lol{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -126px -621px;
+        }
+        .trophy_img.small.hot{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -159px -621px;
+        }
+        .trophy_img.small.fail{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -192px -621px;
+        }
+        .trophy_img.small.cute{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -224px -621px;
+        }
+        .trophy_img.small.creepy{
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -256px -621px;
         }
 
 div#wall_cont{
@@ -1114,11 +1299,12 @@ div#nom_detail_cont{
         z-index:                100;
     }
     
-        #nom_detail_cont .prev_photo:hover{
-            background: rgba(0, 0, 0, 0.6);
-            -webkit-border-radius:  5px;
-            -moz-border-radius:     5px;
-        }
+    #nom_detail_cont .prev_photo_img{
+        height:                 65px;
+        width:                  30px;
+        background-image:       url(/site_media/img/sprite.png);
+        background-position:    -530px -368px;
+    }
     
     #nom_detail_cont .next_photo{
         cursor:                 pointer;
@@ -1129,11 +1315,12 @@ div#nom_detail_cont{
         z-index:                100;
     }
     
-        #nom_detail_cont .next_photo:hover{
-            background: rgba(0, 0, 0, 0.6);
-            -webkit-border-radius:  5px;
-            -moz-border-radius:     5px;
-        }
+    #nom_detail_cont .next_photo_img{
+        height:                 65px;
+        width:                  30px;
+        background-image:       url(/site_media/img/sprite.png);
+        background-position:    -560px -368px;
+    }
 
     div#nom_cat_stream{
         background-color:   #333;
@@ -1357,7 +1544,7 @@ div#nom_detail_cont{
                             font-weight:            bold;
                         }
                         
-                        div#nomination_text_cont img{
+                        div#nomination_text_cont #nom_trophy_icon{
                             bottom:                 150px;
                             position:               absolute;
                             right:                  0px;
@@ -1882,7 +2069,7 @@ div#new_comment_cont{
     }
     
         #clear_empty_search{
-            top:                    32px;
+            top:                    24px;
             right:                  25px;
         }
     
@@ -1972,12 +2159,16 @@ div#profile_cont{
                     bottom:                 -30px;
                     position:               absolute;
                     right:                  0px;
+                    height:                 42px;
+                    width:                  30px;
+                    background-image:       url(/site_media/img/sprite.png);
+                    background-position:    -44px -679px;
                 }
                 
             .empty_trophy{
                 bottom:                 0px;
                 position:               absolute;
-                right:                  175px;
+                right:                  165px;
             }
     
         .feed_post_cont > a > h1{
@@ -2222,7 +2413,7 @@ div#profile_cont{
                     }
                 
                     .nom_photo_thumbnail p{
-                        bottom:         0px;
+                        bottom:         -1px;
                         font-weight:    bold;
                         right:          0px;
                         padding:        7px 5px 5px 7px;
@@ -2317,37 +2508,35 @@ div#profile_cont{
                         -moz-border-radius:     5px;
                     }
                     
-                        .nom_cat_main_photo_cont .vote_cont:hover{
+                        .nom_cat_main_photo_cont #vote_cont:hover{
                             opacity:            1.0;
                         }
-                    
-                        .vote_cont p{
-                            color:              #CB6698;
-                            font-weight:        bold;
-                        }
                         
-                        .vote_cont .vote_up{
+                        #vote_cont .vote_up{
                             cursor:             pointer;
                             display:            block;
-                            margin-left:        14px;
-                            margin-top:         10px;
-                            margin-bottom:      5px;
                             opacity:            0.7;
+                            height:             60px;
+                            width:              60px;
+                            background-image:       url(/site_media/img/sprite.png);
+                            background-position:    -513px -12px;
                         }
                         
-                            .vote_cont .vote_up:hover{
+                            #vote_cont .vote_up:hover{
                                 opacity:            1.0;
                             }
                         
-                        .vote_cont .vote_down{
+                        #vote_cont .vote_down{
                             cursor:             pointer;
                             display:            block;
-                            margin-left:        14px;
-                            margin-top:         5px;
                             opacity:            0.7;
+                            height:             60px;
+                            width:              60px;
+                            background-image:       url(/site_media/img/sprite.png);
+                            background-position:    -441px -12px;
                         }
                         
-                            .vote_cont .vote_down:hover{
+                            #vote_cont .vote_down:hover{
                                 opacity:            1.0;
                             }
             
@@ -2364,6 +2553,13 @@ div#profile_cont{
                     z-index:                100;
                 }
                 
+                .nom_cat_main_photo_cont .prev_photo_img{
+                    height:                 65px;
+                    width:                  30px;
+                    background-image:       url(/site_media/img/sprite.png);
+                    background-position:    -530px -368px;
+                }
+                
                 .nom_cat_main_photo_cont .next_photo{
                     cursor:                 pointer;
                     opacity:                1.0;
@@ -2371,6 +2567,13 @@ div#profile_cont{
                     right:                  5px;
                     top:                    150px;
                     z-index:                100;
+                }
+                
+                .nom_cat_main_photo_cont .next_photo_img{
+                    height:                 65px;
+                    width:                  30px;
+                    background-image:       url(/site_media/img/sprite.png);
+                    background-position:    -560px -368px;
                 }
 
     #profile_cont #new_photo_cont{
@@ -2434,7 +2637,7 @@ div#profile_cont{
                 text-decoration:    underline;
             }
             
-            .winning_nom_cont .winning_nom_overlay > img{
+            .winning_nom_cont .winning_nom_overlay > .trophy_img{
                 bottom:             0px;
                 position:           absolute;
                 right:              5px;
@@ -2500,7 +2703,7 @@ div#profile_cont{
     
         .winning_nom_cat_main_photo_cont .next_photo{
             cursor:                 pointer;
-            opacity:                1.0;
+            opacity:                0.8;
             position:               absolute;
             right:                  5px;
             top:                    45%;
@@ -2508,13 +2711,13 @@ div#profile_cont{
         }
         
             .next_photo{
-                padding:            20px 10px;
+                padding:            20px;
             }
         
             .next_photo:hover{
-                background: rgba(51, 51, 51, 0.6);
-                -webkit-border-radius:  5px;
-                -moz-border-radius:     5px;
+                background-color:   rgba(34,34,34,0.9);
+                -webkit-border-radius:  10px;
+                -moz-border-radius:     10px;
             }
     
         .winning_nom_cat_main_photo_cont .prev_photo{
@@ -2527,13 +2730,13 @@ div#profile_cont{
         }
         
             .prev_photo:hover{
-                background: rgba(51, 51, 51, 0.6);
-                -webkit-border-radius:  5px;
-                -moz-border-radius:     5px;
+                background-color:   rgba(34,34,34,0.9);
+                -webkit-border-radius:  10px;
+                -moz-border-radius:     10px;
             }
             
             .prev_photo{
-                padding:            20px 10px;
+                padding:            20px;
             }
     
         .winning_nom_cat_main_photo_cont .winning_nom_cat_main_photo_wrap{
@@ -3497,6 +3700,10 @@ div#wall_cont div#profile_wrap{
             color:                  white;
         }
         
+            .recent_nom_vote_count .trophy_img{
+                margin-left:            40px;
+            }
+        
             .recent_nom_vote_count h2{
                 font-size:              18px;
                 margin:                 0px 20px;
@@ -3809,7 +4016,16 @@ div#album_cont{
     }
 
     div#album_cont div.album_title{
-        font-size:          18px;
+        font-size:          16px;
+        background-color:   #444;
+        padding:            5px;
+        width:              125px;
+        position:           absolute;
+        top:                135px;
+        font-weight:        bold;
+        -webkit-border-radius:  10px;
+        -moz-border-radius:     10px;
+        z-index:            1001;
     }
 
     h2.alert_title{
@@ -3822,8 +4038,8 @@ div#album_cont{
     div#album_cont div.photo_album{
         display:            inline-block;
         position:           relative;
-        width:              175px;
-        margin:             40px
+        width:              135px;
+        margin:             55px
     }
     
     div.photo_album:hover{
@@ -3839,7 +4055,7 @@ div#album_cont{
     div#album_cont .img_thumbs{
         display:            block;
         position:           relative;
-        height:             175px;
+        height:             130px;
     }
     
         .img_thumbs > img{
@@ -3933,7 +4149,7 @@ div#photo_cont{
         div#photo_cont div.photo_thumbs .trophy_cat{
             height:             75px;
             position:           absolute;
-            bottom:             9px;
+            bottom:             8px;
             right:              5px;
             border:             none;
         }
@@ -4143,6 +4359,7 @@ div#photo_cont{
         
         #active_nominations_cont{
             margin:         0 auto;
+            text-align:     center;
             width:          500px;
         }
         
@@ -4225,6 +4442,14 @@ div#photo_cont{
             left:               20px;
             top:                200px;
             z-index:            1;
+            padding:            0px 20px;
+        }
+        
+        #back_gallery_img{
+            height:             118px;
+            width:              50px;
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -427px -343px;
         }
         
         #forward_gallery{
@@ -4234,22 +4459,14 @@ div#photo_cont{
             right:              20px;
             top:                200px;
             z-index:            1;
+            padding:            0px 20px;
         }
         
-        #back_gallery_mobile{
-            opacity:            .5;
-            position:           absolute;
-            left:               0px;
-            top:                200px;
-            z-index:            1;
-        }
-        
-        #forward_gallery_mobile{
-            opacity:            .5;
-            right:              0px;
-            position:           absolute;
-            top:                200px;
-            z-index:            1;
+        #forward_gallery_img{
+            height:             118px;
+            width:              50px;
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -477px -343px;
         }
         
         #photo_title{
@@ -4560,12 +4777,16 @@ div#all_friends {
         }
         
         #settings_cont label{
+            float:              left;
             font-size:          18px;
         }
         
         #settings_cont #allow_notifications{
             position:           relative;
-            top:                9px;
+            top:                -3px;
+            left:               5px;
+            cursor:             pointer;
+            float:              left;
         }
         
         #settings_cont #clear_db{
@@ -5075,6 +5296,10 @@ div#payment_types_cont{
     }
     
     #footer_notification_cont{
+        background-image:       url(/site_media/img/sprite.png);
+        background-position:    -227px -12px;
+        height:             60px;
+        width:              60px;
         cursor:             pointer;
         position:           relative;
     }
@@ -5085,6 +5310,10 @@ div#payment_types_cont{
             top:                -11px;
             left:               110px;
             z-index:            1001;
+            height:             20px;
+            width:              20px;
+            background-image:       url(/site_media/img/sprite.png);
+            background-position:    -15px -692px;
         }
     
         #footer_notification_cont > img{

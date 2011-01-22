@@ -32,10 +32,6 @@ div#search_cont #query{
     width:              350px;
 }
 
-.close_img{
-    height:             38px;
-}
-
 div.autocomplete{
     overflow-y:         hidden;
 }
@@ -208,7 +204,7 @@ div#album_cont div#trophy_cont, div#album_cont div#active_cont{
 }
 
 div#album_cont div.photo_album{
-    margin:             30px;
+/*    margin:             30px;*/
 }
 
 #notification_footer_popup{
