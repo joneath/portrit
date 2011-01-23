@@ -55,7 +55,7 @@ elif ENV == "TEST":
     FACEBOOK_APP_SECRET = "25f31ff59105385308be7fed55fa1b5e"
     
     NODE_SOCKET = 8081
-    NODE_HOST = '184.73.249.110'
+    NODE_HOST = 'http://184.73.249.110'
     
 else:
     DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.

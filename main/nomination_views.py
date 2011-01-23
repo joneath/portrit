@@ -506,7 +506,6 @@ def vote_on_nomination(request):
         
         data = {'vote_count': nomination.current_vote_count,
                 'nominatee': nomination.nominatee.fid,}
-        print data
     
     # Send update to event listeners
     

@@ -641,7 +641,7 @@ $(document).ready(function(){
     },
     close_size = 'normal',
     me = null,
-    production = false;
+    production = true;
     
     if (DetectMobileQuick() === true){
         mobile = true;
