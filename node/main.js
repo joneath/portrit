@@ -36,7 +36,13 @@ var Portrit = function(){
             stream.end();
         });
     });
-    tcp_server.listen(8081, 'localhost');
+    if (dev){
+        tcp_server.listen(8081, 'localhost');
+    }
+    else{
+        tcp_server.listen(8081, '184.73.249.110');
+    }
+    
     
     var websock_server = ws.createServer({
         websock_server: http
@@ -61,7 +67,13 @@ var Portrit = function(){
         });
     });
     
-    websock_server.listen(8122);
+    if (dev){
+        websock_server.listen(8122, 'localhost');
+    }
+    else{
+        websock_server.listen(8122, '184.73.249.110');
+    }
+    
     
     var request_server = http.createServer(function(request, response) {
         if (dev){
@@ -134,7 +146,7 @@ var Portrit = function(){
         request_server.listen(8080, '192.168.1.126');
     }
     else{
-        request_server.listen(8080, 'localhost');
+        request_server.listen(8080, '184.73.249.110');
     }
 }
 
