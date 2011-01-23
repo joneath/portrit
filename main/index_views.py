@@ -47,7 +47,7 @@ def index(request, template='index.html'):
     production_code = True
     analytics = True
     
-    if ENV == 'LOCAL' or ENV == 'TEST':
+    if ENV == 'LOCAL':
         production_code = False
         analytics = None
     mobile_dev = mobile(request)
@@ -410,7 +410,7 @@ def submit_bug_report(request):
 def handle404(request, template="404.html"):
     analytics = True
     
-    if ENV == 'LOCAL' or ENV == 'TEST':
+    if ENV == 'LOCAL':
         analytics = None
     payload = {'analytics': analytics,}
     return render_to_response(template, payload, context_instance=RequestContext(request))
@@ -418,7 +418,7 @@ def handle404(request, template="404.html"):
 def handle500(request, template="500.html"):
     analytics = True
     
-    if ENV == 'LOCAL' or ENV == 'TEST':
+    if ENV == 'LOCAL':
         analytics = None
     payload = {'analytics': analytics,}
     return render_to_response(template, payload, context_instance=RequestContext(request))
