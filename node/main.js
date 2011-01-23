@@ -40,7 +40,7 @@ var Portrit = function(){
         tcp_server.listen(8081, 'localhost');
     }
     else{
-        tcp_server.listen(8081, '184.73.249.110');
+        tcp_server.listen(8081, '10.117.57.137');
     }
     
     
@@ -71,7 +71,7 @@ var Portrit = function(){
         websock_server.listen(8122, 'localhost');
     }
     else{
-        websock_server.listen(8122, '184.73.249.110');
+        websock_server.listen(8122, '10.117.57.137');
     }
     
     
@@ -146,7 +146,7 @@ var Portrit = function(){
         request_server.listen(8080, '192.168.1.126');
     }
     else{
-        request_server.listen(8080, '184.73.249.110');
+        request_server.listen(8080, '10.117.57.137');
     }
 }
 
