@@ -36,12 +36,12 @@ var Portrit = function(){
             stream.end();
         });
     });
-    if (dev){
+    // if (dev){
         tcp_server.listen(8081, 'localhost');
-    }
-    else{
-        tcp_server.listen(8081, '10.117.57.137');
-    }
+    // }
+    // else{
+    //     tcp_server.listen(8081, '10.117.57.137');
+    // }
     
     
     var websock_server = ws.createServer({
