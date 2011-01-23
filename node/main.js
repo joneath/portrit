@@ -61,12 +61,12 @@ var Portrit = function(){
         });
     });
     
-    websock_server.listen(8123);
+    websock_server.listen(8122);
     
     http.createServer(function(request, response) {
-        var proxy = http.createClient(8000, "127.0.0.1");
-        var path = url.parse(request.url).pathname;
         if (dev){
+            var proxy = http.createClient(8000, "127.0.0.1");
+            var path = url.parse(request.url).pathname;
             if (path === '/watch_update/'){
                 var event_user = url.parse(request.url, true).query.user;
                 var nom_callback = function(data){
@@ -128,7 +128,6 @@ var Portrit = function(){
             nomination_emitter.addListener(event_user, nom_callback);
             console.log('long poll attached');
         }
-        
     }).listen(8080, '192.168.1.126');
 }
 

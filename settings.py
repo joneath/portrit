@@ -32,6 +32,7 @@ if ENV == "LOCAL":
     FACEBOOK_APP_SECRET = "d7d7672b66720f91894a897933b6b03c"
     
     NODE_SOCKET = 8124
+    NODE_HOST = 'localhost'
     
 elif ENV == "TEST":
     DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
@@ -54,12 +55,13 @@ elif ENV == "TEST":
     FACEBOOK_APP_SECRET = "25f31ff59105385308be7fed55fa1b5e"
     
     NODE_SOCKET = 45716
+    NODE_HOST = '184.73.249.110'
     
 else:
     DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
     DATABASE_NAME = 'portrit'             # Or path to database file if using sqlite3.
     DATABASE_USER = 'root'             # Not used with sqlite3.
-    DATABASE_PASSWORD = 'bitnami'         # Not used with sqlite3.
+    DATABASE_PASSWORD = ''         # Not used with sqlite3.
     DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
     DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
     
@@ -74,6 +76,9 @@ else:
     
     FACEBOOK_APP_ID = "126374870731237"
     FACEBOOK_APP_SECRET = "d6c5a3023e9b92aa4bae8dd7581deeaf"
+    
+    NODE_SOCKET = 8081
+    NODE_HOST = '184.73.249.110'
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name

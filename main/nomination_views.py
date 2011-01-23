@@ -11,7 +11,7 @@ from django.db.models import Q, Count
 
 from main.models import Portrit_User, FB_User, Album, Photo, Nomination, Nomination_Category, Comment, \
                         Notification, Notification_Type
-from settings import ENV, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, NODE_SOCKET
+from settings import ENV, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, NODE_SOCKET, NODE_HOST
 
 from portrit_fb import Portrit_FB
 
@@ -227,7 +227,7 @@ def new_comment(request):
             node_data = json.dumps(node_data)
             sock = socket.socket(
                 socket.AF_INET, socket.SOCK_STREAM)
-            sock.connect(('localhost', NODE_SOCKET))
+            sock.connect((NODE_HOST, NODE_SOCKET))
             sock.send(node_data)
             sock.close()
             
@@ -399,7 +399,7 @@ def nominate_photo(request):
             node_data = json.dumps(node_data)
             sock = socket.socket(
                 socket.AF_INET, socket.SOCK_STREAM)
-            sock.connect(('localhost', NODE_SOCKET))
+            sock.connect((NODE_HOST, NODE_SOCKET))
             sock.send(node_data)
             sock.close()
         
@@ -500,7 +500,7 @@ def vote_on_nomination(request):
         node_data = json.dumps(node_data)
         sock = socket.socket(
             socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect(('localhost', NODE_SOCKET))
+        sock.connect((NODE_HOST, NODE_SOCKET))
         sock.send(node_data)
         sock.close()
         
@@ -562,7 +562,7 @@ def mark_nomination_as_won(request):
         node_data = json.dumps(node_data)
         sock = socket.socket(
             socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect(('localhost', NODE_SOCKET))
+        sock.connect((NODE_HOST, NODE_SOCKET))
         sock.send(node_data)
         sock.close()
     except:

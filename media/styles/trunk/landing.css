@@ -102,7 +102,7 @@ div#login_content div#login_right_cont{
 }
 
 .awesome, .awesome:visited {
-	background: #222 url(/site_media/img/alert-overlay.png) repeat-x; 
+	background: #222 url(http://s3.amazonaws.com/portrit/img/alert-overlay.png) repeat-x; 
 	display: inline-block; 
 	padding: 5px 10px 6px; 
 	color: #fff; 

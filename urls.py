@@ -8,8 +8,6 @@ from settings import ENV
 handler404 = 'main.index_views.handle404'
 handler500 = 'main.index_views.handle500'
 
-ENV = "dsds"
-
 if ENV == "LOCAL":
     urlpatterns = patterns('',
         url(r'^$', 'main.index_views.index', name='index'),

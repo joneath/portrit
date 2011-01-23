@@ -5,7 +5,7 @@ os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
 import json, socket
 from django.db.models import Q, Count
 
-from settings import ENV, NODE_SOCKET
+from settings import ENV, NODE_SOCKET, NODE_HOST
 from main.models import *
 
 def calc_noms_won():
@@ -35,7 +35,6 @@ def calc_noms_won():
                 won=False).distinct('id').order_by('-current_vote_count')
             
             try:
-                print user_cat_stream[0].current_vote_count
                 if user_cat_stream[0].id == nom.id:
                     mark_nom_as_won(nom)
                 else:
@@ -49,7 +48,6 @@ def calc_noms_won():
     # print nominatees
     
 def mark_nom_as_won(nom):
-    print "here"
     nom.won = True
     nom.active = False
     nom.save()
@@ -102,7 +100,7 @@ def mark_nom_as_won(nom):
     node_data = json.dumps(node_data)
     sock = socket.socket(
         socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect(('localhost', NODE_SOCKET))
+    sock.connect((NODE_HOST, NODE_SOCKET))
     sock.send(node_data)
     sock.close()
 
