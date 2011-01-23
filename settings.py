@@ -57,9 +57,9 @@ elif ENV == "TEST":
     
 else:
     DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-    DATABASE_NAME = 'joneath_portrit'             # Or path to database file if using sqlite3.
-    DATABASE_USER = 'joneath_portrit'             # Not used with sqlite3.
-    DATABASE_PASSWORD = 'hNW9CjJ7C6sfXb68tUdX'         # Not used with sqlite3.
+    DATABASE_NAME = 'portrit'             # Or path to database file if using sqlite3.
+    DATABASE_USER = 'root'             # Not used with sqlite3.
+    DATABASE_PASSWORD = 'bitnami'         # Not used with sqlite3.
     DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
     DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
     

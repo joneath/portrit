@@ -129,7 +129,7 @@ var Portrit = function(){
             console.log('long poll attached');
         }
         
-    }).listen(8080, '192.168.1.145');
+    }).listen(8080, '192.168.1.126');
 }
 
 var portrit = new Portrit();

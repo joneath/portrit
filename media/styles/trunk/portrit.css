@@ -180,6 +180,7 @@ div#login_cont{
 
     div#login_header{
         margin:             0 auto;
+        min-height:         93px;
         padding-top:        55px;
         padding-bottom:     30px;
         position:           relative;
@@ -193,11 +194,42 @@ div#login_cont{
     }
     
     div#login_content{
-        background-color:   white;
         margin:             0 auto;
-        -webkit-border-radius:      10px;
-        -moz-border-radius:         10px;
     }
+    
+        #login_top_cont{
+            background-color:   white;
+            color:              #333;
+            height:             200px;
+            margin-bottom:      15px;
+            -webkit-border-radius:      10px;
+            -moz-border-radius:         10px;
+        }
+        
+        #login_bottom_cont{
+            
+        }
+        
+            .login_points{
+                width:              310px;
+                height:             400px;
+                background-color:   white;
+                float:              left;
+                -webkit-border-radius:      10px;
+                -moz-border-radius:         10px;
+            }
+            
+            #point_1{
+                margin-right:       15px;
+            }
+            
+            #point_2{
+                
+            }
+            
+            #point_3{
+                margin-left:        15px;
+            }
     
         div#login_content #login{
             cursor:             pointer;
@@ -216,8 +248,6 @@ div#login_cont{
             width:              460px;
             position:           relative;
             z-index:            10000;
-            -webkit-box-shadow:         rgba(0, 0, 0, 0.496094) 0px 4px 4px 6px;
-            -moz-box-shadow:            0px 4px 4px 6px rgba(0, 0, 0, 0.5);
         }
         
             #landing_img_1 img{
@@ -626,6 +656,13 @@ div#feedback{
         bottom:             10px;
         right:              20px;
     }
+    
+#winners_announced_cont{
+    background-color:   #F95057;
+    padding:            10px 0px;
+    font-size:          20px;
+    margin:             5px 0px;
+}
     
 .close_img{
     cursor:             pointer;
@@ -2026,6 +2063,7 @@ div#new_comment_cont{
 
     #empty_noms_cont .empty_cont{
         margin-left:            -10px;
+        text-align:             center;
     }
     
     #recent_empty_wrap > h1{
@@ -2844,7 +2882,7 @@ div#profile_cont{
     p.tooltip{
         color:                  white;
         font-weight:            bold;
-        font-size:              14px;
+        font-size:              13px;
         text-align:             center;
     }
       
@@ -4005,6 +4043,7 @@ div#album_cont div#trophy_cont{
 div#album_cont{
     max-width:          1100px;
     margin:             0 auto;
+    margin-bottom:      30px;
 }
 
     div#album_cont > h1{
@@ -4018,8 +4057,8 @@ div#album_cont{
     div#album_cont div.album_title{
         font-size:          16px;
         background-color:   #444;
-        padding:            5px;
-        width:              125px;
+        padding:            5px 10px;
+        width:              130px;
         position:           absolute;
         top:                135px;
         font-weight:        bold;
@@ -4327,7 +4366,7 @@ div#photo_cont{
             margin-bottom:  5px;
             padding:        5px;
             width:          488px;
-            height:         100px;
+            height:         70px;
         }
         
         #active_empty{
@@ -4414,6 +4453,7 @@ div#photo_cont{
             
             #nom_complete_cont .nom_complete_cat_cont{
                 display:            inline-block;
+                font-weight:        bold;
                 margin:             10px 20px;
                 text-align:         center;
                 width:              80px;
@@ -4480,7 +4520,7 @@ div#photo_cont{
         background-color:   white;
         font-family:        'lucida grande', tahoma, verdana, arial, sans-serif;
         max-width:          545px;
-        margin:             10px auto 60px;
+        margin:             10px auto 10px;
         padding:            10px;
         -webkit-border-radius:    10px;
         -moz-border-radius:       10px;
@@ -4707,6 +4747,11 @@ div#all_friends {
                 left:               5px;
                 top:                7px;
                 position:           relative;
+                height:             24px;
+                width:              24px;
+                display:            inline-block;
+                background-image:       url(/site_media/img/sprite.png);
+                background-position:    -375px -644px;
             }
     
         #bug_form_cont{
@@ -4717,6 +4762,11 @@ div#all_friends {
                 left:               5px;
                 top:                7px;
                 position:           relative;
+                height:             24px;
+                width:              24px;
+                display:            inline-block;
+                background-image:       url(/site_media/img/sprite.png);
+                background-position:    -375px -644px;
             }
     
         #contact_form > div, #bug_form > div{
@@ -5203,10 +5253,16 @@ div#payment_types_cont{
 }
 
 #clear_all_notifications{
-    color:                  red;
+    color:                  #666;
     position:               absolute;
     right:                  0px;
-    top:                    10px;
+    top:                    15px;
+    font-size:              12px;
+    cursor:                 pointer;
+}
+
+#clear_all_notifications:hover{
+    color:                  #333;
 }
 
 #notification_popup_cont .notification_popup{
@@ -5260,7 +5316,6 @@ div#payment_types_cont{
     }
 
 #footer{
-    background:         -moz-linear-gradient(center top , #333333, #111111) repeat scroll 0 0 transparent;
     background-color:   black;
     bottom:             0px;
     height:             20px;
@@ -5299,9 +5354,14 @@ div#payment_types_cont{
         background-image:       url(/site_media/img/sprite.png);
         background-position:    -227px -12px;
         height:             60px;
+        opacity:            0.3;
         width:              60px;
         cursor:             pointer;
         position:           relative;
+    }
+    
+    #footer_notification_cont:hover{
+        opacity:            1.0;
     }
     
         #notification_footer_popup #notification_arrow{
@@ -5314,15 +5374,6 @@ div#payment_types_cont{
             width:              20px;
             background-image:       url(/site_media/img/sprite.png);
             background-position:    -15px -692px;
-        }
-    
-        #footer_notification_cont > img{
-            float:              left;
-            opacity:            0.3;
-        }
-        
-        #footer_notification_cont > img:hover{
-            opacity:            1.0;
         }
     
         #footer_notification_cont > p{
@@ -5393,8 +5444,8 @@ div#payment_types_cont{
         }
         
             .color_transition{
-                -webkit-transition:     background 3s ease-out;
-                -moz-transition:        background 3s ease-out;
+                -webkit-transition:     background 5s ease-out;
+                -moz-transition:        background 5s ease-out;
             }
         
             .notification_popup_cont .notification_color{

@@ -237,9 +237,8 @@ div#active_cont .active_nom_cont{
 }*/
 
 #clear_empty_search{
-    right:          17px;
-    top:            73px;
-    padding:        10px;
+    right:          25px;
+    top:            80px;
 }
 
 #empty_noms_cont ul li{
@@ -384,6 +383,19 @@ div#feedback div#feedback_cont{
         height:             6em;
     }
     
+.publish_story_overlay{
+    width:              490px;
+}
+
+    #story_cont textarea{
+        font-size:      20px;
+        width:          325px;
+    }
+    
+    #story_preview #preview_right{
+        width:          250px;
+    }
+    
 .nom_photo_bottom_wrap .nominator_cont{
     width:              120px;
 }
@@ -428,7 +440,7 @@ div#active_stream_text_cont > span{
 }
 
 .recent_nom_photo_right_cont .recent_nom_vote_count{
-    margin-top:         5px;
+    margin-top:         40px;
 }
 
 .recent_nom_cont .recent_nom_top_cont{
@@ -691,6 +703,11 @@ div#nom_detail_cont{
             top:            0px;
             width:          200px;
         }
+        
+            div#nomination_text_cont #nom_trophy_icon{
+                bottom:         0px;
+                right:          -100px;
+            }
     
     div#vote_cont_left{
         margin-left:    60px;
@@ -750,6 +767,15 @@ div#nom_detail_cont{
         div#new_comment_cont .comment_body{
             width:          368px;
         }
+        
+#new_nomination_wrap{
+    top:            145px;
+}
+
+#nom_complete_cont{
+    margin-top:     180px;
+    width:          490px;
+}
         
 .comment_empty h2{
     font-size:      20px;
@@ -834,9 +860,6 @@ div#mutual_friend_cont{
 }
 
 #back_gallery{
-    height:             75px;
-    width:              75px;
-    opacity:            .4;
     position:           absolute;
     left:               0px;
     top:                200px;
@@ -844,16 +867,13 @@ div#mutual_friend_cont{
 }
 
 #forward_gallery{
-    height:             75px;
-    width:              75px;
-    opacity:            .4;
     position:           absolute;
     right:              0px;
     top:                200px;
     z-index:            1;
 }
 
-#back_gallery_mobile{
+/*#back_gallery_mobile{
     height:             75px;
     width:              75px;
     opacity:            .4;
@@ -871,7 +891,7 @@ div#mutual_friend_cont{
     position:           absolute;
     top:                200px;
     z-index:            1;
-}
+}*/
 
 img#photo_large_inline{
     max-width:          500px;
