@@ -36,7 +36,7 @@ var Portrit = function(){
             stream.end();
         });
     });
-    tcp_server.listen(8124, 'localhost');
+    tcp_server.listen(8081, 'localhost');
     
     var websock_server = ws.createServer({
         websock_server: http
@@ -63,7 +63,7 @@ var Portrit = function(){
     
     websock_server.listen(8122);
     
-    http.createServer(function(request, response) {
+    var request_server = http.createServer(function(request, response) {
         if (dev){
             var proxy = http.createClient(8000, "127.0.0.1");
             var path = url.parse(request.url).pathname;
@@ -128,7 +128,14 @@ var Portrit = function(){
             nomination_emitter.addListener(event_user, nom_callback);
             console.log('long poll attached');
         }
-    }).listen(8080, '192.168.1.126');
+    });
+    
+    if (dev){
+        request_server.listen(8080, '192.168.1.126');
+    }
+    else{
+        request_server.listen(8080, 'localhost');
+    }
 }
 
 var portrit = new Portrit();
