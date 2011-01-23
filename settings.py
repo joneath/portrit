@@ -36,14 +36,14 @@ if ENV == "LOCAL":
     
 elif ENV == "TEST":
     DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-    DATABASE_NAME = 'joneath_p_test'             # Or path to database file if using sqlite3.
-    DATABASE_USER = 'joneath_p_test'             # Not used with sqlite3.
-    DATABASE_PASSWORD = 'hNW9CjJ7C6sfXb68tUdX'         # Not used with sqlite3.
+    DATABASE_NAME = 'portrit'             # Or path to database file if using sqlite3.
+    DATABASE_USER = 'root'             # Not used with sqlite3.
+    DATABASE_PASSWORD = ''         # Not used with sqlite3.
     DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
     DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
     
-    BASE_URL = "http://test.portrit.com"
-    MEDIA_ROOT = '/home/joneath/webapps/portrit_test_media/'
+    BASE_URL = "http://portrit.com"
+    MEDIA_ROOT = '/home/joneath/webapps/portrit_media/'
     
     EMAIL_HOST = 'smtp.webfaction.com'
     EMAIL_PORT = '25'
@@ -54,7 +54,7 @@ elif ENV == "TEST":
     FACEBOOK_APP_ID = "123063501058161"
     FACEBOOK_APP_SECRET = "25f31ff59105385308be7fed55fa1b5e"
     
-    NODE_SOCKET = 45716
+    NODE_SOCKET = 8081
     NODE_HOST = '184.73.249.110'
     
 else:

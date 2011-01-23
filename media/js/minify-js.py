@@ -39,7 +39,7 @@ def minify_js():
     
     url = 'http://closure-compiler.appspot.com/compile'
     values = {'js_code' : src_buffer,
-              'compilation_level' : 'ADVANCED_OPTIMIZATIONS',
+              'compilation_level' : 'SIMPLE_OPTIMIZATIONS',
               'output_format' : 'json',
               'output_info': 'compiled_code', }
     
