@@ -8,7 +8,7 @@ SQL_BACKUP_FILE=""
 DATETIME=`date +%s-%e-%m-%y`
 
 echo "-Running Database Backup-" | tee -a $LOG_FILE
-cd backup 
+cd /var/www/portrit/backup 
 `$MYSQL_BIN_FOLDER/mysqldump -u $DATABASE_USER -h localhost $DATABASE_NAME > $DATETIME.sql`
 SQL_BACKUP_FILE=`pwd`'/'$DATETIME'.sql'
 cd ..
