@@ -13,4 +13,4 @@ cd /var/www/portrit/backup
 SQL_BACKUP_FILE=`pwd`'/'$DATETIME'.sql'
 cd ..
 
-s3cmd put backup.sh s3://portrit_backup
+s3cmd put $DATETIME.sql s3://portrit_backup
