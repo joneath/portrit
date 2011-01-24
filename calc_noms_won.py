@@ -98,11 +98,15 @@ def mark_nom_as_won(nom):
     }
 
     node_data = json.dumps(node_data)
-    sock = socket.socket(
-        socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect((NODE_HOST, NODE_SOCKET))
-    sock.send(node_data)
-    sock.close()
+    try:
+        sock = socket.socket(
+            socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect((NODE_HOST, NODE_SOCKET))
+        sock.setblocking(0)
+        sock.send(node_data)
+        sock.close()
+    except:
+        pass
 
 if __name__ == '__main__':
     calc_noms_won()

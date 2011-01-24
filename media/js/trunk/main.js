@@ -2741,7 +2741,6 @@ $(document).ready(function(){
                 $('#header').css({'border-bottom': '1px solid #1E1E1E'});
                 
                 load_friends();
-                render_notifications(notification_data);
                 //Run func ptr
                 func_ptr();
             });   
@@ -2755,7 +2754,6 @@ $(document).ready(function(){
             $('#header').css({'border-bottom': '1px solid #1E1E1E'});
             
             load_friends();
-            render_notifications(notification_data);
             func_ptr();
         }
     }
@@ -9743,6 +9741,9 @@ $(document).ready(function(){
         
         if ($('#context_overlay').is(':visible') && view_count > 1){
             $('#close_overlay').click();
+        }
+        if (view_count == 1){
+            render_notifications(notification_data);
         }
         
         if (url_vars['recent-winners'] == undefined && url_vars['latest-photos'] == undefined){

@@ -225,11 +225,15 @@ def new_comment(request):
                 }
             }
             node_data = json.dumps(node_data)
-            sock = socket.socket(
-                socket.AF_INET, socket.SOCK_STREAM)
-            sock.connect((NODE_HOST, NODE_SOCKET))
-            sock.send(node_data)
-            sock.close()
+            try:
+                sock = socket.socket(
+                    socket.AF_INET, socket.SOCK_STREAM)
+                sock.connect((NODE_HOST, NODE_SOCKET))
+                sock.setblocking(0)
+                sock.send(node_data)
+                sock.close()
+            except:
+                pass
             
             data = node_data
         except:
@@ -395,13 +399,17 @@ def nominate_photo(request):
                     'friends': target_friends,
                 }
             }
-        
+            
             node_data = json.dumps(node_data)
-            sock = socket.socket(
-                socket.AF_INET, socket.SOCK_STREAM)
-            sock.connect((NODE_HOST, NODE_SOCKET))
-            sock.send(node_data)
-            sock.close()
+            try:
+                sock = socket.socket(
+                    socket.AF_INET, socket.SOCK_STREAM)
+                sock.connect((NODE_HOST, NODE_SOCKET))
+                sock.setblocking(0)
+                sock.send(node_data)
+                sock.close()
+            except:
+                pass
         
             data = nom_data
         except:
@@ -498,11 +506,15 @@ def vote_on_nomination(request):
         }
         
         node_data = json.dumps(node_data)
-        sock = socket.socket(
-            socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect((NODE_HOST, NODE_SOCKET))
-        sock.send(node_data)
-        sock.close()
+        try:
+            sock = socket.socket(
+                socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect((NODE_HOST, NODE_SOCKET))
+            sock.setblocking(0)
+            sock.send(node_data)
+            sock.close()
+        except:
+            pass
         
         data = {'vote_count': nomination.current_vote_count,
                 'nominatee': nomination.nominatee.fid,}
@@ -559,11 +571,15 @@ def mark_nomination_as_won(request):
             }
         }
         node_data = json.dumps(node_data)
-        sock = socket.socket(
-            socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect((NODE_HOST, NODE_SOCKET))
-        sock.send(node_data)
-        sock.close()
+        try:
+            sock = socket.socket(
+                socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect((NODE_HOST, NODE_SOCKET))
+            sock.setblocking(0)
+            sock.send(node_data)
+            sock.close()
+        except:
+            pass
     except:
         pass
     
