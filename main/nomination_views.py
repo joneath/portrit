@@ -405,7 +405,7 @@ def nominate_photo(request):
                 sock = socket.socket(
                     socket.AF_INET, socket.SOCK_STREAM)
                 sock.connect((NODE_HOST, NODE_SOCKET))
-                sock.setblocking(0)
+                # sock.setblocking(0)
                 sock.send(node_data)
                 sock.close()
             except:

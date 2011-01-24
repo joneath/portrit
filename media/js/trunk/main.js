@@ -1547,7 +1547,12 @@ $(document).ready(function(){
                 meta_html = '<link rel="stylesheet" href="http://s3.amazonaws.com/portrit/styles/production/mobile.css"/>';
             }
             else{
-                meta_html = '<link rel="stylesheet" href="http://s3.amazonaws.com/portrit/styles/trunk/mobile.css"/>';
+                meta_html = '<link rel="stylesheet" href="/site_media/styles/trunk/mobile.css"/>';
+            }
+        }
+        else if (mobile && tablet){
+            if (typeof(_gaq) !== "undefined"){
+                meta_html = '<link rel="stylesheet" href="http://s3.amazonaws.com/portrit/styles/production/tablet.css"/>';
             }
         }
         $('head').append(meta_html);
