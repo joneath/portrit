@@ -9,6 +9,6 @@ DATETIME=`date +%s-%e-%m-%y`
 
 echo "-Running Database Backup-" | tee -a $LOG_FILE
 cd backup 
-`$MYSQL_BIN_FOLDER/mysqldump -u $DATABASE_USER -h localhost -p$DATABASE_PASSWORD $DATABASE_NAME > $DATETIME.sql`
+`$MYSQL_BIN_FOLDER/mysqldump -u $DATABASE_USER -h localhost $DATABASE_NAME > $DATETIME.sql`
 SQL_BACKUP_FILE=`pwd`'/'$DATETIME'.sql'
 cd ..
