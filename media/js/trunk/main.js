@@ -128,66 +128,99 @@ $(document).ready(function(){
     });
 });
 
+    var window_href = window.location.href;
+    if (window_href.indexOf('?ref=nf') > 0){
+        window.location.href = window_href.replace('?ref=nf', '');
+    }
+
     function render_login_cont(){
         var login_html ='<div id="login_header">' +
                             '<img id="login_logo" src="http://s3.amazonaws.com/portrit/img/logo_blank.png"/>' +
                         '</div>' +
                         '<div id="login_content">' +
                             '<div id="login_top_cont">' +
-                                '<img id="login" src="http://static.ak.fbcdn.net/images/fbconnect/login-buttons/connect_light_large_long.gif"/>' +
-                                '<p style="text-align:center;">To start, simply click the Connect with Facebook button above.</p>' +
+                                '<div id="tagline_top">' +
+                                    '<h2>What\'s Portrit?</h2>' +
+                                    '<p id="tagline_main">Award the best photos. It\'s up to you and your Facebook friends to find whose got the best pics.</p>' +
+                                    '<p id="tagline_end">Love it, earn it.</p>' +
+                                    '<div class="clear"></div>' +
+                                '</div>' +
+                                '<div id="login_right_cont">' +
+                                    '<img id="login" src="http://static.ak.fbcdn.net/images/fbconnect/login-buttons/connect_light_large_long.gif"/>' +
+                                    '<p style="text-align:center;">To start, simply click the Connect with Facebook button above.</p>' +
+                                '</div>' +
+                                '<div class="clear"></div>' +
                             '</div>' +
                             '<div id="login_bottom_cont">' +
                                 '<div id="point_1" class="login_points">' +
-                                    '' +
+                                    '<h2 id="point_1_text">1</h2>' +
+                                    '<h3>Nominate</h3>' +
+                                    '<div class="clear"></div>' +
+                                    '<div class="login_points_cont">' +
+                                        '<img src="http://s3.amazonaws.com/portrit/img/landing/nominate.png"/>' +
+                                        '<p>Nominate your friend\'s rockin\' pics.</p>' +
+                                    '</div>' +
                                 '</div>' +
                                 '<div id="point_2" class="login_points">' +
-                                    '' +
+                                    '<h2 id="point_2_text">2</h2>' +
+                                    '<h3>Vote</h3>' +
+                                    '<div class="clear"></div>' +
+                                    '<div class="login_points_cont">' +
+                                        '<img src="http://s3.amazonaws.com/portrit/img/landing/vote.png"/>' +
+                                        '<p>Give your vote to the best.</p>' +
+                                    '</div>' +
                                 '</div>' +
                                 '<div id="point_3" class="login_points">' +
-                                    '' +
-                                '</div>' +
-                            '</div>' +
-                            '<div id="login_left_cont">' +
-                                '<ul class="slideshow">' +
-                                    '<li class="active" style="z-index: 1000;" id="landing_img_1"><a><img src="http://s3.amazonaws.com/portrit/img/landing/main.jpg" width="460" height="320" alt="View all your friends as photos on a canvas"/></a></li>' +
-                                    '<li id="landing_img_2" style="z-index: 999;"><a><img src="http://s3.amazonaws.com/portrit/img/landing/nominate_screen.jpg" width="460" height="320" alt="Quickly get a overview of your friend\'s albums with album peek"/></a></li>' +
-                                    '<li id="landing_img_3" style="z-index: 998;"><a><img src="http://s3.amazonaws.com/portrit/img/landing/active_nom_screen.jpg" width="460" height="320" alt="Dive deep into an album to see the photos"/></a></li>' +
-                                    '<li id="landing_img_4" style="z-index: 997;"><a><img src="http://s3.amazonaws.com/portrit/img/landing/nom_detail_screen.jpg" width="460" height="320" alt="Go to gallery view to view large photos"/></a></li>' +
-                                    '<li id="landing_img_5" style="z-index: 996;"><a><img src="http://s3.amazonaws.com/portrit/img/landing/mobile.jpg" height="320" alt="Optimized for mobile devices"/></a></li>' +
-                                '</ul>' +
-                            '</div>' +
-            				'<div id="login_right_cont">' +
-            				    '<img id="landing_back" src="http://s3.amazonaws.com/portrit/img/left_arrow.png"/>' +
-            				    '<img id="landing_forward" src="http://s3.amazonaws.com/portrit/img/right_arrow.png"/>' +
-            					'<div id="tagline_cont_active">' +
-            					    '<div class="tagline_top">' +
-                                        '<h2>What\'s Portrit?</h2>' +
-                                        '<p id="tageline_large">Award the best photos. It\'s up to you and your Facebook friends to find whose got the best pics.</p>' +
-                                        '<p id="tagline_end">Love it, earn it.</p>' +
-                                    '</div>' +
-                                    '<div class="tagline_top" style="display:none;">' +
-                                        '<h2>Nominate</h2>' +
-                                        '<p id="tageline_large">Nominate your favorite photos. Does that pic scream WTF or Fail? Help a friend out and nominate it.</p>' +
-                                        '<p id="tagline_end">Give the gift of nomination.</p>' +
-                                    '</div>' +
-                                    '<div class="tagline_top" style="display:none;">' +
-                                        '<h2>Stream</h2>' +
-                                        '<p id="tageline_large">Browse through the days photo nominations. A collection of you and your friends favorite photos.</p>' +
-                                        '<p id="tagline_end">Look, but don\'t touch.</p>' +
-                                    '</div>' +
-                                    '<div class="tagline_top" style="display:none;">' +
-                                        '<h2>Vote</h2>' +
-                                        '<p id="tageline_large">Give your opinion of your friends photos. It\'s up to you to decide whose got that rockin\' pic.</p>' +
-                                        '<p id="tagline_end">With great power comes great responsibility.</p>' +
-                                    '</div>' +
-                                    '<div class="tagline_top" style="display:none;">' +
-                                        '<h2>Earn</h2>' +
-                                        '<p id="tageline_large"><img id="trophy_landing" src="http://s3.amazonaws.com/portrit/img/landing/trophies.png"/></p>' +
-                                        '<p id="tagline_end">Receive trophies for your best photos.</p>' +
+                                    '<h2 id="point_3_text">3</h2>' +
+                                    '<h3>Earn</h3>' +
+                                    '<div class="clear"></div>' +
+                                    '<div class="login_points_cont">' +
+                                        '<img src="http://s3.amazonaws.com/portrit/img/landing/earn.png"/>' +
+                                        '<p>Earn trophies for your amazing photos.</p>' +
                                     '</div>' +
                                 '</div>' +
-            				'</div>' +
+                                '<div class="clear"></div>' +
+                            '</div>' +
+                            //                             '<div id="login_left_cont">' +
+                            //                                 '<ul class="slideshow">' +
+                            //                                     '<li class="active" style="z-index: 1000;" id="landing_img_1"><a><img src="http://s3.amazonaws.com/portrit/img/landing/main.jpg" width="460" height="320" alt="View all your friends as photos on a canvas"/></a></li>' +
+                            //                                     '<li id="landing_img_2" style="z-index: 999;"><a><img src="http://s3.amazonaws.com/portrit/img/landing/nominate_screen.jpg" width="460" height="320" alt="Quickly get a overview of your friend\'s albums with album peek"/></a></li>' +
+                            //                                     '<li id="landing_img_3" style="z-index: 998;"><a><img src="http://s3.amazonaws.com/portrit/img/landing/active_nom_screen.jpg" width="460" height="320" alt="Dive deep into an album to see the photos"/></a></li>' +
+                            //                                     '<li id="landing_img_4" style="z-index: 997;"><a><img src="http://s3.amazonaws.com/portrit/img/landing/nom_detail_screen.jpg" width="460" height="320" alt="Go to gallery view to view large photos"/></a></li>' +
+                            //                                     '<li id="landing_img_5" style="z-index: 996;"><a><img src="http://s3.amazonaws.com/portrit/img/landing/mobile.jpg" height="320" alt="Optimized for mobile devices"/></a></li>' +
+                            //                                 '</ul>' +
+                            //                             '</div>' +
+                            // '<div id="login_right_cont">' +
+                            //     '<img id="landing_back" src="http://s3.amazonaws.com/portrit/img/left_arrow.png"/>' +
+                            //     '<img id="landing_forward" src="http://s3.amazonaws.com/portrit/img/right_arrow.png"/>' +
+                            //  '<div id="tagline_cont_active">' +
+                            //      '<div class="tagline_top">' +
+                            //                                         '<h2>What\'s Portrit?</h2>' +
+                            //                                         '<p id="tageline_large">Award the best photos. It\'s up to you and your Facebook friends to find whose got the best pics.</p>' +
+                            //                                         '<p id="tagline_end">Love it, earn it.</p>' +
+                            //                                     '</div>' +
+                            //                                     '<div class="tagline_top" style="display:none;">' +
+                            //                                         '<h2>Nominate</h2>' +
+                            //                                         '<p id="tageline_large">Nominate your favorite photos. Does that pic scream WTF or Fail? Help a friend out and nominate it.</p>' +
+                            //                                         '<p id="tagline_end">Give the gift of nomination.</p>' +
+                            //                                     '</div>' +
+                            //                                     '<div class="tagline_top" style="display:none;">' +
+                            //                                         '<h2>Stream</h2>' +
+                            //                                         '<p id="tageline_large">Browse through the days photo nominations. A collection of you and your friends favorite photos.</p>' +
+                            //                                         '<p id="tagline_end">Look, but don\'t touch.</p>' +
+                            //                                     '</div>' +
+                            //                                     '<div class="tagline_top" style="display:none;">' +
+                            //                                         '<h2>Vote</h2>' +
+                            //                                         '<p id="tageline_large">Give your opinion of your friends photos. It\'s up to you to decide whose got that rockin\' pic.</p>' +
+                            //                                         '<p id="tagline_end">With great power comes great responsibility.</p>' +
+                            //                                     '</div>' +
+                            //                                     '<div class="tagline_top" style="display:none;">' +
+                            //                                         '<h2>Earn</h2>' +
+                            //                                         '<p id="tageline_large"><img id="trophy_landing" src="http://s3.amazonaws.com/portrit/img/landing/trophies.png"/></p>' +
+                            //                                         '<p id="tagline_end">Receive trophies for your best photos.</p>' +
+                            //                                     '</div>' +
+                            //                                 '</div>' +
+                            // '</div>' +
                             '<div class="clear"></div>' +
                         '</div>';
         $('#login_cont').append(login_html);
@@ -208,12 +241,15 @@ $(document).ready(function(){
     function handleSessionResponse(response) {
         clearInterval(watch_hashtag_interval);
         $('#content_loading').remove();
+        // var window_href = window.location.href;
         if (window.location.hash == ''){
             window.location.hash = '#/';
         }
+        // if (window_href.indexOf('?ref=nf') > 0){
+        //     window.location.href = window_href.replace('?ref=nf', '');
+        // }
         if (!response.session) {
             view_active = 'login';
-            // watch_hashtag_interval = setInterval(watch_hashtag, 50);
             render_login_cont();
             if (mobile){
                 $('div#login_header').css({
@@ -225,6 +261,7 @@ $(document).ready(function(){
                     update_view(); 
                 }, 75);
             });
+            set_mobile_css();
             $('#header').hide();
             attach_login_handlers();
             return;
@@ -2133,9 +2170,9 @@ $(document).ready(function(){
                                         '</div>' +
                                     '</div>' +
                                     '<div id="preview_right">' +
-                                        '<a>' + name + ', ' + trophy_won_text + '</a>' +
-                                        '<span>Click the trophy to see ' + name + '\'s winning photos.</span>' +
-                                        '<p></p>' +
+                                        '<a id="trophy_won_nom_link">' + name + ', ' + trophy_won_text + '</a>' +
+                                        '<span id="trophy_won_nom_caption">Click the trophy to see ' + name + '\'s winning photos.</span>' +
+                                        '<p id="trophy_won_nom_desc"></p>' +
                                     '</div>' +
                                     '<div class="clear"></div>' +
                                 '</div>' +
@@ -2151,6 +2188,23 @@ $(document).ready(function(){
         
         $('#publish_story').bind('click', function(){
             var nom_ids = $(this).attr('value');
+            
+            var trophy_img_src = '';
+            if (data.length == 1){
+                trophy_img_src = 'http://s3.amazonaws.com/portrit/img/invite/' + cat_underscore + '.png';
+            }
+            else{
+                trophy_img_src = 'http://s3.amazonaws.com/portrit/img/invite/blank.png';
+            }
+            var link = 'http://184.73.249.104/#/nom_id=' + data[0].nom_id + '/ref=facebook';
+            var name = $('#trophy_won_nom_link').text();
+            var caption = $('#trophy_won_nom_caption').text();
+            var description = $('#story_cont textarea').val();
+            
+            // $.post('https://graph.facebook.com/' + me.id + '/feed', {'access_token': fb_session.access_token, 'picture': trophy_img_src, 'link': link, 'name': name, 'caption': caption}, function(response){
+            //     var test = response;
+            // });
+            
             close_context_overlay();
             
             $('#story_cont textarea').unbind('focus');
@@ -2160,15 +2214,9 @@ $(document).ready(function(){
             $('#publish_story').unbind('click');
             $('#close_overlay').unbind('click');
             
-            // var trophy_img_src = 'http://test.portrit.comhttp://s3.amazonaws.com/portrit/img/invite/' + nom_cat_underscore + '.png';
-            // var link = 'http://test.portrit.com/#/nom_id=' + data[i - 1].id + '/ref=facebook';
-            // var name = nominator_name.split(' ')[0] + ' nominated one of your photos for the ' + nom_cat_text + ' trophy.';
-            // var caption = 'Click the trophy to see you and your friend\'s photo nominations';
-            // var description = '';
-            // 
-            // $.post('https://graph.facebook.com/' + nominatee_id + '/feed', {'access_token': fb_session.access_token, 'picture': trophy_img_src, 'link': link, 'name': name, 'caption': caption}, function(response){
-            //     var test = response;
-            // });
+            $.post('/notification_read/', {'notification_ids': notification_ids}, function(){
+
+            });
             
             window.location.href = '/#/nom_id=' + nom_ids;
         });
@@ -9181,10 +9229,13 @@ $(document).ready(function(){
         
         $('#post_nomination').live('click', function(){
             var selected_nominations = '';
-            if ($('#active_nominations_cont div').length > 0){
+            var that = this;
+            if ($('#active_nominations_cont div').length > 0 && !($(this).hasClass('awesome_hover_lock'))){
                 $('#active_nominations_cont div h4').each(function(){
                     selected_nominations += $(this).text() + ','
                 });
+                $(that).text('Saving...');
+                $(that).addClass('awesome_hover_lock');
                 var photo_src = $('#photo_large_inline').attr('src');
                 var photo_src_small = $('.photo_thumbs[name="selected"] img').attr('src');
                 var photo_small_height = $('.photo_thumbs[name="selected"] img').height();
@@ -9217,6 +9268,8 @@ $(document).ready(function(){
                         nominator_id = '',
                         nominator_name = '';
                     $('#new_nomination_cont').fadeOut(function(){
+                        $(that).text('Post Nomination');
+                        $(that).removeClass('awesome_hover_lock');
                         nominatee_id = data[0].nominatee;
                         nominator_id = data[0].nominator;
                         if (nominator_id == me.id){
@@ -9269,15 +9322,6 @@ $(document).ready(function(){
                                                                         'nom_id': data[i].id};
                             $('#nominate_photo, #go_nom_detail').attr('id', 'go_nom_detail').attr('value', active_user_nom_cache[selected_photo].nom_id).text('Active');
                         }
-                        // var trophy_img_src = 'http://test.portrit.comhttp://s3.amazonaws.com/portrit/img/invite/' + nom_cat_underscore + '.png';
-                        // var link = 'http://test.portrit.com/#/nom_id=' + data[i - 1].id + '/ref=facebook';
-                        // var name = nominator_name.split(' ')[0] + ' nominated one of your photos for the ' + nom_cat_text + ' trophy.';
-                        // var caption = 'Click the trophy to see you and your friend\'s photo nominations';
-                        // var description = '';
-                        // 
-                        // $.post('https://graph.facebook.com/' + nominatee_id + '/feed', {'access_token': fb_session.access_token, 'picture': trophy_img_src, 'link': link, 'name': name, 'caption': caption}, function(response){
-                        //     var test = response;
-                        // });
                         
                         render_share_nom(data, comment_text);
                     });
@@ -9405,9 +9449,9 @@ $(document).ready(function(){
                                         '</div>' +
                                     '</div>' +
                                     '<div id="preview_right">' +
-                                        '<a>' + trophy_won_text + '</a>' +
-                                        '<span>Click the trophy to see ' + friend_name + '\'s nominated photo.</span>' +
-                                        '<p>' + comment_text + '</p>' +
+                                        '<a id="trophy_nom_text_link">' + trophy_won_text + '</a>' +
+                                        '<span id="trophy_nom_text_caption">Click the trophy to see ' + friend_name + '\'s nominated photo.</span>' +
+                                        '<p id="trophy_nom_text_desc">' + comment_text + '</p>' +
                                     '</div>' +
                                     '<div class="clear"></div>' +
                                 '</div>' +
@@ -9424,6 +9468,22 @@ $(document).ready(function(){
         
         $('#publish_story').bind('click', function(){
             var nom_ids = $(this).attr('value');
+            var trophy_img_src = '';
+            if (data.length == 1){
+                trophy_img_src = 'http://s3.amazonaws.com/portrit/img/invite/' + cat_underscore + '.png';
+            }
+            else{
+                trophy_img_src = 'http://s3.amazonaws.com/portrit/img/invite/blank.png';
+            }
+            var link = 'http://184.73.249.104/#/nom_id=' + data[0].id + '/ref=facebook';
+            var name = $('#trophy_nom_text_link').text();
+            var caption = $('#trophy_nom_text_caption').text();
+            var description = $('#story_cont textarea').val();
+            
+            // $.post('https://graph.facebook.com/' + data[0].nominatee + '/feed', {'access_token': fb_session.access_token, 'picture': trophy_img_src, 'link': link, 'name': name, 'caption': caption}, function(response){
+            //     var test = response;
+            // });
+            
             close_context_overlay();
             $('#nom_complete_cont').fadeIn();
             
@@ -9482,6 +9542,7 @@ $(document).ready(function(){
         $('#nomination_comment').text('Tell your friend\'s why this photo rocks!');
         $('#nom_complete_cont').hide();
         $('#nom_complete_cont .nom_complete_cat_cont').remove();
+        $('#post_nomination').text('Post Nomination').removeClass('awesome_hover_lock');
     }
     
     function append_wall_html(view_to_activate){

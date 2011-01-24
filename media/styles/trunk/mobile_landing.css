@@ -34,6 +34,18 @@ div#login_content div#login_right_cont{
     width:          480px;
 }
 
+#point_1{
+    margin:                 0;
+}
+
+#point_3{
+    margin:                 0;
+}
+
+.login_points_cont{
+    width:                  500px;
+}
+
 div#login_right_cont h2{
     font-size:          26px;
     font-weight:        bold;

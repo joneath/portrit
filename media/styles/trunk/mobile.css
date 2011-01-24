@@ -31,8 +31,40 @@ div#login_cont{
     width:                  520px;
 }
 
+#point_1{
+    margin:                 0;
+}
+
+#point_3{
+    margin:                 0;
+}
+
+#tagline_main{
+    font-size:              20px;
+    margin-bottom:          10px;
+}
+
+#tagline_end{
+    font-size:              20px;
+}
+
+.login_points_cont{
+    margin-bottom:          5px;
+    width:                  520px;
+}
+
+    .login_points h3{
+        font-size:              24px;
+    }
+
 div#login_content div#login_right_cont{
-    width:                  500px
+    width:                  500px;
+    -webkit-border-top-right-radius:         0px;
+    -webkit-border-bottom-right-radius:      10px;
+    -webkit-border-bottom-left-radius:       10px;
+    -moz-border-radius-topright:             0px;
+    -moz-border-radius-bottomright:          10px;
+    -moz-border-radius-bottomleft:          10px;
 }
 
 #tagline_cont_active{
