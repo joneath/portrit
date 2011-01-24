@@ -24,15 +24,20 @@ var Portrit = function(){
         });
         stream.on('end', function () {
             console.log('socket closed');
-            var data = JSON.parse(data_stream);
-            
-            console.log(data.payload.friends);
-            for (var i = 0; i < data.payload.friends.length; i++){
-                console.log('emitting event for: ' + data.payload.friends[i]);
-                nomination_emitter.emit(data.payload.friends[i], data);
-                // nomination_emitter.removeAllListeners(data.payload.friends[i]);
+            try{
+                var data = JSON.parse(data_stream);
+
+                console.log(data.payload.friends);
+                for (var i = 0; i < data.payload.friends.length; i++){
+                    console.log('emitting event for: ' + data.payload.friends[i]);
+                    nomination_emitter.emit(data.payload.friends[i], data);
+                    // nomination_emitter.removeAllListeners(data.payload.friends[i]);
+                }
+                data_stream = '';
             }
-            data_stream = '';
+            catch (err){
+                console.log(err);
+            }
             stream.end();
         });
     });
@@ -44,36 +49,35 @@ var Portrit = function(){
     // }
     
     
-    var websock_server = ws.createServer({
-        websock_server: http
-    });
-    
-    websock_server.addListener("listening", function(){
-        sys.log("Listening for connections.");
-    });
-    
-    // Handle WebSocket Requests
-    websock_server.addListener("connection", function(conn){
-        var event_user = '';
-        var nom_callback = function(data){
-            // nomination_emitter.removeAllListeners(event_user);
-            console.log('websocket event sent');
-            conn.write(JSON.stringify(data));
-        }
-        conn.addListener("message", function(data){
-            event_user = data;
-            nomination_emitter.removeAllListeners(event_user);
-            nomination_emitter.addListener(event_user, nom_callback);
-        });
-    });
-    
-    if (dev){
-        websock_server.listen(8122, 'localhost');
-    }
-    else{
-        websock_server.listen(8122, '10.117.57.137');
-    }
-    
+    // var websock_server = ws.createServer({
+    //     websock_server: http
+    // });
+    // 
+    // websock_server.addListener("listening", function(){
+    //     sys.log("Listening for connections.");
+    // });
+    // 
+    // // Handle WebSocket Requests
+    // websock_server.addListener("connection", function(conn){
+    //     var event_user = '';
+    //     var nom_callback = function(data){
+    //         // nomination_emitter.removeAllListeners(event_user);
+    //         console.log('websocket event sent');
+    //         conn.write(JSON.stringify(data));
+    //     }
+    //     conn.addListener("message", function(data){
+    //         event_user = data;
+    //         nomination_emitter.removeAllListeners(event_user);
+    //         nomination_emitter.addListener(event_user, nom_callback);
+    //     });
+    // });
+    // 
+    // if (dev){
+    //     websock_server.listen(8122, 'localhost');
+    // }
+    // else{
+    //     websock_server.listen(8122, '10.117.57.137');
+    // }
     
     var request_server = http.createServer(function(request, response) {
         if (dev){
@@ -120,25 +124,49 @@ var Portrit = function(){
             }
         }
         else{
-            var event_user = url.parse(request.url, true).query.user;
+            try{
+                var event_user = url.parse(request.url, true).query.user;
+            }
+            catch (err){
+                console.log(err);
+            }
             var nom_callback = function(data){
                 // nomination_emitter.removeAllListeners(event_user);
-                console.log('event sent');
-                clearTimeout(nom_timeout);
-                nomination_emitter.removeListener(event_user, nom_callback);
-                response.writeHead(200, { "Content-Type": "text/plain" });
-        		response.end(JSON.stringify(data));
+                try{
+                    console.log('event sent');
+                    clearTimeout(nom_timeout);
+                    nomination_emitter.removeListener(event_user, nom_callback);
+                    response.writeHead(200, { "Content-Type": "text/plain" });
+            		response.end(JSON.stringify(data));
+                }
+                catch(err){
+                    console.log(err);
+                    clearTimeout(nom_timeout);
+                    response.writeHead(200, { "Content-Type": "text/plain" });
+            		response.end(JSON.stringify([]));
+                }
             }
 
             var nom_timeout = setTimeout(function(){
-                nomination_emitter.removeListener(event_user, nom_callback);
+                try{
+                    nomination_emitter.removeListener(event_user, nom_callback);
+                }
+                catch(err){
+                    console.log(err);
+                }
                 response.writeHead(200, { "Content-Type" : "text/plain" });  
                 response.end(JSON.stringify([]));
             }, 25000);
+            
+            try{
+                console.log(nomination_emitter.listeners(event_user));
+                nomination_emitter.addListener(event_user, nom_callback);
+                console.log('long poll attached');
+            }
+            catch(err){
+                console.log(err);
+            }
 
-            console.log(nomination_emitter.listeners(event_user));
-            nomination_emitter.addListener(event_user, nom_callback);
-            console.log('long poll attached');
         }
     });
     

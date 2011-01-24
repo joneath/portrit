@@ -1560,40 +1560,40 @@ $(document).ready(function(){
     
     var notifcation_cache = [ ];
     function wait_for_message(){
-        if (window["WebSocket"]) {
-            //Has websockets
-            try{
-                var recvd = 0;
-                if (production){
-                    var host = "184.73.249.110:8122";
-                }
-                else{
-                    var host = "192.168.1.126:8122";
-                }
-                var conn = new WebSocket("ws://"+host);
-                conn.onmessage = function(event) {
-                    handle_update(JSON.parse(event.data), true);
-                };
-
-                conn.onerror = function() {
-                    console.log("error", arguments);
-                };
-
-                conn.onclose = function() {
-                    // console.log("closed");
-                    conn.send(me.id);
-                };
-
-                conn.onopen = function() {
-                    // console.log("opened");
-                    conn.send(me.id);
-                };
-            } 
-            catch(exception){  
-                 // message('<p>Error'+exception);  
-            }
-        }
-        else{
+        // if (window["WebSocket"]) {
+        //     //Has websockets
+        //     try{
+        //         var recvd = 0;
+        //         if (production){
+        //             var host = "184.73.249.110:8122";
+        //         }
+        //         else{
+        //             var host = "192.168.1.126:8122";
+        //         }
+        //         var conn = new WebSocket("ws://"+host);
+        //         conn.onmessage = function(event) {
+        //             handle_update(JSON.parse(event.data), true);
+        //         };
+        // 
+        //         conn.onerror = function() {
+        //             console.log("error", arguments);
+        //         };
+        // 
+        //         conn.onclose = function() {
+        //             // console.log("closed");
+        //             conn.send(me.id);
+        //         };
+        // 
+        //         conn.onopen = function() {
+        //             // console.log("opened");
+        //             conn.send(me.id);
+        //         };
+        //     } 
+        //     catch(exception){  
+        //          // message('<p>Error'+exception);  
+        //     }
+        // }
+        // else{
             //No websockets
             $.ajax({
                 type: "GET",
@@ -1610,7 +1610,7 @@ $(document).ready(function(){
                     setTimeout(wait_for_message, 5000);
                 }
             });
-        }
+        // }
     }
     
     function handle_update(data, long_poll){
