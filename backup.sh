@@ -12,3 +12,5 @@ cd /var/www/portrit/backup
 `$MYSQL_BIN_FOLDER/mysqldump -u $DATABASE_USER -h localhost $DATABASE_NAME > $DATETIME.sql`
 SQL_BACKUP_FILE=`pwd`'/'$DATETIME'.sql'
 cd ..
+
+s3cmd put backup.sh s3://portrit_backup
