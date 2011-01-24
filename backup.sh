@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DATABASE_NAME=""
+DATABASE_NAME="portrit"
 DATABASE_USER="root"
 DATABASE_PASSWORD=""
 MYSQL_BIN_FOLDER="/usr/bin"
