@@ -346,7 +346,9 @@ def index(request, template='index.html'):
 #     return HttpResponse(data, mimetype='application/json')
     
 def submit_feedback(request):
-    if request.user.is_authenticated():
+    cookie = facebook.get_user_from_cookie(
+        request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
+    if cookie:
         message = request.POST.get('message')
         
         from django.core.mail import EmailMessage
@@ -360,7 +362,9 @@ def submit_feedback(request):
         return HttpResponse(data, mimetype='application/json')
         
 def contact_portrit(request):
-    if request.user.is_authenticated():
+    cookie = facebook.get_user_from_cookie(
+        request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
+    if cookie:
         from_email = request.POST.get('email')
         reason = request.POST.get('reason')
         message = request.POST.get('message')
@@ -385,7 +389,9 @@ def contact_portrit(request):
         return HttpResponse(data, mimetype='application/json')
         
 def submit_bug_report(request):
-    if request.user.is_authenticated():
+    cookie = facebook.get_user_from_cookie(
+        request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
+    if cookie:
         from_email = request.POST.get('email')
         where = request.POST.get('where')
         message = request.POST.get('message')

@@ -2,7 +2,7 @@ import os
 import sys
 
 os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
-import json, socket
+import json, socket, urllib, urllib2
 from django.db.models import Q, Count
 
 from settings import ENV, NODE_SOCKET, NODE_HOST
@@ -13,6 +13,7 @@ def calc_noms_won():
     nominatees = FB_User.objects.filter(nominated_user__isnull=False, nominated_user__active=True).distinct('id')
     
     for nominatee in nominatees.iterator():
+        user_wins = [ ]
         friends = nominatee.friends.all()
         user_noms = Nomination.objects.filter(active=True, won=False, nominatee=nominatee).order_by('-current_vote_count')
         user_noms_cat = { }
@@ -37,13 +38,40 @@ def calc_noms_won():
             try:
                 if user_cat_stream[0].id == nom.id:
                     mark_nom_as_won(nom)
+                    user_wins.append(nom)
                 else:
                     nom.active = False
                     nom.save()
             except:
                 pass
-            # print user_cat_stream
-    
+
+        # if len(user_wins) > 0:
+        #     portrit_user = user_wins[0].nominatee.portrit_fb_user.all()[0]
+        #     if portrit_user.allow_notifications:
+        #         try:
+        #             nom_cat = user_wins[0].nomination_category.name
+        #             name = portrit_user.name.split(' ')[0]
+        #             if len(user_wins) == 1:
+        #                 trophy = 'http://s3.amazonaws.com/portrit/img/invite/' + nom_cat.replace(' ', '_').lower() + '.png'
+        #                 trophy_text = name + ', won the ' + nom_cat + ' trophy for his rockin\' photo!'
+        #             else:
+        #                 trophy = 'http://s3.amazonaws.com/portrit/img/invite/blank.png'
+        #                 trophy_text = name + ', won ' + str(len(user_wins)) + ' trophies for his rockin\' photos!'
+        #             url = 'https://graph.facebook.com/' + str(user_wins[0].nominatee.fid) + '/feed'
+        #             values = {'access_token' : portrit_user.access_token,
+        #                       'picture' : trophy,
+        #                       'link' : 'http://test.portrit.com/#/nom_id=' + str(nom.id) + '/ref=facebook',
+        #                       'name': trophy_text, 
+        #                       'caption': 'Click the trophy to see ' + name + '\'s winning photos.',
+        #                       }
+        #     
+        #             data = urllib.urlencode(values)
+        #             req = urllib2.Request(url, data)
+        #             response = urllib2.urlopen(req)
+        #             data = response.read()
+        #         except:
+        #             pass
+            
     # print active_noms
     # print nominatees
     

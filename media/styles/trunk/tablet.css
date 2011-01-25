@@ -1,11 +1,11 @@
 .large.awesome, .large.awesome:visited 			{ font-size: 15px; padding: 8px 14px 9px; }
 
 div#wrapper{
-    margin:             0 auto -30px;
+    margin:             0 auto -40px;
 }
 
 #push{
-    height:             30px;
+    height:             40px;
 }
 
 #header{
@@ -241,7 +241,7 @@ div#album_cont div.photo_album{
 
 #footer{
     background:         -moz-linear-gradient(center top , #333333, #111111) repeat scroll 0 0 transparent;
-    height:             20px;
+    height:             30px;
     color:              #AEAEAE;
     font-size:          14px;
     text-align:         center;

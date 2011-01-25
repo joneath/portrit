@@ -142,7 +142,7 @@ $(document).ready(function(){
                                 '<div id="tagline_top">' +
                                     '<h2>What\'s Portrit?</h2>' +
                                     '<p id="tagline_main">Award the best photos. It\'s up to you and your Facebook friends to find whose got the best pics.</p>' +
-                                    '<p id="tagline_end">Love it, earn it.</p>' +
+                                    '<p id="tagline_end">Let\'s make photos more social.</p>' +
                                     '<div class="clear"></div>' +
                                 '</div>' +
                                 '<div id="login_right_cont">' +
@@ -158,7 +158,10 @@ $(document).ready(function(){
                                     '<div class="clear"></div>' +
                                     '<div class="login_points_cont">' +
                                         '<img src="http://s3.amazonaws.com/portrit/img/landing/nominate.png"/>' +
-                                        '<p>Nominate your friend\'s rockin\' pics.</p>' +
+                                        '<div class="login_points_bottom">' +
+                                            '<h4>Nominate your friend\'s rockin\' pics.</h4>' +
+                                            '<p>Be nice and courteous or evil and awesome, it\'s up to you.</p>' +
+                                        '</div>' +
                                     '</div>' +
                                 '</div>' +
                                 '<div id="point_2" class="login_points">' +
@@ -167,7 +170,10 @@ $(document).ready(function(){
                                     '<div class="clear"></div>' +
                                     '<div class="login_points_cont">' +
                                         '<img src="http://s3.amazonaws.com/portrit/img/landing/vote.png"/>' +
-                                        '<p>Give your vote to the best.</p>' +
+                                        '<div class="login_points_bottom">' +
+                                            '<h4>Give your vote to the best.</h4>' +
+                                            '<p>The power is in your hands. Use it wisely.</p>' +
+                                        '</div>' +
                                     '</div>' +
                                 '</div>' +
                                 '<div id="point_3" class="login_points">' +
@@ -176,7 +182,10 @@ $(document).ready(function(){
                                     '<div class="clear"></div>' +
                                     '<div class="login_points_cont">' +
                                         '<img src="http://s3.amazonaws.com/portrit/img/landing/earn.png"/>' +
-                                        '<p>Earn trophies for your amazing photos.</p>' +
+                                        '<div class="login_points_bottom">' +
+                                            '<h4>Earn trophies for your amazing photos.</h4>' +
+                                            '<p>No longer search through thousands of your friend\'s photos to find the best.</p>' +
+                                        '</div>' +
                                     '</div>' +
                                 '</div>' +
                                 '<div class="clear"></div>' +
@@ -2615,7 +2624,7 @@ $(document).ready(function(){
                                             '<div class="tut_point">' +
                                                 '<h2 class="tut_point_num nom_cat_fail">1</h2>' +
                                                 '<h3>Nominate Your Friends</h3>' + 
-                                                '<p>Portrit is all about finding the best photos between your friends. Look through your friend\'s photos, or your own and find those rockin\' pics. Go with your gut and choose one of the trophies bellow.</p>' +
+                                                '<p>Portrit is all about finding the best photos between you and your friends. Look through your friend\'s photos, or your own and find those rockin\' pics. Go with your gut and choose one of the trophies bellow.</p>' +
                                                 '<ul>' +
                                                     '<p class="tooltip"></p>' +
                                                     '<li name="Hot">' +
@@ -2649,12 +2658,14 @@ $(document).ready(function(){
                                                 '<h2 class="tut_point_num nom_cat_lol">2</h2>' +
                                                 '<h3>Vote On Your Favorite</h3>' + 
                                                 '<p>It\'s up to you and your friends to decide who earns a trophy. Take a look through all the Hot, WTF, FAIL, etc photos and give your opinion. Love it, vote it up. Hate it, vote it down.</p>' +
+                                                '<img src="http://s3.amazonaws.com/portrit/img/vote.png"/>' +
                                                 '<div class="clear"></div>' +
                                             '</div>' +
                                             '<div class="tut_point">' +
                                                 '<h2 class="tut_point_num nom_cat_party_animal">3</h2>' +
                                                 '<h3>Build Up Your Trophy Room</h3>' + 
                                                 '<p>Got amazing photos? Earn trophies for your hard work. Friends see your winning photos first, so your best photos are always in their face.</p>' +
+                                                '<img src="http://s3.amazonaws.com/portrit/img/trophy_room.png"/>' +
                                                 '<div class="clear"></div>' +
                                             '</div>' +
                                             '<div id="allow_notifications_cont">' +
@@ -2676,8 +2687,8 @@ $(document).ready(function(){
                                 '</div>';
         $('body').append(initial_tut_html);
         if (!mobile || tablet){
-            if ($(window).height() < 1150){
-                $('#wrapper').css('min-height', '1150px');
+            if ($(window).height() < 1425){
+                $('#wrapper').css('min-height', 1425);
             }
         }
         
@@ -8881,6 +8892,7 @@ $(document).ready(function(){
         if (album_cont_height < album_current_height){
             album_cont_height = album_current_height;
         }
+        alert(album_cont_height);
         var profile_nav_control = $('#profile_nav_cont');
         $(profile_nav_control).attr('value', 'trophies');
         $('h2', profile_nav_control).text('Profile');

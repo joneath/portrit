@@ -53,6 +53,10 @@ div#login_cont{
     width:                  520px;
 }
 
+    .login_points_cont .login_points_bottom{
+        width:              520px;
+    }
+
     .login_points h3{
         font-size:              24px;
     }

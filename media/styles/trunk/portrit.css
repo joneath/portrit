@@ -201,7 +201,7 @@ div#login_cont{
         #login_top_cont{
             background-color:   white;
             color:              #333;
-            margin-bottom:      10px;
+            margin-bottom:      20px;
             -webkit-border-radius:      10px;
             -moz-border-radius:         10px;
         }
@@ -219,8 +219,8 @@ div#login_cont{
                     padding:            9px 15px;
                     font-size:          20px;
                     font-weight:        bold;
-                    -webkit-border-radius:      20px;
-                    -moz-border-radius:         20px;
+                    -webkit-border-radius:      30px;
+                    -moz-border-radius:         30px;
                 }
                 
                     #point_1_text{
@@ -242,26 +242,46 @@ div#login_cont{
                 }
             
                 .login_points_cont{
-                    background-color:   #6e6e6e;
+                    background-color:   #dedede;
                     width:              300px;
-                    min-height:         400px;
-                    margin-top:         5px;
+                    margin-top:         10px;
+                    padding-top:        35px;
+                    position:           relative;
+                    overflow-y:         hidden;
                     -webkit-border-radius:      10px;
                     -moz-border-radius:         10px;
                 }
                 
+                    .login_points_cont > img{
+                        position:           relative;
+                        top:                4px;
+                    }
+                
+                .login_points_cont .login_points_bottom{
+                    background:         rgba(0,0,0,0.8);
+                    color:              white;
+                    padding-bottom:     10px;
+                    padding-top:        5px;
+                    padding-left:       10px;
+                    padding-right:      10px;
+                    text-align:         left;
+                    top:                0;
+                    position:           absolute;
+                    width:              280px;
+                    -webkit-border-top-left-radius:      8px;
+                    -webkit-border-top-right-radius:     8px;
+                    -moz-border-radius-topleft:          8px;
+                    -moz-border-radius-topright:         8px;
+                }
+                
+                    .login_points_cont h4{
+                        font-size:      16px;
+                        font-weight:    bold;
+                    }
+                    
                     .login_points_cont p{
-                        background-color:   white;
-                        color:              #333;
-                        font-size:      20px;
-                        padding-bottom: 10px;
-                        padding-left: 10px;
-                        padding-right: 10px;
-                        padding-top:    5px;
-                        -webkit-border-bottom-left-radius:      8px;
-                        -webkit-border-bottom-right-radius:     8px;
-                        -moz-border-radius-bottomleft:          8px;
-                        -moz-border-radius-bottomright:         8px;
+                        font-size:      14px;
+                        margin-top:     5px;
                     }
             
             #point_1{
@@ -992,8 +1012,9 @@ div#initial_tut_cont{
             }
             
             div#initial_tut_top_wrap .tut_point{
-                padding-bottom:     30px;
+                padding-bottom:     20px;
                 width:              650px;
+                text-align:         center;
             }
             
                 div#initial_tut_top_wrap .tut_point .tut_point_num{
@@ -1014,6 +1035,11 @@ div#initial_tut_cont{
                     font-weight:            bold;
                     margin-left:            100px;
                     margin-bottom:          5px;
+                    text-align:             left;
+                }
+                
+                div#initial_tut_top_wrap .tut_point > img{
+                    margin-left:            100px;
                 }
                 
                 div#initial_tut_top_wrap .tut_point ul{
@@ -1032,6 +1058,7 @@ div#initial_tut_cont{
                 div#initial_tut_top_wrap .tut_point > p{
                     font-size:              18px;
                     margin-left:            100px;
+                    text-align:             left;
                 }
                 
             div#initial_tut_top_wrap #allow_notifications_cont{
