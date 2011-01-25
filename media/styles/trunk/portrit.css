@@ -2095,7 +2095,7 @@ div#new_comment_cont{
         text-align:             center;
     }
     
-    #recent_empty_wrap > h1{
+    #recent_empty_wrap > h1, #latest_empty_wrap .empty_cont > h1{
         font-size:              24px;
         font-weight:            bold;
         margin-top:             10px;
@@ -2978,16 +2978,24 @@ div#user_profile_cont{
             background:             rgba(68,68,68,1.0);
         }
         
-        div#user_profile_cont #profile_nav_cont img#album_right_arrow{
+        div#user_profile_cont #profile_nav_cont #album_right_arrow{
+            height:                 8px;
+            width:                  9px;
             position:               absolute;
             right:                  2px;
             top:                    14px;
+            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-position:    -103px -697px;
         }
         
-        div#user_profile_cont #profile_nav_cont img#album_left_arrow{
+        div#user_profile_cont #profile_nav_cont #album_left_arrow{
+            height:                 8px;
+            width:                  9px;
             position:               absolute;
             left:                   2px;
             top:                    13px;
+            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-position:    -86px -697px;
         }
 
     div#user_profile_cont #user_profile{
@@ -3063,6 +3071,10 @@ div#user_profile_cont{
             -moz-box-shadow:        0 0 4px 2px rgba(0, 0, 0, 0.5);*/
             text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
         }
+        
+            #user_profile div#profile_right_cont #loader{
+                padding-top:            50px;
+            }
         
             #user_profile div#profile_right_cont > p{
                 font-size:              18px;

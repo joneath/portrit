@@ -171,7 +171,7 @@ var Portrit = function(){
     });
     
     if (dev){
-        request_server.listen(8080, '192.168.0.65');
+        request_server.listen(8080, '192.168.1.126');
     }
     else{
         request_server.listen(8080, '10.117.57.137');

@@ -2699,6 +2699,7 @@ $(document).ready(function(){
                 tut_counts = data.tut_counts;
                 allow_notifications = data.allow_notifications;
                 first = data.first;
+                first = true;
                 if (first){
                     //$('#right_nav').prepend('<a id="activate_tut">Tutorial</a>');
                     render_initial_tutorial(tut_counts);
@@ -2772,6 +2773,7 @@ $(document).ready(function(){
                 });
                 wait_for_message();
                 load_user_data();
+                
             });
         }
         else{
@@ -2794,8 +2796,6 @@ $(document).ready(function(){
                 $('#header').css({'border-bottom': '1px solid #1E1E1E'});
                 
                 load_friends();
-                //Run func ptr
-                func_ptr();
             });   
         }
         else{
@@ -2807,8 +2807,14 @@ $(document).ready(function(){
             $('#header').css({'border-bottom': '1px solid #1E1E1E'});
             
             load_friends();
-            func_ptr();
         }
+        //Check if callbacks have returned
+        var user_data_load_interval = setInterval(function(){
+            if (friends && me){
+                clearInterval(user_data_load_interval);
+                func_ptr();
+            }
+        }, 50);
     }
     
     function show_search_view(){
@@ -3423,7 +3429,7 @@ $(document).ready(function(){
         }
         else if (default_view === 'profile'){
             $('#wall_cont').hide();
-            var wall_html = '<div id="user_profile_cont"><div id="profile_nav_cont" value="albums"><h2>Albums</h2><img id="album_left_arrow" style="display:none;" src="http://s3.amazonaws.com/portrit/img/albumarrow_left.png"/><img id="album_right_arrow" src="http://s3.amazonaws.com/portrit/img/albumarrow.png"/></div><div id="user_profile"></div><div id="album_cont" style="display:none;"></div></div>';
+            var wall_html = '<div id="user_profile_cont"><div id="profile_nav_cont" value="albums"><h2>Albums</h2><p id="album_left_arrow" style="display:none;"></p><p id="album_right_arrow"></p></div><div id="user_profile"></div><div id="album_cont" style="display:none;"></div></div>';
             $('#wall_cont').append(wall_html);
             selected_user = 'me';
             get_user_albums('me', 5, render_albums);
@@ -3512,6 +3518,7 @@ $(document).ready(function(){
         
         $('#user_profile').append(profile_html);
         // get_users_trophies(me.id, render_user_trophies);
+        append_load($('#profile_right_cont'), 'dark');
         get_users_active_noms(me.id, render_user_noms);
     }
     
@@ -3522,6 +3529,7 @@ $(document).ready(function(){
     }
     
     function render_user_noms(data){
+        remove_load();
         if (data.length > 0){
             var active_nom_html = '',
                 nominator_name = '',
@@ -6018,6 +6026,9 @@ $(document).ready(function(){
                         }
                     }
                 }
+            }
+            if (count == 0){
+                $('#latest_empty_wrap > .empty_cont').append('<h1>No Latest Photos.</h1>');
             }
         }
         
@@ -8855,8 +8866,21 @@ $(document).ready(function(){
     
     function transition_trophy_view(instant){
         var window_width = $(window).width();
-        var album_cont_count = Math.floor(($('.photo_album').length) / 3);
-        var album_cont_height = $('#album_cont').height();
+        var album_current_height = $('#album_cont').height();
+        var album_cont_count = Math.floor(($('.photo_album').length) / 3) + 1;
+        var trophy_cont_count = Math.floor(($('.trophy_album').length) / 3);
+        var album_cont_height = (album_cont_count * 240);
+        var trophy_cont_height = (trophy_cont_count * 255);
+        if (album_cont_height < 400){
+            album_cont_height = 400;
+        }
+        if (trophy_cont_height == 0){
+            trophy_cont_height = $('#trophy_cont').height() + 30;
+        }
+        album_cont_height += trophy_cont_height;
+        if (album_cont_height < album_current_height){
+            album_cont_height = album_current_height;
+        }
         var profile_nav_control = $('#profile_nav_cont');
         $(profile_nav_control).attr('value', 'trophies');
         $('h2', profile_nav_control).text('Profile');
@@ -8895,6 +8919,7 @@ $(document).ready(function(){
         $('#user_profile_cont').css({
             'min-height': ''
         });
+        
         if (!mobile && !instant){
             $('#user_profile_cont').animate({
                 'right': '0px'
