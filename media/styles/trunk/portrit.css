@@ -132,12 +132,12 @@ div#wrapper{
     background-position:center 0px;
     min-height:         100%;
     height:             auto !important;
-    margin:             0 auto -30px;
+    margin:             0 auto -40px;
     overflow-x:         hidden;
 }
 
 #push{
-    height:             30px;
+    height:             40px;
 }
 
 #header{
@@ -5345,11 +5345,12 @@ div#payment_types_cont{
     }
 
 #footer{
+    background:         -moz-linear-gradient(center top , #222, #111) repeat scroll 0 0 transparent;
     background-color:   black;
     bottom:             0px;
-    height:             20px;
+    height:             30px;
     color:              #AEAEAE;
-    font-size:          13px;
+    font-size:          14px;
     overflow-y:         hidden;
     text-align:         center;
     padding-top:        5px;
@@ -5361,8 +5362,8 @@ div#payment_types_cont{
     #footer a{
         display:            inline-block;
         color:              #aeaeae;
-        margin:             0px 5px;
-        margin-top:         3px;
+        margin:             0px 10px;
+        margin-top:         8px;
         text-decoration:    none;
     }
     
@@ -5374,9 +5375,32 @@ div#payment_types_cont{
         color:              white;
     }
     
+    #footer .footer_box{
+        display:            inline-block;
+        width:              3px;
+        height:             3px;
+        background-color:   #3e3e3e;
+        position:           relative;
+        bottom:             3px;
+    }
+    
+    #footer #portrit_copyright{
+        display:            inline-block;
+        margin-left:        35px;
+    }
+    
+        #portrit_copyright div{
+            height:                 16px;
+            width:                  16px;
+            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-position:    -305px -650px;
+            position:               absolute;
+        }
+    
     #footer #copyright{
         display:            inline-block;
         margin:             0px 5px;
+        margin-left:        20px;
     }
     
     #footer_notification_cont{
