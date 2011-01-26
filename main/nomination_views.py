@@ -180,24 +180,23 @@ def new_comment(request):
                 nom_owner_name = ''
             
             voters = nomination.votes.all()
-            all_commentors = FB_User.objects.filter(Q(comment__nomination=nomination) | Q(nomination__votes__isnull=False)).distinct('fid')
+            all_commentors = FB_User.objects.filter(comment__nomination=nomination).distinct('fid')
             friends = [ ]
             # if fb_user.fid != nomination.nominator.fid:
             friends.append(nomination.nominator.fid)
             # if owner.fid != fb_user.fid:
             friends.append(owner.fid)
             #Attach target user
+            friends = list(set(friends))
             for friend in all_commentors.iterator():
                 if friend.fid != fb_user.fid:
                     if friend.fid != nomination.nominator.fid:
                         friends.append(friend.fid)
                         
                     notification_type = Notification_Type.objects.get(name="new_comment")
-                    notification = Notification(source=fb_user, nomination=nomination, notification_type=notification_type)
+                    notification = Notification(source=fb_user, destination=owner, nomination=nomination, notification_type=notification_type)
                     notification.save()
                     Portrit_User.objects.get(fb_user=friend).notifications.add(notification)
-            
-            friends = list(set(friends))
             
             #Create notification record
             # if portrit_owner and owner.fid != fb_user.fid:
@@ -346,7 +345,7 @@ def nominate_photo(request):
                     photo.nominations.add(nomination)
                     fb_user.active_nominations.add(nomination)
                     #Create notification record
-                    notification = Notification(source=fb_user, nomination=nomination, notification_type=notification_type)
+                    notification = Notification(source=fb_user, destination=owner_fb_user, nomination=nomination, notification_type=notification_type)
                     notification.save()
                     
                     try:
@@ -547,7 +546,7 @@ def mark_nomination_as_won(request):
         
         notification_type = Notification_Type.objects.get(name="nom_won")
         for friend in target_friends:
-            notification = Notification(source=nomination.nominatee, nomination=nomination, notification_type=notification_type)
+            notification = Notification(destination=nomination.nominatee, nomination=nomination, notification_type=notification_type)
             notification.save()
             
             portrit_user = Portrit_User.objects.get(fb_user=FB_User.objects.get(fid=friend))
@@ -703,7 +702,9 @@ def get_top_stream(fb_user):
 def get_top_users(fb_user):
     data = [ ]
     try:
-        friends = fb_user.friends.annotate(num_wins=Count('winning_noms')).filter(num_wins__gt=0).order_by('-num_wins')[:10]
+        friends = fb_user.friends.all()
+        friends = FB_User.objects.filter(Q(id=fb_user.id) | Q(id__in=friends)).annotate(num_wins=Count('winning_noms')).filter(num_wins__gt=0).order_by('-num_wins')[:10]
+        # friends | fb_user
         for friend in friends:
             data.append({
                 'fid': friend.fid,

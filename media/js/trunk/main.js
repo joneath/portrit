@@ -2054,7 +2054,8 @@ $(document).ready(function(){
     
     function render_notifications(data){
         var notification_html = '',
-            name = '',
+            source_name = '',
+            dest_name = '',
             color_class = '',
             nom_cat = '',
             first_unread = true,
@@ -2063,75 +2064,93 @@ $(document).ready(function(){
             my_winnings = [ ],
             time_str = '';
         
-        for (var i = 0; i < data.length; i++){
-            color_class = '';
-            if (data[i].source_id == me.id){
-                if (data[i].notification_type == 'nom_won'){
-                    name = "Your";
+        if (data){
+            for (var i = 0; i < data.length; i++){
+                color_class = '';
+                if (data[i].source_id == me.id){
+                    if (data[i].notification_type == 'nom_won'){
+                        source_name = "Your";
+                    }
+                    else{
+                        source_name = 'You';
+                    }
+                }
+                else if(!data[i].source_name && data[i].source_id){
+                    source_name = friends[data[i].source_id].name + '\'s';
                 }
                 else{
-                    name = 'You';
+                    source_name = data[i].source_name;
                 }
-            }
-            else if(!data[i].source_name){
-                name = friends[data[i].source_id].name + '\'s';
-            }
-            else{
-                name = data[i].source_name;
-            }
-            nom_cat = data[i].nomination_category.replace(' ', '_').toLowerCase();
-            if (!data[i].read){
-                color_class = 'color_transition nom_cat_' + nom_cat;
-                if (first_unread){
-                    $('#footer_notification_cont').css({
-                       'opacity': '1.0' 
-                    });
-                    $('#footer_notification_cont > p').addClass('nom_cat_' + nom_cat + '_text');
-                    first_unread = false;
+                
+                if (data[i].destination_id == me.id){
+                    if (data[i].notification_type == 'nom_won'){
+                        dest_name = "Your";
+                    }
+                    else{
+                        dest_name = 'Your';
+                    }
                 }
-            }
-            now = new Date();
-            time = new Date(data[i].create_time * 1000);
-            now -= time;
-            now /= 1000
-            time_str = secondsToHms(parseInt(now));
-            if (data[i].notification_type == 'new_nom'){
-                notification_html +='<div class="notification_popup_cont ' + color_class + '" name="' + nom_cat + '" value="' + data[i].nomination + '" read="' + data[i].read + '" id="notification_' + data[i].notification_id + '" time="' + data[i].create_time +'" onclick="void(0)">' +
-                                        '<div class="nom_cat_' + nom_cat + ' notification_color"></div>' +
-                                        '<div class="notification_text_cont">' +
-                                            '<p class="strong">' + name + '</p><span> nominated your photo for the </span><p class="strong">' + data[i].nomination_category + '</p><span> trophy!</span><span class="time"> - ' + time_str + '</span>' +
-                                        '</div>' +
-                                        '<div class="kill_notification close_img ' + close_size + '" value="' + data[i].notification_id + '" style="display:none;"></div>' +
-                                    '</div>';
-            }
-            else if (data[i].notification_type == 'new_comment'){
-                notification_html +='<div class="notification_popup_cont ' + color_class + '" name="' + nom_cat + '" value="' + data[i].nomination + '" read="' + data[i].read + '" id="notification_' + data[i].notification_id + '" time="' + data[i].create_time +'" onclick="void(0)">' +
-                                        '<div class="nom_cat_' + nom_cat + ' notification_color"></div>' +
-                                        '<div class="notification_text_cont">' +
-                                            '<p class="strong">' + name + '</p><span> commented your photo nominated for the </span><p class="strong">' + data[i].nomination_category + '</p><span> trophy!</span><span class="time"> - ' + time_str + '</span>' +
-                                        '</div>' +
-                                        '<div class="kill_notification close_img ' + close_size + '" value="' + data[i].notification_id + '" style="display:none;"/></div>' +
-                                    '</div>';
-            }
-            else if (data[i].notification_type == 'nom_won'){
-                notification_html +='<div class="notification_popup_cont ' + color_class + '" name="' + nom_cat + '" value="' + data[i].nomination + '" read="' + data[i].read + '" id="notification_' + data[i].notification_id + '" won="true" time="' + data[i].create_time +'" onclick="void(0)">' +
-                                        '<div class="nom_cat_' + nom_cat + ' notification_color"></div>' +
-                                        '<div class="notification_text_cont">' +
-                                            '<p class="strong">' + name + '</p><span> photo won the </span><p class="strong">' + data[i].nomination_category + '</p><span> trophy!</span><span class="time"> - ' + time_str + '</span>' +
-                                        '</div>' +
-                                        '<div class="kill_notification close_img ' + close_size + '" value="' + data[i].notification_id + '" style="display:none;"/></div>' +
-                                    '</div>';
-                if (data[i].source_id == me.id){
-                    my_winnings.push({'fb_user': data[i].source_id, 'cat': data[i].nomination_category, 'nom_id': data[i].nomination, 'notification_id': data[i].notification_id});
-                    // render_publish_story(data[i].source_id, data[i].nomination_category, 'won');
+                else if(!data[i].destination_name){
+                    dest_name = friends[data[i].destination_id].name + '\'s';
                 }
+                else{
+                    dest_name = data[i].destination_name + '\'s';
+                }
+                nom_cat = data[i].nomination_category.replace(' ', '_').toLowerCase();
+                if (!data[i].read){
+                    color_class = 'color_transition nom_cat_' + nom_cat;
+                    if (first_unread){
+                        $('#footer_notification_cont').css({
+                           'opacity': '1.0' 
+                        });
+                        $('#footer_notification_cont > p').addClass('nom_cat_' + nom_cat + '_text');
+                        first_unread = false;
+                    }
+                }
+                now = new Date();
+                time = new Date(data[i].create_time * 1000);
+                now -= time;
+                now /= 1000
+                time_str = secondsToHms(parseInt(now));
+                if (data[i].notification_type == 'new_nom'){
+                    notification_html +='<div class="notification_popup_cont ' + color_class + '" name="' + nom_cat + '" value="' + data[i].nomination + '" read="' + data[i].read + '" id="notification_' + data[i].notification_id + '" time="' + data[i].create_time +'" onclick="void(0)">' +
+                                            '<div class="nom_cat_' + nom_cat + ' notification_color"></div>' +
+                                            '<div class="notification_text_cont">' +
+                                                '<p class="strong">' + source_name + '</p><span> nominated your photo for the </span><p class="strong">' + data[i].nomination_category + '</p><span> trophy!</span><span class="time"> - ' + time_str + '</span>' +
+                                            '</div>' +
+                                            '<div class="kill_notification close_img ' + close_size + '" value="' + data[i].notification_id + '" style="display:none;"></div>' +
+                                        '</div>';
+                }
+                else if (data[i].notification_type == 'new_comment'){
+                    notification_html +='<div class="notification_popup_cont ' + color_class + '" name="' + nom_cat + '" value="' + data[i].nomination + '" read="' + data[i].read + '" id="notification_' + data[i].notification_id + '" time="' + data[i].create_time +'" onclick="void(0)">' +
+                                            '<div class="nom_cat_' + nom_cat + ' notification_color"></div>' +
+                                            '<div class="notification_text_cont">' +
+                                                '<p class="strong">' + source_name + '</p><span> commented on ' + dest_name + ' photo nominated for the </span><p class="strong">' + data[i].nomination_category + '</p><span> trophy!</span><span class="time"> - ' + time_str + '</span>' +
+                                            '</div>' +
+                                            '<div class="kill_notification close_img ' + close_size + '" value="' + data[i].notification_id + '" style="display:none;"/></div>' +
+                                        '</div>';
+                }
+                else if (data[i].notification_type == 'nom_won'){
+                    notification_html +='<div class="notification_popup_cont ' + color_class + '" name="' + nom_cat + '" value="' + data[i].nomination + '" read="' + data[i].read + '" id="notification_' + data[i].notification_id + '" won="true" time="' + data[i].create_time +'" onclick="void(0)">' +
+                                            '<div class="nom_cat_' + nom_cat + ' notification_color"></div>' +
+                                            '<div class="notification_text_cont">' +
+                                                '<p class="strong">' + dest_name + '</p><span> photo won the </span><p class="strong">' + data[i].nomination_category + '</p><span> trophy!</span><span class="time"> - ' + time_str + '</span>' +
+                                            '</div>' +
+                                            '<div class="kill_notification close_img ' + close_size + '" value="' + data[i].notification_id + '" style="display:none;"/></div>' +
+                                        '</div>';
+                    if (data[i].source_id == me.id){
+                        my_winnings.push({'fb_user': data[i].source_id, 'cat': data[i].nomination_category, 'nom_id': data[i].nomination, 'notification_id': data[i].notification_id});
+                        // render_publish_story(data[i].source_id, data[i].nomination_category, 'won');
+                    }
+                }
+                notifcation_cache.unshift({
+                    'data': data[i],
+                    'method': data[i].notification_type
+                });
             }
-            notifcation_cache.unshift({
-                'data': data[i],
-                'method': data[i].notification_type
-            });
         }
-        if (my_winnings.length > 0){
+        
+        if (my_winnings && my_winnings.length > 0){
             render_publish_story(my_winnings);
         }
         $('#notification_footer_popup_cont').append(notification_html);
@@ -2343,8 +2362,10 @@ $(document).ready(function(){
     
     $('#clear_all_notifications').live('click', function(e){
         var notification_ids = '';
+        var read = null;
         $('.notification_popup_cont').each(function(){
-            if ($(this).attr('read') == '0'){
+            read = $(this).attr('read');
+            if (read == '0' || read == false || read == 'false'){
                 notification_ids += $(this).attr('id').replace('notification_', '') + ',';
             }
         });
@@ -4466,7 +4487,7 @@ $(document).ready(function(){
             get_user_videos(id);
         }
         else{
-            album_html = '<div id="info_wrap"><h1>Profile Info <span>Not Your Friend</span></h1><div id="info_cont"><div id="info_loading"><img src="http://s3.amazonaws.com/portrit/img/ajax-loader-light.gif"/></div></div></div><div id="profile_wrap"><div id="profile_cont_wrap"><h1></h1><div id="profile_loading"><img src="http://s3.amazonaws.com/portrit/img/ajax-loader-light.gif"/></div><div id="scroller"><div id="profile_cont"></div></div></div></div>';
+            album_html = '<div id="info_wrap"><h1>Profile Info <span>Not Your Friend</span></h1><div id="info_cont"><div id="info_loading"><img src="http://s3.amazonaws.com/portrit/img/ajax-loader-light.gif"/></div></div></div>';
             $('#title').html('<h3>' + name + '</h3>');
             $('#title').show();
             $('#friend_album_cont').prepend(album_html);
@@ -4482,7 +4503,8 @@ $(document).ready(function(){
                     'position': 'relative',
                     'right': '0',
                     'left': '0',
-                    'float': 'left'
+                    'padding-top': '1px',
+                    'margin-bottom': '10px'
                 });
                 $('#profile_wrap').css({
                     'position': 'relative',
@@ -4534,11 +4556,10 @@ $(document).ready(function(){
                 });
             }
 
-            init_profile_view();
+            // init_profile_view();
             init_info_view();
             $('#friend_album_cont').show();
             
-            $(window).bind('scroll', watch_scroll);
             view_active = 'profile';
         }
         
@@ -5046,15 +5067,19 @@ $(document).ready(function(){
         if (nom_data.caption){
             caption = 'Caption: ' + nom_data.caption;
         }
-        if (nom_data.nominator == me.id){
+        nominator_name = nom_data.nominator_name;
+        if (nominator_name == me.name){
             nominator_name = 'You';
         }
-        else if (friends[nom_data.nominator]){
-            nominator_name = friends[nom_data.nominator].name;
-        }
-        else{
-            nominator_name = '';
-        }
+        // if (nom_data.nominator == me.id){
+        //     nominator_name = 'You';
+        // }
+        // else if (friends[nom_data.nominator]){
+        //     nominator_name = friends[nom_data.nominator].name;
+        // }
+        // else{
+        //     nominator_name = '';
+        // }
 
         // $('#nom_' + active_id + ' .target_wrap h3:first').text(name);
         $('#nom_' + active_id + ' .nom_cat_user_cont h3').text(name);
@@ -5132,8 +5157,8 @@ $(document).ready(function(){
         
         user_profile = data;
         $('#info_cont').append(profile_html);
-        $('#info_wrap').append('<h1>Trophy Room</h1><div id="trophy_cont"></div>');
-        render_user_profile_trophies();
+        // $('#info_wrap').append('<h1>Trophy Room</h1><div id="trophy_cont"></div>');
+        // render_user_profile_trophies();
     }
     
     var feed_load_once = true;
@@ -6012,13 +6037,20 @@ $(document).ready(function(){
     function render_top_users(top_users){
         var user_html = '';
         var top_html = '';
+        var name = '';
         if (top_users.length > 0){
             top_html = '<h1>All Time <span class="strong">Leaderboard</span></h1><div id="top_friends">';
             for (var i = 0; i < top_users.length; i++){
+                if (!friends[top_users[i].fid]){
+                    name = 'You';
+                }
+                else{
+                    name = friends[top_users[i].fid].name
+                }
                 user_html = '<div class="top_friend">' +
                                 '<p class="nom_cat_' + top_users[i].top_nom_cat.replace(' ', '_').toLowerCase() + '">' + getGetOrdinal(i + 1) + '</p>' +
                                 '<a href="/#/user=' + top_users[i].fid + '">' +
-                                    '<h2>' + friends[top_users[i].fid].name + '</h2>' +
+                                    '<h2>' + name + '</h2>' +
                                 '</a>' +
                                 '<a href="/#/user=' + top_users[i].fid + '">' +
                                     '<img src="https://graph.facebook.com/' + top_users[i].fid + '/picture?type=square"/>' +
@@ -6398,7 +6430,7 @@ $(document).ready(function(){
             dateFuture.setTime(Date.parse(dx))
             dateFuture.setHours(dateFuture.getHours() + tzCurrent - tzOffset);
             
-            $('#cont').append('<div id="winners_announced_cont"><h2>Winners are being calculated. Check back in a few minutes.</h2></div>')
+            $('#cont').prepend('<div id="winners_announced_cont"><h2>Winners are being calculated. Check back in a few minutes.</h2></div>')
     	}
 		days=0;hours=0;mins=0;secs=0;out="";
 
@@ -6953,29 +6985,29 @@ $(document).ready(function(){
                         if (user_name == me.name){
                             user_name = 'you';
                         }
-                        if (friends[comments[j].from.id]){
+                        // if (friends[comments[j].from.id]){
                             to_name = '<a href="#/user=' + comments[j].from.id + '" class="post_username from_username clear_profile">' + user_name + '</a>';
-                        }
-                        else{
-                            to_name = '<a class="post_username from_username clear_profile">' + user_name + '</a>';
-                        }
+                        // }
+                        // else{
+                            // to_name = '<a class="post_username from_username clear_profile">' + user_name + '</a>';
+                        // }
                     }
-                    if (friends[comments[j].from.id] !== undefined){
-                        comments_html += '<div class="photo_comment comment">' + portrit_favicon +
+                    // if (friends[comments[j].from.id] !== undefined){
+                        comments_html += '<div class="photo_comment comment">'+
                                             '<a href="#/user=' + comments[j].from.id + '">' +
                                                 '<img class="user_photo" src="http://graph.facebook.com/' + comments[j].from.id + '/picture?type=square"/>' +
                                             '</a>' + 
                                             to_name +
                                             '<p>' + comments[j].message + '</p>' +
                                          '</div>';
-                    }
-                    else{
-                        comments_html += '<div class="photo_comment comment">' +
-                                            '<img class="user_photo" src="http://graph.facebook.com/' + comments[j].from.id + '/picture?type=square"/>' +
-                                            to_name +
-                                            '<p>' + comments[j].message + '</p>' +
-                                         '</div>';
-                    }
+                    // }
+                    // else{
+                    //     comments_html += '<div class="photo_comment comment">' +
+                    //                         '<img class="user_photo" src="http://graph.facebook.com/' + comments[j].from.id + '/picture?type=square"/>' +
+                    //                         to_name +
+                    //                         '<p>' + comments[j].message + '</p>' +
+                    //                      '</div>';
+                    // }
                 }
                 $('#photo_comments').append(comments_html);
                 $('#photo_comments').show();

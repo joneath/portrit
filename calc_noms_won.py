@@ -100,11 +100,13 @@ def mark_nom_as_won(nom):
         
     target_friends = list(set(target_friends))
     
+    nom.notification_set.filter(notification_type__name='new_nom').update(active=False)
+    
     notification_type = Notification_Type.objects.get(name="nom_won")
     for friend in target_friends:
         try:
             portrit_user = Portrit_User.objects.get(fb_user=FB_User.objects.get(fid=friend))
-            notification = Notification(source=nom.nominatee, nomination=nom, notification_type=notification_type)
+            notification = Notification(destination=nom.nominatee, nomination=nom, notification_type=notification_type)
             notification.save()
             portrit_user.notifications.add(notification)
         except:

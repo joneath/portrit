@@ -2733,8 +2733,9 @@ div#profile_cont{
         
             .winning_nom_cont .winning_nom_overlay p{
                 float:              left;
-                margin-top:         12px;
+                margin-top:         4px;
                 margin-left:        5px;
+                text-align:         left;
             }
             
             .winning_nom_cont .winning_nom_overlay p:hover{
@@ -3216,6 +3217,10 @@ div#info_wrap{
     div#info_cont{
         padding:                5px 20px;
     }
+    
+        div#info_cont a{
+            color:                  #99CB6E;
+        }
 
     div#info_wrap #profile_info_img{
         float:              left;
@@ -3707,7 +3712,9 @@ div#wall_cont div#profile_wrap{
                 display:            inline-block;
                 font-size:          14px;
                 font-weight:        bold;
-                margin-top:         18px;
+                margin-top:         9px;
+                width:              165px;
+                text-align:         left;
             }
             
             .top_friend h2:hover{

@@ -32,7 +32,7 @@ def notification_read(request):
             for id in notification_ids:
                 if id:
                     ids.append(int(id))
-            print ids
+
             Notification.objects.filter(pk__in=ids).update(read=True, active=False)
         except:
             pass
@@ -55,7 +55,7 @@ def get_active_notifications(user):
         # rem_count = 5 - all_notifications.count()
         read_notifications = user.notifications.filter(active=True, read=True)
         
-        all_notifications = read_notifications | all_notifications
+        all_notifications = all_notifications | read_notifications
         all_notifications = all_notifications.distinct('id').order_by('read', '-created_date')[:5]
     
     data = [ ]
@@ -64,8 +64,10 @@ def get_active_notifications(user):
             'notification_type': notification.notification_type.name,
             'create_time': time.mktime(notification.created_date.utctimetuple()),
             'read': notification.read,
-            'source_id': notification.source.fid,
-            'source_name': notification.source.get_name(),
+            'source_id': notification.get_source_fid(),
+            'source_name': notification.get_source_name(),
+            'destination_id': notification.get_dest_fid(),
+            'destination_name': notification.get_dest_name(),
             'nomination': notification.nomination.id,
             'notification_id': notification.id,
             'nomination_category': notification.nomination.nomination_category.name,

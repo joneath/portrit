@@ -280,14 +280,39 @@ class Notification(models.Model):
     read = models.BooleanField(default=False)
     created_date = models.DateTimeField(auto_now_add=True)
     notification_type = models.ForeignKey(Notification_Type, null=True, blank=True)
-    source = models.ForeignKey('FB_User', null=True, blank=True)
+    source = models.ForeignKey('FB_User', null=True, blank=True, related_name="notification_source")
+    destination = models.ForeignKey('FB_User', null=True, blank=True, related_name="notification_destination")
     nomination = models.ForeignKey(Nomination, null=True, blank=True)
     
     class Meta:
         ordering = ['-created_date']
+        
+    def get_source_fid(self):
+        if self.source:
+            return self.source.fid
+        else:
+            return ''
+            
+    def get_dest_fid(self):
+        if self.destination:
+            return self.destination.fid
+        else:
+            return ''
+            
+    def get_dest_name(self):
+        if self.destination:
+            return self.destination.get_name()
+        else:
+            return ''
+            
+    def get_source_name(self):
+        if self.source:
+            return self.source.get_name()
+        else:
+            return ''
     
     def __unicode__(self):
-        return u'%s-%s' % (self.source.fid, self.notification_type.name)
+        return u'%s to %s - %s' % (self.source, self.destination, self.notification_type.name)
     
 class FB_User(models.Model):
     fid = BigIntegerField(null=True, unique=True)

@@ -94,8 +94,6 @@ def change_user_notifications(request):
         fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
         user = fb_user.portrit_fb_user.all()[0]
         
-        print allow_notifications
-        
         if allow_notifications == 'true':
             user.allow_notifications = True
         else:
@@ -127,7 +125,10 @@ def get_more_recent_stream(request):
 def get_user_data(user):
     data = False
     try:
-        notifications = get_active_notifications(user)
+        try:
+            notifications = get_active_notifications(user)
+        except:
+            notifications = [ ]
         stream = get_user_stream(user.fb_user)
         tut_counts = False
         if not user.tutorial_completed:
