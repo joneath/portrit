@@ -15,6 +15,7 @@ if ENV == "LOCAL":
 else:
     urlpatterns = patterns('',
         url(r'^$', 'main.index_views.index', name='index'),
+        (r'^robots.txt$', 'main.index_views.robots'),
         # url(r'^beta/$', 'main.views.index', name='index'),
     ) 
 

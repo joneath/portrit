@@ -126,6 +126,7 @@ $(document).ready(function(){
             $('#cont').fadeIn('fast').append(logout_html);
         });
     });
+    
 });
 
     var window_href = window.location.href;
@@ -236,10 +237,13 @@ $(document).ready(function(){
         
         $('#login').bind('click', function() {
             if (window.sessionStorage !== undefined){
-                // if (sessionStorage['me'] != undefined){
+                try{
                     sessionStorage.removeItem('me');
                     sessionStorage.removeItem('friends');
-                // }
+                }
+                catch (err){
+                    
+                }
             }
             FB.login(handleSessionResponse, {perms:'read_stream,publish_stream,user_photos,user_videos,friends_photos,friends_videos,friends_status,user_photo_video_tags,friends_photo_video_tags'});
         });
@@ -1082,9 +1086,7 @@ $(document).ready(function(){
                         '</div>' +
                         '<div id="about_left_cont">' +
                             '<h2>Finding the best photos between your friends</h2>' +
-                            '<p>We are visual people so why do we settle for lists of text with the occasional photo? Portrit brings you your facebook friends in a human friendly way, because we can\'t all be robots. Everything is done with a picture!</p>' +
-                            '<p>Portrit is a visual re-imagination of facebook. Gone are the list of information and text. In Portrit you view everything as a photo. Quickly move through your friend’s photos and videos to discover what your friends have been up to.</p>' +
-                            '<p>Check out the newest happenings on Portrit on our <a href="http://blog.portrit.com" target="_blank">blog</a></p>' +
+                            '<p>Portrit makes photo sharing more social. Give and recieve feedback on you and your friends photos based on your social circle\'s opinion. No longer do you need to look through thousands of your friend\'s photos to find the best ones. On Portrit, you and your friends filter the lame photos from the awesome ones.</p>' +
                             pitch_html +
                         '</div>' +
                         '<div class="clear"></div>';
@@ -2664,7 +2666,7 @@ $(document).ready(function(){
                                             '<div class="tut_point">' +
                                                 '<h2 class="tut_point_num nom_cat_party_animal">3</h2>' +
                                                 '<h3>Build Up Your Trophy Room</h3>' + 
-                                                '<p>Got amazing photos? Earn trophies for your hard work. Friends see your winning photos first, so your best photos are always in their face.</p>' +
+                                                '<p>Got amazing photos? Earn trophies for your hard work. Friends see your winning photos first, so your best photos are always first to be seen.</p>' +
                                                 '<img src="http://s3.amazonaws.com/portrit/img/trophy_room.png"/>' +
                                                 '<div class="clear"></div>' +
                                             '</div>' +
@@ -2699,7 +2701,7 @@ $(document).ready(function(){
     var notification_data = null;
     var allow_notifications = true;
     function login_fb_user(){
-        $('#cont').prepend('<div class="loading"><h1>Portrit Loading...</h1><img src="http://s3.amazonaws.com/portrit/img/album-loader-dark.gif"/></div>');
+        $('#cont').prepend('<div class="loading"><h1>Portrit Loading...</h1><div id="loader"><img src="http://s3.amazonaws.com/portrit/img/album-loader-dark.gif"/></div></div>');
         $.post('/login_fb_user/', function(data){
             if (data){
                 var tut_counts = null;
@@ -2710,7 +2712,6 @@ $(document).ready(function(){
                 tut_counts = data.tut_counts;
                 allow_notifications = data.allow_notifications;
                 first = data.first;
-                first = true;
                 if (first){
                     //$('#right_nav').prepend('<a id="activate_tut">Tutorial</a>');
                     render_initial_tutorial(tut_counts);
@@ -2969,32 +2970,51 @@ $(document).ready(function(){
         var name_html = "";
         var alpha_html = "";
         var first_alpha = false;
+        var last_alpha = false;
         var alpha_class = "";
+        var last_alpha_name = '';
+        var first_alpha_char = '';
+        var first_alpha_friend = null;
         friends_alpha = [ ];
         for (var i = 0; i < friend_array.length; i++){
             if (friend_array[i].hidden === false){
                 alpha_html = '';
                 if (friends_alpha[friend_array[i].name[0]] === undefined){
-                    friends_alpha[friend_array[i].name[0]] = [ ];
-                    friends_alpha[friend_array[i].name[0]].push(friend_array[i]);
+                    first_alpha_char = friend_array[i].name[0];
+                    friends_alpha[friend_array[i].name[0]] = [friend_array[i]];
+                    if (i > 0){
+                        last_alpha = true;
+                        last_alpha_name = friend_array[i - 1].name.split(' ')[0];
+                    }
                     first_alpha = true;
                     alpha_class = 'has_alpha';
                 }
                 else{
                     friends_alpha[friend_array[i].name[0]].push(friend_array[i]);
                     first_alpha = false;
+                    last_alpha = false;
                     alpha_class = 'no_alpha';
                 }
-                if (first_alpha === true){
-                    alpha_html = '<h1 class="alpha_key_wall" id="alpha_wall_' + friend_array[i].name[0] + '" onclick="void(0)">' + friend_array[i].name[0] + '</h1>';
-                }
                 
-                if (first_alpha){
-                    image_html = '<div class="crop"><img class="friend_pic" src="https://graph.facebook.com/' + friend_array[i].id + '/picture?type=large"/></div>';
-                    // name_html = '<div class="text_wrapper"><div class="text" onclick="void(0)"><h3>' + friend_array[i].name + '</h3></div></div>';
-                    friend_html = '<div class="friend ' + alpha_class + '" name="' + friend_array[i].name + '" value="' + friend_array[i].id + '" onclick="void(0)">' + alpha_html + '<div class="img_cont">' + image_html  + '</div></div>';
-                    $('#wall_cont').append(friend_html);
-                }
+                // if (first_alpha && last_alpha){
+                //     first_alpha_friend = friends_alpha[first_alpha_char][0];
+                //     image_html = '<div class="crop"><img class="friend_pic" src="https://graph.facebook.com/' + first_alpha_friend.id + '/picture?type=large"/></div>';
+                //     name_html = '<div class="text_wrapper"><div class="text" onclick="void(0)"><h3>' + first_alpha_friend.name.split(' ')[0] + ' to ' + last_alpha_name + '</h3></div></div>';
+                //     friend_html = '<div class="friend ' + alpha_class + '" name="' + first_alpha_friend.name + '" value="' + first_alpha_friend.id + '" onclick="void(0)">' + alpha_html + name_html + '<div class="img_cont">' + image_html  + '</div></div>';
+                //     $('#wall_cont').append(friend_html);
+                // }
+            }
+        }
+        var last_friend_alpha = null;
+        for (var key in friends_alpha){
+            first_alpha_friend = friends_alpha[key][0];
+            last_friend_alpha = friends_alpha[key][friends_alpha[key].length - 1];
+            if (first_alpha_friend){
+                alpha_html = '<h1 class="alpha_key_wall" id="alpha_wall_' + first_alpha_friend.name[0] + '" onclick="void(0)">' + first_alpha_friend.name[0] + '</h1>';
+                image_html = '<div class="crop"><img class="friend_pic" src="https://graph.facebook.com/' + first_alpha_friend.id + '/picture?type=large"/></div>';
+                name_html = '<div class="text_wrapper"><div class="text" onclick="void(0)"><h3>' + first_alpha_friend.name.split(' ')[0] + ' to ' + last_friend_alpha.name.split(' ')[0] + '</h3></div></div>';
+                friend_html = '<div class="friend ' + alpha_class + '" name="' + first_alpha_friend.name + '" value="' + first_alpha_friend.id + '" onclick="void(0)">' + alpha_html + name_html + '<div class="img_cont">' + image_html  + '</div></div>';
+                $('#wall_cont').append(friend_html);
             }
         }
         $('#friend_cont').append('<div class="clear"></div>');
@@ -4118,7 +4138,6 @@ $(document).ready(function(){
             
         }
         // append_load($('#active_cont'), 'dark');
-        // append_load($('#trophy_cont'), 'dark');
         if (albums.length > 1){
             $('#album_cont').append('<h1>Facebook Albums</h1>');
             for (var i = offset; i < albums.length; i++){
@@ -6007,33 +6026,37 @@ $(document).ready(function(){
             var count = 0;
             
             for (var i = 0; i < data.length; i++){
-                for (var j = 0; j < data[i].attachment.media.length; j++){
-                    if (friends[data[i].source_id]){
-                        photo = data[i].attachment.media[j];
-                        photo_id = photo.photo.pid;
-                        owner_id = data[i].actor_id;
-                        if (friends[owner_id]){
-                            owner_name = friends[owner_id].name;
-                        }
-                        else{
-                            owner_name = '';
-                            for (var k = 0; k < data[i].tagged_ids.length; k++){
-                                if (friends[data[i].tagged_ids[k]]){
-                                    owner_name = friends[data[i].tagged_ids[k]].name;
+                if (data[i].attachment.media){
+                    for (var j = 0; j < data[i].attachment.media.length; j++){
+                        if (friends[data[i].source_id]){
+                            photo = data[i].attachment.media[j];
+                            if (photo.photo){
+                                photo_id = photo.photo.pid;
+                                owner_id = data[i].actor_id;
+                                if (friends[owner_id]){
+                                    owner_name = friends[owner_id].name;
+                                }
+                                else{
+                                    owner_name = '';
+                                    for (var k = 0; k < data[i].tagged_ids.length; k++){
+                                        if (friends[data[i].tagged_ids[k]]){
+                                            owner_name = friends[data[i].tagged_ids[k]].name;
+                                        }
+                                    }
+                                }
+
+                                photo_html ='<div class="new_photo_cont" name="' + owner_name + '" value="' + photo_id + '">' +
+                                                '<img src="' + photo.src + '"/>' +
+                                            '</div>';
+                                $('#latest_empty_wrap > .empty_cont').append(photo_html);
+                                count += 1;
+                                if (count == top){
+                                    if (!mobile){
+                                        $('#latest_empty_wrap > .empty_cont').append('<p class="tooltip"></p>');
+                                    }
+                                    return;
                                 }
                             }
-                        }
-
-                        photo_html ='<div class="new_photo_cont" name="' + owner_name + '" value="' + photo_id + '">' +
-                                        '<img src="' + photo.src + '"/>' +
-                                    '</div>';
-                        $('#latest_empty_wrap > .empty_cont').append(photo_html);
-                        count += 1;
-                        if (count == top){
-                            if (!mobile){
-                                $('#latest_empty_wrap > .empty_cont').append('<p class="tooltip"></p>');
-                            }
-                            return;
                         }
                     }
                 }
@@ -6128,11 +6151,10 @@ $(document).ready(function(){
                     
         $('#scroller').append(empty_html);
         
-        append_load($('#latest_empty_wrap > .empty_cont'), 'light');
-        
+        $('#latest_empty_wrap .empty_cont').append('<div id="loader_short"><img src="http://s3.amazonaws.com/portrit/img/ajax-loader-light.gif"/></div>');
         //Empty Recent Photos
         $.getJSON('https://api.facebook.com/method/stream.get?access_token=' + fb_session.access_token + '&limit=50&filter_key=' + photo_filter + '&format=json&callback=?', function(data){
-            remove_load();
+            $('#loader_short').remove();
             render_empty_recent(data.posts);
         });
         
@@ -6175,9 +6197,10 @@ $(document).ready(function(){
             var ret, arr, len, val, i;
             if (q == ''){
                 $('#empty_search_cont').css({
-                    '-webkit-border-radius':  '10px',
+                    'border-radius':  '10px',
                     '-moz-border-radius':     '10px',
                     '-webkit-box-shadow':     'none',
+                    'box-shadow':     'none',
                     '-moz-box-shadow': 'none',
                     'padding': '15px'
                 });
@@ -6205,12 +6228,13 @@ $(document).ready(function(){
                         'padding': '10px 10px'
                     });
                     $('#empty_search_cont').css({
-                        '-webkit-border-bottom-left-radius':      '0px',
-                        '-webkit-border-bottom-right-radius':     '0px',
+                        'border-bottom-left-radius':      '0px',
+                        'border-bottom-right-radius':     '0px',
                         '-moz-border-radius-bottomleft':          '0px',
                         '-moz-border-radius-bottomruight':        '0px',
                         '-webkit-box-shadow': 'rgba(0, 0, 0, 0.496094) 0px 9px 3px -4px',
                         '-moz-box-shadow': '0 9px 3px -4px rgba(0, 0, 0, 0.5)',
+                        'box-shadow': 'rgba(0, 0, 0, 0.496094) 0px 9px 3px -4px',
                         'padding-bottom': '0px'
                     });
                     var friend = null,
@@ -6740,6 +6764,7 @@ $(document).ready(function(){
                     function load_more_pictures(album_index){
                         if (recurrsion_completed === false){
                             FB.api('/' + album_id + '/photos?fields=id,picture,source,height,width&limit=' + interval+ '&offset=' + offset, function(response){
+                                remove_load();
                                 albums[album_index].photos = albums[album_index].photos.concat(response.data);
                                 offset += interval;
                                 if (offset >= high_photo_offset && !hidden){
@@ -6833,14 +6858,17 @@ $(document).ready(function(){
                         photo_load_once = true;
                         if (top == albums[x].album.count){
                             album_completed = true;
+                            remove_load();
                         }
                     }
                     else{
+                        append_load($('#photo_list'), 'dark');
                         load_more_pictures(x);
                     }
                 }
                 else{
                     album_completed = true;
+                    remove_load();
                 }
                 once = true;
             }
@@ -8875,24 +8903,11 @@ $(document).ready(function(){
         }
     }
     
+    var user_album_height_interval = null;
+    var user_album_height_interval_count = 0;
     function transition_trophy_view(instant){
         var window_width = $(window).width();
         var album_current_height = $('#album_cont').height();
-        var album_cont_count = Math.floor(($('.photo_album').length) / 3) + 1;
-        var trophy_cont_count = Math.floor(($('.trophy_album').length) / 3);
-        var album_cont_height = (album_cont_count * 240);
-        var trophy_cont_height = (trophy_cont_count * 255);
-        if (album_cont_height < 400){
-            album_cont_height = 400;
-        }
-        if (trophy_cont_height == 0){
-            trophy_cont_height = $('#trophy_cont').height() + 30;
-        }
-        album_cont_height += trophy_cont_height;
-        if (album_cont_height < album_current_height){
-            album_cont_height = album_current_height;
-        }
-        alert(album_cont_height);
         var profile_nav_control = $('#profile_nav_cont');
         $(profile_nav_control).attr('value', 'trophies');
         $('h2', profile_nav_control).text('Profile');
@@ -8900,8 +8915,28 @@ $(document).ready(function(){
         $('#album_left_arrow').show();
         $('#album_cont').show();
         $('#user_profile_cont').css({
-            'min-height': album_cont_height
+            'min-height': album_current_height
         });
+        user_album_height_interval = setInterval(function(){
+            if (user_album_height_interval_count < 20){
+                var album_current_height = $('#album_cont').height();
+                var current_min_height = $('#user_profile_cont').css('min-height');
+
+                if (current_min_height != album_current_height || current_min_height < album_current_height){
+                    $('#user_profile_cont').css('min-height', album_current_height);
+                    user_album_height_interval_count += 1;
+                }
+                else{
+                    clearInterval(user_album_height_interval);
+                    user_album_height_interval_count += 0;
+                }
+                
+            }
+            else{
+                clearInterval(user_album_height_interval);
+                user_album_height_interval_count += 0;
+            }
+        }, 50);
         if (!mobile && !instant){
             $('#user_profile_cont').animate({
                 'right': '800px'
@@ -9087,9 +9122,9 @@ $(document).ready(function(){
         $(window).bind('scroll', function(){
             if ($(window).scrollTop() >= $('#photo_list').height() - ($(window).height() *2)){
                 if (photo_load_once){
-                    if ($('.photos_loading').length == 0 && !album_completed){
-                        $('#photo_scroller').append('<img class="photos_loading" src="http://s3.amazonaws.com/portrit/img/album-loader-dark.gif"/>');
-                    }
+                    // if ($('.photos_loading').length == 0 && !album_completed){
+                    //     $('#photo_scroller').append('<img class="photos_loading" src="http://s3.amazonaws.com/portrit/img/album-loader-dark.gif"/>');
+                    // }
                     if (!album_completed){
                         init_list_view();
                     }
@@ -9914,7 +9949,7 @@ $(document).ready(function(){
                     else if (selected_user !== undefined && selected_user != '' && selected_user != undefined){
                         user_name = friends[selected_user].name.split(" ", 1)
                     }
-                    $('#photo_list').append('<div id="album_link_loader"><h2>Loading ' + user_name + '\'s Albums...</h2><img src="http://s3.amazonaws.com/portrit/img/album-loader-dark.gif"/></div>');
+                    $('#photo_list').append('<div id="album_link_loader"><h2>Loading ' + user_name + '\'s Albums...</h2><div id="loader"><img src="http://s3.amazonaws.com/portrit/img/album-loader-dark.gif"/></div></div>');
                     clearInterval(photo_load_wait);
                     photo_load_wait = setInterval(function(){
                         if (album_completed || url_vars.album == 'tagged'){
