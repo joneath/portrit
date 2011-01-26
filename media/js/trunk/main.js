@@ -2718,7 +2718,6 @@ $(document).ready(function(){
                 tut_counts = data.tut_counts;
                 allow_notifications = data.allow_notifications;
                 first = data.first;
-                first = true;
                 if (first){
                     //$('#right_nav').prepend('<a id="activate_tut">Tutorial</a>');
                     render_initial_tutorial(tut_counts);
@@ -4792,16 +4791,19 @@ $(document).ready(function(){
                         if (nom_data[k].caption){
                             caption = 'Caption: ' + nom_data[k].caption;
                         }
-                        nominator_name = '';
-                        if (nom_data[k].nominator == me.id){
+                        nominator_name = nom_data[k].nominator_name;
+                        if (nominator_name == me.name){
                             nominator_name = 'You';
                         }
-                        else if (friends[nom_data[k].nominator].name){
-                            nominator_name = friends[nom_data[k].nominator].name;
-                        }
-                        else{
-                            nominator_name = '';
-                        }
+                        // if (nom_data[k].nominator == me.id){
+                        //     nominator_name = 'You';
+                        // }
+                        // else if (friends[nom_data[k].nominator].name){
+                        //     nominator_name = friends[nom_data[k].nominator].name;
+                        // }
+                        // else{
+                        //     nominator_name = '';
+                        // }
 
                         for (var j = 0; j < nom_data[k].votes.length; j++){
                             friend_name = nom_data[k].votes[j].vote_name;

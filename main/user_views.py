@@ -184,6 +184,8 @@ def get_user_stream(fb_user):
                         'nomination_category': nom.nomination_category.name,
                         'nominator': nom.nominator.fid,
                         'nominatee': nom.nominatee.fid,
+                        'nominator_name': nom.nominator.get_name(),
+                        'nominatee_name': nom.nominatee.get_name(),
                         'created_time': time.mktime(nom.created_date.utctimetuple()),
                         'won': nom.won,
                         'time_remaining': nom.get_time_remaining(),

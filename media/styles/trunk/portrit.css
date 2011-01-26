@@ -1086,14 +1086,14 @@ div#initial_tut_cont{
                 
                 #allow_notifications.checked{
                     background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
-                    background-position:    -346px -641px;
+                    background-position:    -345px -641px;
                     height:                 28px;
                     width:                  28px;
                 }
                 
                 #allow_notifications.unchecked{
                     background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
-                    background-position:    -322px -641px;
+                    background-position:    -321px -641px;
                     height:                 28px;
                     width:                  28px;
                 }
