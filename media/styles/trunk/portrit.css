@@ -1046,6 +1046,8 @@ div#initial_tut_cont{
                 
                 div#initial_tut_top_wrap .tut_point > img{
                     margin-left:            100px;
+                    margin-top:             10px;
+                    margin-bottom:          -10px;
                 }
                 
                 div#initial_tut_top_wrap .tut_point ul{
@@ -4304,13 +4306,13 @@ div#photo_cont{
         
             #photo_large_inline_cont #nominate_photo{
                 position:           absolute;
-                font-size:          14px;
+                font-size:          16px;
                 font-weight:        bold;
                 top:                0px;
                 left:               0px;
                 opacity:            0.7;
-                padding:            10px 5px;
-                width:              100px;
+                padding:            12px 5px;
+                width:              120px;
                 border-bottom-left-radius:  10px;
                 border-top-left-radius:     0px;
                 border-top-right-radius:    0px;

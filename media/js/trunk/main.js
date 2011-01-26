@@ -2666,7 +2666,7 @@ $(document).ready(function(){
                                             '<div class="tut_point">' +
                                                 '<h2 class="tut_point_num nom_cat_party_animal">3</h2>' +
                                                 '<h3>Build Up Your Trophy Room</h3>' + 
-                                                '<p>Got amazing photos? Earn trophies for your hard work. Friends see your winning photos first, so your best photos are always first to be seen.</p>' +
+                                                '<p>Got amazing photos? Earn trophies for your hard work. Friends see your winning photos first, so your best photos are always first to be seen. Winners are determined at 12AM each night so don\'t sweat not winning, everything starts fresh the next day.</p>' +
                                                 '<img src="http://s3.amazonaws.com/portrit/img/trophy_room.png"/>' +
                                                 '<div class="clear"></div>' +
                                             '</div>' +
@@ -2689,8 +2689,8 @@ $(document).ready(function(){
                                 '</div>';
         $('body').append(initial_tut_html);
         if (!mobile || tablet){
-            if ($(window).height() < 1425){
-                $('#wrapper').css('min-height', 1425);
+            if ($(window).height() < 1450){
+                $('#wrapper').css('min-height', 1450);
             }
         }
         
@@ -6022,8 +6022,12 @@ $(document).ready(function(){
         var empty_html = '';
         
         function render_empty_recent(data){
-            var top = 6;
+            var top = 24;
             var count = 0;
+            
+            if (mobile && !tablet){
+                top = 9;
+            }
             
             for (var i = 0; i < data.length; i++){
                 if (data[i].attachment.media){
@@ -8917,6 +8921,7 @@ $(document).ready(function(){
         $('#user_profile_cont').css({
             'min-height': album_current_height
         });
+        clearInterval(user_album_height_interval);
         user_album_height_interval = setInterval(function(){
             if (user_album_height_interval_count < 20){
                 var album_current_height = $('#album_cont').height();
@@ -9315,7 +9320,7 @@ $(document).ready(function(){
                 var photo_height = $('#photo_large_inline').height();
                 var photo_width = $('#photo_large_inline').width();
                 var comment_text = $('#nomination_comment').val();
-                if (comment_text == 'Tell your friend\'s why this photo rocks!'){
+                if (comment_text == 'Add a caption to this nomination.'){
                     comment_text = '';
                 }
                 var data = {
@@ -9423,7 +9428,7 @@ $(document).ready(function(){
                 $('#active_nominations #active_empty').show();
             }
             $('#active_nominations_cont').html('');
-            $('#nomination_comment').text('Tell your friend\'s why this photo rocks!');
+            $('#nomination_comment').text('Add a caption to this nomination.');
         });
         
         // $('#like_cont').die('mouseover mouseout');
@@ -9611,7 +9616,7 @@ $(document).ready(function(){
             $('#active_nominations #active_empty').show();
         }
         $('#active_nominations_cont').html('');
-        $('#nomination_comment').text('Tell your friend\'s why this photo rocks!');
+        $('#nomination_comment').text('Add a caption to this nomination.');
         $('#nom_complete_cont').hide();
         $('#nom_complete_cont .nom_complete_cat_cont').remove();
         $('#post_nomination').text('Post Nomination').removeClass('awesome_hover_lock');
@@ -9926,7 +9931,7 @@ $(document).ready(function(){
             $('#friend_album_cont').css({'height': '', 'min-height': ''});
             $('#photo_cont').css({
                 'max-width': '1200px',
-                'min-height': '720px',
+                'min-height': '680px',
                 'margin': '0 auto'
             });
             $('#photo_large').css({
