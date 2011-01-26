@@ -11,8 +11,14 @@ $(document).ready(function(){
         selected_photo = '';
         display_type = '';
         
+        
         if (view_active == 'main' && default_view != 'wall'){
-            $('#wall_view').click();
+            if (!mobile){
+                $('#wall_view').click();
+            }
+            else{
+                $('#wall_view').trigger('touchend');
+            }
         }
         else{
             default_view = 'wall';
@@ -1085,8 +1091,8 @@ $(document).ready(function(){
                             facebook_frame + 
                         '</div>' +
                         '<div id="about_left_cont">' +
-                            '<h2>Finding the best photos between your friends</h2>' +
-                            '<p>Portrit makes photo sharing more social. Give and recieve feedback on you and your friends photos based on your social circle\'s opinion. No longer do you need to look through thousands of your friend\'s photos to find the best ones. On Portrit, you and your friends filter the lame photos from the awesome ones.</p>' +
+                            '<img src="http://s3.amazonaws.com/portrit/img/about_graphic.jpg"/>' +
+                            '<p>Portrit aims to make photo sharing more social. It\'s up to your social circle to find and award the best photos out there. No longer do you need to look through thousands of your friend\'s photos to find the best ones. On Portrit, you and your friends filter the lame photos from the awesome ones.</p>' +
                             pitch_html +
                         '</div>' +
                         '<div class="clear"></div>';
@@ -2666,7 +2672,7 @@ $(document).ready(function(){
                                             '<div class="tut_point">' +
                                                 '<h2 class="tut_point_num nom_cat_party_animal">3</h2>' +
                                                 '<h3>Build Up Your Trophy Room</h3>' + 
-                                                '<p>Got amazing photos? Earn trophies for your hard work. Friends see your winning photos first, so your best photos are always first to be seen. Winners are determined at 12AM each night so don\'t sweat not winning, everything starts fresh the next day.</p>' +
+                                                '<p>Got amazing photos? Earn trophies for your hard work. Friends see your winning photos first, so your best photos are always first to be seen. Don\'t sweat not winning, everything starts fresh the next day, so your hilarious LOLcat photo can live again.</p>' +
                                                 '<img src="http://s3.amazonaws.com/portrit/img/trophy_room.png"/>' +
                                                 '<div class="clear"></div>' +
                                             '</div>' +
@@ -2712,6 +2718,7 @@ $(document).ready(function(){
                 tut_counts = data.tut_counts;
                 allow_notifications = data.allow_notifications;
                 first = data.first;
+                first = true;
                 if (first){
                     //$('#right_nav').prepend('<a id="activate_tut">Tutorial</a>');
                     render_initial_tutorial(tut_counts);
@@ -2746,7 +2753,7 @@ $(document).ready(function(){
     }
     
     function init_view(func_ptr){
-        $('#cont').append('<img id="login_loader" src="http://s3.amazonaws.com/portrit/img/album-loader-dark.gif"/>');
+        // $('#cont').append('<img id="login_loader" src="http://s3.amazonaws.com/portrit/img/album-loader-dark.gif"/>');
         if (window.sessionStorage !== undefined){
             me = sessionStorage.getItem('me');
             photo_filter = sessionStorage.getItem('photo_filter');
@@ -3962,6 +3969,7 @@ $(document).ready(function(){
         var voted_cont_html = '';
         var name = '';
         var user_voted = false;
+        var won = getUrlVars().won;
         for (var i = 0; i < votes.length; i++){
             name = votes[i].vote_name;
             voted_cont_html +=  '<a href="#/user=' + votes[i].vote_user + '" class="clear_profile" id="voted_' + votes[i].vote_user + '" name="' + name + '">' +
@@ -3971,7 +3979,10 @@ $(document).ready(function(){
                 user_voted = true
             }
         }
-        if (user_voted){
+        if (won != undefined){
+            $('.vote').addClass('won').attr('name', 'Already won');
+        }
+        else if (user_voted){
             $('.vote').addClass('won').attr('name', 'Already voted');
         }
         else{
@@ -6065,7 +6076,10 @@ $(document).ready(function(){
                     }
                 }
             }
-            if (count == 0){
+            if (count > 0){
+                $('#latest_empty_wrap > .empty_cont').append('<p class="tooltip"></p>');
+            }
+            else{
                 $('#latest_empty_wrap > .empty_cont').append('<h1>No Latest Photos.</h1>');
             }
         }
@@ -6164,7 +6178,12 @@ $(document).ready(function(){
         
         //Unbind empty handlers
         $('#empty_search').unbind('focus, blur, keyup');
-        $('#clear_empty_search').unbind('click');
+        if (!mobile){
+            $('#clear_empty_search').unbind('click');
+        }
+        else{
+            $('#clear_empty_search').unbind('touchend');
+        }
         //Bind empty handlers
         $('#empty_search').bind('focus', function(){
             comment_form_shown = true;
@@ -6185,9 +6204,17 @@ $(document).ready(function(){
             }
         });
         
-        $('#clear_empty_search').bind('click', function(){
-            $('#empty_search').val('').trigger('keyup').trigger('blur');
-        });
+        if (!mobile){
+            $('#clear_empty_search').bind('click', function(){
+                $('#empty_search').val('').trigger('keyup').trigger('blur');
+            });
+        }
+        else{
+            $('#clear_empty_search').bind('touchend', function(){
+                $('#empty_search').val('').trigger('keyup').trigger('blur');
+                return false;
+            });
+        }
         
         var friend_names = [ ];
         for (var i = 0; i < friend_array.length; i++){
@@ -6235,7 +6262,7 @@ $(document).ready(function(){
                         'border-bottom-left-radius':      '0px',
                         'border-bottom-right-radius':     '0px',
                         '-moz-border-radius-bottomleft':          '0px',
-                        '-moz-border-radius-bottomruight':        '0px',
+                        '-moz-border-radius-bottomright':        '0px',
                         '-webkit-box-shadow': 'rgba(0, 0, 0, 0.496094) 0px 9px 3px -4px',
                         '-moz-box-shadow': '0 9px 3px -4px rgba(0, 0, 0, 0.5)',
                         'box-shadow': 'rgba(0, 0, 0, 0.496094) 0px 9px 3px -4px',
@@ -6256,10 +6283,16 @@ $(document).ready(function(){
                     }
                 }
                 else{
-                    // $('#empty_search_cont').css({
-                    //     '-webkit-border-radius':  '10px',
-                    //     '-moz-border-radius':     '10px'
-                    // });
+                    $('#empty_search_cont').css({
+                        'border-bottom-left-radius':      '0px',
+                        'border-bottom-right-radius':     '0px',
+                        '-moz-border-radius-bottomleft':          '0px',
+                        '-moz-border-radius-bottomright':        '0px',
+                        '-webkit-box-shadow': 'rgba(0, 0, 0, 0.496094) 0px 9px 3px -4px',
+                        '-moz-box-shadow': '0 9px 3px -4px rgba(0, 0, 0, 0.5)',
+                        'box-shadow': 'rgba(0, 0, 0, 0.496094) 0px 9px 3px -4px',
+                        'padding-bottom': '0px'
+                    });
                     // $('#search_empty_wrap .empty_cont').css({
                     //     'padding': '0px'
                     // });

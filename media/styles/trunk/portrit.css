@@ -4121,7 +4121,7 @@ div#album_cont div#trophy_cont{
             position:           absolute;
             bottom:             0px;
             right:              0px;
-            z-index:            100000;
+            z-index:            99;
         }
     
 div#album_cont{
