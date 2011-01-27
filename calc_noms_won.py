@@ -15,7 +15,7 @@ def calc_noms_won():
     for nominatee in nominatees.iterator():
         user_wins = [ ]
         friends = nominatee.friends.all()
-        user_noms = Nomination.objects.filter(active=True, won=False, nominatee=nominatee).order_by('-current_vote_count')
+        user_noms = Nomination.objects.filter(active=True, won=False, nominatee=nominatee).order_by('-current_vote_count', '-created_date')
         user_noms_cat = { }
         for nom in user_noms.iterator():
             nom_cat = nom.nomination_category
@@ -32,18 +32,20 @@ def calc_noms_won():
                 Q(nominatee__in=friends) |
                 Q(nominatee=nominatee),
                 nomination_category=nom_cat,
-                active=True, 
-                won=False).distinct('id').order_by('-current_vote_count')
+                active=True).distinct('id').order_by('-current_vote_count', '-created_date')
             
             try:
                 if user_cat_stream[0].id == nom.id:
-                    mark_nom_as_won(nom)
-                    user_wins.append(nom)
+                    if (nom.won == False):
+                        mark_nom_as_won(nom)
+                        user_wins.append(nom)
                 else:
-                    nom.active = False
+                    # nom.active = False
                     nom.save()
             except:
                 pass
+                
+    Nomination.objects.filter(active=True).update(active=False)
 
         # if len(user_wins) > 0:
         #     portrit_user = user_wins[0].nominatee.portrit_fb_user.all()[0]
@@ -77,7 +79,6 @@ def calc_noms_won():
     
 def mark_nom_as_won(nom):
     nom.won = True
-    nom.active = False
     nom.save()
     
     target_friends = [ ]

@@ -212,6 +212,10 @@ div#context_cont{
         width:      488px;
     }
     
+.load_more_comments{
+    font-size:      20px;
+}
+    
 div.text_wrapper{
     bottom:         0px;
     height:         70px;

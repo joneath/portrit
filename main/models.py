@@ -127,7 +127,7 @@ class Nomination(models.Model):
     nominator = models.ForeignKey('FB_User', null=True, related_name="nominator_user")
     nominatee = models.ForeignKey('FB_User', null=True, related_name="nominated_user")
     comments = models.ManyToManyField(Comment, null=True, blank=True)
-    votes = models.ManyToManyField('FB_User', null=True, blank=True)
+    votes = models.ManyToManyField('FB_User', null=True, blank=True, related_name="vote_users")
     
     class Meta:
         ordering = ['up_votes', 'down_votes', '-created_date']

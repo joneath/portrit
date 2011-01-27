@@ -182,7 +182,7 @@ div#login_cont{
 
     div#login_header{
         margin:             0 auto;
-        min-height:         93px;
+        min-height:         98px;
         padding-top:        55px;
         margin-bottom:      30px;
         position:           relative;
@@ -432,9 +432,14 @@ div#right_nav{
 }
 
     div#right_nav #activate_tut{
+        cursor:             pointer;
         float:              left;
         margin-right:       10px;
-        margin-top:         45px;
+        height:             60px;
+        width:              60px;
+        opacity:            0.3;
+        background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+        background-position:    -512px -86px;
     }
 
     div#right_nav > div{
@@ -571,7 +576,7 @@ div#left_nav{
 }
 
     div#left_nav #give_feedback{
-        margin-top:         45px;
+        margin-top:         40px;
         margin-left:        10px;
     }
     
@@ -708,6 +713,20 @@ div#feedback{
         bottom:             10px;
         right:              20px;
     }
+    
+#new_noms_action{
+    background-color:   #F95057;
+    color:              white;
+    cursor:             pointer;
+    padding:            10px 0px;
+    font-size:          26px;
+    margin:             5px 0px;
+    text-align:         center;
+}
+
+#new_noms_action:hover{
+    background-color:   #F95045;
+}
     
 #winners_announced_cont{
     background-color:   #F95057;
@@ -3818,7 +3837,7 @@ div#wall_cont div#profile_wrap{
             }
     
     .recent_nom_cont .recent_nom_photo_right_cont{
-        background-color:       #aeaeae;
+        background-color:       #dedede;
         float:                  left;
         height:                 250px;
         text-align:             center;
@@ -4141,7 +4160,7 @@ div#album_cont{
         font-size:          24px;
         font-weight:        bold;
         margin-bottom:      10px;
-        margin-left:        20px;
+        margin-left:        30px;
         text-align:         left;
     }
 
@@ -4169,11 +4188,11 @@ div#album_cont{
         display:            inline-block;
         position:           relative;
         width:              135px;
-        margin:             55px
+        margin:             65px 55px;
     }
     
     div.photo_album:hover{
-        cursor:             pointer
+        cursor:             pointer;
     }
     
     div#album_cont .album_ajax_loader{
@@ -5266,19 +5285,30 @@ div#payment_types_cont{
 #tutorial_cont{
     background-color:       white;
     color:                  #333;
+    cursor:                 default;
     padding-bottom:         10px;
     position:               absolute;
-    right:                  15px;
+    right:                  146px;
     text-align:             left;
-    top:                    95px;
+    top:                    67px;
     width:                  200px;
     z-index:                10010;
-    border-radius:  10px;
+    border-radius:          10px;
     -moz-border-radius:     10px;
     -webkit-box-shadow:     rgba(0, 0, 0, 0.496094) 0px 0px 8px 3px;
     -moz-box-shadow:        0px 0px 8px 3px rgba(0, 0, 0, 0.5);
     box-shadow:     rgba(0, 0, 0, 0.496094) 0px 0px 8px 3px;
 }
+
+    #tut_arrow{
+        background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+        background-position:    -16px -719px;
+        height:             20px;
+        width:              20px;
+        position:           absolute;
+        top:                -11px;
+        left:               98px
+    }
 
     #tut_section_wrap{
         background-color:       #333;
@@ -5310,6 +5340,7 @@ div#payment_types_cont{
     
     .tut_section{
         margin-bottom:          5px;
+        position:               relative;
     }
     
     #tutorial_cont .tut_section h3{
@@ -5322,6 +5353,17 @@ div#payment_types_cont{
         padding-bottom:         10px;
         padding-left:           10px;
         padding-top:            10px;
+        position:               relative;
+    }
+    
+    #tutorial_cont .tut_section .tut_completed_checkmark{
+        position:               absolute;
+        bottom:                 5px;
+        right:                  5px;
+        height:                 24px;
+        width:                  24px;
+        background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+        background-position:    -114px -690px;
     }
     
     #tutorial_cont .tut_section p.red_back{
@@ -5488,7 +5530,7 @@ div#payment_types_cont{
         #notification_footer_popup #notification_arrow{
             opacity:            1.0;
             position:           absolute;
-            top:                -11px;
+            top:                -8px;
             left:               110px;
             z-index:            1001;
             height:             20px;
@@ -5523,7 +5565,7 @@ div#payment_types_cont{
             display:                none;
             height:                 335px;
             left:                   -90px;
-            top:                    71px;
+            top:                    67px;
             position:               absolute;
             width:                  250px;
             z-index:                10101;

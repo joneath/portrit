@@ -1702,7 +1702,16 @@ $(document).ready(function(){
                         }
                     }
                 }
-                if (view_active == 'main' && default_view == 'wall' && stream_view == 'recent_noms'){
+                if ($('#empty_noms_cont').length > 0){
+                    $('#scroller').prepend('<div id="new_noms_action" style="display:none;"><h2>New nominations have arrived! Click to view.</h2></div>');
+                    $('#new_noms_action').fadeIn();
+                    $('#new_noms_action').bind('click', function(){
+                        $('#new_noms_action').unbind('click');
+                        stream_view = '';
+                        recent_noms_click();
+                    });
+                }
+                else if (view_active == 'main' && default_view == 'wall' && stream_view == 'recent_noms'){
                     inject_nom_stream(data.payload.nom_data);
                 }
                 else if (view_active == 'main' && default_view == 'wall'){
@@ -1721,8 +1730,10 @@ $(document).ready(function(){
             else if (data.method == 'vote'){
                 if (data.payload.vote_user != me.id){
                     if (my_feed){
-                        active_noms_cache[data.payload.nom_id].vote_count = data.payload.vote_count;
-                        active_noms_cache[data.payload.nom_id].votes.push({'vote_user': data.payload.vote_user, 'vote_name': data.payload.vote_name});
+                        if (active_noms_cache[data.payload.nom_id]){
+                            active_noms_cache[data.payload.nom_id].vote_count = data.payload.vote_count;
+                            active_noms_cache[data.payload.nom_id].votes.push({'vote_user': data.payload.vote_user, 'vote_name': data.payload.vote_name});
+                        }
                         // for (var i = 0; i < my_feed.length; i++){
                         //     if (my_feed[i].cat_name == data.payload.nomination_category){
                         //         for (var j = 0; j < my_feed[i].noms.length; j++){
@@ -1797,6 +1808,9 @@ $(document).ready(function(){
                     }
                     else if (view_active == 'main' && default_view == 'wall'){
                         update_comment_count(data.payload);
+                        if (stream_view == 'recent_noms'){
+                            render_recent_comment_update(data.payload);
+                        }
                     }
                 }
             }
@@ -1813,6 +1827,28 @@ $(document).ready(function(){
             //Setup new request
             wait_for_message();
         }
+    }
+    
+    function render_recent_comment_update(data){
+        var comment_cont_html ='<div class="comment" id="comment_' + data.comment_id +'" style="display:none;">' +
+                                    '<p class="comment_time" value="' + data.create_datetime + '">Right now</p>' +
+                                    '<a href="#/user=' + data.comment_sender_id + '" class="clear_profile">' +
+                                        '<img class="user_photo" src="https://graph.facebook.com/' + data.comment_sender_id + '/picture?type=square"/>' +
+                                    '</a>' +
+                                    '<a href="#?user=' + data.comment_sender_id + '" class="post_username from_username clear_profile">' + data.comment_sender_name + '</a>' +
+                                    '<p>' + data.comment + '</p>' +
+                                '</div>';
+        $('#' + data.id + ' .recent_nom_comment_heading').after(comment_cont_html);
+        $('#comment_' + data.comment_id).fadeIn('slow');
+        
+        var now = new Date();
+        var time_diff = null;
+        $('.comment_time').each(function(){
+            time = new Date($(this).attr('value') * 1000);
+            time_diff = now - time;
+            time_diff /= 1000;
+            $(this).text(secondsToHms(parseInt(time_diff)));
+        });
     }
     
     function render_comment_update(data){
@@ -1991,7 +2027,7 @@ $(document).ready(function(){
                                     '<div class="nom_cat_' + nom_cat +' notification_color"></div>' +
                                     '<div class="notification_text_cont">' +
                                         '<p class="strong" style="">' + name +'</p>' +
-                                        '<span> nominated your photo for the </span><p class="strong" style="">' + data.nomination_category + '</p><span> trophy!</span><span class="time"> - Right now</span>' +
+                                        '<span> nominated your photo.</span><span class="time"> - Right now</span>' +
                                     '</div>' +
                                     '<div class="kill_notification close_img ' + close_size + '" value="' + data.notification_id + '" style="display:none;"></div>' +
                                 '</div>'
@@ -2019,7 +2055,7 @@ $(document).ready(function(){
                                     '<div class="nom_cat_' + nom_cat +' notification_color"></div>' +
                                     '<div class="notification_text_cont">' +
                                         '<p class="strong" style="">' + name +'</p>' +
-                                        '<span> commented on ' + owner_text + ' photo nominated for the </span><p class="strong" style="">' + data.nomination_category + '</p><span> trophy!</span><span class="time"> - Right now</span>' +
+                                        '<span> commented on ' + owner_text + ' photo.<span class="time"> - Right now</span>' +
                                     '</div>' +
                                     '<div class="kill_notification close_img ' + close_size + '" value="' + data.notification_id + '" style="display:none;"></div>' +
                                 '</div>'
@@ -2116,7 +2152,7 @@ $(document).ready(function(){
                     notification_html +='<div class="notification_popup_cont ' + color_class + '" name="' + nom_cat + '" value="' + data[i].nomination + '" read="' + data[i].read + '" id="notification_' + data[i].notification_id + '" time="' + data[i].create_time +'" onclick="void(0)">' +
                                             '<div class="nom_cat_' + nom_cat + ' notification_color"></div>' +
                                             '<div class="notification_text_cont">' +
-                                                '<p class="strong">' + source_name + '</p><span> nominated your photo for the </span><p class="strong">' + data[i].nomination_category + '</p><span> trophy!</span><span class="time"> - ' + time_str + '</span>' +
+                                                '<p class="strong">' + source_name + '</p><span> nominated your photo.<span class="time"> - ' + time_str + '</span>' +
                                             '</div>' +
                                             '<div class="kill_notification close_img ' + close_size + '" value="' + data[i].notification_id + '" style="display:none;"></div>' +
                                         '</div>';
@@ -2125,7 +2161,7 @@ $(document).ready(function(){
                     notification_html +='<div class="notification_popup_cont ' + color_class + '" name="' + nom_cat + '" value="' + data[i].nomination + '" read="' + data[i].read + '" id="notification_' + data[i].notification_id + '" time="' + data[i].create_time +'" onclick="void(0)">' +
                                             '<div class="nom_cat_' + nom_cat + ' notification_color"></div>' +
                                             '<div class="notification_text_cont">' +
-                                                '<p class="strong">' + source_name + '</p><span> commented on ' + dest_name + ' photo nominated for the </span><p class="strong">' + data[i].nomination_category + '</p><span> trophy!</span><span class="time"> - ' + time_str + '</span>' +
+                                                '<p class="strong">' + source_name + '</p><span> commented on ' + dest_name + ' photo.<span class="time"> - ' + time_str + '</span>' +
                                             '</div>' +
                                             '<div class="kill_notification close_img ' + close_size + '" value="' + data[i].notification_id + '" style="display:none;"/></div>' +
                                         '</div>';
@@ -2138,7 +2174,7 @@ $(document).ready(function(){
                                             '</div>' +
                                             '<div class="kill_notification close_img ' + close_size + '" value="' + data[i].notification_id + '" style="display:none;"/></div>' +
                                         '</div>';
-                    if (data[i].source_id == me.id){
+                    if (data[i].destination_id == me.id){
                         my_winnings.push({'fb_user': data[i].source_id, 'cat': data[i].nomination_category, 'nom_id': data[i].nomination, 'notification_id': data[i].notification_id});
                         // render_publish_story(data[i].source_id, data[i].nomination_category, 'won');
                     }
@@ -2440,9 +2476,9 @@ $(document).ready(function(){
                 $('#clear_all_notifications').show();
             }
             
-            // if (mobile){
-            //     notification_scroller = new iScroll('notification_footer_popup_cont');
-            // }
+            if (mobile){
+                notification_scroller = new iScroll('notification_footer_popup_cont');
+            }
             
             $('#wrapper').live('click', function(){
                 footer_notification_shown = true;
@@ -2480,6 +2516,7 @@ $(document).ready(function(){
     
     var tut_on = false;
     function render_tut(tut_counts){
+        
         function get_color_class(count){
             var color_class = '';
             if (current_count == 0){
@@ -2497,49 +2534,66 @@ $(document).ready(function(){
             return color_class;
         }
         if (tut_counts){
+            $('#activate_tut').css('opacity', 1);
             tut_on = true;
             var start_count = 3;
             var current_count = 0;
             var count_class = '';
+            var tut_completed_checkmark = '';
             // if (tut_counts.nom_count){
                 current_count = start_count - tut_counts.nom_count;
                 count_class = get_color_class(current_count);
-                if (current_count > 3){
+                if (current_count >= 3){
                     current_count = 3;
+                    tut_completed_checkmark = '<div class="tut_completed_checkmark"></div>';
+                }
+                else{
+                    tut_completed_checkmark = '';
                 }
                 var nom_count_html ='<h3><span class="strong">Nominate</span> 3 friend\'s photos</h3>' +
-                                    '<p class="' + count_class + '_back">' + current_count + '/3 Completed</p>';
-                $('#nomination_tut').html(nom_count_html);
+                                    '<p class="' + count_class + '_back">' + current_count + '/3 Completed</p>' +
+                                    tut_completed_checkmark;
+                $('#nomination_tut').html(nom_count_html).attr('count', current_count);
             // }
 
             // if (tut_counts.vote_count){
                 current_count = start_count - tut_counts.vote_count;
                 count_class = get_color_class(current_count);
-                if (current_count > 3){
+                if (current_count >= 3){
                     current_count = 3;
+                    tut_completed_checkmark = '<div class="tut_completed_checkmark"></div>';
+                }
+                else{
+                    tut_completed_checkmark = '';
                 }
                 var vote_count_html =   '<h3><span class="strong">Vote</span> on 3 friend\'s nominations</h3>' +
-                                        '<p class="' + count_class + '_back">' + current_count + '/3 Completed</p>';
-                $('#vote_count_tut').html(vote_count_html);
+                                        '<p class="' + count_class + '_back">' + current_count + '/3 Completed</p>' + 
+                                        tut_completed_checkmark;
+                $('#vote_count_tut').html(vote_count_html).attr('count', current_count);
             // }
             // if (tut_counts.comment_count){
                 current_count = start_count - tut_counts.comment_count;
                 count_class = get_color_class(current_count);
-                if (current_count > 3){
+                if (current_count >= 3){
                     current_count = 3;
+                    tut_completed_checkmark = '<div class="tut_completed_checkmark"></div>';
+                }
+                else{
+                    tut_completed_checkmark = '';
                 }
                 var comment_count_html =    '<h3><span class="strong">Comment</span> on 3 friend\'s nominations</h3>' +
-                                            '<p class="' + count_class + '_back">' + current_count + '/3 Completed</p>';
-                $('#comment_count_tut').html(comment_count_html);
+                                            '<p class="' + count_class + '_back">' + current_count + '/3 Completed</p>' +
+                                            tut_completed_checkmark;
+                $('#comment_count_tut').html(comment_count_html).attr('count', current_count);
             // }
-            var tut_link_left = $('#activate_tut').offset().left - ($('#tutorial_cont').width() / 2) + 15;
-            $('#tutorial_cont').css({
-                'left': tut_link_left
-            });
+            // var tut_link_left = $('#activate_tut').offset().left - ($('#tutorial_cont').width() / 2) + 8;
+            // $('#tutorial_cont').css({
+            //     'left': tut_link_left
+            // });
             setTimeout(function(){
                 $('#tutorial_cont').fadeIn();
             }, 1000);
-            $('#close_tut').bind('click', hide_tut);
+            $('#tutorial_cont').bind('click', function(){return false;});
             $('#activate_tut').bind('click', toggle_tut);
             $('#skip_tut').live('click', function(){
                 $.post('/skip_tut/', function(data){
@@ -2555,26 +2609,100 @@ $(document).ready(function(){
         }
     }
     
-    function update_tut(){
-        if (tut_on){
-            
+    function update_tut(method){
+        var count = 0;
+        var count_class = '';
+        var tut_nom_completed = true;
+        var tut_vote_completed = true;
+        var tut_comment_completed = true;
+        
+        function get_color_class(count){
+            var color_class = '';
+            if (count == 0){
+                color_class = 'red';
+            }
+            else if (count == 1){
+                color_class = 'orange';
+            }
+            else if (count == 2){
+                color_class = 'yellow';
+            }
+            else if (count >= 3){
+                color_class = 'green';
+            }
+            return color_class;
+        }
+        
+        if (method == 'nom'){
+            var count = parseInt($('#nomination_tut').attr('count'));
+            count_class = get_color_class(count + 1);
+            count += 1;
+            if (count == 3){
+                $('#nomination_tut').append('<div class="tut_completed_checkmark"></div>');
+            }
+            if (count >= 3){
+                count = 3;
+            }
+            else{
+                tut_nom_completed = false;
+            }
+            $('#nomination_tut > p').text(count + '/3 Completed').removeClass().addClass(count_class + '_back').parent().attr('count', count);
+        }
+        else if (method == 'vote'){
+            var count = parseInt($('#vote_count_tut').attr('count'));
+            count_class = get_color_class(count + 1);
+            count += 1;
+            if (count == 3){
+                $('#vote_count_tut').append('<div class="tut_completed_checkmark"></div>');
+            }
+            if (count >= 3){
+                count = 3;
+            }
+            else{
+                tut_vote_completed = false;
+            }
+            $('#vote_count_tut > p').text(count + '/3 Completed').removeClass().addClass(count_class + '_back').parent().attr('count', count);
+        }
+        else if (method == 'comment'){
+            var count = parseInt($('#comment_count_tut').attr('count'));
+            count_class = get_color_class(count + 1);
+            count += 1;
+            if (count == 3){
+                $('#comment_count_tut').append('<div class="tut_completed_checkmark"></div>');
+            }
+            if (count >= 3){
+                count = 3;
+            }
+            else{
+                tut_comment_completed = false;
+            }
+            $('#comment_count_tut > p').text(count + '/3 Completed').removeClass().addClass(count_class + '_back').parent().attr('count', count);
+        }
+        
+        $('#activate_tut').css('opacity', 1);
+        
+        if (tut_nom_completed && tut_vote_completed && tut_comment_completed){
+            //Render completed tutorial
         }
     }
     
     function toggle_tut(){
         if ($('#tutorial_cont').is(':hidden')){
             show_tut();
+            $('#activate_tut').css('opacity', 1);
+            $(document).bind('click', toggle_tut);
+            return false;
         }
         else{
             hide_tut();
+            $('#activate_tut').css('opacity', 0.3);
+            $(document).unbind('click', toggle_tut);
         }
     }
     
     function show_tut(){
-        var tut_link_left = $('#activate_tut').offset().left - ($('#tutorial_cont').width() / 2) + 15;
-        $('#tutorial_cont').css({
-            'left': tut_link_left
-        }).fadeIn();
+        // var tut_link_left = $('#activate_tut').offset().left - ($('#tutorial_cont').width() / 2) + 22;
+        $('#tutorial_cont').fadeIn();
     }
     
     function hide_tut(){
@@ -2586,7 +2714,7 @@ $(document).ready(function(){
             if (!mobile){
                 $('#initial_tut_cont').fadeOut(function(){
                     $(this).remove();
-                    // render_tut(tut_counts);
+                    render_tut(tut_counts);
                     init_view(update_view);
                 });
                 $('#wrapper').animate({
@@ -2601,7 +2729,7 @@ $(document).ready(function(){
                     'opacity': '1.0',
                     'min-height': '100%'
                 });
-                // render_tut(tut_counts);
+                render_tut(tut_counts);
                 init_view(update_view);
             }
             $('#close_initial_tut, #tut_go_cont span').die('click');
@@ -2740,13 +2868,13 @@ $(document).ready(function(){
                 allow_notifications = data.allow_notifications;
                 first = data.first;
                 if (first){
-                    //$('#right_nav').prepend('<a id="activate_tut">Tutorial</a>');
+                    $('#right_nav').prepend('<div id="activate_tut"><div id="tutorial_cont" style="display:none;"><div id="tut_arrow"></div><h1>Tutorial</h1><div id="tut_section_wrap"><div class="tut_section" id="nomination_tut"></div><div class="tut_section" id="vote_count_tut"></div><div class="tut_section" id="comment_count_tut"></div></div><a id="skip_tut" class="awesome large">Skip</a></div></div>');
                     render_initial_tutorial(tut_counts);
                 }
                 else{
                     if (tut_counts){
-                        //$('#right_nav').prepend('<a id="activate_tut">Tutorial</a>');
-                        //render_tut(tut_counts);
+                        $('#right_nav').prepend('<div id="activate_tut"><div id="tutorial_cont" style="display:none;"><div id="tut_arrow"></div><h1>Tutorial</h1><div id="tut_section_wrap"><div class="tut_section" id="nomination_tut"></div><div class="tut_section" id="vote_count_tut"></div><div class="tut_section" id="comment_count_tut"></div></div><a id="skip_tut" class="awesome large">Skip</a></div></div>');
+                        render_tut(tut_counts);
                     }
                     init_view(update_view);
                 }
@@ -3640,12 +3768,29 @@ $(document).ready(function(){
         }
     }
     
+    function sort_noms_list_by_votes(list){
+        // var temp_array = [ ];
+        // for (var i = 0; i < nom_list.length; i++){
+        //     temp_array.push(nom_dict[nom_list[i]]);
+        // }
+        list.sort(function(a, b){
+            // return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+            return b.vote_count - a.vote_count;
+        });
+        // nom_list = [ ];
+        // for (var i = 0; i < temp_array.length; i++){
+        //     nom_list.push(temp_array[i].id);
+        // }
+        return list;
+    }
+    
     function sort_noms_by_votes(nom_dict, nom_list){
         var temp_array = [ ];
         for (var i = 0; i < nom_list.length; i++){
             temp_array.push(nom_dict[nom_list[i]]);
         }
         temp_array.sort(function(a, b){
+            // return ((x < y) ? -1 : ((x > y) ? 1 : 0));
             return b.vote_count - a.vote_count;
         });
         nom_list = [ ];
@@ -3714,7 +3859,7 @@ $(document).ready(function(){
             vote_class = "won";
             vote_tooltip_text = 'Already won';
             
-            winning_name = 'You';
+            winning_name = 'Your';
             
             title = '<h1 class="title" name="' + nom.nomination_category + '"><a href="/#/user=' + nom.nominatee + '">' + winning_name + '</a> Winning Photos</h1>';
         }
@@ -3773,7 +3918,7 @@ $(document).ready(function(){
         }
         else if (nom.nominatee == me.id){
             if (!won){
-                name = 'Your';
+                name = 'You\'re';
             }
             else{
                 name = 'You';
@@ -3972,17 +4117,17 @@ $(document).ready(function(){
         else{
             active_cache = active_noms_cache;
         }
-        if (trophy || (won && user) || active_cache[id].comments === false){
-            $.getJSON('/get_nom_comments/', {'nom_id': id}, function(data){
-                if (!trophy && !(won && user)){
-                    active_cache[id].comments = data; 
-                }
-                render_nom_comments(data);
-            });
-        }
-        else{
-            render_nom_comments(active_cache[id].comments);
-        }
+        // if (trophy || (won && user) || active_cache[id].comments === false){
+        $.getJSON('/get_nom_comments/', {'nom_id': id}, function(data){
+            if (!trophy && !(won && user)){
+                active_cache[id].comments = data; 
+            }
+            render_nom_comments(data);
+        });
+        // }
+        // else{
+        //     render_nom_comments(active_cache[id].comments);
+        // }
     }
     
     function render_nom_votes(votes){
@@ -3990,6 +4135,7 @@ $(document).ready(function(){
         var name = '';
         var user_voted = false;
         var won = getUrlVars().won;
+        var trophy = getUrlVars().trophy;
         for (var i = 0; i < votes.length; i++){
             name = votes[i].vote_name;
             voted_cont_html +=  '<a href="#/user=' + votes[i].vote_user + '" class="clear_profile" id="voted_' + votes[i].vote_user + '" name="' + name + '">' +
@@ -3999,7 +4145,7 @@ $(document).ready(function(){
                 user_voted = true
             }
         }
-        if (won != undefined){
+        if (won != undefined || trophy != undefined){
             $('.vote').addClass('won').attr('name', 'Already won');
         }
         else if (user_voted){
@@ -4142,7 +4288,7 @@ $(document).ready(function(){
     }
     
     function render_tagged_album(photos){
-        var top = 4;
+        var top = 3;
         var album_html = '';
         
         if (photos.length > 0){
@@ -4172,34 +4318,36 @@ $(document).ready(function(){
         if (albums.length > 1){
             $('#album_cont').append('<h1>Facebook Albums</h1>');
             for (var i = offset; i < albums.length; i++){
-                album_html = '<div class="photo_album" style="display:none;" id="' + albums[i].album.id + '" onclick="void(0)"><div class="img_thumbs"></div><div class="album_title">' + albums[i].album.name + '</div></div>';
-                $('#album_cont').append(album_html);
+                album_html += '<div class="photo_album" style="display:none;" id="' + albums[i].album.id + '" onclick="void(0)"><div class="img_thumbs">';
+                
 
                 album = albums[i];
                 album_id = albums[i].album.id;
-                top = 4;
+                top = 3;
 
                 if (albums[i].photos){
                     if (albums[i].photos.length < top){
                         top = albums[i].photos.length;
                     }
                     for (var j = 0; j < top; j++){
-                        $('#' + album_id + ' > .img_thumbs').append('<img class="img_thumb img_thumb_' + j + '" id="' + album.photos[j].id + '" src="' + album.photos[j].picture + '"/>');
-                        $('#' + album_id + ' > .album_ajax_loader').remove();
+                        album_html += '<img class="img_thumb img_thumb_' + j + '" id="' + album.photos[j].id + '" src="' + album.photos[j].picture + '"/>';
                     }
                 }
+                
+                album_html += '</div><div class="album_title">' + albums[i].album.name + '</div></div>'
             }
+            $('#album_cont').append(album_html);
         }
         else{
             $('#album_cont').html('<h2 class="alert_title">I\'m sorry. It seems this friend has their photo\s set to private.</h2>');
         }
         
-        if (!mobile){
-            $('.photo_album').fadeIn();
-        }
-        else{
-            $('.photo_album').show();
-        }
+        // if (!mobile){
+        //     $('.photo_album').fadeIn();
+        // }
+        // else{
+        $('.photo_album').show();
+        // }
         
         if (!mobile){
             get_user_videos(getUrlVars().user, render_video_album);
@@ -4286,7 +4434,7 @@ $(document).ready(function(){
     function render_winning_photo_noms(data){
         // remove_load();
         if (data.winning_nom_objs.length > 0){
-            var top = 4;
+            var top = 3;
             var cat_underscore = '';
             // $('#album_cont').prepend('');
             var nom_cat_map = { };
@@ -4768,10 +4916,12 @@ $(document).ready(function(){
             prev_offset_width = 0;
             first_offset = 0;
             
+            
             // if (active_nom_cats_map[data[i].cat_name.replace(' ', '_').toLowerCase()] == undefined){
                 active_nom_cats_map[data[i].cat_name.replace(' ', '_').toLowerCase()] = [ ];   
             // }
             
+            sort_noms_list_by_votes(nom_data);
             if (nom_data.length > 0){
                 for (var k = 0; k < nom_data.length; k++){
                     nom_cat_underscore = nom_data[k].nomination_category.replace(' ', '_').toLowerCase();
@@ -5728,7 +5878,7 @@ $(document).ready(function(){
             time_diff = now - time;
             time_diff /= 1000;
             
-            recent_nom_html =   '<div class="recent_nom_cont" style="display:none;" value="' + nom.id + '">' +
+            recent_nom_html =   '<div class="recent_nom_cont" style="display:none;" id="' + nom.id + '">' +
                                     '<div class="recent_nom_top_cont nom_cat_' + nom_cat_underscore + '">' +
                                         '<a href="#/user=' + nom.nominatee + '">' + user_thumbnail + '</a>' +
                                         '<a href="#/user=' + nom.nominatee + '"><h2>' + name + '</h2></a>' +
@@ -5885,7 +6035,7 @@ $(document).ready(function(){
             time_diff = now - time;
             time_diff /= 1000;
             
-            recent_nom_html =   '<div class="recent_nom_cont" value="' + nom.id + '" time="' + nom.created_time + '">' +
+            recent_nom_html =   '<div class="recent_nom_cont" id="' + nom.id + '" time="' + nom.created_time + '">' +
                                     '<div class="recent_nom_top_cont nom_cat_' + nom_cat_underscore + '">' +
                                         '<a href="#/user=' + nom.nominatee + '">' + user_thumbnail + '</a>' +
                                         '<a href="#/user=' + nom.nominatee + '"><h2>' + name + '</h2></a>' +
@@ -7706,7 +7856,7 @@ $(document).ready(function(){
         else{
             var photos = $(album).children();   
         }
-        var peek_range_left = [-55, 90, -55, 90];
+        var peek_range_left = [-55, 90, -0, 90];
         var peek_range_top = [-70, -70, 75, 75];
         $(photos).each(function(i, selected){
             var left = peek_range_left[i];
@@ -8008,6 +8158,9 @@ $(document).ready(function(){
         var that = this;
         var nomination_id = $(this).attr('value');
         if ($(this).hasClass('won') == false){
+            if (tut_on){
+                update_tut('vote');
+            }
             $.post('/vote/', {'method': 'up', 'nomination_id': nomination_id}, function(data){
                 if (data){
                     var vote_count_elm = $(that).parent().children().filter('p');
@@ -8079,8 +8232,8 @@ $(document).ready(function(){
         if (!mobile){
             $('#wrapper').animate({
                 'opacity': 1.0
-            }, 300);
-            $('#context_overlay').fadeOut(function(){
+            }, 250);
+            $('#context_overlay').fadeOut('fast', function(){
                 $('#context_overlay_cont').removeClass();
                 $('#context_overlay_cont > div').html('');
             });
@@ -8589,6 +8742,10 @@ $(document).ready(function(){
             $(comment_cont).find('.comment_body').val('');
             $(comment_cont).parent().find('.comment_empty').remove();
             
+            if (tut_on){
+                update_tut('comment');
+            }
+            
             $.post('/new_comment/', {'body': body, 'nom_id': nom_id}, function(data){
                 if (data){
                     data = JSON.parse(data);
@@ -8887,27 +9044,33 @@ $(document).ready(function(){
             var body = $('.comment_body').val().replace(/\n\r?/g, '<br />'),
                 nom_id = $('#main_nom_cont').attr('value');
                 
+            if (tut_on){
+                update_tut('comment');
+            }
+            
+            var now = new Date().getTime();
+            var comment_cont_html ='<div class="comment">' +
+                                        '<p class="comment_time" value="' + (now / 1000) + '">Right now</p>' +
+                                        '<a href="#/user=' + me.id + '" class="clear_profile">' +
+                                            '<img class="user_photo" src="https://graph.facebook.com/' + me.id + '/picture?type=square"/>' +
+                                        '</a>' +
+                                        '<a href="#?user=' + me.id + '" class="post_username from_username clear_profile">You</a>' +
+                                        '<p>' + body + '</p>' +
+                                    '</div>';
+            $('#new_comment_cont').after(comment_cont_html);
+            if (!mobile){
+                $('.comment_empty').fadeOut();
+            }
+            else{
+                $('.comment_empty').hide();
+            }
+            
+            $('.cancel_new_comment').click();
+            $('.comment_body').val('');
+                
             $.post('/new_comment/', {'body': body, 'nom_id': nom_id}, function(data){
                 if (data){
                     data = JSON.parse(data);
-                    var comment_cont_html ='<div class="comment">' +
-                                                '<p class="comment_time" value="' + data.payload.create_datetime + '">Right now</p>' +
-                                                '<a href="#/user=' + me.id + '" class="clear_profile">' +
-                                                    '<img class="user_photo" src="https://graph.facebook.com/' + me.id + '/picture?type=square"/>' +
-                                                '</a>' +
-                                                '<a href="#?user=' + me.id + '" class="post_username from_username clear_profile">You</a>' +
-                                                '<p>' + body + '</p>' +
-                                            '</div>';
-                    $('#new_comment_cont').after(comment_cont_html);
-                    if (!mobile){
-                        $('.comment_empty').fadeOut();
-                    }
-                    else{
-                        $('.comment_empty').hide();
-                    }
-                    
-                    $('.cancel_new_comment').click();
-                    $('.comment_body').val('');
                     
                     if (getUrlVars().won != undefined){
                         winning_noms_cache[nom_id].comment_count += 1;
@@ -9375,6 +9538,10 @@ $(document).ready(function(){
             var selected_nominations = '';
             var that = this;
             if ($('#active_nominations_cont div').length > 0 && !($(this).hasClass('awesome_hover_lock'))){
+                if (tut_on){
+                    update_tut('nom');
+                }
+                
                 $('#active_nominations_cont div h4').each(function(){
                     selected_nominations += $(this).text() + ','
                 });
@@ -9828,7 +9995,6 @@ $(document).ready(function(){
         //Nom Detail
         $('.nom_photo_thumbnail').die('click');
         $('#add_new_comment').die('click');
-        $('.post_new_comment').die('click');
         
         //list view
         $('.photo_thumbs').die('mousedown');

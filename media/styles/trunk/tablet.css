@@ -106,6 +106,12 @@ div#photo_cont{
     width:          900px;
 }
 
+#clear_all_notifications{
+    font-size:          18px;
+    right:              10px;
+    bottom:             0px;
+}
+
 #right_quick_nav a{
     color:              #bebebe;
     display:            block;

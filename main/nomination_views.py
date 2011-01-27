@@ -181,30 +181,31 @@ def new_comment(request):
             
             voters = nomination.votes.all()
             all_commentors = FB_User.objects.filter(comment__nomination=nomination).distinct('fid')
+
             friends = [ ]
-            # if fb_user.fid != nomination.nominator.fid:
             friends.append(nomination.nominator.fid)
-            # if owner.fid != fb_user.fid:
             friends.append(owner.fid)
             #Attach target user
-            friends = list(set(friends))
             for friend in all_commentors.iterator():
                 if friend.fid != fb_user.fid:
                     if friend.fid != nomination.nominator.fid:
                         friends.append(friend.fid)
-                        
-                    notification_type = Notification_Type.objects.get(name="new_comment")
-                    notification = Notification(source=fb_user, destination=owner, nomination=nomination, notification_type=notification_type)
-                    notification.save()
-                    Portrit_User.objects.get(fb_user=friend).notifications.add(notification)
+                
+            for friend in voters.iterator():
+                if friend.fid != fb_user.fid:
+                    if friend.fid != nomination.nominator.fid:
+                        friends.append(friend.fid)
+                    
+            friends = list(set(friends))
             
-            #Create notification record
-            # if portrit_owner and owner.fid != fb_user.fid:
-            #     notification_type = Notification_Type.objects.get(name="new_comment")
-            #     notification = Notification(source=fb_user, nomination=nomination, notification_type=notification_type)
-            #     notification.save()
-            #     notification_id = notification.id
-            #     portrit_owner.notifications.add(notification)
+            for friend in friends:
+                notification_type = Notification_Type.objects.get(name="new_comment")
+                notification = Notification(source=fb_user, destination=owner, nomination=nomination, notification_type=notification_type)
+                notification.save()
+                try:
+                    Portrit_User.objects.get(fb_user__fid=friend).notifications.add(notification)
+                except:
+                    pass
             
             node_data = {
                 'method': 'new_comment',
