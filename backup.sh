@@ -14,3 +14,4 @@ SQL_BACKUP_FILE=`pwd`'/'$DATETIME'.sql'
 cd ..
 
 s3cmd put $SQL_BACKUP_FILE s3://portrit_backup
+rm $SQL_BACKUP_FILE
