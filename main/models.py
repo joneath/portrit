@@ -9,6 +9,28 @@ add_introspection_rules([], ["^main\.models\.BigIntegerField"])
 
 import time
 
+from django.contrib.sites.models import Site
+from django.core.cache import cache
+ 
+CACHE_EXPIRES = 5 * 60 # 10 minutes
+
+class ObjectManager(models.Manager):
+    def get_query_set(self, *args, **kwargs):
+        cache_key = 'objectlist%d%s%s' % (
+            Site.objects.get_current().id, # unique for site
+            ''.join([str(a) for a in args]), # unique for arguments
+            ''.join('%s%s' % (str(k), str(v)) for k, v in kwargs.iteritems())
+        )
+ 
+        object_list = cache.get(cache_key)
+        #if not object_list:
+        #AdamG noted that this check avoids empty lists
+        #evaluating to False, as "if not object_list" did
+        if object_list is None:
+            object_list = super(ObjectManager, self).get_query_set(*args, **kwargs)
+            cache.set(cache_key, object_list, CACHE_EXPIRES)
+        return object_list
+
 class BigIntegerField(IntegerField):
     empty_strings_allowed=False
     def get_internal_type(self):
@@ -128,6 +150,8 @@ class Nomination(models.Model):
     nominatee = models.ForeignKey('FB_User', null=True, related_name="nominated_user")
     comments = models.ManyToManyField(Comment, null=True, blank=True)
     votes = models.ManyToManyField('FB_User', null=True, blank=True, related_name="vote_users")
+    
+    objects = ObjectManager()
     
     class Meta:
         ordering = ['up_votes', 'down_votes', '-created_date']

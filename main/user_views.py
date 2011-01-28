@@ -29,7 +29,7 @@ def login_fb_user(request):
         first = False
         try:
             fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
-            user = Portrit_User.objects.get(fb_user=fb_user)
+            user = Portrit_User.objects.filter(fb_user=fb_user)[0]
         except:
             pass
         if not user:

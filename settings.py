@@ -1,7 +1,7 @@
 import os
 import os.path
 
-DEBUG = False
+DEBUG = True
 ENV = "LOCAL"
 TEMPLATE_DEBUG = DEBUG
 
@@ -34,6 +34,8 @@ if ENV == "LOCAL":
     NODE_SOCKET = 8081
     NODE_HOST = 'localhost'
     
+    CACHE_BACKEND = 'locmem://?timeout=30&max_entries=400'
+    
 elif ENV == "TEST":
     DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
     DATABASE_NAME = 'portrit'             # Or path to database file if using sqlite3.
@@ -57,6 +59,8 @@ elif ENV == "TEST":
     NODE_SOCKET = 8081
     NODE_HOST = "10.117.57.137"
     
+    CACHE_BACKEND = 'memcached://10.202.90.88:11211/?timeout=86400'
+    
 else:
     DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
     DATABASE_NAME = 'portrit'             # Or path to database file if using sqlite3.
@@ -78,7 +82,9 @@ else:
     FACEBOOK_APP_SECRET = "d6c5a3023e9b92aa4bae8dd7581deeaf"
     
     NODE_SOCKET = 8081
-    NODE_HOST = '184.73.249.110'
+    NODE_HOST = '10.117.57.137'
+    
+    CACHE_BACKEND = 'memcached://10.202.90.88:11211/?timeout=86400'
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -126,6 +132,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.middleware.gzip.GZipMiddleware',
 )
 
 AUTHENTICATION_BACKENDS = (
