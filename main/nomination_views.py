@@ -199,13 +199,15 @@ def new_comment(request):
             friends = list(set(friends))
             
             for friend in friends:
-                notification_type = Notification_Type.objects.get(name="new_comment")
-                notification = Notification(source=fb_user, destination=owner, nomination=nomination, notification_type=notification_type)
-                notification.save()
-                try:
-                    Portrit_User.objects.get(fb_user__fid=friend).notifications.add(notification)
-                except:
-                    pass
+                if friend != fb_user.fid:
+                    print friend
+                    notification_type = Notification_Type.objects.get(name="new_comment")
+                    notification = Notification(source=fb_user, destination=owner, nomination=nomination, notification_type=notification_type)
+                    notification.save()
+                    try:
+                        Portrit_User.objects.get(fb_user__fid=friend).notifications.add(notification)
+                    except:
+                        pass
             
             node_data = {
                 'method': 'new_comment',
@@ -480,7 +482,7 @@ def vote_on_nomination(request):
         
         nominatee = FB_User.objects.get(fid=str(nomination.nominatee))
         try:
-            owner_portrit_user = Portrit_User.objects.get(fb_user=nominatee)
+            owner_portrit_user = Portrit_User.objects.get(fb_user=owner)
             owner_portrit_user.vote_count += 1
             owner_portrit_user.save()
         except:

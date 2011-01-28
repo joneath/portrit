@@ -55,20 +55,28 @@
     	if (window.location.hostname == 'portrit.com' || window.location.hostname == 'www.portrit.com'){
     	    window.fbAsyncInit = function() {
                 FB.init({appId: '126374870731237', status: true, cookie: true, xfbml: false});
+                fb_server_timeout = setTimeout(fb_down, 3000);
                 FB.getLoginStatus(handleSessionResponse);
             };
         }
         else if (window.location.hostname == 'test.portrit.com' || window.location.hostname == 'www.test.portrit.com'){
             window.fbAsyncInit = function() {
                 FB.init({appId: '123063501058161', status: true, cookie: true, xfbml: false});
+                fb_server_timeout = setTimeout(fb_down, 3000);
                 FB.getLoginStatus(handleSessionResponse);
             };
         }
         else{
             window.fbAsyncInit = function() {
                 FB.init({appId: '155664697800227', status: true, cookie: true, xfbml: false});
+                fb_server_timeout = setTimeout(fb_down, 3000);
                 FB.getLoginStatus(handleSessionResponse);
             };
+        }
+        
+        function fb_down(){
+            $('#content_loading').html('<h1 style="display:none">Uh oh, Looks like we are having issues talking with Facebook. Give us a few minutes to check our tubes.</h1>');
+            $('#content_loading h1').fadeIn();
         }
         
         (function() {

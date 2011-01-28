@@ -258,6 +258,7 @@ $(document).ready(function(){
     var watch_hashtag_interval = null;
     // handle a session response from any of the auth related calls
     function handleSessionResponse(response) {
+        clearTimeout(fb_server_timeout);
         clearInterval(watch_hashtag_interval);
         $('#content_loading').remove();
         // var window_href = window.location.href;
@@ -691,6 +692,7 @@ $(document).ready(function(){
     initial_feed_load = true,
     photo_filter = null,
     user_winning_noms_cache = { },
+    fb_server_timeout = null;
     user_notifications = {
         'new_noms': { },
         'comments': { }
@@ -2347,7 +2349,8 @@ $(document).ready(function(){
         var won_url = '';
         var notification_id = $(this).attr('id').replace('notification_', '');
         
-        if (read == '0'){
+        if (read == 'false' || read == false){
+            $(this).attr('read', 'true');
             $.post('/notification_read/', {'notification_id': notification_id}, function(){
                 
             });
@@ -2535,6 +2538,7 @@ $(document).ready(function(){
         }
         if (tut_counts){
             $('#activate_tut').css('opacity', 1);
+            $(document).bind('click', toggle_tut);
             tut_on = true;
             var start_count = 3;
             var current_count = 0;
@@ -2643,9 +2647,6 @@ $(document).ready(function(){
             if (count >= 3){
                 count = 3;
             }
-            else{
-                tut_nom_completed = false;
-            }
             $('#nomination_tut > p').text(count + '/3 Completed').removeClass().addClass(count_class + '_back').parent().attr('count', count);
         }
         else if (method == 'vote'){
@@ -2657,9 +2658,6 @@ $(document).ready(function(){
             }
             if (count >= 3){
                 count = 3;
-            }
-            else{
-                tut_vote_completed = false;
             }
             $('#vote_count_tut > p').text(count + '/3 Completed').removeClass().addClass(count_class + '_back').parent().attr('count', count);
         }
@@ -2673,16 +2671,61 @@ $(document).ready(function(){
             if (count >= 3){
                 count = 3;
             }
-            else{
-                tut_comment_completed = false;
-            }
             $('#comment_count_tut > p').text(count + '/3 Completed').removeClass().addClass(count_class + '_back').parent().attr('count', count);
         }
         
         $('#activate_tut').css('opacity', 1);
         
+        count = parseInt($('#nomination_tut').attr('count'));
+        if (count < 3){
+            tut_nom_completed = false;
+        }
+        
+        count = parseInt($('#vote_count_tut').attr('count'));
+        if (count < 3){
+            tut_vote_completed = false;
+        }
+        
+        count = parseInt($('#comment_count_tut').attr('count'));
+        if (count < 3){
+            tut_comment_completed = false;
+        }
+        
         if (tut_nom_completed && tut_vote_completed && tut_comment_completed){
-            //Render completed tutorial
+            var tut_completed_html ='<h1>Congratulations!</h1>' +
+                                    '<h2>You have just completed the tutorial.</h2>' +
+                                    '<div id="tut_completed_middle">' +
+                                        '<img src="http://s3.amazonaws.com/portrit/img/tutorial_graphic.png"/>' +
+                                        '<div class="tut_check_completed">' +
+                                            '<div class="green_checkmark"></div>' +
+                                            '<p>You nominated 3 of your friend\'s photos.</p>' +
+                                            '<div class="clear"></div>' +
+                                        '</div>' +
+                                        '<div class="tut_check_completed">' +
+                                            '<div class="green_checkmark"></div>' +
+                                            '<p>You voted on 3 of your friend\'s nominations.</p>' +
+                                            '<div class="clear"></div>' +
+                                        '</div>' +
+                                        '<div class="tut_check_completed">' +
+                                            '<div class="green_checkmark"></div>' +
+                                            '<p>You commented on 3 of your friend\'s nominations.</p>' +
+                                            '<div class="clear"></div>' +
+                                        '</div>' +
+                                    '</div>' +
+                                    '<h3>You now know how to use Portrit.</h3>' +
+                                    '<h3>Go nominate, vote, comment, and have fun!</h3>' +
+                                    '<span id="tut_completed_go" class="awesome large">Continue</span>';
+            
+            tut_on = false;
+            $('#context_overlay_cont').addClass('tut_completed_overlay');
+            $('#context_overlay_cont > div').append(tut_completed_html);
+            show_context_overlay(true);
+            $('#activate_tut').fadeOut();
+            
+            $('#tut_completed_go').bind('click', function(){
+                $('#tut_completed_go').unbind('click');
+                close_context_overlay();
+            });
         }
     }
     
@@ -2855,9 +2898,12 @@ $(document).ready(function(){
     var portrit_friends = null;
     var notification_data = null;
     var allow_notifications = true;
+    var server_login_timeout = null;
     function login_fb_user(){
         $('#cont').prepend('<div class="loading"><h1>Portrit Loading...</h1><div id="loader"><img src="http://s3.amazonaws.com/portrit/img/album-loader-dark.gif"/></div></div>');
+        setTimeout(render_server_dead, 3000);
         $.post('/login_fb_user/', function(data){
+            clearTimeout(server_login_timeout);
             if (data){
                 var tut_counts = null;
                 var first = false;
@@ -2881,6 +2927,12 @@ $(document).ready(function(){
             }
             $('.loading').remove();
         });
+    }
+    
+    function render_server_dead(){
+        $('.loading > h1').after('<div id="server_down" style="display:none;"><h2>We\'re sorry, looks like our servers are taking a much needed coffee break.</h2><h3>Please give us another chance and refresh your browser.</h3></div>');
+        $('.loading > h1').hide();
+        $('#server_down').fadeIn();
     }
     
     function load_friend_dict(data){
@@ -4117,8 +4169,10 @@ $(document).ready(function(){
         else{
             active_cache = active_noms_cache;
         }
+        append_load($('#nom_comments_cont'), 'light');
         // if (trophy || (won && user) || active_cache[id].comments === false){
         $.getJSON('/get_nom_comments/', {'nom_id': id}, function(data){
+            remove_load();
             if (!trophy && !(won && user)){
                 active_cache[id].comments = data; 
             }
@@ -4915,11 +4969,8 @@ $(document).ready(function(){
             nom_data = data[i].noms;
             prev_offset_width = 0;
             first_offset = 0;
-            
-            
-            // if (active_nom_cats_map[data[i].cat_name.replace(' ', '_').toLowerCase()] == undefined){
-                active_nom_cats_map[data[i].cat_name.replace(' ', '_').toLowerCase()] = [ ];   
-            // }
+                        
+            active_nom_cats_map[data[i].cat_name.replace(' ', '_').toLowerCase()] = [ ];   
             
             sort_noms_list_by_votes(nom_data);
             if (nom_data.length > 0){
@@ -5041,7 +5092,7 @@ $(document).ready(function(){
                         left_cont_html = '<div class="nom_stream_left_cont">' + voted_html + '<div class="clear"></div></div>';
 
                         message = '<div class="feed_post_cont nom_cat_cont_' + data[i].cat_name.replace(' ', '_').toLowerCase() + '" id="nom_' + nom_data[k].id + '">' + nom_heading_html + left_cont_html  + photo_html + '<div class="clear"></div></div>';
-                        $('#profile_cont').append(message);
+                        $('#profile_cont').prepend(message);
                     }
                     else{
                         small_photo_offset = first_offset + prev_offset_width;

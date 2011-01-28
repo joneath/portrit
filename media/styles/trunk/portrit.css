@@ -74,6 +74,27 @@ a:hover{
     margin-top:         100px;
 }
 
+    .loading h1{
+        font-size:          36px;
+    }
+    
+    .loading h2{
+        font-size:          26px;
+    }
+    
+    .loading h3{
+        margin-top:         5px;
+        font-size:          20px;
+    }
+    
+    .loading #loader{
+        padding-top:        50px;
+    }
+    
+    .loading #server_down{
+        margin-top:         10px;
+    }
+
 .red_back{
     background-color:   #ff6666;
 }
@@ -422,6 +443,11 @@ div#content_loading{
     font-size:          24px;
     font-weight:        bold;
 }
+
+    div#content_loading h1{
+        margin:             0 auto;
+        width:              750px;
+    }
 
 div#right_nav{
     margin:             5px;
@@ -1714,6 +1740,10 @@ div#nom_detail_cont{
             float:              left;
             width:              710px;
         }
+        
+            div#nom_comments_cont #loader{
+                padding-top:            5px;
+            }
         
             div#comment_heading_cont{
                 border-bottom:          1px solid #DEDEDE;
@@ -3332,6 +3362,13 @@ div#info_wrap{
         width:              260px;
     }
     
+.green_checkmark{
+    height:                 24px;
+    width:                  24px;
+    background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+    background-position:    -138px -690px;
+}
+    
 div#context_overlay{
     margin:                 0 auto;
     position:               absolute;
@@ -3357,6 +3394,66 @@ div#context_overlay{
             text-align:         center;
             width:              980px;
         }
+        
+        div.tut_completed_overlay{
+            text-align:         center;
+            width:              600px;
+        }
+        
+            div.tut_completed_overlay h1{
+                padding:            20px 20px 2px;
+                font-size:          32px;
+                font-weight:        bold;
+            }
+            
+            div.tut_completed_overlay h2{
+                padding:            0px 20px 10px;
+                font-size:          26px;
+            }
+            
+            div.tut_completed_overlay h3{
+                font-size:          18px;
+                font-weight:        bold;
+                text-align:         center;
+            }
+            
+            #tut_completed_middle{
+                background-color:   #333;
+                color:              white;
+                height:             110px;
+                margin-top:         10px;
+                margin-bottom:      45px;
+                padding-top:        25px;
+                position:           relative;
+            }
+            
+                #tut_completed_middle img{
+                    position:           absolute;
+                    bottom:             -20px;
+                }
+                
+                #tut_completed_middle .tut_check_completed{
+                    margin-left:            170px;
+                    margin-bottom:          10px;
+                    text-align:             left;
+                }
+                
+                    .tut_check_completed .green_checkmark{
+                        float:                  left;
+                        position:               relative;
+                        bottom:                 5px;
+                    }
+                    
+                    .tut_check_completed p{
+                        margin-left:            35px;
+                    }
+                    
+                #tut_completed_go {
+                    padding:            16px 40px;
+                    font-size:          22px;
+                    font-weight:        normal;
+                    margin:             25px 0px;
+                }
     
 div#wall_cont div#profile_wrap{
 	background-color:		white;
