@@ -112,7 +112,7 @@ a:hover{
 }
 
 .awesome, .awesome:visited, .awesome_abs{
-	background: #222 url(http://s3.amazonaws.com/portrit/img/alert-overlay.png) repeat-x; 
+	background: #222 url(http://d3uzvcq9wwvnca.cloudfront.net/img/alert-overlay.png) repeat-x; 
 	display: inline-block; 
 	padding: 5px 10px 6px; 
 	color: #fff; 
@@ -150,7 +150,7 @@ a:hover{
 .yellow.awesome:hover							{ background-color: #fc9200; }
 
 div#wrapper{
-    background:         url(http://s3.amazonaws.com/portrit/img/landing_back.jpg) no-repeat;
+    background:         url(http://d3uzvcq9wwvnca.cloudfront.net/img/landing_back.jpg) no-repeat;
     background-position:center 0px;
     min-height:         100%;
     height:             auto !important;
@@ -464,7 +464,7 @@ div#right_nav{
         height:             60px;
         width:              60px;
         opacity:            0.3;
-        background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+        background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
         background-position:    -512px -86px;
     }
 
@@ -512,27 +512,27 @@ div#right_nav{
     }
     
         #back{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -12px -12px;
         }
         
         #home{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -84px -12px;
         }
         
         #search_control{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -156px -12px;
         }
         
         #settings{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -298px -12px;
         }
         
         #logout{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -369px -12px;
         }
     
@@ -768,7 +768,7 @@ div#feedback{
 }
 
 .close_img.normal{
-    background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+    background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
     background-position:    -529px -649px;
     height:             25px;
     width:              25px;
@@ -777,7 +777,7 @@ div#feedback{
 }
 
 .close_img.mobile{
-    background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+    background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
     background-position:    -487px -638px;
     height:             38px;
     width:              38px;
@@ -1130,14 +1130,14 @@ div#initial_tut_cont{
                 }
                 
                 #allow_notifications.checked{
-                    background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+                    background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
                     background-position:    -345px -641px;
                     height:                 28px;
                     width:                  28px;
                 }
                 
                 #allow_notifications.unchecked{
-                    background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+                    background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
                     background-position:    -321px -641px;
                     height:                 28px;
                     width:                  28px;
@@ -1213,39 +1213,39 @@ div#initial_tut_cont{
     }
     
         .trophy_img.large.artsy{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -16px -84px;
         }
         .trophy_img.large.wtf{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -119px -84px;
         }
         .trophy_img.large.party_animal{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -219px -84px;
         }
         .trophy_img.large.lol{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -316px -84px;
         }
         .trophy_img.large.blank{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -416px -84px;
         }
         .trophy_img.large.fail{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -24px -295px;
         }
         .trophy_img.large.creepy{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -123px -295px;
         }
         .trophy_img.large.hot{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -222px -295px;
         }
         .trophy_img.large.cute{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -322px -295px;
         }
     
@@ -1255,39 +1255,39 @@ div#initial_tut_cont{
     }
     
         .trophy_img.medium.wtf{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -17px -509px;
         }
         .trophy_img.medium.party_animal{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -70px -509px;
         }
         .trophy_img.medium.lol{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -123px -509px;
         }
         .trophy_img.medium.fail{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -177px -509px;
         }
         .trophy_img.medium.blank{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -230px -509px;
         }
         .trophy_img.medium.hot{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -282px -509px;
         }
         .trophy_img.medium.cute{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -334px -509px;
         }
         .trophy_img.medium.creepy{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -386px -509px;
         }
         .trophy_img.medium.artsy{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -438px -509px;
         }
     
@@ -1297,35 +1297,35 @@ div#initial_tut_cont{
     }
     
         .trophy_img.small.artsy{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -25px -621px;
         }
         .trophy_img.small.wtf{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -59px -621px;
         }
         .trophy_img.small.party_animal{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -93px -621px;
         }
         .trophy_img.small.lol{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -126px -621px;
         }
         .trophy_img.small.hot{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -159px -621px;
         }
         .trophy_img.small.fail{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -192px -621px;
         }
         .trophy_img.small.cute{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -224px -621px;
         }
         .trophy_img.small.creepy{
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -256px -621px;
         }
 
@@ -1448,7 +1448,7 @@ div#nom_detail_cont{
     #nom_detail_cont .prev_photo_img{
         height:                 65px;
         width:                  30px;
-        background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+        background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
         background-position:    -530px -368px;
     }
     
@@ -1464,7 +1464,7 @@ div#nom_detail_cont{
     #nom_detail_cont .next_photo_img{
         height:                 65px;
         width:                  30px;
-        background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+        background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
         background-position:    -560px -368px;
     }
 
@@ -2314,7 +2314,7 @@ div#profile_cont{
                     right:                  0px;
                     height:                 42px;
                     width:                  30px;
-                    background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+                    background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
                     background-position:    -44px -679px;
                 }
                 
@@ -2671,7 +2671,7 @@ div#profile_cont{
                             opacity:            0.7;
                             height:             60px;
                             width:              60px;
-                            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+                            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
                             background-position:    -513px -12px;
                         }
                         
@@ -2685,7 +2685,7 @@ div#profile_cont{
                             opacity:            0.7;
                             height:             60px;
                             width:              60px;
-                            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+                            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
                             background-position:    -441px -12px;
                         }
                         
@@ -2709,7 +2709,7 @@ div#profile_cont{
                 .nom_cat_main_photo_cont .prev_photo_img{
                     height:                 65px;
                     width:                  30px;
-                    background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+                    background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
                     background-position:    -530px -368px;
                 }
                 
@@ -2725,7 +2725,7 @@ div#profile_cont{
                 .nom_cat_main_photo_cont .next_photo_img{
                     height:                 65px;
                     width:                  30px;
-                    background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+                    background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
                     background-position:    -560px -368px;
                 }
 
@@ -3074,7 +3074,7 @@ div#user_profile_cont{
             position:               absolute;
             right:                  2px;
             top:                    14px;
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -103px -697px;
         }
         
@@ -3084,7 +3084,7 @@ div#user_profile_cont{
             position:               absolute;
             left:                   2px;
             top:                    13px;
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -86px -697px;
         }
 
@@ -3365,7 +3365,7 @@ div#info_wrap{
 .green_checkmark{
     height:                 24px;
     width:                  24px;
-    background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+    background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
     background-position:    -138px -690px;
 }
     
@@ -4699,7 +4699,7 @@ div#photo_cont{
         #back_gallery_img{
             height:             118px;
             width:              50px;
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -427px -343px;
         }
         
@@ -4716,7 +4716,7 @@ div#photo_cont{
         #forward_gallery_img{
             height:             118px;
             width:              50px;
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -477px -343px;
         }
         
@@ -4961,7 +4961,7 @@ div#all_friends {
                 height:             24px;
                 width:              24px;
                 display:            inline-block;
-                background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+                background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
                 background-position:    -375px -644px;
             }
     
@@ -4976,7 +4976,7 @@ div#all_friends {
                 height:             24px;
                 width:              24px;
                 display:            inline-block;
-                background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+                background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
                 background-position:    -375px -644px;
             }
     
@@ -5398,7 +5398,7 @@ div#payment_types_cont{
 }
 
     #tut_arrow{
-        background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+        background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
         background-position:    -16px -719px;
         height:             20px;
         width:              20px;
@@ -5459,7 +5459,7 @@ div#payment_types_cont{
         right:                  5px;
         height:                 24px;
         width:                  24px;
-        background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+        background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
         background-position:    -114px -690px;
     }
     
@@ -5599,7 +5599,7 @@ div#payment_types_cont{
         #portrit_copyright div{
             height:                 16px;
             width:                  16px;
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -305px -650px;
             position:               absolute;
         }
@@ -5611,7 +5611,7 @@ div#payment_types_cont{
     }
     
     #footer_notification_cont{
-        background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+        background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
         background-position:    -227px -12px;
         height:             60px;
         opacity:            0.3;
@@ -5632,7 +5632,7 @@ div#payment_types_cont{
             z-index:            1001;
             height:             20px;
             width:              20px;
-            background-image:       url(http://s3.amazonaws.com/portrit/img/sprite.png);
+            background-image:       url(http://d3uzvcq9wwvnca.cloudfront.net/img/sprite.png);
             background-position:    -15px -692px;
         }
     

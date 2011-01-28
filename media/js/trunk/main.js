@@ -125,7 +125,7 @@ $(document).ready(function(){
         $('#cont').fadeOut('fast', function(){
             $(this).html('');
             var logout_html =   '<div id="logout_cont">' +
-                                    '<div id="loader"><img src="http://s3.amazonaws.com/portrit/img/album-loader-dark.gif"/></div>' +
+                                    '<div id="loader"><img src="http://d3uzvcq9wwvnca.cloudfront.net/img/album-loader-dark.gif"/></div>' +
                                     '<h1>Logging out. Hold on to your butts!</h1>' +
                                 '</div>'
 
@@ -142,7 +142,7 @@ $(document).ready(function(){
 
     function render_login_cont(){
         var login_html ='<div id="login_header">' +
-                            '<img id="login_logo" src="http://s3.amazonaws.com/portrit/img/logo_blank.png"/>' +
+                            '<img id="login_logo" src="http://d3uzvcq9wwvnca.cloudfront.net/img/logo_blank.png"/>' +
                         '</div>' +
                         '<div id="login_content">' +
                             '<div id="login_top_cont">' +
@@ -164,7 +164,7 @@ $(document).ready(function(){
                                     '<h3>Nominate</h3>' +
                                     '<div class="clear"></div>' +
                                     '<div class="login_points_cont">' +
-                                        '<img src="http://s3.amazonaws.com/portrit/img/landing/nominate.png"/>' +
+                                        '<img src="http://d3uzvcq9wwvnca.cloudfront.net/img/landing/nominate.png"/>' +
                                         '<div class="login_points_bottom">' +
                                             '<h4>Nominate your friend\'s rockin\' pics.</h4>' +
                                             '<p>Be nice and courteous or evil and awesome, it\'s up to you.</p>' +
@@ -176,7 +176,7 @@ $(document).ready(function(){
                                     '<h3>Vote</h3>' +
                                     '<div class="clear"></div>' +
                                     '<div class="login_points_cont">' +
-                                        '<img src="http://s3.amazonaws.com/portrit/img/landing/vote.png"/>' +
+                                        '<img src="http://d3uzvcq9wwvnca.cloudfront.net/img/landing/vote.png"/>' +
                                         '<div class="login_points_bottom">' +
                                             '<h4>Give your vote to the best.</h4>' +
                                             '<p>The power is in your hands. Use it wisely.</p>' +
@@ -188,7 +188,7 @@ $(document).ready(function(){
                                     '<h3>Earn</h3>' +
                                     '<div class="clear"></div>' +
                                     '<div class="login_points_cont">' +
-                                        '<img src="http://s3.amazonaws.com/portrit/img/landing/earn.png"/>' +
+                                        '<img src="http://d3uzvcq9wwvnca.cloudfront.net/img/landing/earn.png"/>' +
                                         '<div class="login_points_bottom">' +
                                             '<h4>Earn trophies for your amazing photos.</h4>' +
                                             '<p>No longer search through thousands of your friend\'s photos to find the best.</p>' +
@@ -199,16 +199,16 @@ $(document).ready(function(){
                             '</div>' +
                             //                             '<div id="login_left_cont">' +
                             //                                 '<ul class="slideshow">' +
-                            //                                     '<li class="active" style="z-index: 1000;" id="landing_img_1"><a><img src="http://s3.amazonaws.com/portrit/img/landing/main.jpg" width="460" height="320" alt="View all your friends as photos on a canvas"/></a></li>' +
-                            //                                     '<li id="landing_img_2" style="z-index: 999;"><a><img src="http://s3.amazonaws.com/portrit/img/landing/nominate_screen.jpg" width="460" height="320" alt="Quickly get a overview of your friend\'s albums with album peek"/></a></li>' +
-                            //                                     '<li id="landing_img_3" style="z-index: 998;"><a><img src="http://s3.amazonaws.com/portrit/img/landing/active_nom_screen.jpg" width="460" height="320" alt="Dive deep into an album to see the photos"/></a></li>' +
-                            //                                     '<li id="landing_img_4" style="z-index: 997;"><a><img src="http://s3.amazonaws.com/portrit/img/landing/nom_detail_screen.jpg" width="460" height="320" alt="Go to gallery view to view large photos"/></a></li>' +
-                            //                                     '<li id="landing_img_5" style="z-index: 996;"><a><img src="http://s3.amazonaws.com/portrit/img/landing/mobile.jpg" height="320" alt="Optimized for mobile devices"/></a></li>' +
+                            //                                     '<li class="active" style="z-index: 1000;" id="landing_img_1"><a><img src="http://d3uzvcq9wwvnca.cloudfront.net/img/landing/main.jpg" width="460" height="320" alt="View all your friends as photos on a canvas"/></a></li>' +
+                            //                                     '<li id="landing_img_2" style="z-index: 999;"><a><img src="http://d3uzvcq9wwvnca.cloudfront.net/img/landing/nominate_screen.jpg" width="460" height="320" alt="Quickly get a overview of your friend\'s albums with album peek"/></a></li>' +
+                            //                                     '<li id="landing_img_3" style="z-index: 998;"><a><img src="http://d3uzvcq9wwvnca.cloudfront.net/img/landing/active_nom_screen.jpg" width="460" height="320" alt="Dive deep into an album to see the photos"/></a></li>' +
+                            //                                     '<li id="landing_img_4" style="z-index: 997;"><a><img src="http://d3uzvcq9wwvnca.cloudfront.net/img/landing/nom_detail_screen.jpg" width="460" height="320" alt="Go to gallery view to view large photos"/></a></li>' +
+                            //                                     '<li id="landing_img_5" style="z-index: 996;"><a><img src="http://d3uzvcq9wwvnca.cloudfront.net/img/landing/mobile.jpg" height="320" alt="Optimized for mobile devices"/></a></li>' +
                             //                                 '</ul>' +
                             //                             '</div>' +
                             // '<div id="login_right_cont">' +
-                            //     '<img id="landing_back" src="http://s3.amazonaws.com/portrit/img/left_arrow.png"/>' +
-                            //     '<img id="landing_forward" src="http://s3.amazonaws.com/portrit/img/right_arrow.png"/>' +
+                            //     '<img id="landing_back" src="http://d3uzvcq9wwvnca.cloudfront.net/img/left_arrow.png"/>' +
+                            //     '<img id="landing_forward" src="http://d3uzvcq9wwvnca.cloudfront.net/img/right_arrow.png"/>' +
                             //  '<div id="tagline_cont_active">' +
                             //      '<div class="tagline_top">' +
                             //                                         '<h2>What\'s Portrit?</h2>' +
@@ -232,7 +232,7 @@ $(document).ready(function(){
                             //                                     '</div>' +
                             //                                     '<div class="tagline_top" style="display:none;">' +
                             //                                         '<h2>Earn</h2>' +
-                            //                                         '<p id="tageline_large"><img id="trophy_landing" src="http://s3.amazonaws.com/portrit/img/landing/trophies.png"/></p>' +
+                            //                                         '<p id="tageline_large"><img id="trophy_landing" src="http://d3uzvcq9wwvnca.cloudfront.net/img/landing/trophies.png"/></p>' +
                             //                                         '<p id="tagline_end">Receive trophies for your best photos.</p>' +
                             //                                     '</div>' +
                             //                                 '</div>' +
@@ -626,7 +626,7 @@ $(document).ready(function(){
     side_bar_initialized = false,
     side_bar_scroll = null,
     reEscape = new RegExp('(\\' + ['/', '.', '*', '+', '?', '|', '(', ')', '[', ']', '{', '}', '\\'].join('|\\') + ')', 'g'),
-    portrit_favicon = '<img class="post_favicon" src="http://s3.amazonaws.com/portrit/img/favicon.png"/>',
+    portrit_favicon = '<img class="post_favicon" src="http://d3uzvcq9wwvnca.cloudfront.net/img/favicon.png"/>',
     slide_trans_time = 350,
     upgrade_timeout = null,
     album = null,
@@ -707,12 +707,12 @@ $(document).ready(function(){
         
         if (typeof(_gaq) !== "undefined"){
             if (production){
-                var meta_html = '<link rel="stylesheet" href="http://s3.amazonaws.com/portrit/styles/production/mobile_landing.css"/>' +
-                                '<link rel="stylesheet" href="http://s3.amazonaws.com/portrit/styles/production/mobile.css"/>' +
+                var meta_html = '<link rel="stylesheet" href="http://d3uzvcq9wwvnca.cloudfront.net/styles/production/mobile_landing.css"/>' +
+                                '<link rel="stylesheet" href="http://d3uzvcq9wwvnca.cloudfront.net/styles/production/mobile.css"/>' +
                                 '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
-                                '<link rel="shortcut icon" href="http://s3.amazonaws.com/portrit/img/favicon.ico">' +
-                                '<link rel="apple-touch-icon" href="http://s3.amazonaws.com/portrit/img/icon128.png"/>' +
-                                '<link rel="apple-touch-icon-precomposed" href="http://s3.amazonaws.com/portrit/img/icon128.png"/>';
+                                '<link rel="shortcut icon" href="http://d3uzvcq9wwvnca.cloudfront.net/img/favicon.ico">' +
+                                '<link rel="apple-touch-icon" href="http://d3uzvcq9wwvnca.cloudfront.net/img/icon128.png"/>' +
+                                '<link rel="apple-touch-icon-precomposed" href="http://d3uzvcq9wwvnca.cloudfront.net/img/icon128.png"/>';
             }
             else{
                 var meta_html = '<link rel="stylesheet" href="/site_media/styles/production/mobile_landing.css"/>' +
@@ -726,12 +726,12 @@ $(document).ready(function(){
         }
         else{
             if (production){
-                var meta_html = '<link rel="stylesheet" href="http://s3.amazonaws.com/portrit/styles/trunk/mobile_landing.css"/>' +
-                                '<link rel="stylesheet" href="http://s3.amazonaws.com/portrit/styles/trunk/mobile.css"/>' +
+                var meta_html = '<link rel="stylesheet" href="http://d3uzvcq9wwvnca.cloudfront.net/styles/trunk/mobile_landing.css"/>' +
+                                '<link rel="stylesheet" href="http://d3uzvcq9wwvnca.cloudfront.net/styles/trunk/mobile.css"/>' +
                                 '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
-                                '<link rel="shortcut icon" href="http://s3.amazonaws.com/portrit/img/favicon.ico">' +
-                                '<link rel="apple-touch-icon" href="http://s3.amazonaws.com/portrit/img/icon128.png"/>' +
-                                '<link rel="apple-touch-icon-precomposed" href="http://s3.amazonaws.com/portrit/img/icon128.png"/>';
+                                '<link rel="shortcut icon" href="http://d3uzvcq9wwvnca.cloudfront.net/img/favicon.ico">' +
+                                '<link rel="apple-touch-icon" href="http://d3uzvcq9wwvnca.cloudfront.net/img/icon128.png"/>' +
+                                '<link rel="apple-touch-icon-precomposed" href="http://d3uzvcq9wwvnca.cloudfront.net/img/icon128.png"/>';
             }
             else{
                 var meta_html = '<link rel="stylesheet" href="/site_media/styles/trunk/mobile_landing.css"/>' +
@@ -903,7 +903,7 @@ $(document).ready(function(){
         comment_form_shown = true;
         if (next_level == 'social'){
             pitch_html = '<h3>Want to be more social?</h3>';
-            you_are_here_html = '<div id="here_basic"><img src="http://s3.amazonaws.com/portrit/img/here_basic_arrow.png"/><h3>You are here</h3></div>';
+            you_are_here_html = '<div id="here_basic"><img src="http://d3uzvcq9wwvnca.cloudfront.net/img/here_basic_arrow.png"/><h3>You are here</h3></div>';
             if (referrals <= 3){
                 referrals_needed = 3 - referrals;
                 referrals_needed_text = 'Only ' + referrals_needed + ' referrals to go!';
@@ -941,7 +941,7 @@ $(document).ready(function(){
         }
         else if(next_level == 'plus'){
             pitch_html = '';
-            you_are_here_html = '<div id="here_social"><img src="http://s3.amazonaws.com/portrit/img/here_social_arrow.png"/><h3>You are here</h3></div>';
+            you_are_here_html = '<div id="here_social"><img src="http://d3uzvcq9wwvnca.cloudfront.net/img/here_social_arrow.png"/><h3>You are here</h3></div>';
             if (referrals <= 10){
                 referrals_needed = 10 - referrals;
                 referrals_needed_text = 'Only ' + referrals_needed + ' referrals to go!';
@@ -967,57 +967,57 @@ $(document).ready(function(){
                                 '</tr>' +
                                 '<tr>' +
                                     '<td><h5 class="table_img_heading">Friend Canvas</h5></td>' +
-                                    '<td><img class="column_1" src="http://s3.amazonaws.com/portrit/img/check_24.png"/></td>' +
-                                    '<td><img class="column_2" src="http://s3.amazonaws.com/portrit/img/check_24.png"/></td>' +
-                                    '<td><img class="column_3" src="http://s3.amazonaws.com/portrit/img/check_24.png"/></td>' +
+                                    '<td><img class="column_1" src="http://d3uzvcq9wwvnca.cloudfront.net/img/check_24.png"/></td>' +
+                                    '<td><img class="column_2" src="http://d3uzvcq9wwvnca.cloudfront.net/img/check_24.png"/></td>' +
+                                    '<td><img class="column_3" src="http://d3uzvcq9wwvnca.cloudfront.net/img/check_24.png"/></td>' +
                                 '</tr>' +
                                 '<tr>' +
                                     '<td><h5 class="table_img_heading">View Friend\'s Albums</h5></td>' +
-                                    '<td><img class="column_1" src="http://s3.amazonaws.com/portrit/img/check_24.png"/></td>' +
-                                    '<td><img class="column_2" src="http://s3.amazonaws.com/portrit/img/check_24.png"/></td>' +
-                                    '<td><img class="column_3" src="http://s3.amazonaws.com/portrit/img/check_24.png"/></td>' +
+                                    '<td><img class="column_1" src="http://d3uzvcq9wwvnca.cloudfront.net/img/check_24.png"/></td>' +
+                                    '<td><img class="column_2" src="http://d3uzvcq9wwvnca.cloudfront.net/img/check_24.png"/></td>' +
+                                    '<td><img class="column_3" src="http://d3uzvcq9wwvnca.cloudfront.net/img/check_24.png"/></td>' +
                                 '</tr>' +
                                 '<tr>' +
                                     '<td><h5 class="table_img_heading">Photo Gallery</h5></td>' +
-                                    '<td><img class="column_1" src="http://s3.amazonaws.com/portrit/img/check_24.png"/></td>' +
-                                    '<td><img class="column_2" src="http://s3.amazonaws.com/portrit/img/check_24.png"/></td>' +
-                                    '<td><img class="column_3" src="http://s3.amazonaws.com/portrit/img/check_24.png"/></td>' +
+                                    '<td><img class="column_1" src="http://d3uzvcq9wwvnca.cloudfront.net/img/check_24.png"/></td>' +
+                                    '<td><img class="column_2" src="http://d3uzvcq9wwvnca.cloudfront.net/img/check_24.png"/></td>' +
+                                    '<td><img class="column_3" src="http://d3uzvcq9wwvnca.cloudfront.net/img/check_24.png"/></td>' +
                                 '</tr>' +
                                 '<tr>' +
                                     '<td><h5 class="table_img_heading">Touch Friendly</h5></td>' +
-                                    '<td><img class="column_1" src="http://s3.amazonaws.com/portrit/img/check_24.png"/></td>' +
-                                    '<td><img class="column_2" src="http://s3.amazonaws.com/portrit/img/check_24.png"/></td>' +
-                                    '<td><img class="column_3" src="http://s3.amazonaws.com/portrit/img/check_24.png"/></td>' +
+                                    '<td><img class="column_1" src="http://d3uzvcq9wwvnca.cloudfront.net/img/check_24.png"/></td>' +
+                                    '<td><img class="column_2" src="http://d3uzvcq9wwvnca.cloudfront.net/img/check_24.png"/></td>' +
+                                    '<td><img class="column_3" src="http://d3uzvcq9wwvnca.cloudfront.net/img/check_24.png"/></td>' +
                                 '</tr>' +
                                 '<tr>' +
                                     '<td><h5 class="table_img_heading">View Friend\'s Stream</h5></td>' +
-                                    '<td><img class="column_1" src="http://s3.amazonaws.com/portrit/img/check_24.png"/></td>' +
-                                    '<td><img class="column_2" src="http://s3.amazonaws.com/portrit/img/check_24.png"/></td>' +
-                                    '<td><img class="column_3" src="http://s3.amazonaws.com/portrit/img/check_24.png"/></td>' +
+                                    '<td><img class="column_1" src="http://d3uzvcq9wwvnca.cloudfront.net/img/check_24.png"/></td>' +
+                                    '<td><img class="column_2" src="http://d3uzvcq9wwvnca.cloudfront.net/img/check_24.png"/></td>' +
+                                    '<td><img class="column_3" src="http://d3uzvcq9wwvnca.cloudfront.net/img/check_24.png"/></td>' +
                                 '</tr>' +
                                 '<tr>' +
                                     '<td><h5 class="table_img_heading">Comment and Like Friend\'s Post</h5></td>' +
-                                    '<td><img class="column_1" src="http://s3.amazonaws.com/portrit/img/cross_24.png"/></td>' +
-                                    '<td><img class="column_2" src="http://s3.amazonaws.com/portrit/img/check_24.png"/></td>' +
-                                    '<td><img class="column_3" src="http://s3.amazonaws.com/portrit/img/check_24.png"/></td>' +
+                                    '<td><img class="column_1" src="http://d3uzvcq9wwvnca.cloudfront.net/img/cross_24.png"/></td>' +
+                                    '<td><img class="column_2" src="http://d3uzvcq9wwvnca.cloudfront.net/img/check_24.png"/></td>' +
+                                    '<td><img class="column_3" src="http://d3uzvcq9wwvnca.cloudfront.net/img/check_24.png"/></td>' +
                                 '</tr>' +
                                 '<tr>' +
                                     '<td><h5 class="table_img_heading">Hide the Friends You Don\'t Care About</h5></td>' +
-                                    '<td><img class="column_1" src="http://s3.amazonaws.com/portrit/img/cross_24.png"/></td>' +
-                                    '<td><img class="column_2" src="http://s3.amazonaws.com/portrit/img/check_24.png"/></td>' +
-                                    '<td><img class="column_3" src="http://s3.amazonaws.com/portrit/img/check_24.png"/></td>' +
+                                    '<td><img class="column_1" src="http://d3uzvcq9wwvnca.cloudfront.net/img/cross_24.png"/></td>' +
+                                    '<td><img class="column_2" src="http://d3uzvcq9wwvnca.cloudfront.net/img/check_24.png"/></td>' +
+                                    '<td><img class="column_3" src="http://d3uzvcq9wwvnca.cloudfront.net/img/check_24.png"/></td>' +
                                 '</tr>' +
                                 '<tr>' +
                                     '<td><h5 class="table_img_heading">Create a List of Your Favorite Friends</h5></td>' +
-                                    '<td><img class="column_1" src="http://s3.amazonaws.com/portrit/img/cross_24.png"/></td>' +
-                                    '<td><img class="column_2" src="http://s3.amazonaws.com/portrit/img/check_24.png"/></td>' +
-                                    '<td><img class="column_3" src="http://s3.amazonaws.com/portrit/img/check_24.png"/></td>' +
+                                    '<td><img class="column_1" src="http://d3uzvcq9wwvnca.cloudfront.net/img/cross_24.png"/></td>' +
+                                    '<td><img class="column_2" src="http://d3uzvcq9wwvnca.cloudfront.net/img/check_24.png"/></td>' +
+                                    '<td><img class="column_3" src="http://d3uzvcq9wwvnca.cloudfront.net/img/check_24.png"/></td>' +
                                 '</tr>' +
                                 '<tr>' +
                                     '<td><h5 class="table_img_heading">Secret Plus Features</h5></td>' +
-                                    '<td><img class="column_1" src="http://s3.amazonaws.com/portrit/img/cross_24.png"/></td>' +
-                                    '<td><img class="column_2" src="http://s3.amazonaws.com/portrit/img/cross_24.png"/></td>' +
-                                    '<td><img class="column_3" src="http://s3.amazonaws.com/portrit/img/check_24.png"/></td>' +
+                                    '<td><img class="column_1" src="http://d3uzvcq9wwvnca.cloudfront.net/img/cross_24.png"/></td>' +
+                                    '<td><img class="column_2" src="http://d3uzvcq9wwvnca.cloudfront.net/img/cross_24.png"/></td>' +
+                                    '<td><img class="column_3" src="http://d3uzvcq9wwvnca.cloudfront.net/img/check_24.png"/></td>' +
                                 '</tr>' +
                                 '<tr>' +
                                     '<td><h5>Price</h5></td>' +
@@ -1093,7 +1093,7 @@ $(document).ready(function(){
                             facebook_frame + 
                         '</div>' +
                         '<div id="about_left_cont">' +
-                            '<img src="http://s3.amazonaws.com/portrit/img/about_graphic.jpg"/>' +
+                            '<img src="http://d3uzvcq9wwvnca.cloudfront.net/img/about_graphic.jpg"/>' +
                             '<p>Portrit aims to make photo sharing more social. It\'s up to your social circle to find and award the best photos out there. No longer do you need to look through thousands of your friend\'s photos to find the best ones. On Portrit, you and your friends filter the lame photos from the awesome ones.</p>' +
                             pitch_html +
                         '</div>' +
@@ -1240,7 +1240,7 @@ $(document).ready(function(){
                 
                 if (!error){
                     $(that).hide();
-                    $('#contact_form .submit_cont').append('<img class="submit_pending" src="http://s3.amazonaws.com/portrit/img/ajax-loader-light.gif"/>');
+                    $('#contact_form .submit_cont').append('<img class="submit_pending" src="http://d3uzvcq9wwvnca.cloudfront.net/img/ajax-loader-light.gif"/>');
                     $.post('/contact_portrit/', {'email': email, 'reason': reason, 'message': message}, function(data){
                         $('.submit_pending').remove();
                         $(that).show();
@@ -1314,7 +1314,7 @@ $(document).ready(function(){
                 
                 if (!error){
                     $(that).hide();
-                    $('#bug_form .submit_cont').append('<img class="submit_pending" src="http://s3.amazonaws.com/portrit/img/ajax-loader-light.gif"/>');
+                    $('#bug_form .submit_cont').append('<img class="submit_pending" src="http://d3uzvcq9wwvnca.cloudfront.net/img/ajax-loader-light.gif"/>');
                     $.post('/submit_bug_report/', {'email': email, 'where': where, 'message': message, 'os': os, 'browser': browser}, function(data){
                         $('#bug_form .submit_pending').remove();
                         $(that).show();
@@ -1452,13 +1452,13 @@ $(document).ready(function(){
         var referrals_needed = 3 - referrals;
         var bottom_mid = {'x': start_x + (width / 2),
                             'y': start_y + height};
-        var img_html = '<img class="right" src="http://s3.amazonaws.com/portrit/img/upgrade_arrow.png"/>';
+        var img_html = '<img class="right" src="http://d3uzvcq9wwvnca.cloudfront.net/img/upgrade_arrow.png"/>';
                             
         if (Math.abs(start_x) < 153){
             start_x = $(element).position().left - 17;
             bottom_mid = {'x': start_x + (width / 2),
                                 'y': start_y + height};
-            img_html = '<img class="left" src="http://s3.amazonaws.com/portrit/img/upgrade_arrow.png"/>';
+            img_html = '<img class="left" src="http://d3uzvcq9wwvnca.cloudfront.net/img/upgrade_arrow.png"/>';
         }
         else if (mobile && !tablet){
             start_x = $(element).position().left - 203;
@@ -1600,7 +1600,7 @@ $(document).ready(function(){
         var meta_html = '';
         if (mobile && !tablet){
             if (typeof(_gaq) !== "undefined"){
-                meta_html = '<link rel="stylesheet" href="http://s3.amazonaws.com/portrit/styles/production/mobile.css"/>';
+                meta_html = '<link rel="stylesheet" href="http://d3uzvcq9wwvnca.cloudfront.net/styles/production/mobile.css"/>';
             }
             else{
                 meta_html = '<link rel="stylesheet" href="/site_media/styles/trunk/mobile.css"/>';
@@ -1608,7 +1608,7 @@ $(document).ready(function(){
         }
         else if (mobile && tablet){
             if (typeof(_gaq) !== "undefined"){
-                meta_html = '<link rel="stylesheet" href="http://s3.amazonaws.com/portrit/styles/production/tablet.css"/>';
+                meta_html = '<link rel="stylesheet" href="http://d3uzvcq9wwvnca.cloudfront.net/styles/production/tablet.css"/>';
             }
         }
         $('head').append(meta_html);
@@ -2219,12 +2219,12 @@ $(document).ready(function(){
         if (data.length == 1){
             trophy_count_text = 'trophy';
             trophy_won_text = 'won the ' + data[0].cat + ' trophy for his rockin\' photo!';
-            trophy_html = '<img src="http://s3.amazonaws.com/portrit/img/invite/' + cat_underscore + '.png"/>';
+            trophy_html = '<img src="http://d3uzvcq9wwvnca.cloudfront.net/img/invite/' + cat_underscore + '.png"/>';
         }
         else{
             //Blank trophy
             trophy_won_text = 'won ' + data.length + ' trophies for his rockin\' photos!';
-            trophy_html = '<img src="http://s3.amazonaws.com/portrit/img/invite/blank.png"/>';
+            trophy_html = '<img src="http://d3uzvcq9wwvnca.cloudfront.net/img/invite/blank.png"/>';
         }
         
         publish_story_html ='<div id="publish_story_cont">' +
@@ -2238,7 +2238,7 @@ $(document).ready(function(){
                                     '<div id="preview_left">' +
                                         trophy_html +
                                         '<div id="preview_left_bottom">' +
-                                            '<img src="http://s3.amazonaws.com/portrit/img/favicon.png"/>' +
+                                            '<img src="http://d3uzvcq9wwvnca.cloudfront.net/img/favicon.png"/>' +
                                             '<span>via Portrit</span>' +
                                             '<div class="clear"></div>' +
                                         '</div>' +
@@ -2265,10 +2265,10 @@ $(document).ready(function(){
             
             var trophy_img_src = '';
             if (data.length == 1){
-                trophy_img_src = 'http://s3.amazonaws.com/portrit/img/invite/' + cat_underscore + '.png';
+                trophy_img_src = 'http://d3uzvcq9wwvnca.cloudfront.net/img/invite/' + cat_underscore + '.png';
             }
             else{
-                trophy_img_src = 'http://s3.amazonaws.com/portrit/img/invite/blank.png';
+                trophy_img_src = 'http://d3uzvcq9wwvnca.cloudfront.net/img/invite/blank.png';
             }
             var link = 'http://184.73.249.104/#/nom_id=' + data[0].nom_id + '/ref=facebook';
             var name = $('#trophy_won_nom_link').text();
@@ -2695,7 +2695,7 @@ $(document).ready(function(){
             var tut_completed_html ='<h1>Congratulations!</h1>' +
                                     '<h2>You have just completed the tutorial.</h2>' +
                                     '<div id="tut_completed_middle">' +
-                                        '<img src="http://s3.amazonaws.com/portrit/img/tutorial_graphic.png"/>' +
+                                        '<img src="http://d3uzvcq9wwvnca.cloudfront.net/img/tutorial_graphic.png"/>' +
                                         '<div class="tut_check_completed">' +
                                             '<div class="green_checkmark"></div>' +
                                             '<p>You nominated 3 of your friend\'s photos.</p>' +
@@ -2789,7 +2789,7 @@ $(document).ready(function(){
             else{
                 allow_notifications = true;
                 $(this).attr('checked', 'true');
-                $(this).attr('src', 'http://s3.amazonaws.com/portrit/img/checked_box.png');
+                $(this).attr('src', 'http://d3uzvcq9wwvnca.cloudfront.net/img/checked_box.png');
                 $(this).removeClass().addClass('checked');
             }
             $.post('/change_user_notifications/', {'allow_notifications': allow_notifications}, function(data){
@@ -2858,14 +2858,14 @@ $(document).ready(function(){
                                                 '<h2 class="tut_point_num nom_cat_lol">2</h2>' +
                                                 '<h3>Vote On Your Favorite</h3>' + 
                                                 '<p>It\'s up to you and your friends to decide who earns a trophy. Take a look through all the Hot, WTF, FAIL, etc photos and give your opinion. Love it, vote it up. Hate it, vote it down.</p>' +
-                                                '<img src="http://s3.amazonaws.com/portrit/img/vote.png"/>' +
+                                                '<img src="http://d3uzvcq9wwvnca.cloudfront.net/img/vote.png"/>' +
                                                 '<div class="clear"></div>' +
                                             '</div>' +
                                             '<div class="tut_point">' +
                                                 '<h2 class="tut_point_num nom_cat_party_animal">3</h2>' +
                                                 '<h3>Build Up Your Trophy Room</h3>' + 
                                                 '<p>Got amazing photos? Earn trophies for your hard work. Friends see your winning photos first, so your best photos are always first to be seen. Don\'t sweat not winning, everything starts fresh the next day, so your hilarious LOLcat photo can live again.</p>' +
-                                                '<img src="http://s3.amazonaws.com/portrit/img/trophy_room.png"/>' +
+                                                '<img src="http://d3uzvcq9wwvnca.cloudfront.net/img/trophy_room.png"/>' +
                                                 '<div class="clear"></div>' +
                                             '</div>' +
                                             '<div id="allow_notifications_cont">' +
@@ -2880,8 +2880,8 @@ $(document).ready(function(){
                                                 '<span class="awesome large green">Go</span>' +
                                             '</div>' +
                                         '</div>' +
-                                        '<img id="box_img" src="http://s3.amazonaws.com/portrit/img/boxtrophy.png"/>' +
-                                        '<img id="landfill_img" src="http://s3.amazonaws.com/portrit/img/landfilltrophy.png"/>' +
+                                        '<img id="box_img" src="http://d3uzvcq9wwvnca.cloudfront.net/img/boxtrophy.png"/>' +
+                                        '<img id="landfill_img" src="http://d3uzvcq9wwvnca.cloudfront.net/img/landfilltrophy.png"/>' +
                                         '<p id="close_initial_tut" class="close_img ' + close_size +'"></p>' +
                                     '</div>' +
                                 '</div>';
@@ -2900,7 +2900,7 @@ $(document).ready(function(){
     var allow_notifications = true;
     var server_login_timeout = null;
     function login_fb_user(){
-        $('#cont').prepend('<div class="loading"><h1>Portrit Loading...</h1><div id="loader"><img src="http://s3.amazonaws.com/portrit/img/album-loader-dark.gif"/></div></div>');
+        $('#cont').prepend('<div class="loading"><h1>Portrit Loading...</h1><div id="loader"><img src="http://d3uzvcq9wwvnca.cloudfront.net/img/album-loader-dark.gif"/></div></div>');
         setTimeout(render_server_dead, 3000);
         $.post('/login_fb_user/', function(data){
             clearTimeout(server_login_timeout);
@@ -2953,7 +2953,7 @@ $(document).ready(function(){
     }
     
     function init_view(func_ptr){
-        // $('#cont').append('<img id="login_loader" src="http://s3.amazonaws.com/portrit/img/album-loader-dark.gif"/>');
+        // $('#cont').append('<img id="login_loader" src="http://d3uzvcq9wwvnca.cloudfront.net/img/album-loader-dark.gif"/>');
         if (window.sessionStorage !== undefined){
             me = sessionStorage.getItem('me');
             photo_filter = sessionStorage.getItem('photo_filter');
@@ -3712,7 +3712,7 @@ $(document).ready(function(){
             trophy_name_underscore = data[i].cat_name.replace(' ', '_').toLowerCase();
             trophy_html =   '<div class="trophy_cont nom_cat_' + trophy_name_underscore + '_hover">' +
                                 '<a href="#/trophy/user=me/trophy=' + trophy_name_underscore + '">' +
-                                    '<img src="http://s3.amazonaws.com/portrit/img/trophies/medium/' + trophy_name_underscore + '.png"/>' +
+                                    '<img src="http://d3uzvcq9wwvnca.cloudfront.net/img/trophies/medium/' + trophy_name_underscore + '.png"/>' +
                                     '<div class="trophy_win_count">' +
                                         '<p class="nom_cat_' + trophy_name_underscore + '">' + data[i].count + '</p>' +
                                     '</div>' +
@@ -4689,7 +4689,7 @@ $(document).ready(function(){
             get_user_videos(id);
         }
         else{
-            album_html = '<div id="info_wrap"><h1>Profile Info <span>Not Your Friend</span></h1><div id="info_cont"><div id="info_loading"><img src="http://s3.amazonaws.com/portrit/img/ajax-loader-light.gif"/></div></div></div>';
+            album_html = '<div id="info_wrap"><h1>Profile Info <span>Not Your Friend</span></h1><div id="info_cont"><div id="info_loading"><img src="http://d3uzvcq9wwvnca.cloudfront.net/img/ajax-loader-light.gif"/></div></div></div>';
             $('#title').html('<h3>' + name + '</h3>');
             $('#title').show();
             $('#friend_album_cont').prepend(album_html);
@@ -4905,7 +4905,7 @@ $(document).ready(function(){
             }
             if ($('.like_photo').length <= 0){
                 if (view_active != 'gallery'){
-                    $('#like_cont').append('<img class="like_photo" id="lid_' + post_id + '" src="http://s3.amazonaws.com/portrit/img/like.png"/>');
+                    $('#like_cont').append('<img class="like_photo" id="lid_' + post_id + '" src="http://d3uzvcq9wwvnca.cloudfront.net/img/like.png"/>');
                 }
             }
         }
@@ -5537,9 +5537,9 @@ $(document).ready(function(){
                                     '<img class="nom_main_photo" src="' + nom_data.photo.src  + '"/>' +
                                 '</a>' +
                                 '<div class="vote_cont">' +
-                                    '<img class="vote_up" name="' + nom_data.id + '" src="http://s3.amazonaws.com/portrit/img/up_small.png"/>' +
+                                    '<img class="vote_up" name="' + nom_data.id + '" src="http://d3uzvcq9wwvnca.cloudfront.net/img/up_small.png"/>' +
                                     '<p>' + nom_data.vote_count + '</p>' +
-                                    '<img class="vote_down" name="' + nom_data.id + '" src="http://s3.amazonaws.com/portrit/img/down_small.png"/>' +
+                                    '<img class="vote_down" name="' + nom_data.id + '" src="http://d3uzvcq9wwvnca.cloudfront.net/img/down_small.png"/>' +
                                 '</div>';
                     photo_wrap ='<div class="nom_photo_bottom_wrap">' +
                                     '<a href="#">' +
@@ -5684,7 +5684,7 @@ $(document).ready(function(){
                                                         '<img class="nom_main_photo" src="' + data[i].noms[0].photo.src + '">' + 
                                                     '</a>' +
                                                 '</div>' +
-                                                '<img class="winning_trophy" src="http://s3.amazonaws.com/portrit/img/trophies/large/' + cat_name_underscore + '.png"/>' +
+                                                '<img class="winning_trophy" src="http://d3uzvcq9wwvnca.cloudfront.net/img/trophies/large/' + cat_name_underscore + '.png"/>' +
                                                 '<div class="nom_photo_bottom_wrap">' +
                                                     '<a href="#/nom_id=' + data[i].noms[0].id + '"><p class="left">Comments: <span>' + data[i].noms[0].comment_count + '</span></p><p class="right strong">' + name + '</p></a>' +
                                                 '</div>'
@@ -5701,7 +5701,7 @@ $(document).ready(function(){
                                             '<div class="winning_nom_cat_main_photo_cont">' +
                                                 '<div class="empty_winning_cont">' +
                                                     '<h1>No winners for <span class="nom_cat_' + cat_name_underscore + '_text">' + cat_name + '</span> yet. Be the first of your friends!</h1>' +
-                                                    '<img class="winning_trophy" style="bottom: 0px;" src="http://s3.amazonaws.com/portrit/img/trophies/large/' + cat_name_underscore + '.png"/>' +
+                                                    '<img class="winning_trophy" style="bottom: 0px;" src="http://d3uzvcq9wwvnca.cloudfront.net/img/trophies/large/' + cat_name_underscore + '.png"/>' +
                                                 '</div>' +
                                             '</div>' +
                                         '</div>' +
@@ -5715,10 +5715,10 @@ $(document).ready(function(){
     
     function append_load(cont, loader){
         if (loader == 'light'){
-            $(cont).append('<div id="loader"><img src="http://s3.amazonaws.com/portrit/img/ajax-loader-light.gif"/></div>');
+            $(cont).append('<div id="loader"><img src="http://d3uzvcq9wwvnca.cloudfront.net/img/ajax-loader-light.gif"/></div>');
         }
         else{
-            $(cont).append('<div id="loader"><img src="http://s3.amazonaws.com/portrit/img/album-loader-dark.gif"/></div>');
+            $(cont).append('<div id="loader"><img src="http://d3uzvcq9wwvnca.cloudfront.net/img/album-loader-dark.gif"/></div>');
         }
     }
     
@@ -6404,7 +6404,7 @@ $(document).ready(function(){
                     
         $('#scroller').append(empty_html);
         
-        $('#latest_empty_wrap .empty_cont').append('<div id="loader_short"><img src="http://s3.amazonaws.com/portrit/img/ajax-loader-light.gif"/></div>');
+        $('#latest_empty_wrap .empty_cont').append('<div id="loader_short"><img src="http://d3uzvcq9wwvnca.cloudfront.net/img/ajax-loader-light.gif"/></div>');
         //Empty Recent Photos
         $.getJSON('https://api.facebook.com/method/stream.get?access_token=' + fb_session.access_token + '&limit=50&filter_key=' + photo_filter + '&format=json&callback=?', function(data){
             $('#loader_short').remove();
@@ -6682,7 +6682,7 @@ $(document).ready(function(){
                 nom_cat_underscore = nom_cat.replace(' ', '_').toLowerCase();
                 trophy_cont_html =  '<div class="winning_trophy_cont">' +
                                         '<a href="/#/trophy/user=' + id + '/trophy=' + nom_cat_underscore + '">' +
-                                            '<img src="http://s3.amazonaws.com/portrit/img/trophies/medium/' + nom_cat_underscore + '.png"/>' +
+                                            '<img src="http://d3uzvcq9wwvnca.cloudfront.net/img/trophies/medium/' + nom_cat_underscore + '.png"/>' +
                                             '<div class="winning_trophy_count nom_cat_' + nom_cat_underscore + '">' + winning_noms_cats[trophy] + '</div>' +
                                         '</a>' +
                                     '</div>';
@@ -7855,7 +7855,7 @@ $(document).ready(function(){
                     $('#photo_comments').show();
                     var profile_feed_comment = '<div class="comment_self" style="display:none;">' +
                                                     '<div class="like" name="Like">' +
-                                                        '<img style="display: none; " class="like_photo" src="http://s3.amazonaws.com/portrit/img/like.png">'+
+                                                        '<img style="display: none; " class="like_photo" src="http://d3uzvcq9wwvnca.cloudfront.net/img/like.png">'+
                                                     '</div>' +
                                                     '<a href="#/user=me">' +
                                                         '<img class="user_photo" src="http://graph.facebook.com/' + me.id + '/picture?type=square">' +
@@ -7994,7 +7994,7 @@ $(document).ready(function(){
             
             var ref_freiend_html =  '<div class="reffed_friend" id="' + id + '" value="' + fid + '" name="' + name + '">' +
                                         '<img src="https://graph.facebook.com/' + fid + '/picture?type=square">' +
-                                        '<img class="kill_referral" src="http://s3.amazonaws.com/portrit/img/x_medium.png">' +
+                                        '<img class="kill_referral" src="http://d3uzvcq9wwvnca.cloudfront.net/img/x_medium.png">' +
                                     '</div>';
             
             if ($('#refer_button').length === 0){
@@ -8545,7 +8545,7 @@ $(document).ready(function(){
         //     var preview_html =  '<div class="preview_cont">' +
         //                             '<div class="preview_wrap">' +
         //                                 '<img class="photo_to_upload" name="' + data.id + '" src="' + data.photo_medium + '"/>' +
-        //                                 '<img class="kill_photo close_img" src="http://s3.amazonaws.com/portrit/img/x.png">' +
+        //                                 '<img class="kill_photo close_img" src="http://d3uzvcq9wwvnca.cloudfront.net/img/x.png">' +
         //                             '</div>' +
         //                             '<input type="text" class="photo_caption" name="caption_' + data.id + '" value="Photo Caption"/>' +
         //                         '</div>';
@@ -8602,19 +8602,19 @@ $(document).ready(function(){
         //             
         //         left_nom_cont = '<ul class="left_photo_nom_cont">' + 
         //                             '<li class="unselected" id="Hot_cont">' +
-        //                                 '<img src="http://s3.amazonaws.com/portrit/img/trophies/small/hot.png">' +
+        //                                 '<img src="http://d3uzvcq9wwvnca.cloudfront.net/img/trophies/small/hot.png">' +
         //                                 '<h4 class="nom_cat_hot_text">Hot</h4>' +
         //                             '</li>' +
         //                             '<li class="unselected" id="Lol_cont">' +
-        //                                 '<img src="http://s3.amazonaws.com/portrit/img/trophies/small/lol.png">' +
+        //                                 '<img src="http://d3uzvcq9wwvnca.cloudfront.net/img/trophies/small/lol.png">' +
         //                                 '<h4 class="nom_cat_lol_text">LOL</h4>' +
         //                             '</li>' +
         //                             '<li class="unselected" id="Artsy_cont">' +
-        //                                 '<img src="http://s3.amazonaws.com/portrit/img/trophies/small/artsy.png">' +
+        //                                 '<img src="http://d3uzvcq9wwvnca.cloudfront.net/img/trophies/small/artsy.png">' +
         //                                 '<h4 class="nom_cat_artsy_text">Artsy</h4>' + 
         //                             '</li>' +
         //                             '<li class="unselected" id="Fail_cont">' +
-        //                                 '<img src="http://s3.amazonaws.com/portrit/img/trophies/small/fail.png">' +
+        //                                 '<img src="http://d3uzvcq9wwvnca.cloudfront.net/img/trophies/small/fail.png">' +
         //                                 '<h4 class="nom_cat_fail_text">Fail</h4>' + 
         //                             '</li>' +
         //                             '<div class="clear"></div>' +
@@ -8622,19 +8622,19 @@ $(document).ready(function(){
         //                         
         //         right_nom_cont ='<ul class="right_photo_nom_cont">' +
         //                             '<li class="unselected" id="Party_Animal_cont">' +
-        //                                 '<img src="http://s3.amazonaws.com/portrit/img/trophies/small/party_animal.png">' +
+        //                                 '<img src="http://d3uzvcq9wwvnca.cloudfront.net/img/trophies/small/party_animal.png">' +
         //                                 '<h4 class="nom_cat_party_animal_text">Party Animal</h4>' +
         //                             '</li>' +
         //                             '<li class="unselected" id="Cute_cont">' +
-        //                                 '<img src="http://s3.amazonaws.com/portrit/img/trophies/small/cute.png">' +
+        //                                 '<img src="http://d3uzvcq9wwvnca.cloudfront.net/img/trophies/small/cute.png">' +
         //                                 '<h4 class="nom_cat_cute_text">Cute</h4>' +
         //                             '</li>' +
         //                             '<li class="unselected" id="WTF_cont">' +
-        //                                 '<img src="http://s3.amazonaws.com/portrit/img/trophies/small/wtf.png">' +
+        //                                 '<img src="http://d3uzvcq9wwvnca.cloudfront.net/img/trophies/small/wtf.png">' +
         //                                 '<h4 class="nom_cat_wtf_text">WTF</h4>' +
         //                             '</li>' +
         //                             '<li class="unselected" id="Creepy_cont">' +
-        //                                 '<img src="http://s3.amazonaws.com/portrit/img/trophies/small/creepy.png">' +
+        //                                 '<img src="http://d3uzvcq9wwvnca.cloudfront.net/img/trophies/small/creepy.png">' +
         //                                 '<h4 class="nom_cat_creepy_text">Creepy</h4>' +
         //                             '</li>' +
         //                             '<div class="clear"></div>' +
@@ -8709,7 +8709,7 @@ $(document).ready(function(){
         //         }, 300);
         //         var nom_clone = $(this).clone();
         //         $(selected_noms_cont).append(nom_clone);
-        //         $(selected_noms_cont).find('.selected:last').append('<img class="kill_nomination close_img" src="http://s3.amazonaws.com/portrit/img/x.png">').css({
+        //         $(selected_noms_cont).find('.selected:last').append('<img class="kill_nomination close_img" src="http://d3uzvcq9wwvnca.cloudfront.net/img/x.png">').css({
         //             'display': 'inline-block'
         //         });
         //     }
@@ -8851,7 +8851,7 @@ $(document).ready(function(){
             var oldest_time = $('.recent_nom_cont:last').attr('time');
             
             $(this).remove();
-            $('#recent_left_cont').append('<div id="profile_loading"><img src="http://s3.amazonaws.com/portrit/img/ajax-loader-light.gif"/></div>');
+            $('#recent_left_cont').append('<div id="profile_loading"><img src="http://d3uzvcq9wwvnca.cloudfront.net/img/ajax-loader-light.gif"/></div>');
             $.getJSON('/get_more_recent_stream/', {'create_time': oldest_time}, function(data){
                 $('#profile_loading').remove();
                 render_recent_stream(data);
@@ -8974,7 +8974,7 @@ $(document).ready(function(){
         
         $('#trophy_cont').removeClass().addClass('nom_cat_' + cat_underscore);
         $('#nomination_text_cont h3').text(nom.nomination_category);
-        $('#nom_trophy_icon').removeClass().addClass('trophy_img large ' + cat_underscore);//.attr('src', 'http://s3.amazonaws.com/portrit/img/trophies/large/' + cat_underscore + '.png');
+        $('#nom_trophy_icon').removeClass().addClass('trophy_img large ' + cat_underscore);//.attr('src', 'http://d3uzvcq9wwvnca.cloudfront.net/img/trophies/large/' + cat_underscore + '.png');
         $('#nominator_overlay_cont a').attr('href', '/#/user=' + nom.nominator);
         $('#nominator_overlay_cont > h2 > a').text(nominator_name);
         $('#nominator_overlay_cont p').text(caption);
@@ -9409,7 +9409,7 @@ $(document).ready(function(){
             if ($(window).scrollTop() >= $('#photo_list').height() - ($(window).height() *2)){
                 if (photo_load_once){
                     // if ($('.photos_loading').length == 0 && !album_completed){
-                    //     $('#photo_scroller').append('<img class="photos_loading" src="http://s3.amazonaws.com/portrit/img/album-loader-dark.gif"/>');
+                    //     $('#photo_scroller').append('<img class="photos_loading" src="http://d3uzvcq9wwvnca.cloudfront.net/img/album-loader-dark.gif"/>');
                     // }
                     if (!album_completed){
                         init_list_view();
@@ -9651,7 +9651,7 @@ $(document).ready(function(){
                             nom_cat_underscore = data[i].nomination_category.replace(' ', '_').toLowerCase();
                             nom_complete_html = '<div class="nom_complete_cat_cont">' +
                                                     '<a href="#/nom_id=' + data[i].id + '">' +
-                                                        '<img src="http://s3.amazonaws.com/portrit/img/trophies/medium/' + nom_cat_underscore + '.png"/>' +
+                                                        '<img src="http://d3uzvcq9wwvnca.cloudfront.net/img/trophies/medium/' + nom_cat_underscore + '.png"/>' +
                                                     'View Nomination</a>' +
                                                 '</div>';
                             $('#nom_complete_cont').append(nom_complete_html);
@@ -9781,7 +9781,7 @@ $(document).ready(function(){
             else{
                 trophy_won_text = name + ' nominated one of ' + friend_name + '\'s photos for the ' + data[0].nomination_category + ' trophy';
             }
-            trophy_html = '<img src="http://s3.amazonaws.com/portrit/img/invite/' + cat_underscore + '.png"/>';
+            trophy_html = '<img src="http://d3uzvcq9wwvnca.cloudfront.net/img/invite/' + cat_underscore + '.png"/>';
         }
         else{
             //Blank trophy
@@ -9791,7 +9791,7 @@ $(document).ready(function(){
             else{
                 trophy_won_text = name + ' nominated one of ' + friend_name + '\'s photos for the ' + multiple_trophy_text + ' trophies';
             }
-            trophy_html = '<img src="http://s3.amazonaws.com/portrit/img/invite/blank.png"/>';
+            trophy_html = '<img src="http://d3uzvcq9wwvnca.cloudfront.net/img/invite/blank.png"/>';
         }
         
         publish_story_html ='<div id="publish_story_cont">' +
@@ -9805,7 +9805,7 @@ $(document).ready(function(){
                                     '<div id="preview_left">' +
                                         trophy_html +
                                         '<div id="preview_left_bottom">' +
-                                            '<img src="http://s3.amazonaws.com/portrit/img/favicon.png"/>' +
+                                            '<img src="http://d3uzvcq9wwvnca.cloudfront.net/img/favicon.png"/>' +
                                             '<span>via Portrit</span>' +
                                             '<div class="clear"></div>' +
                                         '</div>' +
@@ -9832,10 +9832,10 @@ $(document).ready(function(){
             var nom_ids = $(this).attr('value');
             var trophy_img_src = '';
             if (data.length == 1){
-                trophy_img_src = 'http://s3.amazonaws.com/portrit/img/invite/' + cat_underscore + '.png';
+                trophy_img_src = 'http://d3uzvcq9wwvnca.cloudfront.net/img/invite/' + cat_underscore + '.png';
             }
             else{
-                trophy_img_src = 'http://s3.amazonaws.com/portrit/img/invite/blank.png';
+                trophy_img_src = 'http://d3uzvcq9wwvnca.cloudfront.net/img/invite/blank.png';
             }
             var link = 'http://184.73.249.104/#/nom_id=' + data[0].id + '/ref=facebook';
             var name = $('#trophy_nom_text_link').text();
@@ -10238,7 +10238,7 @@ $(document).ready(function(){
                     else if (selected_user !== undefined && selected_user != '' && selected_user != undefined){
                         user_name = friends[selected_user].name.split(" ", 1)
                     }
-                    $('#photo_list').append('<div id="album_link_loader"><h2>Loading ' + user_name + '\'s Albums...</h2><div id="loader"><img src="http://s3.amazonaws.com/portrit/img/album-loader-dark.gif"/></div></div>');
+                    $('#photo_list').append('<div id="album_link_loader"><h2>Loading ' + user_name + '\'s Albums...</h2><div id="loader"><img src="http://d3uzvcq9wwvnca.cloudfront.net/img/album-loader-dark.gif"/></div></div>');
                     clearInterval(photo_load_wait);
                     photo_load_wait = setInterval(function(){
                         if (album_completed || url_vars.album == 'tagged'){
