@@ -16,5 +16,5 @@ cd ..
 s3cmd put $SQL_BACKUP_FILE s3://portrit_backup
 rm $SQL_BACKUP_FILE
 
-mail -s "Database Backup" jerrylin86@gmail.com < /var/www/email/backup_message.txt
+mail -s " Portrit Database Backup" jerrylin86@gmail.com < /var/www/email/backup_message.txt
 
