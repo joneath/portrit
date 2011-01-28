@@ -1,6 +1,8 @@
-#!/bin/bash
+#!/bin/sh
 
-if ps ax | grep -v grep | grep "httpd" > /dev/null
+SERVICE='httpd'
+
+if ps ax | grep -v grep | grep $SERVICE > /dev/null
 then
 	echo "Apache service is running, everything is fine"
 else
