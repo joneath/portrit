@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 
-if ps ax | grep -v grep | grep "nginx:" < /dev/null
+if ps ax | grep -v grep | grep "nginx: " < /dev/null
 then
 	echo "Nginx service is running, everything is fine"
 else
