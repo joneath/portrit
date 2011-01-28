@@ -7,5 +7,5 @@ then
 	echo "Apache service is running, everything is fine"
 else
 	/etc/init.d/httpd start 
-	mail -s "Portrit Apache Failed" jerrylin86@gmail.com portritinc@gmail.com < /var/www/email/httpd_message.txt
+	# mail -s "Portrit Apache Failed" jerrylin86@gmail.com portritinc@gmail.com < /var/www/email/httpd_message.txt
 fi
