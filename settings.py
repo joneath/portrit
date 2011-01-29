@@ -20,6 +20,7 @@ if ENV == "LOCAL":
     DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
     
     MEDIA_ROOT = os.path.join(os.path.dirname(__file__), 'media').replace('\\','/')
+    MEDIA_URL = '/site_media/'
     BASE_URL = "http://localhost:8000/"
     
     EMAIL_HOST = 'smtp.webfaction.com'
@@ -41,11 +42,11 @@ elif ENV == "TEST":
     DATABASE_NAME = 'portrit'             # Or path to database file if using sqlite3.
     DATABASE_USER = 'root'             # Not used with sqlite3.
     DATABASE_PASSWORD = ''         # Not used with sqlite3.
-    DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
+    DATABASE_HOST = '10.212.93.12'             # Set to empty string for localhost. Not used with sqlite3.
     DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
     
-    BASE_URL = "http://portrit.com"
-    MEDIA_ROOT = '/home/joneath/webapps/portrit_media/'
+    BASE_URL = "http://test.portrit.com"
+    MEDIA_URL = 'http://d3uzvcq9wwvnca.cloudfront.net/'
     
     EMAIL_HOST = 'smtp.webfaction.com'
     EMAIL_PORT = '25'
@@ -66,11 +67,11 @@ else:
     DATABASE_NAME = 'portrit'             # Or path to database file if using sqlite3.
     DATABASE_USER = 'root'             # Not used with sqlite3.
     DATABASE_PASSWORD = ''         # Not used with sqlite3.
-    DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
+    DATABASE_HOST = '10.212.93.12'             # Set to empty string for localhost. Not used with sqlite3.
     DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
     
     BASE_URL = "http://portrit.com"
-    MEDIA_ROOT = '/home/joneath/webapps/portrit_media/'
+    MEDIA_URL = 'http://d3uzvcq9wwvnca.cloudfront.net/'
     
     EMAIL_HOST = 'smtp.webfaction.com'
     EMAIL_PORT = '25'
@@ -104,8 +105,6 @@ SITE_ID = 1
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
 USE_I18N = True
-    
-MEDIA_URL = '/site_media/'
 
 LOGIN_URL = '/'
 

@@ -2443,15 +2443,17 @@ $(document).ready(function(){
             // if (footer_show_first){
             var read_ids = $('.notification_popup_cont[read="false"]');
             if (read_ids.length > 0){
+                var read_ids_string = '';
                 setTimeout(function(){
                     $(read_ids).each(function(){
-                        var cat_name = $(this).attr('name');
+                        var cat_name = $(this).attr('read', true).attr('name');
+                        read_ids_string += $(this).attr('id').replace('notification_', '') + ',';
                         $(this).removeClass('nom_cat_' + cat_name);
                     });
+                    $.post('/notification_read/', {'notification_ids': read_ids_string}, function(){
+                    
+                    });
                 }, 100);
-                // $.post('/notification_read/', {'notification_ids': read_ids}, function(){
-                // 
-                // });
                 // setTimeout(function(){
                     // $(read_ids).each(function(){
                     //     var cat_name = $(this).attr('name');
@@ -2757,7 +2759,9 @@ $(document).ready(function(){
             if (!mobile){
                 $('#initial_tut_cont').fadeOut(function(){
                     $(this).remove();
-                    render_tut(tut_counts);
+                    if (!mobile || tablet){
+                        render_tut(tut_counts);
+                    }
                     init_view(update_view);
                 });
                 $('#wrapper').animate({
@@ -2772,7 +2776,9 @@ $(document).ready(function(){
                     'opacity': '1.0',
                     'min-height': '100%'
                 });
-                render_tut(tut_counts);
+                if (!mobile || tablet){
+                    render_tut(tut_counts);
+                }
                 init_view(update_view);
             }
             $('#close_initial_tut, #tut_go_cont span').die('click');
@@ -2918,7 +2924,7 @@ $(document).ready(function(){
                     render_initial_tutorial(tut_counts);
                 }
                 else{
-                    if (tut_counts){
+                    if (tut_counts && (!mobile || tablet)){
                         $('#right_nav').prepend('<div id="activate_tut"><div id="tutorial_cont" style="display:none;"><div id="tut_arrow"></div><h1>Tutorial</h1><div id="tut_section_wrap"><div class="tut_section" id="nomination_tut"></div><div class="tut_section" id="vote_count_tut"></div><div class="tut_section" id="comment_count_tut"></div></div><a id="skip_tut" class="awesome large">Skip</a></div></div>');
                         render_tut(tut_counts);
                     }
