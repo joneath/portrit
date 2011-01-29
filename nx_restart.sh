@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if ps -ef | grep "nginx: master process" | grep -v grep
+if ps -ef | grep "nginx:" | grep -v grep > /dev/null
 then
 	echo "Nginx service is running, everything is fine"
 else
