@@ -4044,6 +4044,9 @@ $(document).ready(function(){
         if (nom.nominator == me.id){
             nominator_name = 'You';
         }
+        else if (nom.nominator_name){
+            nominator_name = nom.nominator_name;
+        }
         else if (friends[nom.nominator]){
             nominator_name = friends[nom.nominator].name;
         }
@@ -5913,6 +5916,9 @@ $(document).ready(function(){
             if (nom.nominator == me.id){
                 nominator_name = 'You';
             }
+            else if (nom.nominator_name){
+                nominator_name = nom.nominator_name;
+            }
             else if (friends[nom.nominator]){
                 nominator_name = friends[nom.nominator].name;
             }
@@ -6076,6 +6082,9 @@ $(document).ready(function(){
             nominator_caption = '';
             if (nom.nominator == me.id){
                 nominator_name = 'You';
+            }
+            else if (nom.nominator_name){
+                nominator_name = nom.nominator_name;
             }
             else if (friends[nom.nominator]){
                 nominator_name = friends[nom.nominator].name;
