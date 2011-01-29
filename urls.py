@@ -26,6 +26,7 @@ urlpatterns += patterns('',
     url(r'^change_user_notifications/$', 'main.user_views.change_user_notifications', name='change_user_notifications'),
     url(r'^get_user_win_stream/$', 'main.user_views.get_user_win_stream', name='get_user_win_stream'),
     url(r'^get_user_trophies/$', 'main.user_views.get_user_trophies', name='get_user_trophies'),
+    url(r'^get_top_feed/$', 'main.user_views.get_top_feed', name='get_top_feed'),
     url(r'^get_more_recent_stream/$', 'main.user_views.get_more_recent_stream', name='get_more_recent_stream'),
     url(r'^skip_tut/$', 'main.user_views.skip_tut', name='skip_tut'),
 )

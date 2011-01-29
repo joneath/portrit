@@ -1057,24 +1057,10 @@ $(document).ready(function(){
     }
     
     function render_about(){
-        var pitch_html = '';
-        // if (account_type == 'BASIC' && view_active != 'login'){
-        //     pitch_html =    '<div id="pitch_cont">' +
-        //                         '<h3>Want to be more social?</h3>' +
-        //                         '<a href="#/upgrade=social"><h4>Check out what you can unlock here</h4></a>' +
-        //                     '</div>';
-        // }
-        // else if(account_type == 'SOCIAL' && view_active != 'login'){
-        //     pitch_html = '<div id="pitch_cont"><h3>Want to pwn the world?</h3></div>';
-        // }
-        // else if(account_type == 'PLUS' && view_active != 'login'){
-        //     pitch_html = '<div id="pitch_cont"><h3>You pwn the world</h3></div>';
-        // }
         var facebook_frame = '<div id="facebook_frame"><iframe src="http://www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2Fapps%2Fapplication.php%3Fid%3D126374870731237&amp;width=292&amp;connections=10&amp;stream=true&amp;header=true&amp;height=587" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:292px; height:587px;" allowTransparency="true"></iframe></div>';
         if (mobile && !tablet){
             facebook_frame = '';
         }
-        pitch_html = '';
         var about_html ='<h1 id="about_title">About</h1>' + 
                         '<div id="about_right_cont">' +
                             '<div id="find_us">' +
@@ -1095,7 +1081,7 @@ $(document).ready(function(){
                         '<div id="about_left_cont">' +
                             '<img src="http://d3uzvcq9wwvnca.cloudfront.net/img/about_graphic.jpg"/>' +
                             '<p>Portrit aims to make photo sharing more social. It\'s up to your social circle to find and award the best photos out there. No longer do you need to look through thousands of your friend\'s photos to find the best ones. On Portrit, you and your friends filter the lame photos from the awesome ones.</p>' +
-                            pitch_html +
+                            '<p>Co-founded by Jonathan Eatherly and Jerry Lin in 2010.</p>' + 
                         '</div>' +
                         '<div class="clear"></div>';
         $('#context_cont').append(about_html);
@@ -1357,7 +1343,7 @@ $(document).ready(function(){
                             '<h2 class="terms_sub_title">3. Description of the Service</h2>' +
                             '<p>Subject to full compliance with the Terms of Use, Portrit may offer to provide certain services and content, as described more fully on the Site, ("Services"). Services shall include, but not be limited to, any service and content Portrit performs for you, as well as the offering of any materials displayed, transmitted or performed on the Site or through the Services (including, but not limited to text, user comments, information, photographs, images, illustrations, audio clips and video clips, also known as the "Content"). Portrit may change, suspend or discontinue the Services for any reason, at any time, including the availability of any feature. Portrit may also impose limits on certain features and services or restrict your access to parts or all of the Services without notice or liability.</p>' +
                             '<h2 class="terms_sub_title">4. Portrit Privacy Policy</h2>' +
-                            '<p>Portrit\'s current privacy policy is available at <a href="http://portrit.com/beta/#/context=privacy">portrit.com/beta/#/context=privacy</a> (the "Privacy Policy"), which is incorporated by this reference.</p>' +
+                            '<p>Portrit\'s current privacy policy is available at <a href="http://portrit.com/#/context=privacy">portrit.com/#/context=privacy</a> (the "Privacy Policy"), which is incorporated by this reference.</p>' +
                             '<h2 class="terms_sub_title">5. Indemnity</h2>' +
                             '<p>You will indemnify and hold harmless Portrit, its parents, subsidiaries, affiliates, customers, vendors, officers and employees from any liability, damage or cost (including reasonable attorneys. fees and cost) from (i) any claim or demand made by any third party due to or arising out of your access to the Site, use of the Services, violation of the Terms of Use by you, or the infringement by you, or any third party using your account or Facebook User ID, of any intellectual property or other right of any person or entity.</p>' +
                             '<h2 class="terms_sub_title">6. Warranty Disclaimers</h2>' +
@@ -1385,9 +1371,13 @@ $(document).ready(function(){
                                 '<p>Portrit is founded on the principles of complete separation of user data. Portrit knows that you care about how your personal information is used and shared, and we take your privacy very seriously. Please read the following to learn more about our privacy policy. By visiting the Portrit website, you are accepting the practices outlined in this Privacy Policy.</p>' +
                                 '<p>This Privacy Policy covers Portrit\'s treatment of personal information that Portrit gathers when you are on the Portrit website and when you use Portrit services. This policy does not apply to the practices of third parties that Portrit does not own or control, or to individuals that Portrit does not employ or manage.</p>' +
                                 '<h2>Information Collected by Portrit</h2>' +
-                                '<p>We only collect user analytics data. None of your facebook information ever touches one of our servers. All your personal facebook data is routed directly to you through a secure connection from the facebook servers. The user analytics information we do collect allows us to determine what features are working well and monitor our growth. We do not process this information in a way that is incompatible with this objective. We collect the following types of information from our Portrit users:</p>' +
-                                '<h3>Frequency of Use:</h3>' +
-                                '<p class="indent">We only collect data about how often you use Portrit and what features you are using. This is done using Google Analytics.</p>' +
+                                '<p>We only collect personal information that is relevant to the purpose of our website, which is to enable users to discover and share information with one another. This information allows us to provide you with a customized and efficient experience. We do not process this information in a way that is incompatible with this objective. We collect the following types of information from our Portrit users:</p>' +
+                                '<h3>Information You Provide to Us:</h3>' +
+                                '<p class="indent">We receive and store any information you enter on our website or provide to us in any other way. You can choose not to provide us with certain information, but then you may not be able to take advantage of many of our special features.</p>' +
+                                '<h3>Automatic Information:</h3>' +
+                                '<p class="indent">We receive and store certain types of information whenever you interact with us. Portrit and its authorized agents automatically receive and record certain "traffic data" on their server logs from your browser including your IP address, Portrit cookie information, and the page you requested. Portrit uses this traffic data to help diagnose problems with its servers, analyze trends and administer the website.</p>' +
+                                '<p class="indent">Portrit is built off of the Facebook Open Grah API and as such Portrit abides by the API giudlines as well as any user Facebook privacy policies and permissions.</p>' +
+                                '<p class="indent">We will collect data from your Facebook account to enable features like friend lists, nominating photos, votes, and winning trophies. This data is shared across your friends to allow for a consistant experience for the other users of Portrit. We only store the most basic personal information, such as name, facebook id, album ids, and photo ids. You can delete any personal data we have, including votes, comments, nominations, and trophies by going to the settings and requesting to "Remove My Content".</p>' +
                                 '<h2>Sharing Your Information</h2>' +
                                 '<p>Rest assured that the information gathered about who is using Portrit will be neither rented nor sold to anyone and that we will share your personal information only as described below.</p>' +
                                 '<ul>' +
@@ -1396,7 +1386,7 @@ $(document).ready(function(){
                                 '</ul>' +
                                 '<h2>Keeping Information Secure</h2>' +
                                 '<ul>' +
-                                    '<li><p>Your Portrit account information is protected by a password for your privacy and security. Protect against unauthorized access to your password and to your computer by logging off once you have finished using a shared computer.</p></li>' +
+                                    '<li><p>Your Portrit account information is protected by your Facebook account login username and password. Protect against unauthorized access to your password and to your computer by logging off once you have finished using a shared computer.</p></li>' +
                                     '<li><p>Only employees who need personal information to perform a specific job (for example, a customer service representative) are granted access to it. All of our employees are kept up to date on our privacy and security practices.</p></li>' +
                                 '</ul>' +
                                 '<h2>Changes to this Privacy Policy</h2>' +
@@ -1404,7 +1394,7 @@ $(document).ready(function(){
                                 '<h2>Conditions of Use</h2>' +
                                 '<p>If you decide to visit Portrit website, your visit and any possible dispute over privacy is subject to this Privacy Policy and our Terms of Use, including limitations on damages, arbitration of disputes, and application of Oregon state law.</p>' +
                                 '<h2>Effective Date of this Privacy Policy</h2>' +
-                                '<p>This Privacy Policy is effective as of August 15, 2010 and last updated August 1, 2010.</p>' +
+                                '<p>This Privacy Policy is effective as of January 31, 2011 and last updated January 28, 2011.</p>' +
                             '</div>';
                             
         $('#context_cont').append(privacy_html);
@@ -2907,7 +2897,7 @@ $(document).ready(function(){
     var server_login_timeout = null;
     function login_fb_user(){
         $('#cont').prepend('<div class="loading"><h1>Portrit Loading...</h1><div id="loader"><img src="http://d3uzvcq9wwvnca.cloudfront.net/img/album-loader-dark.gif"/></div></div>');
-        setTimeout(render_server_dead, 3000);
+        setTimeout(render_server_dead, 5000);
         $.post('/login_fb_user/', function(data){
             clearTimeout(server_login_timeout);
             if (data){
@@ -2915,7 +2905,7 @@ $(document).ready(function(){
                 var first = false;
                 portrit_friends = data.portrit_friends; 
                 notification_data = data.notifications;
-                my_feed = JSON.parse(data.stream);
+                // my_feed = JSON.parse(data.stream);
                 tut_counts = data.tut_counts;
                 allow_notifications = data.allow_notifications;
                 first = data.first;
@@ -5101,7 +5091,7 @@ $(document).ready(function(){
                         left_cont_html = '<div class="nom_stream_left_cont">' + voted_html + '<div class="clear"></div></div>';
 
                         message = '<div class="feed_post_cont nom_cat_cont_' + data[i].cat_name.replace(' ', '_').toLowerCase() + '" id="nom_' + nom_data[k].id + '">' + nom_heading_html + left_cont_html  + photo_html + '<div class="clear"></div></div>';
-                        $('#profile_cont').prepend(message);
+                        $('#profile_cont').append(message);
                     }
                     else{
                         small_photo_offset = first_offset + prev_offset_width;
@@ -6718,20 +6708,43 @@ $(document).ready(function(){
     function init_profile_view(){
         if($('#profile_cont').children().length === 0){
             // remove_load();
-            if (my_feed.length == 0){
-                hide_stream_fixtures();
-                render_empty_nom_page();
-            }
-            else{
-                show_stream_fixtures();
-                render_feed(my_feed);
-                if (!mobile){
-                    $('#profile_cont').show();
-                }
-                else{
-                    $('#profile_cont').show();
-                }
-            }
+            // if (my_feed){
+            //     if (my_feed.length == 0){
+            //         hide_stream_fixtures();
+            //         render_empty_nom_page();
+            //     }
+            //     else{
+            //         show_stream_fixtures();
+            //         render_feed(my_feed);
+            //         if (!mobile){
+            //             $('#profile_cont').show();
+            //         }
+            //         else{
+            //             $('#profile_cont').show();
+            //         }
+            //     }
+            // }
+            // else{
+                append_load($('#scroller'), 'light');
+                $.getJSON('/get_top_feed/', function(data){
+                    remove_load();
+                    my_feed = data;
+                    if (my_feed.length == 0){
+                        hide_stream_fixtures();
+                        render_empty_nom_page();
+                    }
+                    else{
+                        show_stream_fixtures();
+                        render_feed(my_feed);
+                        if (!mobile){
+                            $('#profile_cont').show();
+                        }
+                        else{
+                            $('#profile_cont').show();
+                        }
+                    }
+                });
+            // }
         }
     }
     

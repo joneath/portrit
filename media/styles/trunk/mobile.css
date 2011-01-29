@@ -1030,6 +1030,10 @@ div#photo_comments p{
     padding:            0px;
 }
 
+#about_left_cont img{
+    width:              480px;
+}
+
 #about_right_cont{
     display:            none;
 }

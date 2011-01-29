@@ -129,19 +129,19 @@ def get_user_data(user):
             notifications = get_active_notifications(user)
         except:
             notifications = [ ]
-        stream = get_user_stream(user.fb_user)
+        # stream = get_user_stream(user.fb_user)
         tut_counts = False
         if not user.tutorial_completed:
             tut_counts = user.get_tutorial_counts()
-            
+        
         portrit_friends_objs = user.fb_user.friends.filter(portrit_fb_user__isnull=False)
         portrit_friends = [ ]
         for friend in portrit_friends_objs.iterator():
-            portrit_friends.append({'id': friend.fid, 'name': friend.portrit_fb_user.all()[0].name})
+            portrit_friends.append({'id': friend.fid, 'name': friend.get_name()})
         
         data = {
             'notifications': notifications,
-            'stream': stream,
+            # 'stream': stream,
             'portrit_friends': portrit_friends,
             'allow_notifications': user.allow_notifications,
             'tut_counts': tut_counts,
@@ -150,6 +150,15 @@ def get_user_data(user):
         pass
     
     return data
+    
+def get_top_feed(request):
+    data = False
+    cookie = facebook.get_user_from_cookie(
+        request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
+    if cookie:
+        fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
+        data = get_user_stream(fb_user)
+    return HttpResponse(data, mimetype='application/json')
     
 def get_user_stream(fb_user):
     data = False
@@ -167,7 +176,7 @@ def get_user_stream(fb_user):
                     'noms': [ ],
                 })
                 
-                top_noms = cat.nomination_set.select_related().filter(
+                top_noms = cat.nomination_set.filter(
                     Q(nominatee__in=friends) |
                     Q(nominatee=fb_user) |
                     Q(nominator=fb_user),
