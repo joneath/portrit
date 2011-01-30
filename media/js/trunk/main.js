@@ -148,7 +148,7 @@ $(document).ready(function(){
                             '<div id="login_top_cont">' +
                                 '<div id="tagline_top">' +
                                     '<h2>What\'s Portrit?</h2>' +
-                                    '<p id="tagline_main">Award the best photos. It\'s up to you and your Facebook friends to find whose got the best pics.</p>' +
+                                    '<p id="tagline_main">Award the best photos. It\'s up to you and your Facebook friends to find who\'s got the best pics.</p>' +
                                     '<p id="tagline_end">Let\'s make photos more social.</p>' +
                                     '<div class="clear"></div>' +
                                 '</div>' +
@@ -212,7 +212,7 @@ $(document).ready(function(){
                             //  '<div id="tagline_cont_active">' +
                             //      '<div class="tagline_top">' +
                             //                                         '<h2>What\'s Portrit?</h2>' +
-                            //                                         '<p id="tageline_large">Award the best photos. It\'s up to you and your Facebook friends to find whose got the best pics.</p>' +
+                            //                                         '<p id="tageline_large">Award the best photos. It\'s up to you and your Facebook friends to find whos got the best pics.</p>' +
                             //                                         '<p id="tagline_end">Love it, earn it.</p>' +
                             //                                     '</div>' +
                             //                                     '<div class="tagline_top" style="display:none;">' +
