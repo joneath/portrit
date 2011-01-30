@@ -629,37 +629,52 @@ def get_recent_stream(fb_user, created_date=None):
                 active=True, won=False).distinct('id').order_by('-created_date')[:PAGE_SIZE]
             
         for nom in nominations.iterator():
-            comment_count = nom.get_comment_count()
-            quick_comments = nom.get_quick_comments()
+            try:
+                comment_count = nom.get_comment_count()
+            except:
+                comment_count = None
+            try:
+                quick_comments = nom.get_quick_comments()
+            except:
+                quick_comments = None
             more_comments = False
-            if len(quick_comments) != comment_count:
-                more_comments = True
+            try:
+                if len(quick_comments) != comment_count:
+                    more_comments = True
+            except:
+                more_comments = False
             votes = [ ]
             for vote in nom.votes.all().iterator():
-                votes.append({
-                    'vote_user': vote.fid,
-                    'vote_name': vote.portrit_fb_user.all()[0].name,
+                try:
+                    votes.append({
+                        'vote_user': vote.fid,
+                        'vote_name': vote.portrit_fb_user.all()[0].name,
+                    })
+                except:
+                    pass
+            try:
+                data.append({
+                    'id': nom.id,
+                    'active': nom.active,
+                    'nomination_category': nom.nomination_category.name,
+                    'nominator': nom.nominator.fid,
+                    'nominator_name': nom.nominator.get_name(),
+                    'nominatee': nom.nominatee.fid,
+                    'nominatee_name': nom.nominatee.get_name(),
+                    'won': nom.won,
+                    'time_remaining': nom.get_time_remaining(),
+                    'created_time': time.mktime(nom.created_date.utctimetuple()),
+                    'photo': nom.get_photo(),
+                    'caption': nom.caption,
+                    'comments': False,
+                    'quick_comments': quick_comments,
+                    'more_comments': more_comments,
+                    'comment_count': comment_count,
+                    'vote_count': nom.current_vote_count,
+                    'votes': votes,
                 })
-            data.append({
-                'id': nom.id,
-                'active': nom.active,
-                'nomination_category': nom.nomination_category.name,
-                'nominator': nom.nominator.fid,
-                'nominator_name': nom.nominator.get_name(),
-                'nominatee': nom.nominatee.fid,
-                'nominatee_name': nom.nominatee.get_name(),
-                'won': nom.won,
-                'time_remaining': nom.get_time_remaining(),
-                'created_time': time.mktime(nom.created_date.utctimetuple()),
-                'photo': nom.get_photo(),
-                'caption': nom.caption,
-                'comments': False,
-                'quick_comments': quick_comments,
-                'more_comments': more_comments,
-                'comment_count': comment_count,
-                'vote_count': nom.current_vote_count,
-                'votes': votes,
-            })
+            except:
+                pass
         
         if data.count() == 0:
             data = "empty"

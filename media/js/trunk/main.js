@@ -2265,7 +2265,7 @@ $(document).ready(function(){
             var caption = $('#trophy_won_nom_caption').text();
             var description = $('#story_cont textarea').val();
             
-            $.post('https://graph.facebook.com/' + me.id + '/feed', {'access_token': fb_session.access_token, 'picture': trophy_img_src, 'link': link, 'name': name, 'caption': caption}, function(response){
+            $.post('https://graph.facebook.com/' + me.id + '/feed', {'access_token': fb_session.access_token, 'picture': trophy_img_src, 'link': link, 'name': name, 'caption': caption, 'description': description}, function(response){
                 var test = response;
             });
             
@@ -2591,7 +2591,7 @@ $(document).ready(function(){
             }, 1000);
             $('#tutorial_cont').bind('click', function(){return false;});
             $('#activate_tut').bind('click', toggle_tut);
-            $('#skip_tut').live('click', function(){
+            $('#skip_tut').bind('click', function(){
                 $.post('/skip_tut/', function(data){
 
                 });
@@ -9916,7 +9916,7 @@ $(document).ready(function(){
             var caption = $('#trophy_nom_text_caption').text();
             var description = $('#story_cont textarea').val();
             
-            $.post('https://graph.facebook.com/' + data[0].nominatee + '/feed', {'access_token': fb_session.access_token, 'picture': trophy_img_src, 'link': link, 'name': name, 'caption': caption}, function(response){
+            $.post('https://graph.facebook.com/' + data[0].nominatee + '/feed', {'access_token': fb_session.access_token, 'picture': trophy_img_src, 'link': link, 'name': name, 'caption': caption, 'description': description}, function(response){
                 var test = response;
             });
             

@@ -154,12 +154,12 @@ div#wrapper{
     background-position:center 0px;
     min-height:         100%;
     height:             auto !important;
-    margin:             0 auto -40px;
+    margin:             0 auto -35px;
     overflow-x:         hidden;
 }
 
 #push{
-    height:             40px;
+    height:             35px;
 }
 
 #header{
