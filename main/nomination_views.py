@@ -51,6 +51,7 @@ def get_trophy_wins(request):
                     })
                 data.append({
                     'id': nom.id,
+                    'active': nomination.active,
                     'nomination_category': nom.nomination_category.name,
                     'nominator': nom.nominator.fid,
                     'nominator_name': nom.nominator.get_name(),
@@ -97,6 +98,7 @@ def get_recent_winners(request):
                         })
                     data.append({
                         'id': nom.id,
+                        'active': nom.active,
                         'nomination_category': nom.nomination_category.name,
                         'nominator': nom.nominator.fid,
                         'nominator_name': nom.nominator.get_name(),
@@ -121,6 +123,7 @@ def get_recent_winners(request):
                     })
                 data.append({
                     'id': nom.id,
+                    'active': nom.active,
                     'nomination_category': nom.nomination_category.name,
                     'nominator': nom.nominator.fid,
                     'nominator_name': nom.nominator.get_name(),
@@ -370,6 +373,7 @@ def nominate_photo(request):
                     
                     nom_data.append({
                         'id': nomination.id,
+                        'active': nomination.active,
                         'nomination_category': nom_cat.name,
                         'nominator': nomination.nominator.fid,
                         'nominator_name': nominator_name,
@@ -559,6 +563,7 @@ def mark_nomination_as_won(request):
             'method': 'nom_won',
             'payload': {
                 'id': nomination.id,
+                'active': nomination.active,
                 'nomination_category': nomination.nomination_category.name,
                 'nominator': nomination.nominator.fid,
                 'nominator_name': nomination.nominator.portrit_fb_user.all()[0].name,
@@ -637,6 +642,7 @@ def get_recent_stream(fb_user, created_date=None):
                 })
             data.append({
                 'id': nom.id,
+                'active': nom.active,
                 'nomination_category': nom.nomination_category.name,
                 'nominator': nom.nominator.fid,
                 'nominator_name': nom.nominator.get_name(),
@@ -683,6 +689,7 @@ def get_top_stream(fb_user):
                 })
             data.append({
                 'id': nom.id,
+                'active': nom.active,
                 'nomination_category': nom.nomination_category.name,
                 'nominator': nom.nominator.fid,
                 'nominator_name': nom.nominator.get_name(),
@@ -746,6 +753,7 @@ def serialize_noms(noms):
             })
         data.append({
             'id': nom.id,
+            'active': nom.active,
             'nomination_category': nom.nomination_category.name,
             'nominator': nom.nominator.fid,
             'nominator_name': nom.nominator.get_name(),

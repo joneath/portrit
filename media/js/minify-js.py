@@ -11,8 +11,7 @@ def minify_js():
 				  'jquery.autocomplete.js',
 				  'iscroll.js',
 				  'mdetect.js',
-				  'main.js',
-				  'ajaxfileupload.js',]
+				  'main.js',]
 				  
     build_file = open(OUTPUT_FILE, 'w')
     src_lines = 0

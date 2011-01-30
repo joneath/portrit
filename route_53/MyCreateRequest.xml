@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ChangeResourceRecordSetsRequest xmlns="https://route53.amazonaws.com/doc/2010-10-01/">
+   <ChangeBatch>
+      <Comment>
+      Added blog.portrit.com
+      </Comment>
+      <Changes>
+         <Change>
+            <Action>CREATE</Action>
+            <ResourceRecordSet>
+               <Name>svn.portrit.com.</Name>
+               <Type>A</Type>
+               <TTL>900</TTL>
+               <ResourceRecords>
+                  <ResourceRecord>
+                     <Value>joneath.webfactional.com.</Value>
+                  </ResourceRecord>
+               </ResourceRecords>
+            </ResourceRecordSet>
+         </Change>
+      </Changes>
+   </ChangeBatch>
+</ChangeResourceRecordSetsRequest>

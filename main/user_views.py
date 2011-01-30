@@ -158,6 +158,62 @@ def get_top_feed(request):
     if cookie:
         fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
         data = get_user_stream(fb_user)
+        data = simplejson.dumps(data) 
+    return HttpResponse(data, mimetype='application/json')
+    
+def get_user_nom(request):
+    data = False
+    cookie = facebook.get_user_from_cookie(
+        request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
+    if cookie:
+        fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
+        nom_id = request.GET.get('nom_id')
+        nom = Nomination.objects.get(id=nom_id)
+        if not nom.active:
+            try:
+                
+                print nom
+                data = [{'cat_name': nom.nomination_category.name,
+                            'noms': None,
+                            'inactive': True,
+                        }]
+                print "here"
+                comment_count = nom.get_comment_count()
+                votes = [ ]
+                for vote in nom.votes.all().iterator():
+                    votes.append({
+                        'vote_user': vote.fid,
+                        'vote_name': vote.get_name(),
+                    })
+                data[0]['noms'] = [{
+                    'id': nom.id,
+                    'active': nom.active,
+                    'nomination_category': nom.nomination_category.name,
+                    'nominator': nom.nominator.fid,
+                    'nominatee': nom.nominatee.fid,
+                    'nominator_name': nom.nominator.get_name(),
+                    'nominatee_name': nom.nominatee.get_name(),
+                    'created_time': time.mktime(nom.created_date.utctimetuple()),
+                    'won': nom.won,
+                    'time_remaining': nom.get_time_remaining(),
+                    'photo': nom.get_photo(),
+                    'caption': nom.caption,
+                    'comments': False,
+                    'comment_count': comment_count,
+                    'vote_count': nom.current_vote_count,
+                    'votes': votes,
+                }]
+                print data
+                data = simplejson.dumps(data)
+            except:
+                pass
+        else:
+            try:
+                data = get_user_stream(fb_user)
+                data = simplejson.dumps(data)
+            except:
+                pass
+        
     return HttpResponse(data, mimetype='application/json')
     
 def get_user_stream(fb_user):
@@ -187,10 +243,11 @@ def get_user_stream(fb_user):
                     for vote in nom.votes.all().iterator():
                         votes.append({
                             'vote_user': vote.fid,
-                            'vote_name': vote.portrit_fb_user.all()[0].name,
+                            'vote_name': vote.get_name(),
                         })
                     data[cat_count]['noms'].append({
                         'id': nom.id,
+                        'active': nom.active,
                         'nomination_category': nom.nomination_category.name,
                         'nominator': nom.nominator.fid,
                         'nominatee': nom.nominatee.fid,
@@ -214,7 +271,6 @@ def get_user_stream(fb_user):
             data = "empty"
     except:
         pass
-    data = simplejson.dumps(data) 
     return data
     
 def get_user_win_stream(request):

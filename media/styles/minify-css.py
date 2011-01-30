@@ -4,13 +4,11 @@ import sys, re
 def minify_css():
     OPEN_LOC = 'trunk/'
     OUTPUT_FILES = ['production/portrit.css',
-                    'production/landing.css',
                     'production/mobile_landing.css',
                     'production/mobile.css',
                     'production/tablet.css',]
     
     OPEN_FILES = ['portrit.css',
-				  'landing.css',
 				  'mobile_landing.css',
 				  'mobile.css',
 				  'tablet.css',]

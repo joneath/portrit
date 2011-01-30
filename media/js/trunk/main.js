@@ -1694,7 +1694,7 @@ $(document).ready(function(){
                         }
                     }
                 }
-                if ($('#empty_noms_cont').length > 0){
+                if ($('#empty_noms_cont').length > 0 && $('#new_noms_action').length == 0){
                     $('#scroller').prepend('<div id="new_noms_action" style="display:none;"><h2>New nominations have arrived! Click to view.</h2></div>');
                     $('#new_noms_action').fadeIn();
                     $('#new_noms_action').bind('click', function(){
@@ -3848,7 +3848,7 @@ $(document).ready(function(){
         return nom_list;
     }
     
-    function nom_detail_view(data){
+    function nom_detail_view(data, inactive){
         view_active = 'nom_detail';
         var nom_id = getUrlVars().nom_id,
             won = getUrlVars().won,
@@ -3870,8 +3870,35 @@ $(document).ready(function(){
             vote_tooltip_text = 'Already voted',
             title = '',
             nom_cat_underscore = '';
+        
+        if (typeof(inactive) !== "undefined"){
+            nom = data[0];
+            noms_in_cat = data
+            active_cache = data;
+            vote_class = "won";
+            vote_tooltip_text = 'Inactive';
             
-        if (trophy != undefined && user_url != undefined){
+            var name = '',
+                winning_name = '';
+            if (friends[nom.nominatee]){
+                name = friends[nom.nominatee].name;
+            }
+            else if (nom.nominatee == me.id){
+                name = 'Your';
+            }
+            else{
+                name = '';
+            }
+            if (name == 'Your'){
+                winning_name = name;
+            }
+            else if (name != ''){
+                winning_name = name.split(' ')[0] + '\'s';
+            }
+            
+            title = '<h1 class="title" name="' + nom.nomination_category + '"><a href="/#/user=' + nom.nominatee + '">' + winning_name + '</a> Inactive <span class="nom_cat_' + nom.nomination_category.replace(' ', '_').toLowerCase() + '_text">' + nom.nomination_category + '</span> Photo</h1>';
+        }
+        else if (trophy != undefined && user_url != undefined){
             won = true;
             nom = data[0];
             noms_in_cat = data
@@ -3996,7 +4023,7 @@ $(document).ready(function(){
             }
             nom_stream_html += '</div>';
         }
-        else if (!won){
+        else if (!won && typeof(inactive) === "undefined"){
             nom_stream_html = '<div id="nom_cat_stream"><div class="prev_photo"><div class="prev_photo_img"></div></div><div class="next_photo"><div class="next_photo_img"></div></div>';
             noms_in_cat = sort_noms_by_votes(active_cache, noms_in_cat);
             for (var i = 0; i < noms_in_cat.length; i++){
@@ -4023,6 +4050,9 @@ $(document).ready(function(){
         
         if (nom.won){
             nom_winning_text = 'Won';
+        }
+        else if (!nom.active){
+            nom_winning_text = 'Lost';
         }
         else{
             nom_winning_text = 'Nominated for';
@@ -4158,23 +4188,28 @@ $(document).ready(function(){
         render_nom_votes(nom.votes);
     }
     
+    var get_comment_timeout = null;
     function get_nom_comments(id, won){
-        var active_cache = null;
-        var trophy = getUrlVars().trophy;
-        var user = getUrlVars().user;
-        if (won != undefined){
-            active_cache = winning_noms_cache;
-        }
-        else{
-            active_cache = active_noms_cache;
-        }
-        append_load($('#nom_comments_cont'), 'light');
+        // var active_cache = null;
+        // var trophy = getUrlVars().trophy;
+        // var user = getUrlVars().user;
+        // // if (won != undefined){
+        // //     active_cache = winning_noms_cache;
+        // // }
+        // // else{
+        // //     active_cache = active_noms_cache;
+        // // }
+        clearTimeout(get_comment_timeout);
+        get_comment_timeout = setTimeout(function(){
+            append_load($('#nom_comments_cont'), 'light');
+        }, 300);
         // if (trophy || (won && user) || active_cache[id].comments === false){
         $.getJSON('/get_nom_comments/', {'nom_id': id}, function(data){
+            clearTimeout(get_comment_timeout);
             remove_load();
-            if (!trophy && !(won && user)){
-                active_cache[id].comments = data; 
-            }
+            // if (!trophy && !(won && user)){
+            //     active_cache[id].comments = data; 
+            // }
             render_nom_comments(data);
         });
         // }
@@ -4564,7 +4599,10 @@ $(document).ready(function(){
             id = me.id;
         }
         if (user_winning_noms_cache[selected_user] == undefined){
+            $('#active_cont').append('<img class="data_loading" src="http://portrit.s3.amazonaws.com/img/album-loader-dark.gif"/>');
+            $('#trophy_cont').append('<img class="data_loading" src="http://portrit.s3.amazonaws.com/img/album-loader-dark.gif"/>');
             $.getJSON('/get_user_album_nom_data/', {'user': id}, function(data){
+                $('.data_loading').remove();
                 if (data){
                     user_winning_noms_cache[selected_user] = data;
                     update_user_album_nom_cache(data.winning_nom_objs);
@@ -5364,25 +5402,33 @@ $(document).ready(function(){
     var feed_load_once = true;
     function get_user_feed(fnc_ptr, method){
         if (method == 'user_stream'){
-            // $.getJSON('/get_user_stream/', function(data){
+            $.getJSON('/get_user_nom/', {'nom_id': getUrlVars().nom_id} ,function(data){
                 var nom_data = null;
-                var data = my_feed;
+                
+                if (data && data.length > 0){
+                    if (!data[0].inactive){
+                        for (var i = 0; i < data.length; i++){
+                            nom_data = data[i].noms;
+                            active_nom_cats_map[data[i].cat_name.replace(' ', '_').toLowerCase()] = [ ];
 
-                for (var i = 0; i < data.length; i++){
-                    nom_data = data[i].noms;
-                    active_nom_cats_map[data[i].cat_name.replace(' ', '_').toLowerCase()] = [ ];
-
-                    if (nom_data.length > 0){
-                        for (var k = 0; k < nom_data.length; k++){
-                            active_noms_cache[nom_data[k].id] = nom_data[k];
-                            active_nom_cats_map[nom_data[k].nomination_category.replace(' ', '_').toLowerCase()].push(nom_data[k].id);
+                            if (nom_data.length > 0){
+                                for (var k = 0; k < nom_data.length; k++){
+                                    active_noms_cache[nom_data[k].id] = nom_data[k];
+                                    active_nom_cats_map[nom_data[k].nomination_category.replace(' ', '_').toLowerCase()].push(nom_data[k].id);
+                                }
+                            }
+                        }
+                        if (fnc_ptr){
+                            fnc_ptr(my_feed, data[0].inactive);
+                        }
+                    }
+                    else{
+                        if (fnc_ptr){
+                            fnc_ptr(data[0].noms, data[0].inactive);
                         }
                     }
                 }
-                if (fnc_ptr){
-                    fnc_ptr(data);
-                }
-            // });
+            });
         }
         else if (method == 'won'){
             $.getJSON('/get_recent_winners/', {'nom_id': getUrlVars().nom_id}, function(data){
@@ -6396,13 +6442,13 @@ $(document).ready(function(){
                             '<div class="empty_cont">' +
                             '</div>' +
                         '</div>' +
-                        '<div id="recent_empty_wrap">' +
-                            '<h3>Recent Winners</h3>' +
-                            '<div class="empty_cont"></div>' +
-                        '</div>' +
                         '<div id="latest_empty_wrap">' +
                             '<h3>Latest Photos</h3>' +
                             '<p>The newest photos on Facebook.</p>' +
+                            '<div class="empty_cont"></div>' +
+                        '</div>' +
+                        '<div id="recent_empty_wrap">' +
+                            '<h3>Recent Winners</h3>' +
                             '<div class="empty_cont"></div>' +
                         '</div>' +
                     '</div>';
