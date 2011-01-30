@@ -2260,14 +2260,14 @@ $(document).ready(function(){
             else{
                 trophy_img_src = 'http://portrit.s3.amazonaws.com/img/invite/blank.png';
             }
-            var link = 'http://184.73.249.104/#/nom_id=' + data[0].nom_id + '/ref=facebook';
+            var link = 'http://portrit.com/#/nom_id=' + data[0].nom_id + '/ref=facebook';
             var name = $('#trophy_won_nom_link').text();
             var caption = $('#trophy_won_nom_caption').text();
             var description = $('#story_cont textarea').val();
             
-            // $.post('https://graph.facebook.com/' + me.id + '/feed', {'access_token': fb_session.access_token, 'picture': trophy_img_src, 'link': link, 'name': name, 'caption': caption}, function(response){
-            //     var test = response;
-            // });
+            $.post('https://graph.facebook.com/' + me.id + '/feed', {'access_token': fb_session.access_token, 'picture': trophy_img_src, 'link': link, 'name': name, 'caption': caption}, function(response){
+                var test = response;
+            });
             
             close_context_overlay();
             
@@ -9911,14 +9911,14 @@ $(document).ready(function(){
             else{
                 trophy_img_src = 'http://portrit.s3.amazonaws.com/img/invite/blank.png';
             }
-            var link = 'http://184.73.249.104/#/nom_id=' + data[0].id + '/ref=facebook';
+            var link = 'http://portrit.com/#/nom_id=' + data[0].id + '/ref=facebook';
             var name = $('#trophy_nom_text_link').text();
             var caption = $('#trophy_nom_text_caption').text();
             var description = $('#story_cont textarea').val();
             
-            // $.post('https://graph.facebook.com/' + data[0].nominatee + '/feed', {'access_token': fb_session.access_token, 'picture': trophy_img_src, 'link': link, 'name': name, 'caption': caption}, function(response){
-            //     var test = response;
-            // });
+            $.post('https://graph.facebook.com/' + data[0].nominatee + '/feed', {'access_token': fb_session.access_token, 'picture': trophy_img_src, 'link': link, 'name': name, 'caption': caption}, function(response){
+                var test = response;
+            });
             
             close_context_overlay();
             $('#nom_complete_cont').fadeIn();

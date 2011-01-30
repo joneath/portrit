@@ -80,8 +80,8 @@ def submit_feedback(request):
         from django.core.mail import EmailMessage
         subject = 'User Feedback'
         html_content = message
-        from_email = 'no-reply@portrit.com'
-        msg = EmailMessage(subject, html_content, from_email, ['feedback@portrit.com'])
+        from_email = 'no-reply@joneath.webfactional.com'
+        msg = EmailMessage(subject, html_content, from_email, ['feedback@joneath.webfactional.com'])
         msg.send()
         
         data = simplejson.dumps(True)
@@ -96,12 +96,12 @@ def contact_portrit(request):
         message = request.POST.get('message')
         
         to_email_dict = {
-            '1': 'support@portrit.com',
-            '2': 'feedback@portrit.com',
-            '3': 'abuse@portrit.com',
-            '4': 'contact@portrit.com',
-            '5': 'press@portrit.com',
-            '6': 'advertise@portrit.com',
+            '1': 'support@joneath.webfactional.com',
+            '2': 'feedback@joneath.webfactional.com',
+            '3': 'abuse@joneath.webfactional.com',
+            '4': 'contact@joneath.webfactional.com',
+            '5': 'press@joneath.webfactional.com',
+            '6': 'advertise@joneath.webfactional.com',
         }
         to_email = to_email_dict[reason]
         
@@ -132,7 +132,7 @@ def submit_bug_report(request):
                         '<h2>BROWSER: ' + browser + '</h2>' \
                         '<p>' + message + '</p>'
                         
-        msg = EmailMessage(subject, html_content, from_email, ['bugs@portrit.com'])
+        msg = EmailMessage(subject, html_content, from_email, ['bugs@joneath.webfactional.com'])
         msg.content_subtype = "html"
         msg.send()
         
