@@ -13,7 +13,7 @@ MANAGERS = ADMINS
 
 if ENV == "LOCAL":
     DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-    DATABASE_NAME = 'joneath_portrit'             # Or path to database file if using sqlite3.
+    DATABASE_NAME = 'portrit'             # Or path to database file if using sqlite3.
     DATABASE_USER = 'root'             # Not used with sqlite3.
     DATABASE_PASSWORD = ''         # Not used with sqlite3.
     DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
@@ -62,6 +62,11 @@ elif ENV == "TEST":
     
     CACHE_BACKEND = 'memcached://10.202.90.88:11211/?timeout=86400'
     
+    ADMINS = (
+        # ('Your Name', 'your_email@domain.com'),
+        ("Jonathan Eatherly", "jonathan.eatherly@gmail.com"),
+    )
+    
 else:
     DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
     DATABASE_NAME = 'portrit'             # Or path to database file if using sqlite3.
@@ -86,6 +91,11 @@ else:
     NODE_HOST = '10.117.57.137'
     
     CACHE_BACKEND = 'memcached://10.202.90.88:11211/?timeout=86400'
+    
+    ADMINS = (
+        # ('Your Name', 'your_email@domain.com'),
+        ("Jonathan Eatherly", "jonathan.eatherly@gmail.com"),
+    )
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -132,6 +142,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.gzip.GZipMiddleware',
+    'middleware.htmlmailexception.HTMLMailExceptionMiddleware',
 )
 
 AUTHENTICATION_BACKENDS = (

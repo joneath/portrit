@@ -47,7 +47,7 @@ def get_trophy_wins(request):
                 for vote in nom.votes.all().iterator():
                     votes.append({
                         'vote_user': vote.fid,
-                        'vote_name': vote.portrit_fb_user.all()[0].name,
+                        'vote_name': vote.get_name(),
                     })
                 data.append({
                     'id': nom.id,
@@ -94,7 +94,7 @@ def get_recent_winners(request):
                     for vote in nom.votes.all().iterator():
                         votes.append({
                             'vote_user': vote.fid,
-                            'vote_name': vote.portrit_fb_user.all()[0].name,
+                            'vote_name': vote.get_name(),
                         })
                     data.append({
                         'id': nom.id,
@@ -119,7 +119,7 @@ def get_recent_winners(request):
                 for vote in nom.votes.all().iterator():
                     votes.append({
                         'vote_user': vote.fid,
-                        'vote_name': vote.portrit_fb_user.all()[0].name,
+                        'vote_name': vote.get_name(),
                     })
                 data.append({
                     'id': nom.id,
@@ -363,11 +363,11 @@ def nominate_photo(request):
                     nominator_name = None
                     nominatee_name = None
                     try:
-                        nominator_name = nomination.nominator.portrit_fb_user.all()[0].name
+                        nominator_name = nomination.nominator.get_name()
                     except:
                         pass
                     try:
-                        nominatee_name = nomination.nominatee.portrit_fb_user.all()[0].name
+                        nominatee_name = nomination.nominatee.get_name()
                     except:
                         pass
                     
@@ -388,7 +388,7 @@ def nominate_photo(request):
                         'vote_count': nomination.current_vote_count,
                         'votes': [{
                             'vote_user': fb_user.fid,
-                            'vote_name': Portrit_User.objects.get(fb_user=fb_user).name,
+                            'vote_name': fb_user.get_name(), #Portrit_User.objects.get(fb_user=fb_user).name,
                         },],
                         'notification_id': notification.id,
                     })
@@ -566,9 +566,9 @@ def mark_nomination_as_won(request):
                 'active': nomination.active,
                 'nomination_category': nomination.nomination_category.name,
                 'nominator': nomination.nominator.fid,
-                'nominator_name': nomination.nominator.portrit_fb_user.all()[0].name,
+                'nominator_name': nomination.nominator.get_name(),
                 'nominatee': nomination.nominatee.fid,
-                'nominatee_name': nomination.nominatee.portrit_fb_user.all()[0].name,
+                'nominatee_name': nomination.nominatee.get_name(),
                 'vote_count': nomination.current_vote_count,
                 'won': nomination.won,
                 'friends': target_friends,
@@ -648,7 +648,7 @@ def get_recent_stream(fb_user, created_date=None):
                 try:
                     votes.append({
                         'vote_user': vote.fid,
-                        'vote_name': vote.portrit_fb_user.all()[0].name,
+                        'vote_name': vote.get_name(),
                     })
                 except:
                     pass
@@ -700,7 +700,7 @@ def get_top_stream(fb_user):
             for vote in nom.votes.all().iterator():
                 votes.append({
                     'vote_user': vote.fid,
-                    'vote_name': vote.portrit_fb_user.all()[0].name,
+                    'vote_name': vote.get_name(),
                 })
             data.append({
                 'id': nom.id,
@@ -764,7 +764,7 @@ def serialize_noms(noms):
         for vote in nom.votes.all().iterator():
             votes.append({
                 'vote_user': vote.fid,
-                'vote_name': vote.portrit_fb_user.all()[0].name,
+                'vote_name': vote.get_name(),
             })
         data.append({
             'id': nom.id,

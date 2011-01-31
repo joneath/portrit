@@ -3240,14 +3240,13 @@ div#user_profile_cont{
 
     div#user_profile_cont #album_cont{
         position:               absolute;
-        right:                  -800px;
+        right:                  -960px;
         top:                    0px;
-        width:                  800px;
+        width:                  960px;
     }
     
     div#user_profile_cont #trophy_cont{
         margin-top:             0px;
-        width:                  780px;
     }
     
 #album_link_loader{
@@ -4365,9 +4364,8 @@ div#photo_cont{
         }
     
     div#photo_cont #right_quick_nav{
-        background-color:   black;
+        background:         rgba(0,0,0,0.7);
         font-style:         italic;
-        opacity:            .7;
         padding:            5px;
         position:           absolute;
         right:              0px;

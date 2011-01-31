@@ -820,7 +820,7 @@ $(document).ready(function(){
         setttings_html = '<div id="settings_cont">' +
                             '<h1>Settings</h1>' +
                             '<div id="allow_notifications_cont">' +
-                                '<label for="allow_notifications">Allow Portrit to post on your wall when you win a trophy: </label>' +
+                                '<label for="allow_notifications">Allow Portrit to notify your Facebook account: </label>' +
                                 '<div id="allow_notifications" class="' + checked_class + '" checked="' + checked + '"></div>' +
                                 '<div class="clear"></div>' +
                             '</div>' +
@@ -2865,7 +2865,7 @@ $(document).ready(function(){
                                                 '<div class="clear"></div>' +
                                             '</div>' +
                                             '<div id="allow_notifications_cont">' +
-                                                '<label for="allow_notifications">Allow Portrit to post on your wall when you win a trophy: </label>' +
+                                                '<label for="allow_notifications">Allow Portrit to notify your Facebook account: </label>' +
                                                 '<div id="allow_notifications" class="checked" checked="true"></div>' +
                                                 '<div class="clear"></div>' +
                                             '</div>' +
@@ -3743,6 +3743,7 @@ $(document).ready(function(){
                                 '<h2>Friends on Portrit</h2>' +
                                 '<p class="tooltip"></p>' +
                                 portrit_friends_html +
+                                '<div class="clear"></div>' +
                             '</div>' +
                         '</div>' +
                         '<div id="profile_right_cont">' +
@@ -9037,6 +9038,9 @@ $(document).ready(function(){
         if (nom.nominator == me.id){
             nominator_name = "You";
         }
+        else if (nom.nominator_name){
+            nominator_name = nom.nominator_name;
+        }
         else if (friends[nom.nominator]){
             nominator_name = friends[nom.nominator].name;
         }
@@ -9050,7 +9054,7 @@ $(document).ready(function(){
         $('#nomination_text_cont h3').text(nom.nomination_category);
         $('#nom_trophy_icon').removeClass().addClass('trophy_img large ' + cat_underscore);//.attr('src', 'http://portrit.s3.amazonaws.com/img/trophies/large/' + cat_underscore + '.png');
         $('#nominator_overlay_cont a').attr('href', '/#/user=' + nom.nominator);
-        $('#nominator_overlay_cont > h2 > a').text(nominator_name);
+        $('#nominator_overlay_cont > h2 a').text(nominator_name);
         $('#nominator_overlay_cont p').text(caption);
         $('#nominator_overlay_cont .user_img').attr('src', 'https://graph.facebook.com/' + nom.nominator + '/picture?type=square')
         $('div#nomination_text_cont .user_img').attr('src', 'https://graph.facebook.com/' + nom.nominatee + '/picture?type=square')
@@ -9298,13 +9302,15 @@ $(document).ready(function(){
             }
         }, 50);
         if (!mobile && !instant){
+            $('#profile_nav_cont').css('right', -85);
             $('#user_profile_cont').animate({
-                'right': '800px'
+                'right': (window_width / 2) + (960 / 2)
             }, 300);
         }
         else if (tablet){
+            $('#profile_nav_cont').css('right', -85);
             $('#user_profile_cont').css({
-                'right': '800px'
+                'right': (window_width / 2) + (960 / 2)
             });
         }
         else{
@@ -9328,11 +9334,13 @@ $(document).ready(function(){
         });
         
         if (!mobile && !instant){
+            $('#profile_nav_cont').css('right', 10);
             $('#user_profile_cont').animate({
                 'right': '0px'
             }, 300);
         }
         else if (tablet){
+            $('#profile_nav_cont').css('right', 10);
             $('#user_profile_cont').css({
                 'right': '0px'
             });
@@ -10321,10 +10329,18 @@ $(document).ready(function(){
                                 selected_photo = $('.photo_thumbs:first > img').attr('id');
                                 photo_id = selected_photo;
                             }
+                            user_name = '';
+                            if (selected_user == me.id || selected_user == 'me'){
+                                user_name = 'Your';
+                                selected_user = me.id;
+                            }
+                            else{
+                                user_name = friends[selected_user].name.split(' ')[0] + '\'s';
+                            }
                             $('#album_link_loader').remove();
                             $('#title').hide();
-                            $('#right_quick_nav').show().find('#top_quick_nav').attr('href', '#/user=' + selected_user + '/album=' + selected_album_id).text('To album');
-                            $('#right_quick_nav').show().find('#bottom_quick_nav').attr('href', '#/user=' + getUrlVars().user).text('To profile →');
+                            $('#right_quick_nav').show().find('#top_quick_nav').attr('href', '#/user=' + selected_user).text('To ' + user_name + ' profile →');
+                            $('#right_quick_nav').show().find('#bottom_quick_nav').attr('href', '#/user=' + selected_user + '/album=' + selected_album_id).text('To album');
                             $('.photo_thumbs').show().css({'opacity': '0.6', 'position': 'absolute'});
                             reset_nomination_overlay();
                             photo_gallery_view();
@@ -10332,14 +10348,22 @@ $(document).ready(function(){
                     }, 100);
                 }
                 else{
+                    user_name = '';
+                    if (selected_user == me.id || selected_user == 'me'){
+                        user_name = 'Your';
+                        selected_user = me.id;
+                    }
+                    else{
+                        user_name = friends[selected_user].name.split(' ')[0] + '\'s';
+                    }
                     if (selected_photo == ''){
                         selected_photo = $('.photo_thumbs:first > img').attr('id');
                         photo_id = selected_photo;
                     }
                     $('.photo_thumbs').css({'position': 'absolute'});
                     $('#title').hide();
-                    $('#right_quick_nav').show().find('#top_quick_nav').attr('href', '#/user=' + selected_user + '/album=' + selected_album_id).text('To album');
-                    $('#right_quick_nav').show().find('#bottom_quick_nav').attr('href', '#/user=' + getUrlVars().user).text('To profile →');
+                    $('#right_quick_nav').show().find('#top_quick_nav').attr('href', '#/user=' + selected_user).text('To ' + user_name + ' profile →');
+                    $('#right_quick_nav').show().find('#bottom_quick_nav').attr('href', '#/user=' + selected_user + '/album=' + selected_album_id).text('To album');
                     $('.photo_thumbs').css({'opacity': '0.6'});
                     reset_nomination_overlay();
                     photo_gallery_view();
