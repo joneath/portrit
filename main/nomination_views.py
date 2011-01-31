@@ -51,7 +51,7 @@ def get_trophy_wins(request):
                     })
                 data.append({
                     'id': nom.id,
-                    'active': nomination.active,
+                    'active': nom.active,
                     'nomination_category': nom.nomination_category.name,
                     'nominator': nom.nominator.fid,
                     'nominator_name': nom.nominator.get_name(),
