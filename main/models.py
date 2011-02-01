@@ -54,6 +54,7 @@ class Comment(models.Model):
             'comment': self.comment,
             'create_datetime': time.mktime(self.created_date.utctimetuple()),
             'owner_id': self.owner.fid,
+            'owner_name': self.owner.get_name(),
         }
         comment_lvl_two_count = 0
         comment_lvl_three_count = 0
@@ -194,23 +195,26 @@ class Nomination(models.Model):
         return {'comments': comment_list, 'count': comment_count}
         
     def get_quick_comments(self):
-        comment_list = [ ]
-        comment_count = self.get_comment_count()
-        split = 3
+        try:
+            comment_list = [ ]
+            comment_count = self.get_comment_count()
+            split = 3
         
-        if comment_count > 3:
-            split = 2
+            if comment_count > 3:
+                split = 2
         
-        for comment in self.comments.all()[:split]:
-            comment_list.append({
-                'id': comment.id,
-                'comment': comment.comment,
-                'owner_id': comment.owner.fid,
-                'owner_name': comment.owner.portrit_fb_user.all()[0].name,
-                'create_datetime': time.mktime(comment.created_date.utctimetuple()),
-            })
+            for comment in self.comments.all()[:split]:
+                comment_list.append({
+                    'id': comment.id,
+                    'comment': comment.comment,
+                    'owner_id': comment.owner.fid,
+                    'owner_name': comment.owner.portrit_fb_user.all()[0].name,
+                    'create_datetime': time.mktime(comment.created_date.utctimetuple()),
+                })
             
-        return comment_list
+            return comment_list
+        except:
+            return []
         
     def get_comment_count(self):
         return self.comments.all().count()
@@ -219,7 +223,7 @@ class Nomination(models.Model):
         self.current_vote_count = self.up_votes - self.down_votes
         
     def save(self):
-        if self.won == True and self.user_winning_noms.all().count() == 0:
+        if self.won == True:
             self.nominatee.winning_noms.add(self)
         
         super(Nomination, self).save()
@@ -356,6 +360,24 @@ class FB_User(models.Model):
             return self.portrit_fb_user.all()[0].name
         except:
             return None
+            
+    def get_portrit_user(self):
+        try:
+            return self.portrit_fb_user.all()[0]
+        except:
+            return None
+            
+    def get_portrit_user_access_token(self):
+        try:
+            return self.portrit_fb_user.all()[0].access_token
+        except:
+            return None
+            
+    def get_portrit_user_notification_permission(self):
+        try:
+            return self.portrit_fb_user.all()[0].allow_notifications
+        except:
+            return False
     
     def get_active_nominations(self):
         try:
@@ -369,11 +391,14 @@ class FB_User(models.Model):
 
 class Portrit_User(models.Model):
     active = models.BooleanField(default=True)
+    ask_permission = models.BooleanField(default=True)
+    allow_portrit_album = models.BooleanField(default=False)
     allow_notifications = models.BooleanField(default=True)
     created_date = models.DateField(auto_now_add=True)
     access_token = models.CharField(max_length=255, null=True)
     fb_user = models.ForeignKey(FB_User, related_name="portrit_fb_user")
     name = models.CharField(max_length=255, null=True, blank=True)
+    portrit_album_fid = BigIntegerField(blank=True, null=True, unique=True)
     tutorial_completed = models.BooleanField(default=False)
     given_nomination_count = models.IntegerField(default=0)
     recieved_nomination_count = models.IntegerField(default=0)

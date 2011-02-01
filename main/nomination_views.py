@@ -30,11 +30,11 @@ def get_trophy_wins(request):
             cat = cat.replace('_', ' ').title()
             if user_id:
                 user = FB_User.objects.get(fid=user_id)
-                winning_noms = Nomination.objects.filter(won=True, nominatee=user, nomination_category__name=cat).order_by('-current_vote_count', '-created_date')
+                winning_noms = Nomination.objects.select_related().filter(won=True, nominatee=user, nomination_category__name=cat).order_by('-current_vote_count', '-created_date')
             else:
                 user = FB_User.objects.get(fid=int(cookie["uid"]))
                 friends = user.friends.all()
-                winning_noms = Nomination.objects.filter(
+                winning_noms = Nomination.objects.select_related().filter(
                         Q(nominatee__in=friends) |
                         Q(nominatee=user) |
                         Q(nominator=user),
@@ -87,7 +87,7 @@ def get_recent_winners(request):
             if not nom_id:
                 fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
                 friends = fb_user.friends.all()
-                winning_noms = Nomination.objects.filter(Q(nominatee__in=friends) | Q(nominatee=fb_user), won=True).order_by('-created_date')[(per_page*(page-1)):(per_page*page)]
+                winning_noms = Nomination.objects.select_related().filter(Q(nominatee__in=friends) | Q(nominatee=fb_user), won=True).order_by('-created_date')[(per_page*(page-1)):(per_page*page)]
                 for nom in winning_noms.iterator():
                     comment_count = nom.get_comment_count()
                     votes = [ ]
@@ -150,7 +150,7 @@ def get_users_active_noms(request):
     if cookie:
         fid = request.GET.get('id')
         fb_user = FB_User.objects.get(fid=int(fid))
-        active_noms = Nomination.objects.filter(nominatee=fb_user, active=True, won=False).order_by('-current_vote_count')
+        active_noms = Nomination.objects.select_related().filter(nominatee=fb_user, active=True, won=False).order_by('-current_vote_count')
         data = serialize_noms(active_noms)
         
     data = simplejson.dumps(data) 
@@ -185,30 +185,36 @@ def new_comment(request):
             voters = nomination.votes.all()
             all_commentors = FB_User.objects.filter(comment__nomination=nomination).distinct('fid')
 
-            friends = [ ]
-            friends.append(nomination.nominator.fid)
-            friends.append(owner.fid)
+            friends = { }
+            # friends = [ ]
+            friends[nomination.nominator.fid] = {'fid': nomination.nominator.fid,
+                            'allow_notifications': nomination.nominator.get_portrit_user_notification_permission()}
+
+            friends[owner.fid] = {'fid': owner.fid,
+                            'allow_notifications': owner.get_portrit_user_notification_permission()}
+                            
             #Attach target user
             for friend in all_commentors.iterator():
                 if friend.fid != fb_user.fid:
                     if friend.fid != nomination.nominator.fid:
-                        friends.append(friend.fid)
+                        friends[friend.fid] = {'fid': friend.fid,
+                                                'allow_notifications': friend.get_portrit_user_notification_permission()}
                 
             for friend in voters.iterator():
                 if friend.fid != fb_user.fid:
                     if friend.fid != nomination.nominator.fid:
-                        friends.append(friend.fid)
-                    
-            friends = list(set(friends))
+                        friends[friend.fid] = {'fid': friend.fid,
+                                                'allow_notifications': friend.get_portrit_user_notification_permission()} 
             
             for friend in friends:
-                if friend != fb_user.fid:
-                    print friend
+                friend = friends[friend]
+                if friend['fid'] != fb_user.fid:
                     notification_type = Notification_Type.objects.get(name="new_comment")
                     notification = Notification(source=fb_user, destination=owner, nomination=nomination, notification_type=notification_type)
                     notification.save()
+                    friend['notification_id'] = notification.id
                     try:
-                        Portrit_User.objects.get(fb_user__fid=friend).notifications.add(notification)
+                        Portrit_User.objects.get(fb_user__fid=friend['fid']).notifications.add(notification)
                     except:
                         pass
             
@@ -226,7 +232,6 @@ def new_comment(request):
                     'nom_owner_name': nom_owner_name,
                     'won': nomination.won,
                     'friends': friends,
-                    'notification_id': notification_id,
                 }
             }
             node_data = json.dumps(node_data)
@@ -239,7 +244,7 @@ def new_comment(request):
             except:
                 pass
             
-            data = node_data
+            data = True
         except:
             pass
     
@@ -395,13 +400,20 @@ def nominate_photo(request):
                     
             #Send update notification to event handlers
             target_friends = get_target_friends(owner_fb_user, fb_user)
-            target_friends = list(set(target_friends))
+            friends = { }
+            for friend in target_friends:
+                try:
+                    friend = FB_User.objects.get(fid=friend)
+                    friends[friend.fid] = {'fid': friend.fid,
+                                    'allow_notifications': friend.get_portrit_user_notification_permission()}
+                except:
+                    friends = { }
         
             node_data = {
                 'method': 'new_nom',
                 'payload': {
                     'nom_data': nom_data,
-                    'friends': target_friends,
+                    'friends': friends,
                 }
             }
             
@@ -432,8 +444,8 @@ def get_user_album_nom_data(request):
         if cookie:
             owner = FB_User.objects.get(fid=int(cookie["uid"]))
             user = FB_User.objects.get(fid=user_id)
-            winning_nominations = Nomination.objects.filter(nominatee=user, won=True).order_by('-created_date')
-            active_nominations = Nomination.objects.filter(nominatee=user, won=False, active=True).order_by('-current_vote_count')
+            winning_nominations = Nomination.objects.select_related().filter(nominatee=user, won=True).order_by('-created_date')
+            active_nominations = Nomination.objects.select_related().filter(nominatee=user, won=False, active=True).order_by('-current_vote_count')
             
             winning_nom_objs = [ ]
             active_nom_objs = [ ]
@@ -494,7 +506,14 @@ def vote_on_nomination(request):
         
         portrit_user = owner.portrit_fb_user.all()[0]
         target_friends = get_target_friends(nominatee, owner)
-        target_friends = list(set(target_friends))
+        friends = { }
+        for friend in target_friends:
+            try:
+                friend = FB_User.objects.get(fid=friend)
+                friends[friend.fid] = {'fid': friend.fid,
+                                'allow_notifications': friend.get_portrit_user_notification_permission()}
+            except:
+                friends = { }
         
         node_data = {
             'method': 'vote',
@@ -505,7 +524,7 @@ def vote_on_nomination(request):
                 'vote_count': nomination.current_vote_count,
                 'vote_user': owner.fid,
                 'vote_name': portrit_user.name,
-                'friends': target_friends,
+                'friends': friends,
             }
         }
         
@@ -523,68 +542,6 @@ def vote_on_nomination(request):
                 'nominatee': nomination.nominatee.fid,}
     
     # Send update to event listeners
-    
-    data = simplejson.dumps(data)
-    return HttpResponse(data, mimetype='application/json')
-    
-def mark_nomination_as_won(request):
-    data = False
-    nom_id = request.GET.get('nom_id')
-    try:
-        nomination = Nomination.objects.get(id=nom_id)
-        nomination.won = True
-        nomination.save()
-
-        target_friends = [ ]
-        active_voters = nomination.votes.all()
-        active_commentors = FB_User.objects.filter(comment__nomination=nomination)
-        
-        portrit_nominatee = Portrit_User.objects.get(fb_user=nomination.nominatee)
-        portrit_nominatee.winning_nomination_count += 1
-        portrit_nominatee.save()
-        
-        target_friends.append(nomination.nominatee.fid)
-        for friend in active_voters.iterator():
-            target_friends.append(friend.fid)
-        for friend in active_commentors.iterator():
-            target_friends.append(friend.fid)
-            
-        target_friends = list(set(target_friends))
-        
-        notification_type = Notification_Type.objects.get(name="nom_won")
-        for friend in target_friends:
-            notification = Notification(destination=nomination.nominatee, nomination=nomination, notification_type=notification_type)
-            notification.save()
-            
-            portrit_user = Portrit_User.objects.get(fb_user=FB_User.objects.get(fid=friend))
-            portrit_user.notifications.add(notification)
-        
-        node_data = {
-            'method': 'nom_won',
-            'payload': {
-                'id': nomination.id,
-                'active': nomination.active,
-                'nomination_category': nomination.nomination_category.name,
-                'nominator': nomination.nominator.fid,
-                'nominator_name': nomination.nominator.get_name(),
-                'nominatee': nomination.nominatee.fid,
-                'nominatee_name': nomination.nominatee.get_name(),
-                'vote_count': nomination.current_vote_count,
-                'won': nomination.won,
-                'friends': target_friends,
-            }
-        }
-        node_data = json.dumps(node_data)
-        try:
-            sock = socket.socket(
-                socket.AF_INET, socket.SOCK_STREAM)
-            sock.connect((NODE_HOST, NODE_SOCKET))
-            sock.send(node_data)
-            sock.close()
-        except:
-            pass
-    except:
-        pass
     
     data = simplejson.dumps(data)
     return HttpResponse(data, mimetype='application/json')
@@ -616,33 +573,23 @@ def get_recent_stream(fb_user, created_date=None):
     try:
         friends = fb_user.friends.all()
         if created_date:
-            nominations = Nomination.objects.filter(
+            nominations = Nomination.objects.select_related().filter(
                 Q(nominatee__in=friends) |
                 Q(nominatee=fb_user) |
                 Q(nominator=fb_user),
                 created_date__lt=created_date, active=True, won=False).distinct('id').order_by('-created_date')[:PAGE_SIZE]
         else:
-            nominations = Nomination.objects.filter(
+            nominations = Nomination.objects.select_related().filter(
                 Q(nominatee__in=friends) |
                 Q(nominatee=fb_user) |
                 Q(nominator=fb_user),
                 active=True, won=False).distinct('id').order_by('-created_date')[:PAGE_SIZE]
-            
         for nom in nominations.iterator():
-            try:
-                comment_count = nom.get_comment_count()
-            except:
-                comment_count = None
-            try:
-                quick_comments = nom.get_quick_comments()
-            except:
-                quick_comments = None
+            comment_count = nom.get_comment_count()
+            quick_comments = nom.get_quick_comments()
             more_comments = False
-            try:
-                if len(quick_comments) != comment_count:
-                    more_comments = True
-            except:
-                more_comments = False
+            if len(quick_comments) != comment_count:
+                more_comments = True
             votes = [ ]
             for vote in nom.votes.all().iterator():
                 try:
@@ -662,7 +609,6 @@ def get_recent_stream(fb_user, created_date=None):
                     'nominatee': nom.nominatee.fid,
                     'nominatee_name': nom.nominatee.get_name(),
                     'won': nom.won,
-                    'time_remaining': nom.get_time_remaining(),
                     'created_time': time.mktime(nom.created_date.utctimetuple()),
                     'photo': nom.get_photo(),
                     'caption': nom.caption,
@@ -685,14 +631,14 @@ def get_recent_stream(fb_user, created_date=None):
     
 def get_top_stream(fb_user):
     data = [ ]
-    PAGE_SIZE = 10
+    PAGE_SIZE = 5
     try:
         friends = fb_user.friends.all()
-        nominations = Nomination.objects.filter(
+        nominations = Nomination.objects.select_related().filter(
             Q(nominatee__in=friends) |
             Q(nominatee=fb_user) |
             Q(nominator=fb_user),
-            active=True, won=False).distinct('id').order_by('-current_vote_count')#[:PAGE_SIZE]
+            active=True, won=False).distinct('id').order_by('-current_vote_count')[:PAGE_SIZE]
             
         for nom in nominations.iterator():
             comment_count = nom.get_comment_count()
@@ -732,7 +678,7 @@ def get_top_users(fb_user):
     data = [ ]
     try:
         friends = fb_user.friends.all()
-        friends = FB_User.objects.filter(Q(id=fb_user.id) | Q(id__in=friends)).annotate(num_wins=Count('winning_noms')).filter(num_wins__gt=0).order_by('-num_wins')[:10]
+        friends = FB_User.objects.select_related().filter(Q(id=fb_user.id) | Q(id__in=friends)).annotate(num_wins=Count('winning_noms')).filter(num_wins__gt=0).order_by('-num_wins')[:10]
         # friends | fb_user
         for friend in friends:
             data.append({

@@ -10,7 +10,9 @@ from django.db.models import Q
 
 from main.models import Portrit_User, FB_User, Album, Photo, Nomination, Nomination_Category, Comment, \
                         Notification, Notification_Type
-from settings import ENV, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET
+from settings import ENV, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, NODE_SOCKET, NODE_HOST
+
+import json, socket, urllib, urllib2
 
 from portrit_fb import Portrit_FB
 from notification_views import get_active_notifications
@@ -27,9 +29,12 @@ def login_fb_user(request):
         user = None
         data = True
         first = False
+        permission_request = True
         try:
             fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
-            user = Portrit_User.objects.filter(fb_user=fb_user)[0]
+            user = fb_user.get_portrit_user()
+            if not user.ask_permission:
+                permission_request = False
         except:
             pass
         if not user:
@@ -55,13 +60,93 @@ def login_fb_user(request):
         elif user.access_token != cookie["access_token"]:
             user.access_token = cookie["access_token"]
             user.save()
+            # fb_user = FB_User.objects.get(fid=str(profile["id"]))
+            # node_data = {
+            #     'method': 'update_user_friends',
+            #     'payload': {
+            #         'fid': fb_user.fid,
+            #     }
+            # }
+            # 
+            # node_data = json.dumps(node_data)
+            # try:
+            #     sock = socket.socket(
+            #         socket.AF_INET, socket.SOCK_STREAM)
+            #     sock.connect((NODE_HOST, NODE_SOCKET))
+            #     sock.send(node_data)
+            #     sock.close()
+            # except:
+            #     pass
+            
             graph = facebook.GraphAPI(cookie["access_token"])
             portrit = Portrit_FB(graph, fb_user, cookie["access_token"])
             portrit.load_user_friends(True)
             
         data = get_user_data(user)
         data['first'] = first
+        data['allow_portrit_album'] = user.allow_portrit_album
+        data['permission_request'] = permission_request
     
+    data = simplejson.dumps(data) 
+    return HttpResponse(data, mimetype='application/json')
+    
+def perm_request(request):
+    data = False
+    cookie = facebook.get_user_from_cookie(
+        request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
+    if cookie:
+        action = request.POST.get('action')
+        fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
+        portrit_user = fb_user.get_portrit_user()
+        if action == 'true':
+            portrit_user.allow_portrit_album = True
+            if portrit_user.portrit_album_fid == None:
+                create_portrit_album(fb_user, portrit_user)
+            else:
+                from portrit.to_facebook_trophy_album import to_facebook_trophy_album
+                for nom in fb_user.winning_noms.all():
+                    to_facebook_trophy_album(nom.get_photo()['src'], portrit_user.portrit_album_fid)
+        else:
+            portrit_user.allow_portrit_album = False
+        
+        # portrit_user.ask_permission = False
+        portrit_user.save()
+    
+    data = simplejson.dumps(data) 
+    return HttpResponse(data, mimetype='application/json')
+    
+    
+def create_portrit_album(fb_user, portrit_user):
+    winning_noms = fb_user.winning_noms.all()
+    
+    url = 'https://graph.facebook.com/me/albums'
+    values = {'access_token' : portrit_user.access_token,
+              'name' : 'Portrit Trophies',
+              }
+
+    data = urllib.urlencode(values)
+    req = urllib2.Request(url, data)
+    response = urllib2.urlopen(req)
+    data = response.read()
+    data = simplejson.loads(data)
+    portrit_user.portrit_album_fid = data['id']
+    
+    from portrit.to_facebook_trophy_album import to_facebook_trophy_album
+    for nom in fb_user.winning_noms.all():
+        to_facebook_trophy_album(nom.get_photo()['src'], portrit_user.portrit_album_fid)
+    
+    
+def update_user_friends(request):
+    data = False
+    try:
+        fid = request.GET.get('fid')
+        fb_user = FB_User.objects.get(fid=fid)
+        graph = facebook.GraphAPI(cookie["access_token"])
+        portrit = Portrit_FB(graph, fb_user, cookie["access_token"])
+        portrit.load_user_friends(True)
+        data = True
+    except:
+        pass
     data = simplejson.dumps(data) 
     return HttpResponse(data, mimetype='application/json')
     
@@ -134,7 +219,7 @@ def get_user_data(user):
         if not user.tutorial_completed:
             tut_counts = user.get_tutorial_counts()
         
-        portrit_friends_objs = user.fb_user.friends.filter(portrit_fb_user__isnull=False)
+        portrit_friends_objs = user.fb_user.friends.filter(portrit_fb_user__isnull=False).order_by('created_date')
         portrit_friends = [ ]
         for friend in portrit_friends_objs.iterator():
             portrit_friends.append({'id': friend.fid, 'name': friend.get_name()})

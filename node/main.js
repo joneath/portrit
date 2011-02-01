@@ -12,6 +12,12 @@ var Portrit = function(){
     var dev = true;
         
     var nomination_emitter = new events.EventEmitter();
+    var fb_mail_emitter = new events.EventEmitter();
+    
+    var fb_mail_send = function(friend, data){
+        console.log('here');
+        console.log(friend.fid);
+    }
     
     var tcp_server = net.createServer(function (stream) {
         var data_stream = '';
@@ -26,16 +32,23 @@ var Portrit = function(){
             console.log('socket closed');
             try{
                 var data = JSON.parse(data_stream);
-
-                console.log(data.payload.friends);
-                for (var i = 0; i < data.payload.friends.length; i++){
-                    console.log('emitting event for: ' + data.payload.friends[i]);
-                    nomination_emitter.emit(data.payload.friends[i], data);
+                for (var id in data.payload.friends){
+                    if (id != undefined){
+                        // if (nomination_emitter.listeners(data.payload.friends[id].fid).length == 0 && data.payload.friends[id].allow_notifications){
+                        //     fb_mail_emitter.addListener(data.payload.friends[id].fid, fb_mail_send);
+                        //     fb_mail_emitter.emit(data.payload.friends[id].fid, data.payload.friends[id], data);
+                        // }
+                        // else{
+                            // console.log('emitting event for: ' + data.payload.friends[id].fid);
+                            nomination_emitter.emit(data.payload.friends[id].fid, data.payload.friends[id].notification_id, data);
+                        // }
+                    }
                     // nomination_emitter.removeAllListeners(data.payload.friends[i]);
                 }
                 data_stream = '';
             }
             catch (err){
+                console.log('error');
                 console.log(err);
             }
             stream.end();
@@ -85,12 +98,15 @@ var Portrit = function(){
             var path = url.parse(request.url).pathname;
             if (path === '/watch_update/'){
                 var event_user = url.parse(request.url, true).query.user;
-                var nom_callback = function(data){
+                var nom_callback = function(notification_id, data){
                     // nomination_emitter.removeAllListeners(event_user);
                     console.log('event sent');
                     clearTimeout(nom_timeout);
                     nomination_emitter.removeAllListeners(event_user);
                     response.writeHead(200, { "Content-Type": "text/plain" });
+                    if (typeof(notification_id) !== "undefined"){
+                        data.payload.notification_id = notification_id;
+                    }
             		response.end(JSON.stringify(data));
                 }
 
@@ -100,9 +116,9 @@ var Portrit = function(){
                     response.end(JSON.stringify([]));
                 }, 25000);
 
-                console.log(nomination_emitter.listeners(event_user));
+                // console.log(nomination_emitter.listeners(event_user));
                 nomination_emitter.addListener(event_user, nom_callback);
-                console.log('long poll attached');
+                // console.log('long poll attached');
             }
             else{
                 var proxy_request = proxy.request(request.method, request.url, request.headers);
@@ -128,19 +144,20 @@ var Portrit = function(){
                 var event_user = url.parse(request.url, true).query.user;
             }
             catch (err){
-                console.log(err);
+
             }
-            var nom_callback = function(data){
+            var nom_callback = function(notification_id, data){
                 // nomination_emitter.removeAllListeners(event_user);
                 try{
-                    console.log('event sent');
                     clearTimeout(nom_timeout);
                     nomination_emitter.removeListener(event_user, nom_callback);
                     response.writeHead(200, { "Content-Type": "text/plain" });
+                    if (typeof(notification_id) !== "undefined"){
+                        data.payload.notification_id = notification_id;
+                    }
             		response.end(JSON.stringify(data));
                 }
                 catch(err){
-                    console.log(err);
                     clearTimeout(nom_timeout);
                     response.writeHead(200, { "Content-Type": "text/plain" });
             		response.end(JSON.stringify([]));
@@ -159,14 +176,13 @@ var Portrit = function(){
             }, 25000);
             
             try{
-                console.log(nomination_emitter.listeners(event_user));
+                // console.log(nomination_emitter.listeners(event_user));
                 nomination_emitter.addListener(event_user, nom_callback);
-                console.log('long poll attached');
+                // console.log('long poll attached');
             }
             catch(err){
-                console.log(err);
-            }
 
+            }
         }
     });
     

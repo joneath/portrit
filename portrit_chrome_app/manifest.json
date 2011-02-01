@@ -1,0 +1,20 @@
+{
+"name": "Portrit",
+"description": "Finding the best photos between your friends.",
+"version": "1.0",
+"icons": {
+"128": "icon128_rounded.png"
+},
+"app": {
+"urls": [
+"http://portrit.com/"
+],
+"launch": {
+"web_url": "http://portrit.com/"
+}
+},
+"permissions": [
+"unlimitedStorage",
+"notifications"
+]
+}

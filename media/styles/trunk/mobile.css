@@ -886,6 +886,16 @@ div#album_cont > h1{
     -moz-transition:        none;
 }
 
+div#non_friend_wrap{
+    margin:                 0 auto;
+    margin-top:             10px;
+    width:                  520px;
+}
+
+div#non_friend_trophy_room_wrap{
+    width:              520px;
+}
+
 div#info_wrap #profile_info_img{
     margin-right:       10px;
 }

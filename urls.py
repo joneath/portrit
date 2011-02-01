@@ -23,6 +23,7 @@ else:
 urlpatterns += patterns('',
     url(r'^login_fb_user/$', 'main.user_views.login_fb_user', name='login_fb_user'),
     url(r'^logout/$', 'main.user_views.logout_user', name='logout'),
+    url(r'^perm_request/$', 'main.user_views.perm_request', name='perm_request'),
     url(r'^change_user_notifications/$', 'main.user_views.change_user_notifications', name='change_user_notifications'),
     url(r'^get_user_win_stream/$', 'main.user_views.get_user_win_stream', name='get_user_win_stream'),
     url(r'^get_user_trophies/$', 'main.user_views.get_user_trophies', name='get_user_trophies'),
@@ -43,7 +44,6 @@ urlpatterns += patterns('',
     url(r'^new_comment/$', 'main.nomination_views.new_comment', name='new_comment'),
     url(r'^get_recent_winners/$', 'main.nomination_views.get_recent_winners', name='get_recent_winners'),
     url(r'^init_recent_stream/$', 'main.nomination_views.init_recent_stream', name='init_recent_stream'),
-    url(r'^mark_nomination_as_won$', 'main.nomination_views.mark_nomination_as_won', name='mark_nomination_as_won'),
 )
 
 #Photo URLs

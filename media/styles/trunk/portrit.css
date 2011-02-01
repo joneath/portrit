@@ -688,7 +688,7 @@ div#feedback{
 }
 
     div#feedback div#feedback_cont{
-        background-color:   white;
+        background-color:   #eee;
         color:              #333;
         display:            inline-block;
         margin-top:         40px;
@@ -1075,9 +1075,6 @@ div#initial_tut_cont{
                     padding:            8px 18px;
                     border-radius:  5px;
                     -moz-border-radius:     5px;
-                    -webkit-box-shadow: rgba(0, 0, 0, 0.496094) 0px 0px 8px -2px;
-                    -moz-box-shadow:        0px 0px 8px -2px rgba(0, 0, 0, 0.5);
-                    box-shadow: rgba(0, 0, 0, 0.496094) 0px 0px 8px -2px;
                     text-shadow: rgba(0, 0, 0, 0.246094) 0px -1px 1px;
                 }
                 
@@ -3046,6 +3043,7 @@ div#profile_cont{
 
 div#user_profile_cont{
     display:                block;
+    margin-bottom:          10px;
     position:               relative;
 }
 
@@ -3255,74 +3253,25 @@ div#user_profile_cont{
     margin-top:             100px;
 }
 
-div#info_wrap{
-    background-color:       white;
-    color:                  #333;
-    margin:                 0px auto;
-    width:                  300px;
-    position:               absolute;
-    top:                    0px;
-    left:                   -310px;
-    text-align:             left;
-    border-radius:      10px;
-    -moz-border-radius:         10px;
+div#non_friend_wrap{
+    margin:                 0 auto;
+    margin-top:             10px;
+    width:                  600px;
 }
 
-    div#info_cont{
-        padding:                5px 20px;
-    }
-    
-        div#info_cont a{
-            color:                  #99CB6E;
-        }
+div#non_friend_trophy_room_wrap{
+    float:                  left;
+    margin-bottom:          10px;
+    width:                  600px;
+    background-color:       #333;
+    position:               relative;
+    z-index:                0;
+    border-radius:         10px;
+    -moz-border-radius:     10px;
+    -moz-border-radius:  10px;
+}
 
-    div#info_wrap #profile_info_img{
-        float:              left;
-        position:           relative;
-    }
-    
-        #info_wrap h1 .heart{
-            cursor:         pointer;
-            position:       absolute;
-            right:          20px;
-            opacity:        .5;
-            -webkit-transition:     opacity .35s ease-out;
-            -moz-transition:        opacity .35s ease-out;
-        }
-        
-        #info_wrap h1 .hearted{
-            cursor:         pointer;
-            position:       absolute;
-            right:          20px;
-            opacity:        1.0;
-            -webkit-transition:     opacity .35s ease-out;
-            -moz-transition:        opacity .35s ease-out;
-        }
-        
-    #mutual_friend_tooltip{
-        background-color:       #333;
-        color:                  white;
-        font-size:              14px;
-        font-weight:            bold;
-        text-align:             center;
-        position:               absolute;
-        opacity:                0;
-        padding:                5px;
-        width:                  150px;
-        box-shadow:     rgba(0, 0, 0, 0.496094) 0px 3px 7px;
-        -webkit-box-shadow:     rgba(0, 0, 0, 0.496094) 0px 3px 7px;
-        -moz-box-shadow:        0 3px 7px rgba(0, 0, 0, 0.5);
-        border-radius:          5px;
-        -moz-border-radius:     5px;
-        -webkit-transition:     opacity .3s ease-out, left .3s ease-out, top .3s ease-out;
-        -moz-transition:        opacity .3s ease-out, left .3s ease-out, top .3s ease-out;
-    }
-    
-    div#info_wrap li{
-        list-style:         none;
-    }
-    
-    div#info_wrap h1{
+    #non_friend_trophy_room_wrap  h1{
         background-color:   #dedede;
         font-size:          30px;
         margin-top:         10px;
@@ -3332,11 +3281,85 @@ div#info_wrap{
         -webkit-box-shadow:     rgba(0, 0, 0, 0.496094) 0px 4px 3px 0px;
         -moz-box-shadow:        0px 4px 3px 0px rgba(0, 0, 0, 0.5);
     }
+
+    div#non_friend_trophy_room_cont{
+        margin-left:            300px;
+    }
+    
+        #non_friend_trophy_room_cont > h1{
+            color:                  #DEDEDE;
+            background-color:       #6E6E6E;
+        }
+        
+        #non_friend_trophy_room_cont #non_friend_trophies{
+            margin:                 0px 20px;
+            margin-top:             20px;
+        }
+        
+            #non_friend_trophies .trophy_cont{
+                float:                  left;
+                position:               relative;
+            }
+            
+                #non_friend_trophies .trophy_cont p{
+                    bottom:                 8px;
+                    left:                   9px;
+                    padding:                5px 10px;
+                    position:               absolute;
+                    border-radius:          15px;
+                    -moz-border-radius:     15px;
+                }
+        
+            #non_friend_trophies > h2{
+                color:                  white;
+                font-size:              22px;
+                margin-top:             80px;
+            }
+
+div#info_wrap{
+    background-color:       white;
+    color:                  #333;
+    float:                  left;
+    margin:                 0px auto;
+    width:                  300px;
+    text-align:             left;
+    border-top-left-radius:         10px;
+    border-bottom-left-radius:      10px;
+    position:               relative;
+    z-index:                1;
+    -moz-border-radius-topleft:     10px;
+    -moz-border-radius-bottomleft:  10px;
+    box-shadow:     rgba(0, 0, 0, 0.496094) 0px 4px 3px 3px;
+    -webkit-box-shadow:     rgba(0, 0, 0, 0.496094) 0px 4px 3px 3px;
+    -moz-box-shadow:        0px 4px 3px 3px rgba(0, 0, 0, 0.5);
+}
+
+    div#info_cont{
+        padding:                0px 20px;
+        padding-top:            0px;
+        padding-bottom:         10px;
+    }
+    
+        div#info_cont a{
+            color:                  #99CB6E;
+        }
+
+    div#info_wrap #profile_info_img{
+        float:              left;
+    }
+    
+    div#info_wrap li{
+        list-style:         none;
+    }
     
     div#info_wrap h1 span{
         font-size:          14px;
         float:              right;
-        margin-top:         15px;
+        background-color:   red;
+        position:           relative;
+        bottom:             5px;
+        padding:            5px;
+        color:              white;
     }
 
     div#info_wrap h2{
@@ -3345,26 +3368,13 @@ div#info_wrap{
         width:              110px;
     }
     
-    div#info_wrap h3{
-        font-size:          26px;
-        margin-bottom:      3px;
-    }
-    
-    div#info_wrap h3 span{
-        float:              right;
-        margin-right:       5px;
-    }
-    
     div#info_wrap p{
         display:            inline-block;
+        font-weight:        bold;
     }
 
     div#info_loading, .feed_loading{
         text-align:         center;
-    }
-    
-    div#mutual_friend_cont{
-        width:              260px;
     }
     
 .green_checkmark{
@@ -3393,6 +3403,43 @@ div#context_overlay{
         -webkit-box-shadow:     rgba(0, 0, 0, 0.496094) 0px 0px 8px 3px;
         -moz-box-shadow:        0px 0px 8px 3px rgba(0, 0, 0, 0.5);
     }
+    
+        div.permission_request{
+            top:                -100px;
+            text-align:         center;
+            width:              500px;
+        }
+        
+            div.permission_request #perms_top_cont{
+                margin-bottom:      20px;
+                padding-top:        20px;
+            }
+        
+            div.permission_request #perms_middle_cont{
+                margin:                 0px 20px;
+                margin-bottom:          20px;
+                border-bottom:          1px solid #DEDEDE;
+                padding-bottom:         20px;
+            }
+            
+                div.permission_request #perms_middle_cont h2{
+                    font-size:          24px;
+                }
+                
+                div.permission_request #perms_middle_cont p{
+                    font-size:          14px;
+                    margin:             0px 50px;
+                    margin-top:         10px;
+                }
+            
+            div.permission_request #perms_bottom_cont{
+                padding-bottom:         20px;
+            }
+            
+            div.permission_request #perms_bottom_cont .awesome{
+                margin:                 0px 20px;
+                padding:                8px 40px 9px;
+            }
 
         div.latest_photos_overlay{
             min-height:         300px;

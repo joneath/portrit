@@ -21,7 +21,9 @@ import facebook, json, socket, time
 def notification_read(request):
     data = False
     notification_id = request.POST.get('notification_id')
+    kill = request.POST.get('kill')
     notification_ids = None
+    print kill
     try:
         notification_ids = request.POST.get('notification_ids').split(',')
     except:
@@ -32,15 +34,20 @@ def notification_read(request):
             for id in notification_ids:
                 if id:
                     ids.append(int(id))
-
-            Notification.objects.filter(pk__in=ids).update(read=True, active=False)
+            
+            if kill:
+                Notification.objects.filter(pk__in=ids).update(read=True, active=False)
+            else:
+                Notification.objects.filter(pk__in=ids).update(read=True, active=True)
+            
         except:
             pass
     else:
         try:
             notification = Notification.objects.get(id=notification_id)
             notification.read = True
-            notification.active = False
+            if kill:
+                notification.active = False
             notification.save()
             data = True
         except:
@@ -50,10 +57,10 @@ def notification_read(request):
     return HttpResponse(data, mimetype='application/json')
     
 def get_active_notifications(user):
-    all_notifications = user.notifications.filter(active=True, read=False).order_by('-created_date')
+    all_notifications = user.notifications.select_related().filter(active=True, read=False).order_by('-created_date')
     if all_notifications.count() < 5:
         # rem_count = 5 - all_notifications.count()
-        read_notifications = user.notifications.filter(active=True, read=True)
+        read_notifications = user.notifications.select_related().filter(active=True, read=True)
         
         all_notifications = all_notifications | read_notifications
         all_notifications = all_notifications.distinct('id').order_by('read', '-created_date')[:5]

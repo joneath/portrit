@@ -47,32 +47,32 @@ def calc_noms_won():
                 
     Nomination.objects.filter(active=True).update(active=False)
 
-        # if len(user_wins) > 0:
-        #     portrit_user = user_wins[0].nominatee.portrit_fb_user.all()[0]
-        #     if portrit_user.allow_notifications:
-        #         try:
-        #             nom_cat = user_wins[0].nomination_category.name
-        #             name = portrit_user.name.split(' ')[0]
-        #             if len(user_wins) == 1:
-        #                 trophy = 'http://s3.amazonaws.com/portrit/img/invite/' + nom_cat.replace(' ', '_').lower() + '.png'
-        #                 trophy_text = name + ', won the ' + nom_cat + ' trophy for his rockin\' photo!'
-        #             else:
-        #                 trophy = 'http://s3.amazonaws.com/portrit/img/invite/blank.png'
-        #                 trophy_text = name + ', won ' + str(len(user_wins)) + ' trophies for his rockin\' photos!'
-        #             url = 'https://graph.facebook.com/' + str(user_wins[0].nominatee.fid) + '/feed'
-        #             values = {'access_token' : portrit_user.access_token,
-        #                       'picture' : trophy,
-        #                       'link' : 'http://test.portrit.com/#/nom_id=' + str(nom.id) + '/ref=facebook',
-        #                       'name': trophy_text, 
-        #                       'caption': 'Click the trophy to see ' + name + '\'s winning photos.',
-        #                       }
-        #     
-        #             data = urllib.urlencode(values)
-        #             req = urllib2.Request(url, data)
-        #             response = urllib2.urlopen(req)
-        #             data = response.read()
-        #         except:
-        #             pass
+    if len(user_wins) > 0:
+        portrit_user = user_wins[0].nominatee.portrit_fb_user.all()[0]
+        if portrit_user.allow_notifications:
+            try:
+                nom_cat = user_wins[0].nomination_category.name
+                name = portrit_user.name.split(' ')[0]
+                if len(user_wins) == 1:
+                    trophy = 'http://s3.amazonaws.com/portrit/img/invite/' + nom_cat.replace(' ', '_').lower() + '.png'
+                    trophy_text = name + ', won the ' + nom_cat + ' trophy for his rockin\' photo!'
+                else:
+                    trophy = 'http://s3.amazonaws.com/portrit/img/invite/blank.png'
+                    trophy_text = name + ', won ' + str(len(user_wins)) + ' trophies for his rockin\' photos!'
+                url = 'https://graph.facebook.com/' + str(user_wins[0].nominatee.fid) + '/feed'
+                values = {'access_token' : portrit_user.access_token,
+                          'picture' : trophy,
+                          'link' : 'http://portrit.com/#/nom_id=' + str(nom.id) + '/ref=facebook',
+                          'name': trophy_text, 
+                          'caption': 'Click the trophy to see ' + name + '\'s winning photos.',
+                          }
+        
+                data = urllib.urlencode(values)
+                req = urllib2.Request(url, data)
+                response = urllib2.urlopen(req)
+                data = response.read()
+            except:
+                pass
             
     # print active_noms
     # print nominatees
@@ -104,11 +104,20 @@ def mark_nom_as_won(nom):
     nom.notification_set.filter(notification_type__name='new_nom').update(active=False)
     
     notification_type = Notification_Type.objects.get(name="nom_won")
+    friends = { }
     for friend in target_friends:
         try:
-            portrit_user = Portrit_User.objects.get(fb_user=FB_User.objects.get(fid=friend))
+            fb_user = FB_User.objects.get(fid=friend)
+            portrit_user = Portrit_User.objects.get(fb_user=fb_user)
+            try:
+                friends[fb_user.fid] = {'fid': fb_user.fid,
+                                'allow_notifications': fb_user.get_portrit_user_notification_permission()}
+            except:
+                pass
             notification = Notification(destination=nom.nominatee, nomination=nom, notification_type=notification_type)
             notification.save()
+            try:
+                friends[fb_user.fid]['notification_id'] = notification.id
             portrit_user.notifications.add(notification)
         except:
             pass
@@ -124,7 +133,7 @@ def mark_nom_as_won(nom):
             'nominatee_name': nom.nominatee.get_name(),
             'vote_count': nom.current_vote_count,
             'won': nom.won,
-            'friends': target_friends,
+            'friends': friends,
         }
     }
 
