@@ -3982,7 +3982,6 @@ $(document).ready(function(){
             won = getUrlVars().won,
             user_url = getUrlVars().user,
             trophy = getUrlVars().trophy,
-            ref = getUrlVars().trophy,
             nom = null,
             active_cache = null;
             noms_in_cat = null,
@@ -4000,7 +3999,7 @@ $(document).ready(function(){
             title = '',
             nom_cat_underscore = '';
         
-        if (typeof(inactive) !== "undefined" && ref == undefined){
+        if (typeof(inactive) !== "undefined"){
             nom = data[0];
             noms_in_cat = data
             active_cache = data;

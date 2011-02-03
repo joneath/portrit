@@ -263,6 +263,10 @@ def get_user_nom(request):
                         }]
                 comment_count = nom.get_comment_count()
                 votes = [ ]
+                active = nom.active
+                if nom.won:
+                    active = True
+                
                 for vote in nom.votes.all().iterator():
                     votes.append({
                         'vote_user': vote.fid,
@@ -270,7 +274,7 @@ def get_user_nom(request):
                     })
                 data[0]['noms'] = [{
                     'id': nom.id,
-                    'active': nom.active,
+                    'active': active,
                     'nomination_category': nom.nomination_category.name,
                     'nominator': nom.nominator.fid,
                     'nominatee': nom.nominatee.fid,
