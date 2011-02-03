@@ -8,6 +8,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q, Count
+from django.core.cache import cache
 
 from main.models import Portrit_User, FB_User, Album, Photo, Nomination, Nomination_Category, Comment, \
                         Notification, Notification_Type
@@ -86,32 +87,37 @@ def get_recent_winners(request):
             data = [ ]
             if not nom_id:
                 fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
-                friends = fb_user.friends.all()
-                winning_noms = Nomination.objects.select_related().filter(Q(nominatee__in=friends) | Q(nominatee=fb_user), won=True).order_by('-created_date')[(per_page*(page-1)):(per_page*page)]
-                for nom in winning_noms.iterator():
-                    comment_count = nom.get_comment_count()
-                    votes = [ ]
-                    for vote in nom.votes.all().iterator():
-                        votes.append({
-                            'vote_user': vote.fid,
-                            'vote_name': vote.get_name(),
+                recent_winners_cache = cache.get(str(fb_user.fid) + '_recent_winners')
+                if recent_winners_cache == None:
+                    friends = fb_user.friends.all()
+                    winning_noms = Nomination.objects.select_related().filter(Q(nominatee__in=friends) | Q(nominatee=fb_user), won=True).order_by('-created_date')[(per_page*(page-1)):(per_page*page)]
+                    for nom in winning_noms.iterator():
+                        comment_count = nom.get_comment_count()
+                        votes = [ ]
+                        for vote in nom.votes.all().iterator():
+                            votes.append({
+                                'vote_user': vote.fid,
+                                'vote_name': vote.get_name(),
+                            })
+                        data.append({
+                            'id': nom.id,
+                            'active': nom.active,
+                            'nomination_category': nom.nomination_category.name,
+                            'nominator': nom.nominator.fid,
+                            'nominator_name': nom.nominator.get_name(),
+                            'nominatee': nom.nominatee.fid,
+                            'nominatee_name': nom.nominatee.get_name(),
+                            'won': nom.won,
+                            'photo': nom.get_photo(),
+                            'caption': nom.caption,
+                            'comments': False,
+                            'comment_count': comment_count,
+                            'vote_count': nom.current_vote_count,
+                            'votes': votes,
                         })
-                    data.append({
-                        'id': nom.id,
-                        'active': nom.active,
-                        'nomination_category': nom.nomination_category.name,
-                        'nominator': nom.nominator.fid,
-                        'nominator_name': nom.nominator.get_name(),
-                        'nominatee': nom.nominatee.fid,
-                        'nominatee_name': nom.nominatee.get_name(),
-                        'won': nom.won,
-                        'photo': nom.get_photo(),
-                        'caption': nom.caption,
-                        'comments': False,
-                        'comment_count': comment_count,
-                        'vote_count': nom.current_vote_count,
-                        'votes': votes,
-                    })
+                    cache.set(str(fb_user.fid) + '_recent_winners', data)
+                else:
+                    data = recent_winners_cache
             else:
                 nom = Nomination.objects.get(id=nom_id)
                 comment_count = nom.get_comment_count()
@@ -181,6 +187,12 @@ def new_comment(request):
             except:
                 portrit_owner = None
                 nom_owner_name = ''
+                
+            #clear comment cache
+            try:
+                cache.delete(str(nomination.id) + '_comments')
+            except:
+                pass
             
             voters = nomination.votes.all()
             all_commentors = FB_User.objects.filter(comment__nomination=nomination).distinct('fid')
@@ -217,9 +229,16 @@ def new_comment(request):
                         Portrit_User.objects.get(fb_user__fid=friend['fid']).notifications.add(notification)
                     except:
                         pass
+                        
+            friends_to_update = { }
+            target_friends = get_target_friends(owner, fb_user)
+            for friend in target_friends:
+                friends_to_update[friend] = {'fid': friend,
+                                        'allow_notifications': False}
             
             node_data = {
                 'method': 'new_comment',
+                'secondary_method': 'new_comment_update',
                 'payload': {
                     'id': nomination.id,
                     'comment': comment.comment,
@@ -232,18 +251,48 @@ def new_comment(request):
                     'nom_owner_name': nom_owner_name,
                     'won': nomination.won,
                     'friends': friends,
+                    'friends_to_update': friends_to_update,
                 }
             }
-            node_data = json.dumps(node_data)
+            
+            node_comment_notification_data = json.dumps(node_data)
             try:
                 sock = socket.socket(
                     socket.AF_INET, socket.SOCK_STREAM)
                 sock.connect((NODE_HOST, NODE_SOCKET))
-                sock.send(node_data)
+                sock.send(node_comment_notification_data)
                 sock.close()
             except:
                 pass
             
+            #Update nom comments caches
+            try:
+                target_friends = get_target_friends(owner, fb_user)
+                for friend in target_friends:
+                    friend_recent_nom_cache = cache.get(str(friend) + '_recent_stream')
+                    user_top_stream = cache.get(str(friend) + '_user_top_stream')
+                    try:
+                        if friend_recent_nom_cache != None:
+                            for nom in friend_recent_nom_cache:
+                                if nom['id'] == nomination.id:
+                                    nom['quick_comments'] = nomination.get_quick_comments()
+                                
+                            cache.set(str(friend) + '_recent_stream', friend_recent_nom_cache)
+                    except:
+                        pass
+                    
+                    try:
+                        if user_top_stream != None:
+                            for nom_cat in user_top_stream:
+                                for nom in nom_cat['noms']:
+                                    if nom['id'] == nomination.id:
+                                        nom['comment_count'] = nomination.get_comments()['count']
+                                    
+                            cache.set(str(friend) + '_user_top_stream', user_top_stream)
+                    except:
+                        pass
+            except:
+                pass
             data = True
         except:
             pass
@@ -254,16 +303,43 @@ def new_comment(request):
 def get_nom_comments(request):
     data = False
     nom_id = request.GET.get('nom_id')
-    
-    try:
-        nomination = Nomination.objects.get(id=nom_id)
-        comments = nomination.get_comments()['comments']
-        data = comments
-    except:
-        pass
+    comment_cache = cache.get(str(nom_id) + '_comments')
+    if comment_cache == None:
+        try:
+            nomination = Nomination.objects.get(id=nom_id)
+            comments = nomination.get_comments()['comments']
+            data = comments
+            cache.set(str(nom_id) + '_comments', data)
+        except:
+            pass
+    else:
+        data = comment_cache
       
     data = simplejson.dumps(data) 
-    return HttpResponse(data, mimetype='application/json')  
+    return HttpResponse(data, mimetype='application/json')
+    
+def get_nom_votes(request):
+    data = False
+    nom_id = request.GET.get('nom_id')
+    vote_cache = cache.get(str(nom_id) + '_votes')
+    if vote_cache == None:
+        try:
+            nomination = Nomination.objects.get(id=nom_id)
+            votes = [ ]
+            for vote in nomination.votes.all().iterator():
+                votes.append({
+                    'vote_user': vote.fid,
+                    'vote_name': vote.get_name(),
+                })
+            data = votes
+            cache.set(str(nom_id) + '_votes', data)
+        except:
+            pass
+    else:
+        data = vote_cache
+      
+    data = simplejson.dumps(data) 
+    return HttpResponse(data, mimetype='application/json')
     
 def nominate_photo(request):
     data = False
@@ -337,7 +413,6 @@ def nominate_photo(request):
             except:
                 pass
                 
-        
             nom_data = [ ]
             notification_type = Notification_Type.objects.get(name="new_nom")
             for nomination in nominations:
@@ -352,7 +427,7 @@ def nominate_photo(request):
                     nomination.votes.add(fb_user)
                     comments = nomination.get_comments()
                     comment_count = comments['count']
-                    comments = comments['comments']
+                    # comments = comments['comments']
                     photo.nominations.add(nomination)
                     fb_user.active_nominations.add(nomination)
                     #Create notification record
@@ -385,9 +460,9 @@ def nominate_photo(request):
                         'nominatee': nomination.nominatee.fid,
                         'nominatee_name': nominatee_name,
                         'won': nomination.won,
-                        'time_remaining': nomination.get_time_remaining(),
+                        'created_time': time.mktime(nomination.created_date.utctimetuple()),
                         'caption': comment_text,
-                        'comments': comments,
+                        'comments': False, #comments,
                         'comment_count': comment_count,
                         'photo': photo_data,
                         'vote_count': nomination.current_vote_count,
@@ -408,6 +483,22 @@ def nominate_photo(request):
                                     'allow_notifications': friend.get_portrit_user_notification_permission()}
                 except:
                     friends = { }
+                    
+                try:
+                    recent_nom_cache = cache.get(str(friend.fid) + '_recent_stream')
+                    user_top_stream = cache.get(str(friend.fid) + '_user_top_stream')
+                    if recent_nom_cache != None:
+                        for nom in nom_data:
+                            nom['quick_comments'] = [ ]
+                            recent_nom_cache.insert(0, nom)
+                        cache.set(str(friend.fid) + '_recent_stream', recent_nom_cache)
+                    if user_top_stream != None:
+                        try:
+                            cache.delete(str(friend.fid) + '_user_top_stream')
+                        except:
+                            pass
+                except:
+                    pass
         
             node_data = {
                 'method': 'new_nom',
@@ -540,8 +631,38 @@ def vote_on_nomination(request):
         
         data = {'vote_count': nomination.current_vote_count,
                 'nominatee': nomination.nominatee.fid,}
-    
-    # Send update to event listeners
+                
+        #Update nom vote caches
+        try:
+            for friend in target_friends:
+                friend_recent_nom_cache = cache.get(str(friend) + '_recent_stream')
+                user_top_stream = cache.get(str(friend) + '_user_top_stream')
+                try:
+                    if friend_recent_nom_cache != None:
+                        for nom in friend_recent_nom_cache:
+                            if nom['id'] == nomination.id:
+                                nom['vote_count'] = nomination.current_vote_count,
+                                nom['votes'].append({'vote_user': owner.fid,
+                                                        'vote_name': portrit_user.name})
+
+                        cache.set(str(friend) + '_recent_stream', friend_recent_nom_cache)
+                except:
+                    pass
+
+                try:
+                    if user_top_stream != None:
+                        for nom_cat in user_top_stream:
+                            for nom in nom_cat['noms']:
+                                if nom['id'] == nomination.id:
+                                    nom['vote_count'] = nomination.current_vote_count,
+                                    nom['votes'].append({'vote_user': owner.fid,
+                                                            'vote_name': portrit_user.name})
+
+                        cache.set(str(friend) + '_user_top_stream', user_top_stream)
+                except:
+                    pass
+        except:
+            pass
     
     data = simplejson.dumps(data)
     return HttpResponse(data, mimetype='application/json')
@@ -572,55 +693,61 @@ def get_recent_stream(fb_user, created_date=None):
     PAGE_SIZE = 10
     try:
         friends = fb_user.friends.all()
-        if created_date:
-            nominations = Nomination.objects.select_related().filter(
-                Q(nominatee__in=friends) |
-                Q(nominatee=fb_user) |
-                Q(nominator=fb_user),
-                created_date__lt=created_date, active=True, won=False).distinct('id').order_by('-created_date')[:PAGE_SIZE]
-        else:
-            nominations = Nomination.objects.select_related().filter(
-                Q(nominatee__in=friends) |
-                Q(nominatee=fb_user) |
-                Q(nominator=fb_user),
-                active=True, won=False).distinct('id').order_by('-created_date')[:PAGE_SIZE]
-        for nom in nominations.iterator():
-            comment_count = nom.get_comment_count()
-            quick_comments = nom.get_quick_comments()
-            more_comments = False
-            if len(quick_comments) != comment_count:
-                more_comments = True
-            votes = [ ]
-            for vote in nom.votes.all().iterator():
+        user_recent_stream = cache.get(str(fb_user.fid) + '_recent_stream')
+        if user_recent_stream == None or created_date:
+            if created_date:
+                nominations = Nomination.objects.select_related().filter(
+                    Q(nominatee__in=friends) |
+                    Q(nominatee=fb_user) |
+                    Q(nominator=fb_user),
+                    created_date__lt=created_date, active=True, won=False).distinct('id').order_by('-created_date')[:PAGE_SIZE]
+            else:
+                nominations = Nomination.objects.select_related().filter(
+                    Q(nominatee__in=friends) |
+                    Q(nominatee=fb_user) |
+                    Q(nominator=fb_user),
+                    active=True, won=False).distinct('id').order_by('-created_date')[:PAGE_SIZE]
+            for nom in nominations.iterator():
+                comment_count = nom.get_comment_count()
+                quick_comments = nom.get_quick_comments()
+                more_comments = False
+                if len(quick_comments) != comment_count:
+                    more_comments = True
+                votes = [ ]
+                for vote in nom.votes.all().iterator():
+                    try:
+                        votes.append({
+                            'vote_user': vote.fid,
+                            'vote_name': vote.get_name(),
+                        })
+                    except:
+                        pass
                 try:
-                    votes.append({
-                        'vote_user': vote.fid,
-                        'vote_name': vote.get_name(),
+                    data.append({
+                        'id': nom.id,
+                        'active': nom.active,
+                        'nomination_category': nom.nomination_category.name,
+                        'nominator': nom.nominator.fid,
+                        'nominator_name': nom.nominator.get_name(),
+                        'nominatee': nom.nominatee.fid,
+                        'nominatee_name': nom.nominatee.get_name(),
+                        'won': nom.won,
+                        'created_time': time.mktime(nom.created_date.utctimetuple()),
+                        'photo': nom.get_photo(),
+                        'caption': nom.caption,
+                        'comments': False,
+                        'quick_comments': quick_comments,
+                        'more_comments': more_comments,
+                        'comment_count': comment_count,
+                        'vote_count': nom.current_vote_count,
+                        'votes': votes,
                     })
                 except:
                     pass
-            try:
-                data.append({
-                    'id': nom.id,
-                    'active': nom.active,
-                    'nomination_category': nom.nomination_category.name,
-                    'nominator': nom.nominator.fid,
-                    'nominator_name': nom.nominator.get_name(),
-                    'nominatee': nom.nominatee.fid,
-                    'nominatee_name': nom.nominatee.get_name(),
-                    'won': nom.won,
-                    'created_time': time.mktime(nom.created_date.utctimetuple()),
-                    'photo': nom.get_photo(),
-                    'caption': nom.caption,
-                    'comments': False,
-                    'quick_comments': quick_comments,
-                    'more_comments': more_comments,
-                    'comment_count': comment_count,
-                    'vote_count': nom.current_vote_count,
-                    'votes': votes,
-                })
-            except:
-                pass
+            if not created_date:        
+                cache.set(str(fb_user.fid) + '_recent_stream', data)
+        else:
+            data = user_recent_stream
         
         if data.count() == 0:
             data = "empty"
@@ -632,41 +759,45 @@ def get_recent_stream(fb_user, created_date=None):
 def get_top_stream(fb_user):
     data = [ ]
     PAGE_SIZE = 5
+    top_steam_cache = cache.get(str(fb_user.fid) + '_top_current_noms')
     try:
-        friends = fb_user.friends.all()
-        nominations = Nomination.objects.select_related().filter(
-            Q(nominatee__in=friends) |
-            Q(nominatee=fb_user) |
-            Q(nominator=fb_user),
-            active=True, won=False).distinct('id').order_by('-current_vote_count')[:PAGE_SIZE]
+        if top_steam_cache == None:
+            friends = fb_user.friends.all()
+            nominations = Nomination.objects.select_related().filter(
+                Q(nominatee__in=friends) |
+                Q(nominatee=fb_user) |
+                Q(nominator=fb_user),
+                active=True, won=False).distinct('id').order_by('-current_vote_count')[:PAGE_SIZE]
             
-        for nom in nominations.iterator():
-            comment_count = nom.get_comment_count()
-            votes = [ ]
-            for vote in nom.votes.all().iterator():
-                votes.append({
-                    'vote_user': vote.fid,
-                    'vote_name': vote.get_name(),
+            for nom in nominations.iterator():
+                comment_count = nom.get_comment_count()
+                votes = [ ]
+                for vote in nom.votes.all().iterator():
+                    votes.append({
+                        'vote_user': vote.fid,
+                        'vote_name': vote.get_name(),
+                    })
+                data.append({
+                    'id': nom.id,
+                    'active': nom.active,
+                    'nomination_category': nom.nomination_category.name,
+                    'nominator': nom.nominator.fid,
+                    'nominator_name': nom.nominator.get_name(),
+                    'nominatee': nom.nominatee.fid,
+                    'nominatee_name': nom.nominatee.get_name(),
+                    'won': nom.won,
+                    'time_remaining': nom.get_time_remaining(),
+                    'created_time': time.mktime(nom.created_date.utctimetuple()),
+                    'photo': nom.get_photo(),
+                    'caption': nom.caption,
+                    'comments': False,
+                    'comment_count': comment_count,
+                    'vote_count': nom.current_vote_count,
+                    'votes': votes,
                 })
-            data.append({
-                'id': nom.id,
-                'active': nom.active,
-                'nomination_category': nom.nomination_category.name,
-                'nominator': nom.nominator.fid,
-                'nominator_name': nom.nominator.get_name(),
-                'nominatee': nom.nominatee.fid,
-                'nominatee_name': nom.nominatee.get_name(),
-                'won': nom.won,
-                'time_remaining': nom.get_time_remaining(),
-                'created_time': time.mktime(nom.created_date.utctimetuple()),
-                'photo': nom.get_photo(),
-                'caption': nom.caption,
-                'comments': False,
-                'comment_count': comment_count,
-                'vote_count': nom.current_vote_count,
-                'votes': votes,
-            })
-        
+            cache.set(str(fb_user.fid) + '_top_current_noms', data, 60*5)
+        else:
+            data = top_steam_cache
         if data.count() == 0:
             data = "empty"
     except:
@@ -677,28 +808,36 @@ def get_top_stream(fb_user):
 def get_top_users(fb_user):
     data = [ ]
     try:
-        friends = fb_user.friends.all()
-        friends = FB_User.objects.select_related().filter(Q(id=fb_user.id) | Q(id__in=friends)).annotate(num_wins=Count('winning_noms')).filter(num_wins__gt=0).order_by('-num_wins')[:10]
-        # friends | fb_user
-        for friend in friends:
-            data.append({
-                'fid': friend.fid,
-                'noms_won': friend.winning_noms.all().count(),
-                'top_nom_cat': friend.winning_noms.all().annotate(noms_cat_count=Count('nomination_category')).order_by('-noms_cat_count')[0].nomination_category.name,
-            })
-
+        user_top_cache = cache.get(str(fb_user.fid) + '_top_users')
+        if user_top_cache == None:
+            friends = fb_user.friends.all()
+            friends = FB_User.objects.select_related().filter(Q(id=fb_user.id) | Q(id__in=friends)).annotate(num_wins=Count('winning_noms')).filter(num_wins__gt=0).order_by('-num_wins')[:10]
+            for friend in friends:
+                data.append({
+                    'fid': friend.fid,
+                    'noms_won': friend.winning_noms.all().count(),
+                    'top_nom_cat': friend.winning_noms.all().annotate(noms_cat_count=Count('nomination_category')).order_by('-noms_cat_count')[0].nomination_category.name,
+                })
+            cache.set(str(fb_user.fid) + '_top_users', data)
+        else:
+            data = user_top_cache
     except:
         pass
     return data
     
 def get_target_friends(fb_user, current_user):
-    target_friends = Portrit_User.objects.filter(fb_user__friends=fb_user)
-    friends = [ ]
-    #Attach target user
-    friends.append(fb_user.fid)
-    for friend in target_friends.iterator():
-        # if friend.fb_user.fid != current_user.fid:
-        friends.append(friend.fb_user.fid)
+    target_friends_cache = cache.get(str(fb_user.id) + '_target_friends')
+    if target_friends_cache == None:
+        target_friends = Portrit_User.objects.filter(fb_user__friends=fb_user)
+        friends = [ ]
+        #Attach target user
+        friends.append(fb_user.fid)
+        for friend in target_friends.iterator():
+            friends.append(friend.fb_user.fid)
+            
+        cache.set(str(fb_user.id) + '_target_friends', friends)
+    else:
+        friends = target_friends_cache
         
     return friends
     

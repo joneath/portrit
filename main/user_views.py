@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.core.cache import cache
 
 from main.models import Portrit_User, FB_User, Album, Photo, Nomination, Nomination_Category, Comment, \
                         Notification, Notification_Type
@@ -44,6 +45,7 @@ def login_fb_user(request):
                 
             user = Portrit_User(fb_user=fb_user, name=profile['name'],
                         access_token=cookie["access_token"])
+            user.ask_permission = False
             user.save()
             
             for winning_nom in fb_user.winning_noms.all():
@@ -102,14 +104,14 @@ def perm_request(request):
             portrit_user.allow_portrit_album = True
             if portrit_user.portrit_album_fid == None:
                 create_portrit_album(fb_user, portrit_user)
-            else:
-                from portrit.to_facebook_trophy_album import to_facebook_trophy_album
-                for nom in fb_user.winning_noms.all():
-                    to_facebook_trophy_album(nom.get_photo()['src'], portrit_user.portrit_album_fid)
+                
+            from portrit.to_facebook_trophy_album import to_facebook_trophy_album
+            for nom in fb_user.winning_noms.all():
+                to_facebook_trophy_album(portrit_user.access_token, nom.get_photo()['src'], portrit_user.portrit_album_fid, nom)
         else:
             portrit_user.allow_portrit_album = False
         
-        # portrit_user.ask_permission = False
+        portrit_user.ask_permission = False
         portrit_user.save()
     
     data = simplejson.dumps(data) 
@@ -117,24 +119,17 @@ def perm_request(request):
     
     
 def create_portrit_album(fb_user, portrit_user):
-    winning_noms = fb_user.winning_noms.all()
-    
     url = 'https://graph.facebook.com/me/albums'
     values = {'access_token' : portrit_user.access_token,
               'name' : 'Portrit Trophies',
               }
-
     data = urllib.urlencode(values)
     req = urllib2.Request(url, data)
     response = urllib2.urlopen(req)
     data = response.read()
     data = simplejson.loads(data)
     portrit_user.portrit_album_fid = data['id']
-    
-    from portrit.to_facebook_trophy_album import to_facebook_trophy_album
-    for nom in fb_user.winning_noms.all():
-        to_facebook_trophy_album(nom.get_photo()['src'], portrit_user.portrit_album_fid)
-    
+    portrit_user.save()
     
 def update_user_friends(request):
     data = False
@@ -170,19 +165,26 @@ def skip_tut(request):
     data = simplejson.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
-def change_user_notifications(request):
+def change_user_permissions(request):
     data = False
     cookie = facebook.get_user_from_cookie(
         request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
     if cookie:
-        allow_notifications = request.POST.get('allow_notifications')
+        permission = request.POST.get('permission')
+        check = request.POST.get('check')
         fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
         user = fb_user.portrit_fb_user.all()[0]
         
-        if allow_notifications == 'true':
-            user.allow_notifications = True
-        else:
-            user.allow_notifications = False
+        if permission == 'fb_auto_post':
+            if check == 'true':
+                user.allow_notifications = True
+            else:
+                user.allow_notifications = False
+        elif permission == 'portrit_album':
+            if check == 'true':
+                user.allow_portrit_album = True
+            else:
+                user.allow_portrit_album = False
             
         user.save()
         data = True
@@ -256,13 +258,10 @@ def get_user_nom(request):
         nom = Nomination.objects.get(id=nom_id)
         if not nom.active:
             try:
-                
-                print nom
                 data = [{'cat_name': nom.nomination_category.name,
                             'noms': None,
                             'inactive': True,
                         }]
-                print "here"
                 comment_count = nom.get_comment_count()
                 votes = [ ]
                 for vote in nom.votes.all().iterator():
@@ -288,7 +287,6 @@ def get_user_nom(request):
                     'vote_count': nom.current_vote_count,
                     'votes': votes,
                 }]
-                print data
                 data = simplejson.dumps(data)
             except:
                 pass
@@ -305,53 +303,58 @@ def get_user_stream(fb_user):
     data = False
     PAGE_SIZE = 8
     try:
-        friends = fb_user.friends.all()
-        nom_cats = Nomination_Category.objects.all()
-        data = [ ]
-        cat_count = 0
-        for cat in nom_cats.iterator():
-            try:
-                data.append({
-                    'cat_name': cat.name,
-                    'page_size': PAGE_SIZE,
-                    'noms': [ ],
-                })
-                
-                top_noms = cat.nomination_set.filter(
-                    Q(nominatee__in=friends) |
-                    Q(nominatee=fb_user) |
-                    Q(nominator=fb_user),
-                    active=True, won=False).distinct('id').order_by('-current_vote_count', '-created_date')#[:PAGE_SIZE]
-                for nom in top_noms.iterator():
-                    comment_count = nom.get_comment_count()
-                    votes = [ ]
-                    for vote in nom.votes.all().iterator():
-                        votes.append({
-                            'vote_user': vote.fid,
-                            'vote_name': vote.get_name(),
-                        })
-                    data[cat_count]['noms'].append({
-                        'id': nom.id,
-                        'active': nom.active,
-                        'nomination_category': nom.nomination_category.name,
-                        'nominator': nom.nominator.fid,
-                        'nominatee': nom.nominatee.fid,
-                        'nominator_name': nom.nominator.get_name(),
-                        'nominatee_name': nom.nominatee.get_name(),
-                        'created_time': time.mktime(nom.created_date.utctimetuple()),
-                        'won': nom.won,
-                        'time_remaining': nom.get_time_remaining(),
-                        'photo': nom.get_photo(),
-                        'caption': nom.caption,
-                        'comments': False,
-                        'comment_count': comment_count,
-                        'vote_count': nom.current_vote_count,
-                        'votes': votes,
+        user_top_stream = cache.get(str(fb_user.fid) + '_user_top_stream')
+        if user_top_stream == None:
+            friends = fb_user.friends.all()
+            nom_cats = Nomination_Category.objects.all()
+            data = [ ]
+            cat_count = 0
+            for cat in nom_cats.iterator():
+                try:
+                    data.append({
+                        'cat_name': cat.name,
+                        'page_size': PAGE_SIZE,
+                        'noms': [ ],
                     })
-                cat_count += 1
-            except:
-                top_nom = None
-        data = sorted(data, key=lambda k: len(k['noms']), reverse=True)
+                
+                    top_noms = cat.nomination_set.filter(
+                        Q(nominatee__in=friends) |
+                        Q(nominatee=fb_user) |
+                        Q(nominator=fb_user),
+                        active=True, won=False).distinct('id').order_by('-current_vote_count', '-created_date')#[:PAGE_SIZE]
+                    for nom in top_noms.iterator():
+                        comment_count = nom.get_comment_count()
+                        votes = [ ]
+                        for vote in nom.votes.all().iterator():
+                            votes.append({
+                                'vote_user': vote.fid,
+                                'vote_name': vote.get_name(),
+                            })
+                        data[cat_count]['noms'].append({
+                            'id': nom.id,
+                            'active': nom.active,
+                            'nomination_category': nom.nomination_category.name,
+                            'nominator': nom.nominator.fid,
+                            'nominatee': nom.nominatee.fid,
+                            'nominator_name': nom.nominator.get_name(),
+                            'nominatee_name': nom.nominatee.get_name(),
+                            'created_time': time.mktime(nom.created_date.utctimetuple()),
+                            'won': nom.won,
+                            'time_remaining': nom.get_time_remaining(),
+                            'photo': nom.get_photo(),
+                            'caption': nom.caption,
+                            'comments': False,
+                            'comment_count': comment_count,
+                            'vote_count': nom.current_vote_count,
+                            'votes': votes,
+                        })
+                    cat_count += 1
+                except:
+                    top_nom = None
+            data = sorted(data, key=lambda k: len(k['noms']), reverse=True)
+            cache.set(str(fb_user.fid) + '_user_top_stream', data)
+        else:
+            data = user_top_stream
         if data.count() == 0:
             data = "empty"
     except:
@@ -378,39 +381,20 @@ def get_user_trophies(request):
     user = request.GET.get('user')
     user = FB_User.objects.get(fid=user)
     
-    nom_cats = Nomination_Category.objects.filter(nomination__nominatee=user, nomination__won=True).distinct('id')
-    cat_count = 0
-    for cat in nom_cats.iterator():
-        winning_noms = cat.nomination_set.select_related().filter(nominatee=user, won=True)
-        data.append({
-            'cat_name': cat.name,
-            'count': winning_noms.count(),
-            'noms': [ ],
-        })
-        
-        # for nom in winning_noms.iterator():
-        #     comment_count = nom.get_comment_count()
-        #     votes = [ ]
-        #     for vote in nom.votes.all().iterator():
-        #         votes.append({
-        #             'vote_user': vote.fid,
-        #             'vote_name': vote.portrit_fb_user.all()[0].name,
-        #         })
-        #     data[cat_count]['noms'].append({
-        #         'id': nom.id,
-        #         'nomination_category': nom.nomination_category.name,
-        #         'nominator': nom.nominator.fid,
-        #         'nominatee': nom.nominatee.fid,
-        #         'won': nom.won,
-        #         'time_remaining': nom.get_time_remaining(),
-        #         'photo': nom.get_photo(),
-        #         'caption': nom.caption,
-        #         'comments': False,
-        #         'comment_count': comment_count,
-        #         'vote_count': nom.current_vote_count,
-        #         'votes': votes,
-        #     })
-        # cat_count += 1
+    user_trophies = cache.get(str(user.fid) + '_user_trophies')
+    if user_trophies == None:
+        nom_cats = Nomination_Category.objects.filter(nomination__nominatee=user, nomination__won=True).distinct('id')
+        cat_count = 0
+        for cat in nom_cats.iterator():
+            winning_noms = cat.nomination_set.select_related().filter(nominatee=user, won=True)
+            data.append({
+                'cat_name': cat.name,
+                'count': winning_noms.count(),
+                'noms': [ ],
+            })
+        cache.set(str(user.fid) + '_user_trophies', data)
+    else:
+        data = user_trophies
     
     data = simplejson.dumps(data)
     return HttpResponse(data, mimetype='application/json')

@@ -9,7 +9,7 @@
     <link rel="apple-touch-icon" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>
     <link rel="apple-touch-icon-precomposed" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>
     {% if production_code %}
-        <link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/portrit.css"/>
+        <link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/portrit-new.css"/>
     {% else %}
         <link rel="stylesheet" href="/site_media/styles/trunk/portrit.css"/>
         {% ifequal mobile_var "ipad" %}
@@ -21,7 +21,7 @@
         google.load("jquery", "1.4.4");
     </script>
     {% if production_code %}
-        <script type="text/javascript" src="http://portrit.s3.amazonaws.com/js/production/portrit-min.js"></script>
+        <script type="text/javascript" src="http://portrit.s3.amazonaws.com/js/production/portrit-min-new.js"></script>
     {% else %}
         <script type="text/javascript" src="/site_media/js/trunk/easing.1.3.js"></script>
         <script type="text/javascript" src="/site_media/js/trunk/jquery.autocomplete.js"></script>
@@ -68,6 +68,11 @@
         else{
             window.fbAsyncInit = function() {
                 FB.init({appId: '155664697800227', status: true, cookie: true, xfbml: false});
+                // FB.provide("UIServer.Methods",
+                //    { 'permissions.request' : { size : {width: 575, height: 300}, 
+                //                     url: 'connect/uiserver.php',
+                //                 transform : FB.UIServer.genericTransform }
+                //     } );
                 clearTimeout(fb_server_timeout);
                 fb_server_timeout = setTimeout(fb_down, 3000);
                 FB.getLoginStatus(handleSessionResponse);
@@ -202,7 +207,7 @@
                     </div>
 	                <div id="give_feedback"><a onclick="void(0)">Give Feedback</a></div>
 	            </div>
-                <a id="logo_link" href="#">
+                <a id="logo_link">
                     <img id="logo" src="http://portrit.s3.amazonaws.com/img/logo.png"/>
                 </a>
 				<div id="right_nav">

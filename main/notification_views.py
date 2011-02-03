@@ -23,7 +23,6 @@ def notification_read(request):
     notification_id = request.POST.get('notification_id')
     kill = request.POST.get('kill')
     notification_ids = None
-    print kill
     try:
         notification_ids = request.POST.get('notification_ids').split(',')
     except:

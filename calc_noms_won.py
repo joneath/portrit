@@ -4,6 +4,7 @@ import sys
 os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
 import json, socket, urllib, urllib2
 from django.db.models import Q, Count
+from django.core.cache import cache
 
 from settings import ENV, NODE_SOCKET, NODE_HOST
 from main.models import *
@@ -11,7 +12,6 @@ from main.models import *
 def calc_noms_won():
     # active_noms = Nomination.objects.filter(active=True)
     nominatees = FB_User.objects.filter(nominated_user__isnull=False, nominated_user__active=True).distinct('id')
-    
     for nominatee in nominatees.iterator():
         user_wins = [ ]
         friends = nominatee.friends.all()
@@ -39,6 +39,17 @@ def calc_noms_won():
                     if (nom.won == False):
                         mark_nom_as_won(nom)
                         user_wins.append(nom)
+                        
+                        try:
+                            portrit_user = nominatee.get_portrit_user()
+                            if portrit_user.allow_portrit_album and portrit_user.ask_permission == False:
+                                from to_facebook_trophy_album import to_facebook_trophy_album
+                                if not portrit_user.portrit_album_fid:
+                                    from main.user_views import create_portrit_album
+                                    create_portrit_album(nominatee, portrit_user)
+                                to_facebook_trophy_album(portrit_user.access_token, nom.get_photo()['src'], portrit_user.portrit_album_fid, nom)
+                        except:
+                            pass
                 else:
                     # nom.active = False
                     nom.save()
@@ -48,8 +59,8 @@ def calc_noms_won():
     Nomination.objects.filter(active=True).update(active=False)
 
     if len(user_wins) > 0:
-        portrit_user = user_wins[0].nominatee.portrit_fb_user.all()[0]
-        if portrit_user.allow_notifications:
+        portrit_user = user_wins[0].nominatee.get_portrit_user()
+        if portrit_user.allow_notifications and portrit_user.allow_portrit_album == False:
             try:
                 nom_cat = user_wins[0].nomination_category.name
                 name = portrit_user.name.split(' ')[0]
@@ -59,23 +70,26 @@ def calc_noms_won():
                 else:
                     trophy = 'http://s3.amazonaws.com/portrit/img/invite/blank.png'
                     trophy_text = name + ', won ' + str(len(user_wins)) + ' trophies for his rockin\' photos!'
-                url = 'https://graph.facebook.com/' + str(user_wins[0].nominatee.fid) + '/feed'
+
                 values = {'access_token' : portrit_user.access_token,
                           'picture' : trophy,
                           'link' : 'http://portrit.com/#/nom_id=' + str(nom.id) + '/ref=facebook',
                           'name': trophy_text, 
                           'caption': 'Click the trophy to see ' + name + '\'s winning photos.',
                           }
-        
+                url = 'https://graph.facebook.com/' + str(user_wins[0].nominatee.fid) + '/feed?' + urllib.urlencode(values)
                 data = urllib.urlencode(values)
                 req = urllib2.Request(url, data)
                 response = urllib2.urlopen(req)
                 data = response.read()
             except:
                 pass
-            
-    # print active_noms
-    # print nominatees
+
+    try:
+        cache.clear()
+        cache._cache.flush_all()
+    except:
+        cache.clear()
     
 def mark_nom_as_won(nom):
     nom.won = True
@@ -116,9 +130,11 @@ def mark_nom_as_won(nom):
                 pass
             notification = Notification(destination=nom.nominatee, nomination=nom, notification_type=notification_type)
             notification.save()
+            portrit_user.notifications.add(notification)
             try:
                 friends[fb_user.fid]['notification_id'] = notification.id
-            portrit_user.notifications.add(notification)
+            except:
+                pass
         except:
             pass
     

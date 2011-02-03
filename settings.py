@@ -35,7 +35,7 @@ if ENV == "LOCAL":
     NODE_SOCKET = 8081
     NODE_HOST = 'localhost'
     
-    CACHE_BACKEND = 'locmem://?timeout=30&max_entries=400'
+    CACHE_BACKEND = 'locmem://?timeout=86400&max_entries=400'
     
 elif ENV == "TEST":
     DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
@@ -77,6 +77,7 @@ else:
     
     BASE_URL = "http://portrit.com"
     MEDIA_URL = 'http://d3uzvcq9wwvnca.cloudfront.net/'
+    MEDIA_ROOT = '/var/www/portrit/media'
     
     EMAIL_HOST = 'smtp.webfaction.com'
     EMAIL_PORT = '25'

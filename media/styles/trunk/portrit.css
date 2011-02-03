@@ -1111,14 +1111,14 @@ div#initial_tut_cont{
                     text-align:             left;
                 }
                 
-            div#initial_tut_top_wrap #allow_notifications_cont{
+            div#initial_tut_top_wrap #allow_notifications_cont, div#initial_tut_top_wrap #allow_portrit_album_cont{
                 margin-left:            100px;
-                padding-bottom:         20px;
+                padding-bottom:         5px;
                 position:               relative;
                 z-index:                2;
             }
             
-                div#initial_tut_top_wrap #allow_notifications{
+                div#initial_tut_top_wrap #allow_notifications, div#initial_tut_top_wrap #allow_portrit_album{
                     float:                  left;
                     cursor:                 pointer;
                     position:               relative;
@@ -1126,14 +1126,14 @@ div#initial_tut_cont{
                     left:                   5px;
                 }
                 
-                #allow_notifications.checked{
+                .checked{
                     background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
                     background-position:    -345px -641px;
                     height:                 28px;
                     width:                  28px;
                 }
                 
-                #allow_notifications.unchecked{
+                .unchecked{
                     background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
                     background-position:    -321px -641px;
                     height:                 28px;
@@ -1342,6 +1342,17 @@ div#wall_cont{
         position:               relative;
         width:                  960px;
     }
+    
+    div#main_view_control h3{
+        color:                  #99CB6E;
+        position:               absolute;
+        right:                  0px;
+    }
+    
+/*        div#main_view_control h3:hover{
+            cursor:                 pointer;
+            text-decoration:        underline;
+        }*/
     
     .main_control{
         opacity:                            0.5;
@@ -3050,10 +3061,10 @@ div#user_profile_cont{
     div#user_profile_cont #profile_nav_cont{
         background:             rgba(68,68,68,0.7);
         cursor:                 pointer;
-        padding:                8px 15px;
+        padding:                12px 18px;
         position:               absolute;
         right:                  10px;
-        top:                    -42px;
+        top:                    120px;
         z-index:                100;
         -moz-border-radius:     15px;
         border-radius:  15px;
@@ -3071,7 +3082,7 @@ div#user_profile_cont{
             width:                  9px;
             position:               absolute;
             right:                  2px;
-            top:                    14px;
+            top:                    18px;
             background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
             background-position:    -103px -697px;
         }
@@ -3081,7 +3092,7 @@ div#user_profile_cont{
             width:                  9px;
             position:               absolute;
             left:                   2px;
-            top:                    13px;
+            top:                    16px;
             background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
             background-position:    -86px -697px;
         }
@@ -3144,6 +3155,7 @@ div#user_profile_cont{
             }
             
                 #profile_left_cont #user_friends h2{
+                    float:                  left;
                     font-size:              24px;
                     padding-bottom:         10px;
                 }
@@ -4531,7 +4543,7 @@ div#photo_cont{
     #new_nomination_wrap{
         margin:             0 auto;
         position:           absolute;
-        top:                260px;
+        top:                220px;
         width:              100%;
         z-index:            100;
     }
@@ -5093,7 +5105,7 @@ div#all_friends {
             font-size:          18px;
         }
         
-        #settings_cont #allow_notifications{
+        #settings_cont #allow_notifications, #settings_cont #allow_portrit_album{
             position:           relative;
             top:                -3px;
             left:               5px;

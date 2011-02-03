@@ -43,7 +43,20 @@ var Portrit = function(){
                             nomination_emitter.emit(data.payload.friends[id].fid, data.payload.friends[id].notification_id, data);
                         // }
                     }
-                    // nomination_emitter.removeAllListeners(data.payload.friends[i]);
+                }
+                if (data.payload.friends_to_update){
+                    data.method = data.secondary_method;
+                    console.log(data.method);
+                    for (var id in data.payload.friends_to_update){
+                        if (id != undefined){
+                            try{
+                                nomination_emitter.emit(data.payload.friends_to_update[id].fid, undefined, data);
+                            }
+                            catch (err){
+                                
+                            }
+                        }
+                    }
                 }
                 data_stream = '';
             }

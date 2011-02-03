@@ -152,8 +152,6 @@ class Nomination(models.Model):
     comments = models.ManyToManyField(Comment, null=True, blank=True)
     votes = models.ManyToManyField('FB_User', null=True, blank=True, related_name="vote_users")
     
-    objects = ObjectManager()
-    
     class Meta:
         ordering = ['up_votes', 'down_votes', '-created_date']
         verbose_name_plural = "Nominations"
@@ -392,7 +390,7 @@ class FB_User(models.Model):
 class Portrit_User(models.Model):
     active = models.BooleanField(default=True)
     ask_permission = models.BooleanField(default=True)
-    allow_portrit_album = models.BooleanField(default=False)
+    allow_portrit_album = models.BooleanField(default=True)
     allow_notifications = models.BooleanField(default=True)
     created_date = models.DateField(auto_now_add=True)
     access_token = models.CharField(max_length=255, null=True)
