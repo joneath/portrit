@@ -3999,7 +3999,7 @@ $(document).ready(function(){
             title = '',
             nom_cat_underscore = '';
         
-        if (typeof(inactive) !== "undefined"){
+        if (typeof(inactive) !== "undefined" && inactive == true && data[0].won == false){
             nom = data[0];
             noms_in_cat = data
             active_cache = data;
@@ -5524,7 +5524,7 @@ $(document).ready(function(){
                             }
                         }
                         if (fnc_ptr){
-                            fnc_ptr(my_feed, data[0].inactive);
+                            fnc_ptr(my_feed);
                         }
                     }
                     else{
@@ -8504,15 +8504,23 @@ $(document).ready(function(){
         $('#wrapper').css('min-height', '');
     }
     
-    function show_context_overlay(darken){
+    function show_context_overlay(darken, instant){
         $('#close_overlay').removeClass().addClass('close_img ' + close_size);
         if (!mobile){
             if (typeof(darken) !== "undefined"){
-                $('#wrapper').animate({
-                    'opacity': 0.3
-                }, 300);
+                if (typeof(instant) !== "undefined"){
+                    $('#wrapper').css({
+                        'opacity': 0.3
+                    });
+                    $('#context_overlay').show();
+                }
+                else{
+                    $('#wrapper').animate({
+                        'opacity': 0.3
+                    }, 300);
+                    $('#context_overlay').fadeIn();
+                }
             }
-            $('#context_overlay').fadeIn();
         }
         else{
             if (typeof(darken) !== "undefined"){
@@ -8576,7 +8584,7 @@ $(document).ready(function(){
             $('#tab_nav > .selected').removeClass('selected');
             $(this).addClass('selected');
             $('#context_overlay_cont').removeClass().addClass('latest_photos_overlay');
-            show_context_overlay(true);
+            show_context_overlay(true, true);
             init_latest_photos();
             
             if (typeof(_gaq) !== "undefined"){
@@ -8588,7 +8596,7 @@ $(document).ready(function(){
             $('#tab_nav > .selected').removeClass('selected');
             $(this).addClass('selected');
             $('#context_overlay_cont').removeClass().addClass('latest_photos_overlay');
-            show_context_overlay(true);
+            show_context_overlay(true, true);
             init_recent_winners();
             
             if (typeof(_gaq) !== "undefined"){

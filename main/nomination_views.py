@@ -491,7 +491,7 @@ def nominate_photo(request):
                         for nom in nom_data:
                             nom['quick_comments'] = [ ]
                             recent_nom_cache.insert(0, nom)
-                        cache.set(str(friend.fid) + '_recent_stream', recent_nom_cache)
+                        cache.set(str(friend.fid) + '_recent_stream', recent_nom_cache, 60*5)
                     if user_top_stream != None:
                         try:
                             cache.delete(str(friend.fid) + '_user_top_stream')
