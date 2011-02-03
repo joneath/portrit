@@ -79,7 +79,6 @@ def login_fb_user(request):
             #     sock.close()
             # except:
             #     pass
-            
             graph = facebook.GraphAPI(cookie["access_token"])
             portrit = Portrit_FB(graph, fb_user, cookie["access_token"])
             portrit.load_user_friends(True)
@@ -352,7 +351,7 @@ def get_user_stream(fb_user):
                 except:
                     top_nom = None
             data = sorted(data, key=lambda k: len(k['noms']), reverse=True)
-            cache.set(str(fb_user.fid) + '_user_top_stream', data)
+            cache.set(str(fb_user.fid) + '_user_top_stream', data, 60*5)
         else:
             data = user_top_stream
         if data.count() == 0:
@@ -379,22 +378,24 @@ def get_user_win_stream(request):
 def get_user_trophies(request):
     data = [ ]
     user = request.GET.get('user')
-    user = FB_User.objects.get(fid=user)
-    
-    user_trophies = cache.get(str(user.fid) + '_user_trophies')
-    if user_trophies == None:
-        nom_cats = Nomination_Category.objects.filter(nomination__nominatee=user, nomination__won=True).distinct('id')
-        cat_count = 0
-        for cat in nom_cats.iterator():
-            winning_noms = cat.nomination_set.select_related().filter(nominatee=user, won=True)
-            data.append({
-                'cat_name': cat.name,
-                'count': winning_noms.count(),
-                'noms': [ ],
-            })
-        cache.set(str(user.fid) + '_user_trophies', data)
-    else:
-        data = user_trophies
+    try:
+        user = FB_User.objects.get(fid=user)
+        user_trophies = cache.get(str(user.fid) + '_user_trophies')
+        if user_trophies == None:
+            nom_cats = Nomination_Category.objects.filter(nomination__nominatee=user, nomination__won=True).distinct('id')
+            cat_count = 0
+            for cat in nom_cats.iterator():
+                winning_noms = cat.nomination_set.select_related().filter(nominatee=user, won=True)
+                data.append({
+                    'cat_name': cat.name,
+                    'count': winning_noms.count(),
+                    'noms': [ ],
+                })
+            cache.set(str(user.fid) + '_user_trophies', data)
+        else:
+            data = user_trophies
+    except:
+        pass
     
     data = simplejson.dumps(data)
     return HttpResponse(data, mimetype='application/json')

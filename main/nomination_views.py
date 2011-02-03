@@ -745,7 +745,7 @@ def get_recent_stream(fb_user, created_date=None):
                 except:
                     pass
             if not created_date:        
-                cache.set(str(fb_user.fid) + '_recent_stream', data)
+                cache.set(str(fb_user.fid) + '_recent_stream', data, 60*5)
         else:
             data = user_recent_stream
         

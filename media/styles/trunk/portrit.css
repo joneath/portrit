@@ -1343,7 +1343,7 @@ div#wall_cont{
         width:                  960px;
     }
     
-    div#main_view_control h3{
+    div#main_view_control h3, div#main_view_control .invite_friends{
         color:                  #99CB6E;
         position:               absolute;
         right:                  0px;
@@ -3059,8 +3059,10 @@ div#user_profile_cont{
 }
 
     div#user_profile_cont #profile_nav_cont{
-        background:             rgba(68,68,68,0.7);
+        background:             #222 url(http://portrit.s3.amazonaws.com/img/alert-overlay.png) repeat-x;
+        color:                  #FAC86E;
         cursor:                 pointer;
+        font-weight:            bold;
         padding:                12px 18px;
         position:               absolute;
         right:                  10px;
@@ -3542,7 +3544,7 @@ div#wall_cont div#profile_wrap{
     }
 
     div#activate_recent_winners{
-        background-color:   #dedede;
+        background-color:   white;
         color:              #444;
         cursor:             pointer;
         float:              left;
@@ -3568,7 +3570,7 @@ div#wall_cont div#profile_wrap{
     }
 
     div#activate_latest_photos{
-        background-color:   #dedede;
+        background-color:   white;
         color:              #444;
         cursor:             pointer;
         float:              left;
@@ -3932,7 +3934,8 @@ div#wall_cont div#profile_wrap{
             margin-right:           10px;
         }
         
-            .recent_nom_top_cont h3 a{
+            .recent_nom_top_cont h3 > span.strong{
+                display:            inline;
                 font-size:          18px;
             }
             
@@ -4473,6 +4476,7 @@ div#photo_cont{
     }
     
     div#photo_large{
+        margin-bottom:      20px;
         position:           relative;
         text-align:         center;
     }
@@ -4662,6 +4666,25 @@ div#photo_cont{
             margin-bottom:  10px;
         }
         
+        #tagged_users{
+            text-align:     center;
+        }
+        
+            #tagged_users .tagged_user{
+                display:        inline-block;
+                margin:         3px 4px;
+                height:         50px;
+                width:          50px;
+                border:         2px solid #333;
+                border-radius:  3px;
+                -moz-border-radius:        3px;
+            }
+            
+            #tagged_users .tagged_user img{
+                height:         50px;
+                width:          50px;
+            }
+        
         #active_nominations{
             background:         rgba(0, 0, 0, 0.75);
             border-top-right-radius:    10px;
@@ -4690,8 +4713,9 @@ div#photo_cont{
         #active_nominations h3{
             font-size:      20px;
             font-weight:    bold;
+            margin-left:    10px;
             padding-top:    10px;
-            text-align:     center;
+            text-align:     left;
         }
         
         #active_nominations h4{
@@ -5763,6 +5787,7 @@ div#payment_types_cont{
             margin:                 7px 0px;
             margin-right:           10px;
             padding:                3px 0px;
+            padding-right:          10px;
             position:               relative;
             text-align:             left;
         }

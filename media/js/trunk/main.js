@@ -2228,12 +2228,12 @@ $(document).ready(function(){
         }
         
         if (data.length == 1){
-            trophy_won_text = name + ' won the ' + data[0].cat + ' trophy for his rockin\' photo!';
+            trophy_won_text = name + ' won the ' + data[0].cat + ' trophy for thier rockin\' photo!';
             trophy_img_src = 'http://portrit.s3.amazonaws.com/img/invite/' + cat_underscore + '.png';
         }
         else{
             //Blank trophy
-            trophy_won_text = name + ' won ' + data.length + ' trophies for his rockin\' photos!';
+            trophy_won_text = name + ' won ' + data.length + ' trophies for thier rockin\' photos!';
             trophy_img_src = 'http://portrit.s3.amazonaws.com/img/invite/blank.png';
         }
         
@@ -3699,17 +3699,17 @@ $(document).ready(function(){
         //     photo_upload_html = '';
         // }
         
-        var invite_friends = '<h3 class="awesome large invite_friends">Invite Friends</h3>';
-        
-        if (mobile && !tablet){
-            invite_friends = '';
-        }
+        // var invite_friends = '<h3 class="awesome large invite_friends">Invite Friends</h3>';
+        // 
+        // if (mobile && !tablet){
+        //     invite_friends = '';
+        // }
         
         var view_control_html = '<div id="main_view_control">' +
                                     '<a id="friend_view" class="main_control awesome large ' + friend_view_selected + '">Friends</a>' +
                                     '<a id="wall_view" class="main_control awesome large ' + wall_view_selected + ' ">Stream</a>' +
                                     '<a id="profile_view" class="main_control awesome large ' + profile_view_selected + '">Profile</a>' +
-                                    invite_friends +
+                                    // invite_friends +
                                     photo_upload_html +
                                 '</div>';
         $('#cont').prepend(view_control_html);
@@ -3982,6 +3982,7 @@ $(document).ready(function(){
             won = getUrlVars().won,
             user_url = getUrlVars().user,
             trophy = getUrlVars().trophy,
+            ref = getUrlVars().trophy,
             nom = null,
             active_cache = null;
             noms_in_cat = null,
@@ -3999,7 +4000,7 @@ $(document).ready(function(){
             title = '',
             nom_cat_underscore = '';
         
-        if (typeof(inactive) !== "undefined"){
+        if (typeof(inactive) !== "undefined" && ref == undefined){
             nom = data[0];
             noms_in_cat = data
             active_cache = data;
@@ -4458,15 +4459,15 @@ $(document).ready(function(){
         var first_alpha = true;
         var alpha_class = "";
         
-        var invite_friends = '<h3 class="awesome large invite_friends">Invite Friends</h3>';
-        
-        if (mobile && !tablet){
-            invite_friends = '';
-        }
+        // var invite_friends = '<h3 class="awesome large invite_friends">Invite Friends</h3>';
+        // 
+        // if (mobile && !tablet){
+        //     invite_friends = '';
+        // }
         
         // $('#wall_cont').html('');
         if ($('#main_view_control').length == 0){
-            $('#cont').prepend('<div id="main_view_control"><a id="friend_view" class="main_control awesome large main_control_active">Friends</a><a id="wall_view" class="main_control awesome large  ">Stream</a><a id="profile_view" class="main_control awesome large ">Profile</a>' + invite_friends + '</div>');
+            $('#cont').prepend('<div id="main_view_control"><a id="friend_view" class="main_control awesome large main_control_active">Friends</a><a id="wall_view" class="main_control awesome large  ">Stream</a><a id="profile_view" class="main_control awesome large ">Profile</a></div>');
         }
         $('#wall_cont').show();
         $('#friend_cont').show();
@@ -4871,6 +4872,7 @@ $(document).ready(function(){
             get_user_videos(id);
         }
         else{
+            user_profile = null;
             album_html ='<div id="non_friend_wrap">' +
                             '<div id="non_friend_trophy_room_wrap">' +
                                 '<div id="info_wrap">' +
@@ -5940,16 +5942,21 @@ $(document).ready(function(){
     }
     
     var photo_feed = null;
+    var photo_feed_timeout = null;
     function init_latest_photos(){
         view_active = 'latest_photos';
         $('#context_overlay_cont > div').append('<div id="new_photo_cont"><h1>Latest Photos</h1><p class="tooltip"></p></div>');
         append_load($('#context_overlay_cont > div'), 'light');
-        if (!photo_feed){
+        if (!photo_feed || photo_feed.length == 0){
             //Get newest photo feed from server
             $.getJSON('https://api.facebook.com/method/stream.get?access_token=' + fb_session.access_token + '&limit=50&filter_key=' + photo_filter + '&format=json&callback=?', function(data){
                 remove_load();
                 photo_feed = data.posts;
                 render_latest_photos(photo_feed);
+                clearTimeout(photo_feed_timeout);
+                photo_feed_timeout = setTimeout(function(){
+                    photo_feed = null;
+                }, 1000 * 60 * 5);
             });
         }
         else{
@@ -6094,7 +6101,7 @@ $(document).ready(function(){
                                     '<div class="recent_nom_top_cont nom_cat_' + nom_cat_underscore + '">' +
                                         '<a href="#/user=' + nom.nominatee + '">' + user_thumbnail + '</a>' +
                                         '<a href="#/user=' + nom.nominatee + '"><h2>' + name + '</h2></a>' +
-                                        '<h3>Nominated for <a href="#/trophy=' + nom_cat_underscore + '"><span class="strong">' + nom_cat_text + '</span></a><span>' + secondsToHms(time_diff) + '</span></h3>' +
+                                        '<h3>Nominated for <span class="strong">' + nom_cat_text + '</span><span>' + secondsToHms(time_diff) + '</span></h3>' +
                                         '<div class="clear"></div>' +
                                     '</div>' +
                                     '<div class="recent_nom_photo_cont">' +
@@ -6245,7 +6252,7 @@ $(document).ready(function(){
                                     '<div class="recent_nom_top_cont nom_cat_' + nom_cat_underscore + '">' +
                                         '<a href="#/user=' + nom.nominatee + '">' + user_thumbnail + '</a>' +
                                         '<a href="#/user=' + nom.nominatee + '"><h2>' + name + '</h2></a>' +
-                                        '<h3>Nominated for <a href="#/trophy=' + nom_cat_underscore + '"><span class="strong">' + nom_cat_text + '</span></a><span>' + secondsToHms(time_diff) + '</span></h3>' +
+                                        '<h3>Nominated for <span class="strong">' + nom_cat_text + '</span><span>' + secondsToHms(time_diff) + '</span></h3>' +
                                         '<div class="clear"></div>' +
                                     '</div>' +
                                     '<div class="recent_nom_photo_cont">' +
@@ -6755,6 +6762,17 @@ $(document).ready(function(){
                 else{
                     $('#profile_cont').show();
                 }
+                
+                // $.getJSON('https://api.facebook.com/method/stream.get?access_token=' + fb_session.access_token + '&limit=50&filter_key=' + photo_filter + '&format=json&callback=?', function(data){
+                //     remove_load();
+                //     photo_feed = data.posts;
+                //     // render_latest_photos(photo_feed);
+                //     render_latest_photos_top_stream(photo_feed);
+                //     clearTimeout(photo_feed_timeout);
+                //     photo_feed_timeout = setTimeout(function(){
+                //         photo_feed = null;
+                //     }, 1000 * 60 * 5);
+                // });
             }
             else{
                 render_empty_nom_page();
@@ -8559,7 +8577,7 @@ $(document).ready(function(){
             $('#tab_nav > .selected').removeClass('selected');
             $(this).addClass('selected');
             $('#context_overlay_cont').removeClass().addClass('latest_photos_overlay');
-            show_context_overlay();
+            show_context_overlay(true);
             init_latest_photos();
             
             if (typeof(_gaq) !== "undefined"){
@@ -8571,7 +8589,7 @@ $(document).ready(function(){
             $('#tab_nav > .selected').removeClass('selected');
             $(this).addClass('selected');
             $('#context_overlay_cont').removeClass().addClass('latest_photos_overlay');
-            show_context_overlay();
+            show_context_overlay(true);
             init_recent_winners();
             
             if (typeof(_gaq) !== "undefined"){
@@ -9118,7 +9136,7 @@ $(document).ready(function(){
     
     function update_nom_detail(nom, won){
         $('#main_nom_photo').attr('src', nom.photo.src);
-        $('#vote_cont_left p').text(nom.vote_count);
+        $('#nom_vote_count').text(nom.vote_count);
         
         $('.comment').remove();
         $('#nom_votes_wrap a').remove();
@@ -9463,7 +9481,7 @@ $(document).ready(function(){
     $('.invite_friends').live('click', function(){
         FB.ui({
             method: 'apprequests', 
-            message: 'You should learn more about this awesome game.'
+            message: 'Come join me on Portrit. Find the best photos between our friends.'
         }, function(response) {
             if (response && response.post_id) {
                 if (typeof(_gaq) !== "undefined"){
@@ -9680,6 +9698,24 @@ $(document).ready(function(){
                 $('#new_nomination_cont').show();
             }
             $('.photo_thumbs').die('click', photo_click_handler);
+            
+            // FB.api('/' + selected_photo, function(response) {
+            //     var tagged_users = [ ];
+            //     var taggged_user_html = '';
+            //     if (response.tags.data.length > 0){
+            //         for (var i = 0; i < response.tags.data.length; i++){
+            //             if (response.tags.data[i].id != selected_user){
+            //                 // tagged_users.push(response.tags[i]);
+            //                 taggged_user_html = '<div class="tagged_user" value="' + response.tags.data[i].id + '">' +
+            //                                         '<img src="https://graph.facebook.com/' + response.tags.data[i].id + '/picture?type=square"/>' +
+            //                                     '</div>';
+            //                 $('#tagged_users > div').append(taggged_user_html);
+            //             }
+            //         }
+            //         $('#tagged_users').slideDown('fast');
+            //     }
+            // });
+            
             return false; 
         });
         
@@ -10020,6 +10056,8 @@ $(document).ready(function(){
         $('#nom_complete_cont').hide();
         $('#nom_complete_cont .nom_complete_cat_cont').remove();
         $('#post_nomination').text('Post Nomination').removeClass('awesome_hover_lock');
+        $('#tagged_users').hide();
+        $('#tagged_users > div').html('');
     }
     
     function append_wall_html(view_to_activate){
@@ -10042,18 +10080,18 @@ $(document).ready(function(){
             replace_view_text = 'Active Nominations';
         }
         
-        invite_friends = '<h3 class="awesome large invite_friends">Invite Friends</h3>';
-        
-        if (mobile && !tablet){
-            invite_friends = '';
-        }
+        // invite_friends = '<h3 class="awesome large invite_friends">Invite Friends</h3>';
+        // 
+        // if (mobile && !tablet){
+        //     invite_friends = '';
+        // }
         
         if ($('#main_view_control').length == 0){
             var view_control_html = '<div id="main_view_control">' +
                                         '<a id="friend_view" class="main_control awesome large">Friends</a>' +
                                         '<a id="wall_view" class="main_control awesome large main_control_active">Stream</a>' +
                                         '<a id="profile_view" class="main_control awesome large">Profile</a>' +
-                                        invite_friends +
+                                        // invite_friends +
                                         photo_upload_html
                                     '</div>';
             $('#cont').prepend(view_control_html);
