@@ -49,27 +49,63 @@ div#login_cont{
 }
 
 .login_points_cont{
-    margin-bottom:          5px;
-    width:                  520px;
+    margin-bottom:          10px;
+    width:                  480px;
 }
 
     .login_points_cont .login_points_bottom{
-        width:              520px;
+        width:              480px;
     }
 
     .login_points h3{
         font-size:              24px;
     }
+    
+#login_top_cont{
+    height:                 auto;
+}
+    
+div#tagline_top{
+    float:                  none;
+    padding-bottom:         5px;
+    position:               relative;
+    width:                  480px;
+}
 
 div#login_content div#login_right_cont{
+    border-right:           none;
+    border-left:            none;
+    position:               relative;
+    right:                  0px;
     width:                  520px;
-    -webkit-border-top-right-radius:         0px;
-    -webkit-border-bottom-right-radius:      10px;
-    -webkit-border-bottom-left-radius:       10px;
-    -moz-border-radius-topright:             0px;
-    -moz-border-radius-bottomright:          10px;
-    -moz-border-radius-bottomleft:          10px;
 }
+
+    div#login_content div#login_right_cont p{
+        font-size:              16px;
+        width:                  300px;
+    }
+    
+#login_screenshot_cont{
+    padding:                0px;
+}
+    
+#login_screenshot_left_cont{
+    float:                  none;
+    margin-top:             0px;
+    margin-right:           0px;
+    padding-top:            10px;
+    padding-bottom:         15px;
+    width:                  520px;
+}
+
+#login_screenshot_right_cont{
+    float:                  none;
+    width:                  520px;
+}
+
+    #login_screenshot_right_cont #screenshot_cont{
+        width:              520px;
+    }
 
 #tagline_cont_active{
     height:                 385px;
@@ -105,18 +141,6 @@ div#tagline_bottom p{
 div#login_content{
     margin-top:             10px;
     margin-bottom:          -10px;
-}
-
-ul.slideshow{
-    height:                 360px;
-}
-
-ul.slideshow li {  
-    position:               absolute;
-    top:                    20px;
-    left:                   0px;
-    -webkit-transition:     -webkit-transform .25s ease-out;
-    -moz-transition:        -moz-transform .25s ease-out;
 }
 
 div#cont{
@@ -172,6 +196,31 @@ div#push{
 div#context_cont{
     width:          480px;
 }
+
+    div#context_overlay_cont.nominate_photo{
+        width:              480px;
+    }
+    
+    #selected_nom_image_cont{
+        display:            none;
+    }
+    
+    #selected_photo_triangle{
+        display:            none;
+    }
+    
+    #selected_nom_cont{
+        float:              none;
+        width:              440px;
+    }
+    
+        #selected_nom_cont h2{
+            border-left:        1px solid #dedede;
+        }
+    
+    #nom_caption{
+        width:              400px;
+    }
 
 #contact_form textarea, #bug_form textarea{
     width:              25em; 

@@ -24,8 +24,15 @@ class Portrit_FB(object):
     
     def load_user_friends(self, update=False):
         friends = self.graph.get_connections("me", "friends")
-        if update:
-            self.fb_user.friends.clear()
+        friend_ids = [ ]
         for friend in friends['data']:
-            new_fb_user, created = FB_User.objects.get_or_create(fid=friend['id'])
-            self.fb_user.friends.add(new_fb_user)
+            friend_ids.append(long(friend['id']))
+         
+        friend_query = self.fb_user.friends.values_list('fid', flat=True)
+        for fid in friend_ids:
+            if not (fid in friend_query):
+                print fid
+                new_fb_user, created = FB_User.objects.get_or_create(fid=fid)
+                self.fb_user.friends.add(new_fb_user)
+            else:
+                pass

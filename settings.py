@@ -37,6 +37,9 @@ if ENV == "LOCAL":
     
     CACHE_BACKEND = 'locmem://?timeout=86400&max_entries=400'
     
+    AWS_KEY = 'AKIAIYXPXPJDU2VIKQKQ'
+    AWS_SECRET_KEY = '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'
+    
 elif ENV == "TEST":
     DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
     DATABASE_NAME = 'portrit'             # Or path to database file if using sqlite3.
@@ -66,6 +69,9 @@ elif ENV == "TEST":
         # ('Your Name', 'your_email@domain.com'),
         ("Jonathan Eatherly", "jonathan.eatherly@gmail.com"),
     )
+    
+    AWS_KEY = 'AKIAIYXPXPJDU2VIKQKQ'
+    AWS_SECRET_KEY = 'nMI2Etuxpa64IXyGCbtmnmSNE7DKmX0uUhKUmzuv'
     
 else:
     DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
@@ -98,6 +104,9 @@ else:
         ("Jonathan Eatherly", "jonathan.eatherly@gmail.com"),
     )
 
+    AWS_KEY = 'AKIAIYXPXPJDU2VIKQKQ'
+    AWS_SECRET_KEY = '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'
+    
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -164,5 +173,4 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'main',
     'south',
-    'sorl.thumbnail',
 )

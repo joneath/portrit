@@ -2,7 +2,6 @@ from django.db import models
 
 from django.db.models.fields import IntegerField
 from django.contrib.auth.models import User
-from sorl.thumbnail.fields import ImageWithThumbnailsField
 
 from south.modelsinspector import add_introspection_rules
 add_introspection_rules([], ["^main\.models\.BigIntegerField"])
@@ -13,23 +12,6 @@ from django.contrib.sites.models import Site
 from django.core.cache import cache
  
 CACHE_EXPIRES = 5 * 60 # 10 minutes
-
-class ObjectManager(models.Manager):
-    def get_query_set(self, *args, **kwargs):
-        cache_key = 'objectlist%d%s%s' % (
-            Site.objects.get_current().id, # unique for site
-            ''.join([str(a) for a in args]), # unique for arguments
-            ''.join('%s%s' % (str(k), str(v)) for k, v in kwargs.iteritems())
-        )
- 
-        object_list = cache.get(cache_key)
-        #if not object_list:
-        #AdamG noted that this check avoids empty lists
-        #evaluating to False, as "if not object_list" did
-        if object_list is None:
-            object_list = super(ObjectManager, self).get_query_set(*args, **kwargs)
-            cache.set(cache_key, object_list, CACHE_EXPIRES)
-        return object_list
 
 class BigIntegerField(IntegerField):
     empty_strings_allowed=False
@@ -244,9 +226,7 @@ class Album(models.Model):
     def __unicode__(self):
         return u'%s_%s' % (self.fid, self.name)
 
-class Photo(models.Model):
-    list_thumbnail_size = (150, 150)
-    
+class Photo(models.Model):    
     active = models.BooleanField(default=True)
     pending = models.BooleanField(default=False)
     created_date = models.DateTimeField(auto_now_add=True)
@@ -258,16 +238,9 @@ class Photo(models.Model):
     height = models.IntegerField(null=True, blank=True)
     width = models.IntegerField(null=True, blank=True)
     caption = models.CharField(max_length=512, null=True, blank=True)
-    photo = ImageWithThumbnailsField(upload_to="photos",
-                                        thumbnail={'size': list_thumbnail_size},
-                                        extra_thumbnails={
-                                            'medium': {'size': (400, 400)},
-                                            'large': {'size': (800, 800)},
-                                        },
-                                        generate_on_save=True,
-                                        null=True,
-                                        blank=True,
-                                    )
+    portrit_photo = models.BooleanField(default=False)
+    thumbnail_src = models.URLField(max_length=255, null=True, blank=True)
+    large_src = models.URLField(max_length=255, null=True, blank=True)
     album = models.ForeignKey(Album, null=True, blank=True)
     nominations = models.ManyToManyField(Nomination, null=True, blank=True)
     
@@ -275,16 +248,26 @@ class Photo(models.Model):
         ordering = ['-created_date']
     
     def __unicode__(self):
-        return u'%s, %s, nom count: %s' % (self.fid, self.photo, self.nominations.all().count())
-        
-    def save_thumbnails(self):
-        thumbnail = self.photo.thumbnail.absolute_url
-        medium = self.photo.extra_thumbnails['medium']
-        large = self.photo.extra_thumbnails['large']
+        return u'%s, %s' % (self.fid, self.thumbnail_src)
         
     def get_album_fid(self):
         try:
             return self.album.fid
+        except:
+            return None
+            
+    def get_portrit_photo(self):
+        try:
+            return {
+                'id': self.id,
+                'caption': self.caption,
+                'thumbnail_src': self.thumbnail_src,
+                 'large_src': self.large_src,
+                 'small_height': self.small_height,
+                 'small_width': self.small_width,
+                 'height': self.height,
+                 'width': self.width,
+            }
         except:
             return None
         
@@ -397,6 +380,7 @@ class Portrit_User(models.Model):
     fb_user = models.ForeignKey(FB_User, related_name="portrit_fb_user")
     name = models.CharField(max_length=255, null=True, blank=True)
     portrit_album_fid = BigIntegerField(blank=True, null=True, unique=True)
+    portrit_user_albums = models.ManyToManyField(Album, blank=True, null=True)
     tutorial_completed = models.BooleanField(default=False)
     given_nomination_count = models.IntegerField(default=0)
     recieved_nomination_count = models.IntegerField(default=0)
@@ -417,6 +401,12 @@ class Portrit_User(models.Model):
     
     def __unicode__(self):
         return u'%s' % (self.fb_user.fid)
+        
+    def get_portrit_album(self):
+        try:
+            return self.portrit_user_albums.select_related().filter(active=True)[0]
+        except:
+            return None
         
     def get_tutorial_counts(self):
         nom_count = 3 - self.given_nomination_count

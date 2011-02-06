@@ -27,6 +27,7 @@
         <script type="text/javascript" src="/site_media/js/trunk/jquery.autocomplete.js"></script>
         <script type="text/javascript" src="/site_media/js/trunk/iscroll.js"></script>
         <script type="text/javascript" src="/site_media/js/trunk/mdetect.js"></script>
+        <script type="text/javascript" src="/site_media/js/trunk/jquery.fileupload.js"></script>
         <script type="text/javascript" src="/site_media/js/trunk/main.js"></script>
     {% endif %}
 
@@ -124,72 +125,6 @@
             <div></div>
         </div>
     </div>
-    <div id="new_nomination_wrap" style="display:none;">
-        <div id="new_nomination_cont">
-            <div id="trophy_cont_top">
-                <h2>Nominate Photo For A Trophy</h2>
-                <ul>
-                    <li class="unselected" id="Hot_cont">
-                        <p class="trophy_img medium hot" onclick="void(0)"></p>
-                        <h4 class="nom_cat_hot_text">Hot</h4>
-                    </li>
-                    <li class="unselected" id="Lol_cont">
-                        <p class="trophy_img medium lol" onclick="void(0)"></p>
-                        <h4 class="nom_cat_lol_text">LOL</h4>
-                    </li>
-                    <li class="unselected" id="Artsy_cont">
-                        <p class="trophy_img medium artsy" onclick="void(0)"></p>
-                        <h4 class="nom_cat_artsy_text">Artsy</h4>
-                    </li>
-                    <li class="unselected" id="Fail_cont">
-                        <p class="trophy_img medium fail" onclick="void(0)"></p>
-                        <h4 class="nom_cat_fail_text">Fail</h4>
-                    </li>
-                    <li class="unselected" id="Party_Animal_cont">
-                        <p class="trophy_img medium party_animal" onclick="void(0)"></p>
-                        <h4 class="nom_cat_party_animal_text">Party Animal</h4>
-                    </li>
-                    <li class="unselected" id="Cute_cont">
-                        <p class="trophy_img medium cute" onclick="void(0)"></p>
-                        <h4 class="nom_cat_cute_text">Cute</h4>
-                    </li>
-                    <li class="unselected" id="WTF_cont">
-                        <p class="trophy_img medium wtf" onclick="void(0)"></p>
-                        <h4 class="nom_cat_wtf_text">WTF</h4>
-                    </li>
-                    <li class="unselected" id="Creepy_cont">
-                        <p class="trophy_img medium creepy" onclick="void(0)"></p>
-                        <h4 class="nom_cat_creepy_text">Creepy</h4>
-                    </li>
-                    <div class="clear"></div>
-                </ul>
-            </div>
-            <div class="clear"></div>
-            <div id="trophy_cont_bottom">
-                <div id="active_nominations">
-                    <div id="tagged_users" style="display:none;">
-                        <h3>Tagged Friends</h3>
-                        <div></div>
-                    </div>
-                    <h3>Selected Nominations</h3>
-                    <div id="active_empty">
-                        <h5>No nominations selected</h5>
-                    </div>
-                    <div id="active_nominations_cont">
-                    </div>
-                    <div class="clear"></div>
-                </div>
-                <textarea id="nomination_comment">Add a caption to this nomination.</textarea>
-                <span id="cancel_nomination" class="awesome large">Cancel</span>
-                <span id="post_nomination" class="awesome large">Post Nomination</span>
-                <div class="clear"></div>
-            </div>
-        </div>
-        <div id="nom_complete_cont" style="display:none;">
-            <h1>Photo Has Been Nominated</h1>
-            <p id="close_nom_success" class="close_img"></p>
-        </div>
-    </div>
     <div id="wrapper">
         <div id="header" style="display:none; background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#333), to(#111));">
 			<div id="header_wrap">
@@ -197,7 +132,7 @@
 	                <div class="nav_icon" id="back" title="Back"></div>
 	                <div class="nav_icon" id="home" title="Home"></div>
 	                <div class="nav_icon" id="search_control" title="Search"></div>
-	                <div id="footer_notification_cont">
+	                <div id="footer_notification_cont" title="Notifications">
                         <div id="notification_footer_popup">
                             <div id="notification_arrow"></div>
                             <div id="notification_footer_popup_heading">

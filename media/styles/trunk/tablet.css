@@ -21,6 +21,10 @@ div#cont{
     padding-top:        0px;
 }
 
+.close_img.normal{
+    right:              -10px;
+}
+
 div#search{
     height:             400px;
     padding-top:        150px;

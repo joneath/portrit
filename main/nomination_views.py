@@ -537,6 +537,17 @@ def get_user_album_nom_data(request):
             user = FB_User.objects.get(fid=user_id)
             winning_nominations = Nomination.objects.select_related().filter(nominatee=user, won=True).order_by('-created_date')
             active_nominations = Nomination.objects.select_related().filter(nominatee=user, won=False, active=True).order_by('-current_vote_count')
+            try:
+                portrit_user = user.get_portrit_user()
+                portrit_album = portrit_user.get_portrit_album()
+                portrit_album_data = {
+                    'album_name': portrit_album.name,
+                    'photos': [ ]
+                }
+                for photo in portrit_album.photo_set.filter(active=True, pending=False):
+                    portrit_album_data['photos'].append(photo.get_portrit_photo())
+            except:
+                portrit_album_data = { }
             
             winning_nom_objs = [ ]
             active_nom_objs = [ ]
@@ -557,6 +568,7 @@ def get_user_album_nom_data(request):
             data = {
                 'winning_nom_objs': winning_nom_objs,
                 'active_nom_objs': active_nom_objs,
+                'portrit_album_data': portrit_album_data,
             }
     except:
         pass
@@ -575,94 +587,94 @@ def vote_on_nomination(request):
     if cookie:
         owner = FB_User.objects.get(fid=int(cookie["uid"]))
         nomination = Nomination.objects.get(id=nomination_id)
-        # if nomination.votes.filter(fid=owner.fid).count() == 0:
-        if direction == 'up':
-            nomination.up_votes += 1
-            nomination.update_current_vote_count()
-            nomination.save()
-        elif direction == 'down':
-            nomination.down_votes += 1
-            nomination.update_current_vote_count()
-            nomination.save()
+        if nomination.votes.filter(fid=owner.fid).count() == 0 and nomination.active:
+            if direction == 'up':
+                nomination.up_votes += 1
+                nomination.update_current_vote_count()
+                nomination.save()
+            elif direction == 'down':
+                nomination.down_votes += 1
+                nomination.update_current_vote_count()
+                nomination.save()
             
-        nomination.votes.add(owner)
+            nomination.votes.add(owner)
         
-        nominatee = FB_User.objects.get(fid=str(nomination.nominatee))
-        try:
-            owner_portrit_user = Portrit_User.objects.get(fb_user=owner)
-            owner_portrit_user.vote_count += 1
-            owner_portrit_user.save()
-        except:
-            pass
-        
-        portrit_user = owner.portrit_fb_user.all()[0]
-        target_friends = get_target_friends(nominatee, owner)
-        friends = { }
-        for friend in target_friends:
+            nominatee = FB_User.objects.get(fid=str(nomination.nominatee))
             try:
-                friend = FB_User.objects.get(fid=friend)
-                friends[friend.fid] = {'fid': friend.fid,
-                                'allow_notifications': friend.get_portrit_user_notification_permission()}
+                owner_portrit_user = Portrit_User.objects.get(fb_user=owner)
+                owner_portrit_user.vote_count += 1
+                owner_portrit_user.save()
             except:
-                friends = { }
+                pass
         
-        node_data = {
-            'method': 'vote',
-            'payload': {
-                'nom_id': nomination.id,
-                'nominatee': nomination.nominatee.fid,
-                'nomination_category': nomination.nomination_category.name,
-                'vote_count': nomination.current_vote_count,
-                'vote_user': owner.fid,
-                'vote_name': portrit_user.name,
-                'friends': friends,
-            }
-        }
-        
-        node_data = json.dumps(node_data)
-        try:
-            sock = socket.socket(
-                socket.AF_INET, socket.SOCK_STREAM)
-            sock.connect((NODE_HOST, NODE_SOCKET))
-            sock.send(node_data)
-            sock.close()
-        except:
-            pass
-        
-        data = {'vote_count': nomination.current_vote_count,
-                'nominatee': nomination.nominatee.fid,}
-                
-        #Update nom vote caches
-        try:
+            portrit_user = owner.portrit_fb_user.all()[0]
+            target_friends = get_target_friends(nominatee, owner)
+            friends = { }
             for friend in target_friends:
-                friend_recent_nom_cache = cache.get(str(friend) + '_recent_stream')
-                user_top_stream = cache.get(str(friend) + '_user_top_stream')
                 try:
-                    if friend_recent_nom_cache != None:
-                        for nom in friend_recent_nom_cache:
-                            if nom['id'] == nomination.id:
-                                nom['vote_count'] = nomination.current_vote_count,
-                                nom['votes'].append({'vote_user': owner.fid,
-                                                        'vote_name': portrit_user.name})
-
-                        cache.set(str(friend) + '_recent_stream', friend_recent_nom_cache)
+                    friend = FB_User.objects.get(fid=friend)
+                    friends[friend.fid] = {'fid': friend.fid,
+                                    'allow_notifications': friend.get_portrit_user_notification_permission()}
                 except:
-                    pass
-
-                try:
-                    if user_top_stream != None:
-                        for nom_cat in user_top_stream:
-                            for nom in nom_cat['noms']:
+                    friends = { }
+        
+            node_data = {
+                'method': 'vote',
+                'payload': {
+                    'nom_id': nomination.id,
+                    'nominatee': nomination.nominatee.fid,
+                    'nomination_category': nomination.nomination_category.name,
+                    'vote_count': nomination.current_vote_count,
+                    'vote_user': owner.fid,
+                    'vote_name': portrit_user.name,
+                    'friends': friends,
+                }
+            }
+        
+            node_data = json.dumps(node_data)
+            try:
+                sock = socket.socket(
+                    socket.AF_INET, socket.SOCK_STREAM)
+                sock.connect((NODE_HOST, NODE_SOCKET))
+                sock.send(node_data)
+                sock.close()
+            except:
+                pass
+        
+            data = {'vote_count': nomination.current_vote_count,
+                    'nominatee': nomination.nominatee.fid,}
+                
+            #Update nom vote caches
+            try:
+                for friend in target_friends:
+                    friend_recent_nom_cache = cache.get(str(friend) + '_recent_stream')
+                    user_top_stream = cache.get(str(friend) + '_user_top_stream')
+                    try:
+                        if friend_recent_nom_cache != None:
+                            for nom in friend_recent_nom_cache:
                                 if nom['id'] == nomination.id:
                                     nom['vote_count'] = nomination.current_vote_count,
                                     nom['votes'].append({'vote_user': owner.fid,
                                                             'vote_name': portrit_user.name})
 
-                        cache.set(str(friend) + '_user_top_stream', user_top_stream)
-                except:
-                    pass
-        except:
-            pass
+                            cache.set(str(friend) + '_recent_stream', friend_recent_nom_cache)
+                    except:
+                        pass
+
+                    try:
+                        if user_top_stream != None:
+                            for nom_cat in user_top_stream:
+                                for nom in nom_cat['noms']:
+                                    if nom['id'] == nomination.id:
+                                        nom['vote_count'] = nomination.current_vote_count,
+                                        nom['votes'].append({'vote_user': owner.fid,
+                                                                'vote_name': portrit_user.name})
+
+                            cache.set(str(friend) + '_user_top_stream', user_top_stream)
+                    except:
+                        pass
+            except:
+                pass
     
     data = simplejson.dumps(data)
     return HttpResponse(data, mimetype='application/json')

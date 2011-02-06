@@ -111,7 +111,7 @@ a:hover{
     background-color:   #66cc66;
 }
 
-.awesome, .awesome:visited, .awesome_abs{
+.sick, .sick:visited, .sick_abs{
 	background: #222 url(http://portrit.s3.amazonaws.com/img/alert-overlay.png) repeat-x; 
 	display: inline-block; 
 	padding: 5px 10px 6px; 
@@ -128,26 +128,26 @@ a:hover{
 	cursor: pointer;
 }
 
-.awesome_hover_lock:                            { background-color: #111; color: #fff; }
-.awesome:hover, .awesome_abs:hover				{ background-color: #111; color: #fff; }
-.awesome:active							        { top: 1px; }
-.small.awesome, .small.awesome:visited 			{ font-size: 11px; padding: ; }
-.awesome, .awesome:visited, .awesome_abs,
-.medium.awesome, .medium.awesome:visited 		{ font-size: 13px; font-weight: bold; line-height: 1; text-shadow: 0 -1px 1px rgba(0,0,0,0.25); }
-.large.awesome, .large.awesome:visited, .large.awesome_abs  			{ font-size: 14px; padding: 8px 14px 9px; }
+.sick_hover_lock:                            { background-color: #111; color: #fff; }
+.sick:hover, .sick_abs:hover				{ background-color: #111; color: #fff; }
+.sick:active							        { top: 1px; }
+.small.sick, .small.sick:visited 			{ font-size: 11px; padding: ; }
+.sick, .sick:visited, .sick_abs,
+.medium.sick, .medium.sick:visited 		{ font-size: 13px; font-weight: bold; line-height: 1; text-shadow: 0 -1px 1px rgba(0,0,0,0.25); }
+.large.sick, .large.sick:visited, .large.sick_abs  			{ font-size: 14px; padding: 8px 14px 9px; }
 
-.green.awesome, .green.awesome:visited, .green.awesome_abs		    { background-color: #91bd09; }
-.green.awesome:hover						    { background-color: #749a02; }
-.blue.awesome, .blue.awesome:visited, .blue.awesome_abs		    { background-color: #2daebf; }
-.blue.awesome:hover							    { background-color: #007d9a; }
-.red.awesome, .red.awesome:visited, .red.awesome_abs			    { background-color: #e33100; }
-.red.awesome:hover							    { background-color: #872300; }
-.magenta.awesome, .magenta.awesome:visited, .magenta.awesome_abs		{ background-color: #a9014b; }
-.magenta.awesome:hover							{ background-color: #630030; }
-.orange.awesome, .orange.awesome:visited, .orange.awesome_abs		{ background-color: #ff5c00; }
-.orange.awesome:hover							{ background-color: #d45500; }
-.yellow.awesome, .yellow.awesome:visited, .yellow.awesome_abs		{ background-color: #ffb515; }
-.yellow.awesome:hover							{ background-color: #fc9200; }
+.green.sick, .green.sick:visited, .green.sick_abs		    { background-color: #91bd09; }
+.green.sick:hover						    { background-color: #749a02; }
+.blue.sick, .blue.sick:visited, .blue.sick_abs		    { background-color: #2daebf; }
+.blue.sick:hover							    { background-color: #007d9a; }
+.red.sick, .red.sick:visited, .red.sick_abs			    { background-color: #e33100; }
+.red.sick:hover							    { background-color: #872300; }
+.magenta.sick, .magenta.sick:visited, .magenta.sick_abs		{ background-color: #a9014b; }
+.magenta.sick:hover							{ background-color: #630030; }
+.orange.sick, .orange.sick:visited, .orange.sick_abs		{ background-color: #ff5c00; }
+.orange.sick:hover							{ background-color: #d45500; }
+.yellow.sick, .yellow.sick:visited, .yellow.sick_abs		{ background-color: #ffb515; }
+.yellow.sick:hover							{ background-color: #fc9200; }
 
 div#wrapper{
     background:         url(http://portrit.s3.amazonaws.com/img/landing_back.jpg) no-repeat;
@@ -204,7 +204,7 @@ div#login_cont{
     div#login_header{
         margin:             0 auto;
         min-height:         98px;
-        padding-top:        55px;
+        padding-top:        35px;
         margin-bottom:      30px;
         position:           relative;
     }
@@ -221,22 +221,33 @@ div#login_cont{
     }
     
         #login_top_cont{
-            background-color:   white;
-            color:              #333;
-            margin-bottom:      20px;
-            border-radius:      10px;
-            -moz-border-radius:         10px;
+            background-color:   #E95C41;
+            color:              white;
+            height:             200px;
+            position:           relative;
+            border-top-left-radius:             10px;
+            border-top-right-radius:            10px;
+            -moz-border-radius-topleft:         10px;
+            -moz-border-radius-topright:        10px;
         }
         
         #login_bottom_cont{
-            
+            background-color:   white;
+            color:              #333;
+            padding:            0px 20px;
+            padding-top:        20px;
         }
         
+            .point_header{
+                display:            inline-block;
+            }
+        
             .login_points{
-                float:              left;
+                display:            inline-block;
             }
             
                 .login_points h2{
+                    color:              white;
                     float:              left;
                     padding:            9px 15px;
                     font-size:          20px;
@@ -264,8 +275,7 @@ div#login_cont{
                 }
             
                 .login_points_cont{
-                    background-color:   #dedede;
-                    width:              300px;
+                    width:              280px;
                     margin-top:         10px;
                     padding-top:        35px;
                     position:           relative;
@@ -280,26 +290,29 @@ div#login_cont{
                     }
                 
                 .login_points_cont .login_points_bottom{
-                    background:         rgba(0,0,0,0.8);
-                    color:              white;
                     padding-bottom:     10px;
-                    padding-top:        5px;
-                    padding-left:       10px;
-                    padding-right:      10px;
                     text-align:         left;
                     top:                0;
                     position:           absolute;
                     width:              280px;
-                    border-top-left-radius:      8px;
-                    border-top-right-radius:     8px;
-                    -moz-border-radius-topleft:          8px;
-                    -moz-border-radius-topright:         8px;
                 }
                 
                     .login_points_cont h4{
                         font-size:      16px;
                         font-weight:    bold;
                     }
+                    
+                        #point_1 .login_points_cont h4{
+                            color:          #9C6;
+                        }
+                        
+                        #point_2 .login_points_cont h4{
+                            color:          #C69;
+                        }
+                        
+                        #point_3 .login_points_cont h4{
+                            color:          #56ABFE;
+                        }
                     
                     .login_points_cont p{
                         font-size:      14px;
@@ -328,26 +341,31 @@ div#login_cont{
         }
     
         div#login_content div#login_right_cont{
-            background-color:   #cecece;
-            float:              right;
-            height:             110px;
-            overflow:           hidden;
+            bottom:             0px;
+            border-left:        7px solid #E6806C;
+            border-top:         7px solid #E6806C;
+            border-right:       7px solid #E6806C;
+            right:              40px;
+            background-color:   white;
+            border-bottom:      1px solid #dedede;
+            color:              #333;
+            height:             100px;
             text-align:         center;
-            width:              420px;
-            padding-top:        60px;
-            position:           relative;
+            width:              340px;
+            padding-top:        30px;
+            position:           absolute;
             z-index:            10000;
-            border-top-right-radius:         10px;
-            border-bottom-right-radius:      10px;
-            -moz-border-radius-topright:             10px;
-            -moz-border-radius-bottomright:          10px;
+            box-shadow:         rgba(0, 0, 0, 0.25) 0px -2px 2px 0px;
+            -webkit-box-shadow: rgba(0, 0, 0, 0.25) 0px -2px 2px 0px;
+            -moz-box-shadow:    0px -2px 2px 0px rgba(0, 0, 0, 0.25);
         }
         
             div#login_content div#login_right_cont p{
-                text-align: center;
-                font-size: 13px;
-                width: 200px;
-                margin: 0 auto;
+                text-align:         center;
+                font-size:          13px;
+                width:              200px;
+                margin:             0 auto;
+                margin-top:         7px;
             }
             
             #trophy_landing{
@@ -366,60 +384,24 @@ div#login_cont{
                 margin-top:         20px;
                 float:              left;
                 text-align:         left;
-                height:             150px;
-                width:              480px;
+                width:              525px;
             }
             
                 div#tagline_top h2{
-                    font-size:      32px;
+                    font-size:      42px;
                     font-weight:    bold;
-                    margin-bottom:  20px;
-                }
-                
-                #tagline_main{
                     margin-bottom:  15px;
                 }
                 
-                #tagline_end{
-                    font-weight:    bold;
+                #tagline_main{
+                    font-size:      18px;
+                    margin-bottom:  30px;
                 }
                 
-            #landing_forward{
-                cursor:             pointer;
-                padding:            5px;
-                position:           absolute;
-                top:                80px;
-                right:              0px;
-                opacity:            0.6;
-                z-index:            100;
-            }
-            
-                #landing_forward:hover{
-                    background-color:   #666;
-                    opacity:            1.0;                   
-                    border-top-left-radius:         5px;
-                    border-bottom-left-radius:      5px;
-                    -moz-border-radius-topleft:             5px;
-                    -moz-border-radius-bottomleft:          5px;
-                }
-            
-            #landing_back{
-                cursor:             pointer;
-                padding:            5px;
-                left:               -10px;
-                position:           absolute;
-                top:                80px;
-                opacity:            0.6;
-                z-index:            100;
-            }
-            
-                #landing_back:hover{
-                    background-color:   #666;
-                    opacity:            1.0;
-                    border-top-right-radius:         5px;
-                    border-bottom-right-radius:      5px;
-                    -moz-border-radius-topright:             5px;
-                    -moz-border-radius-bottomright:          5px;
+                #tagline_end{
+                    float:          right;
+                    font-size:      20px;
+                    font-weight:    bold;
                 }
             
             div#tagline_bottom{
@@ -437,6 +419,144 @@ div#login_cont{
                     margin:             0 auto;
                     margin-top:         15px;
                 }
+                
+    #login_screenshot_cont{
+        background-color:       #DEDDDB;
+        color:                  #333;
+        padding:                20px;
+        border-bottom-right-radius:         10px;
+        border-bottom-left-radius:          10px;
+        -moz-border-radius-bottomright:     10px;
+        -moz-border-radius-bottomleft:      10px;
+    }
+    
+        #login_screenshot_left_cont{
+            float:                  left;
+            margin-top:             30px;
+            margin-right:           20px;
+            width:                  400px;
+        }
+        
+            #login_screenshot_left_cont h2{
+                font-size:              24px;
+                font-weight:            bold;
+            }
+            
+            #login_screenshot_left_cont p{
+                font-size:          18px;
+                margin:             0 auto;
+                margin-top:         5px;
+                width:              270px;
+            }
+        
+        #login_screenshot_right_cont{
+            float:                  right;
+            width:                  500px;
+        }
+        
+            #login_screenshot_right_cont #screenshot_cont{
+                width:                  500px;
+                background-color:       black;
+                height:                 300px;
+                margin:                 0 auto;
+                position:               relative;
+            }
+            
+                #screenshot_cont #left_large_wrap{
+                    background:             rgba(51,51,51,0.7);
+                    cursor:                 pointer;
+                    padding:                10px;
+                    position:               absolute;
+                    left:                   10px;
+                    top:                    80px;
+                    z-index:                10;
+                    border-radius:          5px;
+                    -moz-border-radius:     5px;
+                    -webkit-transition:     background .2s ease-out;
+                    -moz-transition:        background .2s ease-out;
+                }
+                
+                #screenshot_cont #left_large_wrap:hover{
+                    background:             rgba(51,51,51,0.95);
+                }
+                
+                    #screenshot_cont #left_large_wrap #left_large{
+                        width:                  45px;
+                        height:                 113px;
+                        background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+                        background-position:    -430px -346px;
+                    }
+                
+                #screenshot_cont #right_large_wrap{
+                    background:             rgba(51,51,51,0.7);
+                    cursor:                 pointer;
+                    padding:                10px;
+                    position:               absolute;
+                    right:                  10px;
+                    top:                    80px;
+                    z-index:                10;
+                    border-radius:          5px;
+                    -moz-border-radius:     5px;
+                    -webkit-transition:     background .2s ease-out;
+                    -moz-transition:        background .2s ease-out;
+                }
+                
+                #screenshot_cont #right_large_wrap:hover{
+                    background:             rgba(51,51,51,0.95);
+                }
+                
+                    #screenshot_cont #right_large_wrap #right_large{
+                        width:                  45px;
+                        height:                 113px;
+                        background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+                        background-position:    -480px -346px;
+                    }
+                    
+                #screenshots{
+                    width:                  500px;
+                    height:                 300px;
+                    overflow:               hidden;
+                    position:               relative;
+                    z-index:                2;
+                }
+                    
+                #screenshots .screenshot{
+                    display:                none;
+                    position:               absolute;
+                }
+                
+                #screenshots .screenshot.active{
+                    display:                inline;
+                    position:               absolute;
+                    top:                    0;
+                    left:                   0;
+                }
+                    
+                #screenshot_cont #screenshot_position_controls{
+                    position:               absolute;
+                    bottom:                 5px;
+                    width:                  500px;
+                    z-index:                2;
+                }
+                
+                    #screenshot_position_controls .screenshot_control{
+                        background-color:       #bebebe;
+                        cursor:                 pointer;
+                        display:                inline-block;
+                        height:                 12px;
+                        margin:                 0px 5px;
+                        width:                  12px;
+                        border-radius:          12px;
+                        -moz-border-radius:     12px;
+                    }
+                    
+                    #screenshot_position_controls .screenshot_control:hover{
+                        background-color:       #E95C41;
+                    }
+                    
+                        #screenshot_position_controls .screenshot_control.active{
+                            background-color:       #E95C41;
+                        }
             
 div#content_loading{
     margin-top:         300px;
@@ -1245,6 +1365,16 @@ div#initial_tut_cont{
             background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
             background-position:    -322px -295px;
         }
+        
+        .trophy_img.large.awesome{
+            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+            background-position:    -601px -141px;
+        }
+        
+        .trophy_img.large.yummy{
+            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+            background-position:    -601px -388px;
+        }
     
     .trophy_img.medium{
         height:         100px;
@@ -1287,6 +1417,16 @@ div#initial_tut_cont{
             background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
             background-position:    -438px -509px;
         }
+        
+        .trophy_img.medium.awesome{
+            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+            background-position:    -704px -240px;
+        }
+        
+        .trophy_img.medium.yummy{
+            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+            background-position:    -704px -488px;
+        }
     
     .trophy_img.small{
         height:         50px;
@@ -1324,6 +1464,16 @@ div#initial_tut_cont{
         .trophy_img.small.creepy{
             background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
             background-position:    -256px -621px;
+        }
+        
+        .trophy_img.small.awesome{
+            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+            background-position:    -759px -290px;
+        }
+        
+        .trophy_img.small.yummy{
+            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+            background-position:    -759px -539px;
         }
 
 div#wall_cont{
@@ -1449,7 +1599,7 @@ div#nom_detail_cont{
         opacity:                1.0;
         position:               absolute;
         left:                   5px;
-        top:                    35px;
+        top:                    20px;
         z-index:                100;
     }
     
@@ -1465,7 +1615,7 @@ div#nom_detail_cont{
         opacity:                1.0;
         position:               absolute;
         right:                  5px;
-        top:                    35px;
+        top:                    20px;
         z-index:                100;
     }
     
@@ -1478,8 +1628,8 @@ div#nom_detail_cont{
 
     div#nom_cat_stream{
         background-color:   #333;
-        min-height:         170px;
-        overflow-x:         hidden;
+        min-height:         150px;
+        overflow:           hidden;
         top:                -5px;
         position:           relative;
     }
@@ -2219,7 +2369,7 @@ div#new_comment_cont{
         }
     
     #empty_search_cont{
-        background-color:       #777;
+        background-color:       #E95C41;
         margin:                 0 auto;
         padding:                15px;
         position:               relative;
@@ -2458,6 +2608,32 @@ div#profile_cont{
         .nom_cat_lol_text{
             color:              #FAC86E;
         }
+        
+        .nom_cat_awesome{
+            background-color:   #3399ff;
+        }
+        
+        .nom_cat_awesome_hover:hover{
+            background-color:   #3399ff;
+            cursor:             pointer;
+        }
+        
+        .nom_cat_awesome_text{
+            color:              #3399ff;
+        }
+        
+        .nom_cat_yummy{
+            background-color:   #cc3366;
+        }
+        
+        .nom_cat_yummy:hover{
+            background-color:   #cc3366;
+            cursor:             pointer;
+        }
+        
+        .nom_cat_yummy_text{
+            color:              #cc3366;
+        }
     
         .feed_post_cont .nom_stream_left_cont{
             background-color:   #333;
@@ -2550,9 +2726,14 @@ div#profile_cont{
         
         
             .stream_photo_cont .nom_cat_stream_cont{
+                background-color:   #222;
                 height:             100px;
                 overflow-x:         hidden;
                 position:           relative;
+                z-index:            1;
+                -webkit-box-shadow: inset rgba(0, 0, 0, 0.496094) 5px 3px 3px -3px, rgba(0, 0, 0, 0.496094) 0px 6px 3px -3px;
+                -moz-box-shadow:    inset 5px 3px 3px -3px rgba(0, 0, 0, 0.5), 0 6px 3px -3px rgba(0, 0, 0, 0.5);
+                box-shadow:         inset rgba(0, 0, 0, 0.496094) 5px 3px 3px -3px, rgba(0, 0, 0, 0.496094) 0px 6px 3px -3px
             }
             
                 .nom_cat_stream_cont .nom_photo_thumbnail{
@@ -2767,6 +2948,7 @@ div#profile_cont{
         }
         
     #new_photo_cont .winning_nom_cont, .empty_cont .winning_nom_cont{
+        border:                 1px solid #eee;
         display:                inline-block;
         height:                 150px;
         margin:                 10px;
@@ -3418,6 +3600,45 @@ div#context_overlay{
         -moz-box-shadow:        0px 0px 8px 3px rgba(0, 0, 0, 0.5);
     }
     
+        div#context_overlay_cont.nominate_photo{
+            width:              960px;
+        }
+    
+        div#context_overlay_cont.photo_upload{
+            width:              600px;
+        }
+        
+            div#context_overlay_cont.photo_upload > div{
+                padding:            10px;
+            }
+            
+            .qq-uploader { position:relative; width: 100%;}
+
+/*            .qq-upload-button-hover {background:#cc0000;}*/
+            .qq-upload-button-focus {outline:1px dotted black;}
+
+            .qq-upload-drop-area {
+                position:absolute; top:0; left:0; width:100%; height:100%; min-height: 70px; z-index:2;
+                background:#FF9797; text-align:center; 
+            }
+            .qq-upload-drop-area span {
+                display:block; position:absolute; top: 50%; width:100%; margin-top:-8px; font-size:16px;
+            }
+            .qq-upload-drop-area-active {background:#FF7171;}
+
+            .qq-upload-list {margin:15px 35px; padding:0; list-style:disc;}
+            .qq-upload-list li { margin:0; padding:0; line-height:15px; font-size:12px;}
+            .qq-upload-file, .qq-upload-spinner, .qq-upload-size, .qq-upload-cancel, .qq-upload-failed-text {
+                margin-right: 7px;
+            }
+
+            .qq-upload-file {}
+            .qq-upload-spinner {display:inline-block; background: url("loading.gif"); width:15px; height:15px; vertical-align:text-bottom;}
+            .qq-upload-size,.qq-upload-cancel {font-size:11px;}
+
+            .qq-upload-failed-text {display:none;}
+            .qq-upload-fail .qq-upload-failed-text {display:inline;}
+    
         div.permission_request{
             top:                -100px;
             text-align:         center;
@@ -3450,7 +3671,7 @@ div#context_overlay{
                 padding-bottom:         20px;
             }
             
-            div.permission_request #perms_bottom_cont .awesome{
+            div.permission_request #perms_bottom_cont .sick{
                 margin:                 0px 20px;
                 padding:                8px 40px 9px;
             }
@@ -3458,6 +3679,7 @@ div#context_overlay{
         div.latest_photos_overlay{
             min-height:         300px;
             text-align:         center;
+            padding-bottom:     25px;
             width:              980px;
         }
         
@@ -3559,6 +3781,9 @@ div#wall_cont div#profile_wrap{
         border-top-right-radius:    5px;
         -moz-border-radius-topright:        5px;
         -moz-border-radius-topleft:         5px;
+        -webkit-box-shadow: inset rgba(0, 0, 0, 0.496094) 0px -2px 3px 0px;
+        -moz-box-shadow:    inset 0px -2px 3px 0px rgba(0, 0, 0, 0.5);
+        box-shadow:         inset rgba(0, 0, 0, 0.496094) 0px -2px 3px 0px;
     }
         
         div#activate_recent_winners:hover{
@@ -3584,6 +3809,9 @@ div#wall_cont div#profile_wrap{
         border-top-right-radius:    5px;
         -moz-border-radius-topright:        5px;
         -moz-border-radius-topleft:         5px;
+        -webkit-box-shadow: inset rgba(0, 0, 0, 0.496094) 0px -2px 3px 0px;
+        -moz-box-shadow:    inset 0px -2px 3px 0px rgba(0, 0, 0, 0.5);
+        box-shadow:         inset rgba(0, 0, 0, 0.496094) 0px -2px 3px 0px;
     }
     
         div#activate_latest_photos:hover{
@@ -3918,7 +4146,7 @@ div#wall_cont div#profile_wrap{
 }
 
 .recent_nom_cont{
-    margin-bottom:          20px;
+    margin-bottom:          15px;
 }
 
     .recent_nom_cont .recent_nom_top_cont{
@@ -4042,7 +4270,7 @@ div#wall_cont div#profile_wrap{
         
     .recent_nom_cont .recent_nom_comment_cont{
         margin:             0 auto;
-        margin-top:         20px;
+        margin-top:         10px;
         width:              610px;
     }
     
@@ -4318,7 +4546,19 @@ div#album_cont{
     max-width:          1100px;
     margin:             0 auto;
     margin-bottom:      30px;
+    position:           relative;
 }
+
+    #load_more_fb_albums, #hide_more_fb_albums{
+        position:           absolute;
+        bottom:             -20px;
+        right:              20px;
+        width:              90px;
+    }
+    
+    #user_profile_cont #load_more_fb_albums, #hide_more_fb_albums{
+        bottom:             0px;
+    }
 
     div#album_cont > h1{
         font-size:          24px;
@@ -4544,230 +4784,203 @@ div#photo_cont{
                     opacity:            1.0;
                 }
             
-    #new_nomination_wrap{
-        margin:             0 auto;
-        position:           absolute;
-        top:                220px;
-        width:              100%;
-        z-index:            100;
-    }
-            
-    #new_nomination_cont{
-        margin:             0 auto;
-        text-align:         left;
-        padding:            10px;
-        position:           relative;
-        width:              960px;
-/*        -webkit-box-shadow: rgba(0, 0, 0, 0.496094) 0px 0px 8px 3px;
-        -moz-box-shadow:    0px 0px 8px 3px rgba(0, 0, 0, 0.5);*/
-    }
-    
-        #new_nomination_cont #trophy_cont_top{
-            background:         rgba(0, 0, 0, 0.75);
-            padding:            5px;
-            text-align:         center;
-            border-radius:    10px;
-            -moz-border-radius:       10px;
-            -webkit-box-shadow: rgba(0, 0, 0, 0.496094) 0px 0px 3px 2px;
-            -moz-box-shadow:    0px 0px 3px 2px rgba(0, 0, 0, 0.5);
-            box-shadow: rgba(0, 0, 0, 0.496094) 0px 0px 3px 2px;
+        #new_nom_wrap{
+            padding:            20px;
         }
         
-        #new_nomination_cont #trophy_cont_bottom{
-            background-color:   #2e2e2e;
-            margin:             0px auto;
-            margin-top:         10px;
-            width:              500px;
-            border-radius:    10px;
-            -moz-border-radius:       10px;
-            -webkit-box-shadow: rgba(0, 0, 0, 0.496094) 0px 0px 3px 2px;
-            -moz-box-shadow:    0px 0px 3px 2px rgba(0, 0, 0, 0.5);
-            box-shadow: rgba(0, 0, 0, 0.496094) 0px 0px 3px 2px;
-        }
-    
-        #new_nomination_cont #cancel_nominate_photo{
-            cursor:         pointer;
-            position:       absolute;
-            top:            -10px;
-            right:          -10px;
-        }
-        
-        #new_nomination_cont h2{
-            font-size:      26px;
-            font-weight:    bold;
-            text-align:     center;
-        }
-        
-        #new_nomination_cont li{
-            display:        inline-block;
-            list-style:     none;
-            padding:        5px;
-            text-align:     center;
-            width:          103px;
-            border-radius:    10px;
-            -moz-border-radius:       10px;
-            -webkit-transition:     opacity .35s ease-out;
-            -moz-transition:        opacity .35s ease-out;
-        }
-        
-/*            #new_nomination_cont li img{
-                float:              left;
-            }*/
-        
-        #new_nomination_cont li.selected{
-            opacity:            0;
-        }
-        
-        #trophy_cont_top.inactive, #trophy_cont_bottom.inactive{
-            opacity:            0.5;
-            -webkit-transition:     opacity .35s ease-out;
-            -moz-transition:        opacity .35s ease-out;
-        }
-        
-        #new_nomination_cont li.unselected:hover{
-            background-color:   #444;
-            cursor:             pointer;
-        }
-        
-            #new_nomination_cont li h4{
-                font-weight:        bold;
-                margin-right:       5px;
+            #new_nom_wrap #new_nom_top_cont{
+                
             }
             
-            #new_nomination_cont li p{
-                display:            inline-block;
-            }
-            
-        #new_nomination_cont textarea{
-            font-size:      20px;
-            margin-top:     15px;
-            margin-bottom:  5px;
-            padding:        5px;
-            width:          488px;
-            height:         70px;
-        }
-        
-        #active_empty{
-            color:          #bebebe;
-            padding:        20px 0px;
-            text-align:     center;
-        }
-        
-        #new_nomination_cont #cancel_nomination{
-            float:          left;
-            margin-left:    10px;
-            margin-bottom:  10px;
-        }
-        
-        #new_nomination_cont #post_nomination{
-            color:          #99CB6E;
-            float:          right;
-            margin-right:   10px;
-            margin-bottom:  10px;
-        }
-        
-        #tagged_users{
-            text-align:     center;
-        }
-        
-            #tagged_users .tagged_user{
-                display:        inline-block;
-                margin:         3px 4px;
-                height:         50px;
-                width:          50px;
-                border:         2px solid #333;
-                border-radius:  3px;
-                -moz-border-radius:        3px;
-            }
-            
-            #tagged_users .tagged_user img{
-                height:         50px;
-                width:          50px;
-            }
-        
-        #active_nominations{
-            background:         rgba(0, 0, 0, 0.75);
-            border-top-right-radius:    10px;
-            border-top-left-radius:     10px;
-            -moz-border-radius-topright:        10px;
-            -moz-border-radius-topleft:         10px;
-        }
-        
-        #active_nominations_cont{
-            margin:         0 auto;
-            text-align:     center;
-            width:          500px;
-        }
-        
-        #active_nominations_cont div{
-            display:        inline-block;
-            padding:        10px;
-            position:       relative;
-            text-align:     center;
-            width:          103px;
-            opacity:            0;
-            -webkit-transition:     opacity .35s ease-out;
-            -moz-transition:        opacity .35s ease-out;
-        }
-        
-        #active_nominations h3{
-            font-size:      20px;
-            font-weight:    bold;
-            margin-left:    10px;
-            padding-top:    10px;
-            text-align:     left;
-        }
-        
-        #active_nominations h4{
-            font-size:      16px;
-            font-weight:    bold;
-        }
-        
-        #active_nominations_cont .kill_nomination{
-            cursor:         pointer;
-            position:       absolute;
-            top:            0px;
-            right:          0px;
-        }
-        
-        #nom_complete_cont{
-            background-color:   #222;
-            height:             200px;
-            margin:             0 auto;
-            margin-top:         20px;
-            position:           relative;
-            text-align:         center;
-            width:              500px;
-            border-radius:    10px;
-            -moz-border-radius:       10px;
-        }
-        
-            #nom_complete_cont h1{
-                font-size:          20px;
-                font-weight:        bold;
-                padding-top:        10px;
-                text-align:         center;
-            }
-            
-            #nom_complete_cont .nom_complete_cat_cont{
-                display:            inline-block;
-                font-weight:        bold;
-                margin:             10px 20px;
-                text-align:         center;
-                width:              80px;
-            }
-            
-                .nom_complete_cat_cont img{
+                #new_nom_top_cont h1{
+                    font-size:          30px;
                     padding-bottom:     5px;
                 }
                 
-                .nom_complete_cat_cont a{
-                    color:              #8e8e8e;
+                #new_nom_top_cont ul{
+                    list-style:         none;
+                    padding-top:        5px;
                 }
                 
-                .nom_complete_cat_cont a:hover{
-                    color:              #dedede;
+                    #new_nom_top_cont #inactive_trophy_cont{
+                        background-color:   #222;
+                        opacity:            1.0;
+                        text-align:         center;
+                        -webkit-box-shadow:     inset rgba(0, 0, 0, 0.496094) 0px 0px 8px 3px;
+                        -moz-box-shadow:        inset 0px 0px 8px 3px rgba(0, 0, 0, 0.5);
+                        box-shadow:             inset rgba(0, 0, 0, 0.496094) 0px 0px 8px 3px;
+                    }
+                    
+                        #inactive_trophy_cont li{
+                            display:            inline-block;
+                            margin-bottom:      4px;
+                            padding:            10px 0px;
+                            width:              85px;
+                            border-radius:      10px;
+                            -moz-border-radius: 10px;
+                            font-size:          14px;
+                            -webkit-transition: opacity .3s ease-in-out;
+                            -moz-transition: opacity .3s ease-in-out;
+                            -o-transition: opacity .3s ease-in-out;
+                            transition: opacity .3s ease-in-out;
+                        }
+                        
+                            #inactive_trophy_cont li.active{
+                                cursor:             pointer;
+                                opacity:            1.0;
+                            }
+                            
+                            #inactive_trophy_cont li.active:hover{
+                                background-color:   black;
+                            }
+                            
+                            #inactive_trophy_cont li.selected{
+                                opacity:            0.3;
+                            }
+                            
+                            #inactive_trophy_cont li.inactive{
+                                opacity:            0.3;
+                            }
+                        
+                            #inactive_trophy_cont li h3{
+                                padding-top:         10px;
+                            }
+                        
+            #new_nom_wrap #new_nom_middle_cont {
+                margin-top:             15px;
+            }
+            
+                #selected_nom_image_cont{
+                    background-color:   black;
+                    float:              left;
+                    height:             214px;
+                    text-align:         center;
+                    position:           relative;
+                    width:              320px;
                 }
+                
+                    #selected_nom_image_cont > div{
+                        display:            table-cell;
+                        height:             214px;
+                        width:              320px;
+                        text-align:         center;
+                        position:           relative;
+                        vertical-align:     middle;
+                    }
+                
+                    #selected_nom_image_cont img{
+                        max-height:         214px;
+                        max-width:          320px;
+                    }
+                
+                    #selected_nom_image_cont p{
+                        left:               100px;
+                        position:           absolute;
+                        z-index:            1;
+                        font-size:          14px;
+                        background:         rgba(0, 0, 0, .7);
+                        color:              white;
+                        padding:            5px 8px;
+                        border-bottom-right-radius:     5px;
+                        border-bottom-left-radius:      5px;
+                        -moz-border-radius-bottomright: 5px;
+                        -moz-border-radius-bottomleft:  5px;
+                    }
+                
+                #selected_nom_cont{
+                    float:              right;
+                    width:              600px;
+                }
+                
+                    #selected_nom_cont h2{
+                        background-color:       white;
+                        border-top:             1px solid #dedede;
+                        border-right:           1px solid #dedede;
+                        font-size:              27px;
+                        height:                 28px;
+                        padding:                8px;
+                    }
+                
+                    #selected_noms{
+                        background-color:       #222;
+                        min-height:             170px;
+                        text-align:             center;
+                    }
+                    
+                        #selected_noms > div{
+                            cursor:                 pointer;
+                            display:                inline-block;
+                            margin:                 0px 10px;
+                            margin-top:             20px;
+                            opacity:                0;
+                            position:               relative;
+                            width:                  100px;
+                            -webkit-transition: opacity .3s ease-in-out;
+                            -moz-transition: opacity .3s ease-in-out;
+                            -o-transition: opacity .3s ease-in-out;
+                            transition: opacity .3s ease-in-out;
+                        }
+                        
+                        #selected_noms .kill_nomination{
+                            display:                none;
+                        }
+                    
+                        #selected_noms h4{
+                            color:                  white;
+                            font-size:              20px;
+                            padding-top:            65px;
+                            text-align:             center;
+                        }
+                        
+                        #selected_noms h3{
+                            margin-top:             10px;
+                        }
+            
+            #new_nom_bottom_cont{
+                position:           relative;
+            }
+            
+                #selected_photo_triangle{
+                    height:             14px;
+                    width:              35px;
+                    background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+                    background-position:    -175px -697px;
+                    position:           absolute;
+                    top:                -15px;
+                    left:               135px;
+                }
+               
+                #nom_caption {
+                    bottom:             2px;
+                    height:             18px;
+                    width:              878px;
+                    border-left:        1px solid #DEDEDE;
+                    border-right:       1px solid #DEDEDE;
+                    border-bottom:      1px solid #DEDEDE;
+                    border-top:         none;
+                    padding:            15px 20px;
+                    position:           relative;
+                    font-size:          20px;
+                    overflow:           hidden;
+                }
+                
+                #text_remail_cont{
+                    float:              left;
+                    margin-top:         10px;
+                }
+                
+                #nom_controls_cont{
+                    margin-top:         10px;
+                    float:              right;
+                }
+                
+                    #post_nomination{
+                        color:              #99CB6E;
+                    }
+                    
+                    #cancel_nom{
+                        margin-right:       25px;
+                    }
         
         #photo_large_inline{
 
@@ -4835,8 +5048,8 @@ div#photo_cont{
             border-bottom:      1px solid #dedede;
             color:              #333;
             font-family:        'lucida grande', tahoma, verdana, arial, sans-serif;
-            margin:             15px 0px;
-            padding-bottom:     15px;
+            margin:             10px 0px;
+            padding-bottom:     10px;
             min-height:         50px;
             overflow-x:         hidden;
             text-align:         left;
@@ -4844,6 +5057,7 @@ div#photo_cont{
         }
         
             .comment p{
+                font-size:          14px;
                 margin-left:        55px;
                 padding:            5px;
             }
