@@ -42,7 +42,6 @@ def login_fb_user(request):
             graph = facebook.GraphAPI(cookie["access_token"])
             profile = graph.get_object("me")
             fb_user, created = FB_User.objects.get_or_create(fid=str(profile["id"]))
-                
             user = Portrit_User(fb_user=fb_user, name=profile['name'],
                         access_token=cookie["access_token"])
             user.ask_permission = False

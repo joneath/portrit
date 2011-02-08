@@ -932,7 +932,7 @@ div#photo_upload{
     
         #photo_upload_cont > h1{
             font-size:          26px;
-            margin-bottom:      5px;
+            margin-bottom:      10px;
         }
         
         #photo_upload_cont > p{
@@ -1235,14 +1235,15 @@ div#initial_tut_cont{
                 margin-left:            100px;
                 padding-bottom:         5px;
                 position:               relative;
+                width:                  650px;
                 z-index:                2;
             }
             
                 div#initial_tut_top_wrap #allow_notifications, div#initial_tut_top_wrap #allow_portrit_album{
-                    float:                  left;
+                    float:                  right;
                     cursor:                 pointer;
                     position:               relative;
-                    top:                    -3px;
+                    top:                    -7px;
                     left:                   5px;
                 }
                 
@@ -3443,6 +3444,53 @@ div#user_profile_cont{
         margin-top:             0px;
     }
     
+#portrit_photo_cont{
+    background-color:   #111;
+    margin:             0px auto;
+    margin-top:         5px;
+    margin-bottom:      10px;
+    margin-right:       10px;
+    margin-left:        10px;
+    max-width:          1100px;
+    padding-top:        10px;
+    position:           relative;
+    border-radius:      10px;
+    -moz-border-radius: 10px;
+}
+
+    #portrit_photo_cont a{
+        color:              #99CB6E;
+        position:           absolute;
+        bottom:             10px;
+        right:              10px;
+    }
+    
+    #portrit_photo_cont a:hover{
+        text-decoration:    underline;
+    }
+
+    #portrit_photo_cont h1{
+        font-size:          24px;
+        font-weight:        bold;
+        margin-bottom:      10px;
+        margin-left:        10px;
+        text-align:         left;
+    }
+    
+    #portrit_photo_cont #portrit_photos{
+        padding-bottom:     25px;
+    }
+    
+    #portrit_photo_cont .portrit_photo{
+        cursor:             pointer;
+        display:            inline-block;
+        margin:             7px;
+    }
+    
+        #portrit_photo_cont .portrit_photo img{
+            border:             solid 5px white;
+        }
+    
 #album_link_loader{
     font-size:              28px;
     font-weight:            bold;
@@ -3605,6 +3653,7 @@ div#context_overlay{
         }
     
         div#context_overlay_cont.photo_upload{
+            top:                -50px;
             width:              600px;
         }
         
@@ -3612,32 +3661,178 @@ div#context_overlay{
                 padding:            10px;
             }
             
-            .qq-uploader { position:relative; width: 100%;}
-
-/*            .qq-upload-button-hover {background:#cc0000;}*/
-            .qq-upload-button-focus {outline:1px dotted black;}
-
-            .qq-upload-drop-area {
-                position:absolute; top:0; left:0; width:100%; height:100%; min-height: 70px; z-index:2;
-                background:#FF9797; text-align:center; 
+            div#photo_upload_cont{
+                
             }
-            .qq-upload-drop-area span {
-                display:block; position:absolute; top: 50%; width:100%; margin-top:-8px; font-size:16px;
-            }
-            .qq-upload-drop-area-active {background:#FF7171;}
-
-            .qq-upload-list {margin:15px 35px; padding:0; list-style:disc;}
-            .qq-upload-list li { margin:0; padding:0; line-height:15px; font-size:12px;}
-            .qq-upload-file, .qq-upload-spinner, .qq-upload-size, .qq-upload-cancel, .qq-upload-failed-text {
-                margin-right: 7px;
-            }
-
-            .qq-upload-file {}
-            .qq-upload-spinner {display:inline-block; background: url("loading.gif"); width:15px; height:15px; vertical-align:text-bottom;}
-            .qq-upload-size,.qq-upload-cancel {font-size:11px;}
-
-            .qq-upload-failed-text {display:none;}
-            .qq-upload-fail .qq-upload-failed-text {display:inline;}
+            
+                div#photo_upload_cont #file_uploader{
+                    position:       relative;
+                    width:          130px;
+                    overflow:       hidden;
+                    height:         35px;
+                }
+                
+                    div#photo_upload_cont #file_uploader input{
+                        border:         300px solid transparent;
+                        cursor:         pointer;
+                        position:       absolute;
+                        top:            0px;
+                        right:          0px;
+                        z-index:        2;
+                        opacity:        0;
+                        -ms-filter:     alpha(opacity=0);
+                        filter:         alpha(opacity=0);
+                        -o-transform:   translate(-300px,-300px) scale(10);
+                        -moz-transform: translate(-800px,0) scale(10);
+                    }
+                    
+                div#upload_left_cont{
+                    float:          left;
+                    width:          150px;
+                    margin-left:    10px;
+                }
+                
+                    #upload_left_cont #loader{
+                        margin-right:       20px;
+                    }
+                
+                div#upload_right_cont{
+                    float:          left;
+                    margin-bottom:  20px;
+                    height:         300px;
+                    border:         1px solid #DEDEDE;
+                    overflow-y:     auto;
+                    width:          400px;
+                }
+                
+                    div#upload_right_cont h2{
+                        font-size:      20px;
+                        margin-top:     135px;
+                        text-align:     center;
+                    }
+                    
+                    #upload_right_cont .photo_to_upload_cont{
+                        height:         50px;
+                        margin-bottom:  5px;
+                        overflow:       hidden;
+                        position:       relative;
+                    }
+                    
+                        #upload_right_cont .photo_to_upload_cont .close_img{
+                            top:                12px;
+                            right:              10px;
+                        }
+                    
+                        #upload_right_cont .photo_to_upload_thumb{
+                            float:              left;
+                            position:           relative;
+                            height:             50px;
+                            width:              50px;
+                        }
+                        
+                            #upload_right_cont .photo_to_upload_thumb img{
+                                position:           absolute;
+                                clip:               rect(30px,70px,80px,20px);
+                                left:               -20px;
+                                top:                -30px;
+                            }
+                            
+                        #upload_right_cont .photo_to_upload_name_cont{
+                            background-color:   #eee;
+                            float:              left;
+                            width:              310px;
+                            height:             50px;
+                            padding:            0px 20px;
+                        }
+                        
+                            #upload_right_cont .photo_to_upload_name_cont p{
+                                font-size:          13px;
+                                margin-top:         18px;
+                                overflow:           hidden;
+                                width:              290px;
+                            }
+                    
+                    
+                #upload_controls{
+                    float:          right;
+                    margin-right:   17px;
+                }
+                
+                    #upload_controls a{
+                        text-align:     center;
+                        width:          75px;
+                    }
+                
+                    #upload_controls #cancel_upload{
+                        margin-right:       25px;
+                    }
+                    
+                #photo_upload_permission_cont{
+                    position:           absolute;
+                    background-color:   white;
+                    width:              580px;
+                    left:               0px;
+                    bottom:             -170px;
+                    height:             140px;
+                    padding:            10px;
+                    z-index:            1;
+                    border-radius:      10px;
+                    -moz-border-radius: 10px;
+                }
+                
+                    #photo_upload_permission_cont #connecting_triangle{
+                        height:             21px;
+                        width:              35px;
+                        background-image:   url(http://portrit.s3.amazonaws.com/img/sprite.png);
+                        background-position: -175px -693px;
+                        position:           absolute;
+                        top:                -18px;
+                        left:               280px;
+                    }
+                
+                    #photo_upload_permission_cont > h2{
+                        font-size:          22px;
+                        text-align:         center;
+                    }
+                
+                    #photo_upload_permission_cont ul{
+                        list-style:         none;
+                        margin-top:         10px;
+                    }
+                    
+                        #photo_upload_permission_cont li{
+                            margin:             0 auto;
+                            margin-bottom:      10px;
+                            width:              400px;
+                        }
+                    
+                        #photo_upload_permission_cont ul h3{
+                            color:              #4e4e4e;
+                            float:              left;
+                            font-size:          16px;
+                            font-weight:        bold;
+                            margin-top:         13px;
+                        }
+                        
+                        #photo_upload_permission_cont ul div.switch{
+                            float:              right;
+                        }
+                   
+        .switch_on{
+            cursor:             pointer;
+            height:             43px;
+            width:              117px;
+            background-image:   url(http://portrit.s3.amazonaws.com/img/sprite.png);
+            background-position: -238px -700px;
+        }
+        
+        .switch_off{
+            cursor:             pointer;
+            height:             43px;
+            width:              117px;
+            background-image:   url(http://portrit.s3.amazonaws.com/img/sprite.png);
+            background-position: -369px -700px;
+        }
     
         div.permission_request{
             top:                -100px;
@@ -4312,6 +4507,168 @@ div#wall_cont div#profile_wrap{
             height:                 84px;
             z-index:                20001;
         }
+        
+#recent_winners{
+    background-color:       white;
+    color:                  #333;
+    margin:                 0 auto;
+    margin-top:             32px;
+    margin-bottom:          10px;
+    position:               relative;
+    width:                  960px;
+    border-radius:          10px;
+    -moz-border-radius:     10px;
+}
+
+    #recent_winners h1{
+        font-size:              30px;
+        margin-bottom:          5px;
+        padding-left:           20px;
+        padding-top:            10px;
+        text-align:             left;
+    }
+    
+    #recent_winners #top_stripe{
+        background-color:       #333367;
+        height:                 50px;
+    }
+    
+    #recent_winners #main_nom_cont{
+        height:             300px;
+        margin:             0 auto;
+        width:              840px;
+        -webkit-box-shadow: none;
+        -moz-box-shadow:    none;
+        box-shadow:         none;
+    }
+    
+        #main_nom_cont #recent_win_photo_cont{
+            background-color:   black;
+            float:              left;
+            height:             300px;
+            width:              420px;
+            position:           relative;
+        }
+        
+            #recent_win_photo_cont #recent_win_photo_wrap{
+                display:            table-cell;
+                vertical-align:     middle;
+                height:             300px;
+                width:              420px;
+            }
+        
+            #recent_win_photo_cont #recent_win_photo{
+                max-height:         300px;
+                max-width:          420px;
+            }
+            
+            #recent_win_photo_cont #nominator_overlay_cont{
+                background:         rgba(0, 0, 0, 0.7);
+                bottom:             0px;
+                height:             50px;
+                overflow:           hidden;
+                position:           absolute;
+                text-align:         left;
+                width:              420px;
+            }
+        
+        #main_nom_cont #recent_win_right_cont{
+            color:                  white;
+            cursor:                 default;
+            float:                  left;
+            height:                 270px;
+            padding-left:           50px;
+            padding-top:            30px;
+            position:               relative;
+            text-align:             left;
+            width:                  370px;
+        }
+        
+            #recent_win_right_cont #nom_create_date{
+                background-color:   white;
+                bottom:             0px;
+                color:              #333;
+                font-size:          18px;
+                padding:            8px 14px;
+                position:           absolute;
+                border-top-left-radius:     5px;
+                border-top-right-radius:    5px;
+                -moz-border-radius-topleft:         5px;
+                -moz-border-radius-topright:        5px;
+            }
+        
+            #recent_win_right_cont img{
+                float:              left;
+                height:             50px;
+                width:              50px;
+                border-top-right-radius:        15px;
+                border-bottom-left-radius:      12px;
+                -moz-border-radius-topright:    15px;
+                -moz-border-radius-bottomleft:  12px;
+            }
+            
+            #recent_win_right_cont p{
+                font-size:          20px;
+                margin-left:        70px;
+            }
+        
+            #recent_win_right_cont h2{
+                font-size:          32px;
+                font-weight:        bold;
+                margin-top:         40px;
+                text-shadow:        0 -1px 1px rgba(0,0,0,0.25);
+            }
+            
+            #recent_win_right_cont .trophy_img{
+                bottom:             0px;
+                right:              15px;
+                position:           absolute;
+            }
+            
+        #recent_win_stream_cont #nom_cat_stream{
+            top:                    -5px;
+            -webkit-box-shadow:     inset rgba(0, 0, 0, 0.496094) 0px 0px 8px 3px;
+            -moz-box-shadow:        inset 0px 0px 8px 3px rgba(0, 0, 0, 0.5);
+            box-shadow:             inset rgba(0, 0, 0, 0.496094) 0px 0px 8px 3px;
+        }
+            
+        #recent_win_stream_cont .prev_photo{
+            cursor:                 pointer;
+            opacity:                1.0;
+            position:               absolute;
+            left:                   5px;
+            top:                    20px;
+            z-index:                100;
+        }
+
+        #recent_win_stream_cont .prev_photo_img{
+            height:                 65px;
+            width:                  30px;
+            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+            background-position:    -530px -368px;
+        }
+
+        #recent_win_stream_cont .next_photo{
+            cursor:                 pointer;
+            opacity:                1.0;
+            position:               absolute;
+            right:                  5px;
+            top:                    20px;
+            z-index:                100;
+        }
+
+        #recent_win_stream_cont .next_photo_img{
+            height:                 65px;
+            width:                  30px;
+            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+            background-position:    -560px -368px;
+        }
+        
+        #recent_win_stream_cont .nom_photo_thumbnail .trophy_img{
+            bottom:                 0px;
+            right:                  0px;
+            position:               absolute;
+        }
 
 div#friend_album_cont div#profile_wrap{
 	background-color:		white;
@@ -4323,8 +4680,8 @@ div#friend_album_cont div#profile_wrap{
     right:                  -640px;
     text-align:             left;
     z-index:                0;
-    border-radius:  15px;
-    -moz-border-radius:     15px;
+    border-radius:          10px;
+    -moz-border-radius:     10px;
 }
 
     div#profile_left{
@@ -4484,11 +4841,11 @@ div#album_cont div#trophy_cont{
         padding-top:            0px;
     }
 
-    div#album_cont div#trophy_cont > h1, div#album_cont div#active_cont > h1{
+    div#album_cont div#trophy_cont > h1, div#album_cont div#active_cont > h1, #portrit_photo_cont > h1{
         font-size:          24px;
         font-weight:        bold;
         padding-bottom:     10px;
-        margin-left:        20px;
+        margin-left:        10px;
         text-align:         left;
     }
     
@@ -4498,8 +4855,8 @@ div#album_cont div#trophy_cont{
         padding-bottom:     10px;
     }
     
-    div#user_profile_cont div#album_cont h1{
-        margin-left:        10px;
+    div#user_profile_cont div#album_cont > h1{
+        margin-left:        20px;
     }
     
     div#trophy_cont .trophy_album{
@@ -4564,7 +4921,7 @@ div#album_cont{
         font-size:          24px;
         font-weight:        bold;
         margin-bottom:      10px;
-        margin-left:        30px;
+        margin-left:        20px;
         text-align:         left;
     }
 
@@ -4853,7 +5210,7 @@ div#photo_cont{
                 #selected_nom_image_cont{
                     background-color:   black;
                     float:              left;
-                    height:             214px;
+                    height:             215px;
                     text-align:         center;
                     position:           relative;
                     width:              320px;
@@ -4861,7 +5218,7 @@ div#photo_cont{
                 
                     #selected_nom_image_cont > div{
                         display:            table-cell;
-                        height:             214px;
+                        height:             217px;
                         width:              320px;
                         text-align:         center;
                         position:           relative;
@@ -4869,7 +5226,7 @@ div#photo_cont{
                     }
                 
                     #selected_nom_image_cont img{
-                        max-height:         214px;
+                        max-height:         215px;
                         max-width:          320px;
                     }
                 
@@ -4935,18 +5292,41 @@ div#photo_cont{
                         #selected_noms h3{
                             margin-top:             10px;
                         }
+                        
+            #new_nom_photo_stream_cont{
+                background-color:   #111;
+                cursor:             pointer;
+                height:             80px;
+                overflow-y:         hidden;
+                padding:            0px 5px;
+            }
+            
+                #new_nom_photo_stream_cont .nom_photo_thumb_cont{
+                    display:            inline-block;
+                    margin-right:       5px;
+                    position:           relative;
+                }
+                
+                    #new_nom_photo_stream_cont .nom_photo_thumb_cont .close_img{
+                        top:                0;
+                        right:              0;
+                    }
+                
+                    #new_nom_photo_stream_cont .nom_photo_thumb_cont img{
+                        max-height:         80px;
+                    }
             
             #new_nom_bottom_cont{
                 position:           relative;
             }
             
                 #selected_photo_triangle{
-                    height:             14px;
+                    height:             21px;
                     width:              35px;
                     background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
-                    background-position:    -175px -697px;
+                    background-position:    -175px -693px;
                     position:           absolute;
-                    top:                -15px;
+                    top:                -20px;
                     left:               135px;
                 }
                
@@ -5336,6 +5716,7 @@ div#all_friends {
     
         #settings_cont > div{
             margin-bottom:      10px;
+            width:              600px;
         }
         
         #settings_cont label{
@@ -5345,10 +5726,9 @@ div#all_friends {
         
         #settings_cont #allow_notifications, #settings_cont #allow_portrit_album{
             position:           relative;
-            top:                -3px;
-            left:               5px;
+            top:                -7px;
             cursor:             pointer;
-            float:              left;
+            float:              right;
         }
         
         #settings_cont #clear_db{
@@ -6020,6 +6400,7 @@ div#payment_types_cont{
             
             .notification_text_cont{
                 margin-left:            30px;
+                margin-right:           20px;
             }
             
             .notification_popup_cont .kill_notification{

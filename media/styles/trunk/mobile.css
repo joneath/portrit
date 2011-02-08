@@ -183,7 +183,7 @@ div#title div#main_view_control{
     padding-bottom:         15px;
 }
 
-.large.awesome, .large.awesome:visited 			{ font-size: 19px; padding: 8px 14px 9px; }
+.large.sick, .large.sick:visited 			{ font-size: 19px; padding: 8px 14px 9px; }
 
 div.autocomplete div p{
     font-size:      26px;
@@ -191,6 +191,19 @@ div.autocomplete div p{
 
 div#push{
     height:         20px;
+}
+
+#settings_cont > div{
+    width:          480px;
+}
+
+#settings_cont label{
+    width:          400px;
+}
+
+div#initial_tut_top_wrap #allow_notifications_cont, div#initial_tut_top_wrap #allow_portrit_album_cont{
+    margin-left:    20px;
+    width:          480px;
 }
 
 div#context_cont{

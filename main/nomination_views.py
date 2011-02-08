@@ -83,11 +83,13 @@ def get_recent_winners(request):
             page = request.GET.get('page')
             if not page:
                 page = 1
+            else:
+                page = int(page)
             
             data = [ ]
             if not nom_id:
                 fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
-                recent_winners_cache = cache.get(str(fb_user.fid) + '_recent_winners')
+                recent_winners_cache = cache.get(str(fb_user.fid) + '_recent_winners_' + str(page))
                 if recent_winners_cache == None:
                     friends = fb_user.friends.all()
                     winning_noms = Nomination.objects.select_related().filter(Q(nominatee__in=friends) | Q(nominatee=fb_user), won=True).order_by('-created_date')[(per_page*(page-1)):(per_page*page)]
@@ -102,6 +104,7 @@ def get_recent_winners(request):
                         data.append({
                             'id': nom.id,
                             'active': nom.active,
+                            'create_datetime': time.mktime(nom.created_date.utctimetuple()),
                             'nomination_category': nom.nomination_category.name,
                             'nominator': nom.nominator.fid,
                             'nominator_name': nom.nominator.get_name(),
@@ -115,7 +118,7 @@ def get_recent_winners(request):
                             'vote_count': nom.current_vote_count,
                             'votes': votes,
                         })
-                    cache.set(str(fb_user.fid) + '_recent_winners', data)
+                        cache.set(str(fb_user.fid) + '_recent_winners_' + str(page), data)
                 else:
                     data = recent_winners_cache
             else:
@@ -349,6 +352,7 @@ def nominate_photo(request):
         fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
         album_id = request.POST.get('album_id')
         photo_id = request.POST.get('photo_id')
+        portrit_photo_id = request.POST.get('portrit_photo_id')
         photo_src = request.POST.get('photo_src')
         photo_src_small = request.POST.get('photo_src_small')
         photo_small_height = request.POST.get('photo_small_height')
@@ -360,20 +364,23 @@ def nominate_photo(request):
         comment_text = request.POST.get('comment_text')
         
         try:
-            photo, created = Photo.objects.get_or_create(fid=photo_id)
-            if album_id !='tagged':
-                album, created = Album.objects.get_or_create(fid=album_id)
+            if portrit_photo_id:
+                photo, created = Photo.objects.get_or_create(id=portrit_photo_id)
+            else:
+                photo, created = Photo.objects.get_or_create(fid=photo_id)
+                if album_id !='tagged':
+                    album, created = Album.objects.get_or_create(fid=album_id)
             
-            # if photo.nominations.count() < 3:
-            photo.fb_source = photo_src
-            photo.fb_source_small = photo_src_small
-            photo.small_height = photo_small_height
-            photo.small_width = photo_small_width
-            photo.height = photo_height
-            photo.width = photo_width
-            if album_id !='tagged':
-                photo.album = album
-            photo.save()
+            if not portrit_photo_id:
+                photo.fb_source = photo_src
+                photo.fb_source_small = photo_src_small
+                photo.small_height = photo_small_height
+                photo.small_width = photo_small_width
+                photo.height = photo_height
+                photo.width = photo_width
+                if album_id !='tagged':
+                    photo.album = album
+                photo.save()
             
             photo_data = { }
             photo_data['fid'] = photo.fid
@@ -548,22 +555,27 @@ def get_user_album_nom_data(request):
                     portrit_album_data['photos'].append(photo.get_portrit_photo())
             except:
                 portrit_album_data = { }
-            
             winning_nom_objs = [ ]
             active_nom_objs = [ ]
         
             for nom in winning_nominations.iterator():
-                winning_nom_objs.append({'id': nom.id, 
-                                        'vote_count': nom.current_vote_count,
-                                        'nomination_category': nom.nomination_category.name,
-                                        'photo': nom.get_photo()})
+                try:
+                    winning_nom_objs.append({'id': nom.id, 
+                                            'vote_count': nom.current_vote_count,
+                                            'nomination_category': nom.nomination_category.name,
+                                            'photo': nom.get_photo()})
+                except:
+                    pass
             
             for nom in active_nominations.iterator():
-                active_nom_objs.append({'id': nom.id, 
-                                        'vote_count': nom.current_vote_count,
-                                        'comment_count': nom.get_comment_count(),
-                                        'nomination_category': nom.nomination_category.name,
-                                        'photo': nom.get_photo()})
+                try:
+                    active_nom_objs.append({'id': nom.id, 
+                                            'vote_count': nom.current_vote_count,
+                                            'comment_count': nom.get_comment_count(),
+                                            'nomination_category': nom.nomination_category.name,
+                                            'photo': nom.get_photo()})
+                except:
+                    pass
             
             data = {
                 'winning_nom_objs': winning_nom_objs,

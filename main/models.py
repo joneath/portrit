@@ -142,6 +142,7 @@ class Nomination(models.Model):
     def get_photo(self):
         photo_data = { }
         photo = self.photo_set.filter(active=True)[0]
+        photo_data['id'] = photo.id
         photo_data['fid'] = photo.fid
         photo_data['src'] = photo.fb_source
         photo_data['src_small'] = photo.fb_source_small
@@ -229,6 +230,7 @@ class Album(models.Model):
 class Photo(models.Model):    
     active = models.BooleanField(default=True)
     pending = models.BooleanField(default=False)
+    public = models.BooleanField(default=False)
     created_date = models.DateTimeField(auto_now_add=True)
     fid = BigIntegerField(null=True, blank=True)
     fb_source = models.CharField(max_length=255, null=True, blank=True)
@@ -239,6 +241,7 @@ class Photo(models.Model):
     width = models.IntegerField(null=True, blank=True)
     caption = models.CharField(max_length=512, null=True, blank=True)
     portrit_photo = models.BooleanField(default=False)
+    photo_path = models.CharField(max_length=512, null=True, blank=True)
     thumbnail_src = models.URLField(max_length=255, null=True, blank=True)
     large_src = models.URLField(max_length=255, null=True, blank=True)
     album = models.ForeignKey(Album, null=True, blank=True)
@@ -261,15 +264,21 @@ class Photo(models.Model):
             return {
                 'id': self.id,
                 'caption': self.caption,
-                'thumbnail_src': self.thumbnail_src,
-                 'large_src': self.large_src,
-                 'small_height': self.small_height,
-                 'small_width': self.small_width,
-                 'height': self.height,
-                 'width': self.width,
+                'picture': self.thumbnail_src,
+                'source': self.large_src,
+                'small_height': self.small_height,
+                'small_width': self.small_width,
+                'height': self.height,
+                'width': self.width,
             }
         except:
             return None
+            
+    def delete_local_copy(self):
+        import os
+        os.remove(self.photo_path)
+        os.remove(self.photo_path + '_130.jpg')
+        os.remove(self.photo_path + '_720.jpg')
         
 class Notification_Type(models.Model):
     active = models.BooleanField(default=True)
@@ -380,6 +389,7 @@ class Portrit_User(models.Model):
     fb_user = models.ForeignKey(FB_User, related_name="portrit_fb_user")
     name = models.CharField(max_length=255, null=True, blank=True)
     portrit_album_fid = BigIntegerField(blank=True, null=True, unique=True)
+    portrit_photos_album_fid = BigIntegerField(blank=True, null=True, unique=True)
     portrit_user_albums = models.ManyToManyField(Album, blank=True, null=True)
     tutorial_completed = models.BooleanField(default=False)
     given_nomination_count = models.IntegerField(default=0)
