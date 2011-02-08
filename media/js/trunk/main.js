@@ -4859,7 +4859,7 @@ $(document).ready(function(){
     
     function update_user_albums(photos){
         var found = false;
-        if (typeof(photos) !== "undefined" && photos.photos.length > 0){
+        if (typeof(photos) !== "undefined" && typeof(photos.photos) !== "undefined" && photos.photos.length > 0){
             for (var i = 0; i < albums.length; i++){
                 if (albums[i].album.id == 'portrit-photos'){
                     albums[i].photos = photos.photos;
