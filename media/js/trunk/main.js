@@ -1663,7 +1663,7 @@ $(document).ready(function(){
         var meta_html = '';
         if (mobile && !tablet){
             if (typeof(_gaq) !== "undefined"){
-                meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-2.css"/>';
+                meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-3.css"/>';
             }
             else{
                 meta_html = '<link rel="stylesheet" href="/site_media/styles/trunk/mobile.css"/>';
@@ -1671,7 +1671,7 @@ $(document).ready(function(){
         }
         else if (mobile && tablet){
             if (typeof(_gaq) !== "undefined"){
-                meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/tablet-2.css"/>';
+                meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/tablet-3.css"/>';
             }
         }
         $('head').append(meta_html);
@@ -9222,11 +9222,36 @@ $(document).ready(function(){
                 show_context_overlay(true, true);
                 
                 var file_count = 0;
+                var error_timeout = null;
                 $('#file_uploader').fileUpload({
                     namespace: 'file_upload_1',
                     url: '/upload_photo/',
                     dropZone: $('#upload_right_cont'),
                     initUpload: function(event, files, index, xhr, handler, callback){
+                        var regexp = /\.(png)|(jpg)|(gif)$/i;
+                        if (!regexp.test(files[index].name)) {
+                            $('#upload_right_cont').css('background-color', 'white');
+                            $('#upload_right_cont > h2').text('Drag Photos Here');
+                            $('#upload_error').remove();
+                            $('#photo_upload_cont > h1').after('<p id="upload_error">Only .jpg, .png, and .gif are allowed.</p>');
+                            clearTimeout(error_timeout);
+                            error_timeout = setTimeout(function(){
+                                $('#upload_error').fadeOut();
+                            }, 4500);
+                            
+                            return;
+                        }
+                        if (files[index].size > 2000000) {
+                            $('#upload_right_cont').css('background-color', 'white');
+                            $('#upload_right_cont > h2').text('Drag Photos Here');
+                            $('#upload_error').remove();
+                            $('#photo_upload_cont > h1').after('<p id="upload_error">File size must be below 2MB.</p>');
+                            clearTimeout(error_timeout);
+                            error_timeout = setTimeout(function(){
+                                $('#upload_error').fadeOut();
+                            }, 4500);
+                            return;
+                        }
                         file_count += 1;
                         append_load($('#upload_left_cont'), 'light');
                         upload_active = true;

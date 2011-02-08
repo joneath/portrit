@@ -939,6 +939,14 @@ div#photo_upload{
             color:              #6e6e6e;
         }
         
+        #photo_upload_cont #upload_error{
+            color:              #E95C41;
+            font-size:          18px;
+            position:           absolute;
+            top:                17px;
+            left:               180px;
+        }
+        
         #upload_center_cont{
             margin-top:         20px;
         }
