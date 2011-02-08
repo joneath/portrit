@@ -9,19 +9,16 @@
     <link rel="apple-touch-icon" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>
     <link rel="apple-touch-icon-precomposed" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>
     {% if production_code %}
-        <link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/portrit-3.css"/>
+        <link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/portrit-4.css"/>
     {% else %}
         <link rel="stylesheet" href="/site_media/styles/trunk/portrit.css"/>
-        {% ifequal mobile_var "ipad" %}
-            <link rel="stylesheet" href="/site_media/styles/trunk/tablet.css"/>
-        {% endifequal %}
     {% endif %}
     <script src="http://www.google.com/jsapi?key=ABQIAAAAv9UUX4Bh3gRCpbzjSE5MxxSfZ7BxKgj6oXj1KRYYnjuHN0SsnBTx1B5nTeUxCB_k-Yerxn8ZVGvnLA" type="text/javascript"></script>
     <script type="text/javascript">
         google.load("jquery", "1.5.0");
     </script>
     {% if production_code %}
-        <script type="text/javascript" src="http://portrit.s3.amazonaws.com/js/production/portrit-min-4.js"></script>
+        <script type="text/javascript" src="http://portrit.s3.amazonaws.com/js/production/portrit-min-5.js"></script>
     {% else %}
         <script type="text/javascript" src="/site_media/js/trunk/easing.1.3.js"></script>
         <script type="text/javascript" src="/site_media/js/trunk/jquery.autocomplete.js"></script>

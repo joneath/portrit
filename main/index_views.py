@@ -46,19 +46,12 @@ def mobile(request):
 def index(request, template='index.html'):    
     production_code = True
     analytics = True
-    mobile_var = None
     
     if ENV == 'LOCAL':
         production_code = False
         analytics = None
-        mobile_dev = mobile(request)    
-        try:
-            if mobile_dev['device']['ipad']:
-                mobile_var = 'ipad'
-        except:
-            pass
     
-    payload = {'analytics': analytics, 'mobile_var': mobile_var, 'production_code': production_code}
+    payload = {'analytics': analytics, 'production_code': production_code}
     return render_to_response(template, payload, context_instance=RequestContext(request))
 
 def robots(request):

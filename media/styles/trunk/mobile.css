@@ -198,13 +198,21 @@ div#push{
 }
 
 #settings_cont label{
-    width:          400px;
+    width:          350px;
 }
 
 div#initial_tut_top_wrap #allow_notifications_cont, div#initial_tut_top_wrap #allow_portrit_album_cont{
     margin-left:    20px;
     width:          480px;
 }
+
+    div#initial_tut_top_wrap #allow_notifications_cont label, div#initial_tut_top_wrap #allow_portrit_album_cont label{
+        width:          350px;
+    }
+    
+    div#initial_tut_top_wrap #allow_notifications, div#initial_tut_top_wrap #allow_portrit_album{
+        top:            -2px;
+    }
 
 div#context_cont{
     width:          480px;
@@ -733,11 +741,16 @@ div#new_comment_cont .comment_body{
         
 .recent_nom_comment_cont .recent_nom_comment_heading{
     height:         40px;
+    margin-bottom:  15px;
 }
 
 div.comment_top_head a.cancel_new_comment{
     position:       absolute;
     left:           0px;
+}
+
+div#main_nom_bottom_cont .comment_empty h2{
+    font-size:      20px;
 }
         
 div#nom_detail_cont{
@@ -985,26 +998,6 @@ div#mutual_friend_cont{
     z-index:            1;
 }
 
-/*#back_gallery_mobile{
-    height:             75px;
-    width:              75px;
-    opacity:            .4;
-    position:           absolute;
-    left:               0px;
-    top:                200px;
-    z-index:            1;
-}
-
-#forward_gallery_mobile{
-    height:             75px;
-    width:              75px;
-    opacity:            .4;
-    right:              0px;
-    position:           absolute;
-    top:                200px;
-    z-index:            1;
-}*/
-
 img#photo_large_inline{
     max-width:          500px;
 }
@@ -1143,7 +1136,7 @@ div#initial_tut_wrap{
         }
         
         div#initial_tut_top_wrap .tut_point ul{
-            margin-left:    65px;
+            margin-left:    30px;
         }
     
         div#initial_tut_top_wrap .tut_point p{

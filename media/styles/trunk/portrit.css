@@ -1222,7 +1222,7 @@ div#initial_tut_cont{
                 
                 div#initial_tut_top_wrap .tut_point ul{
                     list-style:             none;
-                    margin-left:            100px;
+                    margin-left:            50px;
                     text-align:             center;
                 }
                 
@@ -3257,7 +3257,7 @@ div#user_profile_cont{
         padding:                12px 18px;
         position:               absolute;
         right:                  10px;
-        top:                    120px;
+        top:                    15px;
         z-index:                100;
         -moz-border-radius:     15px;
         border-radius:  15px;

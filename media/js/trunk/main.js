@@ -394,7 +394,6 @@ $(document).ready(function(){
                     update_view(); 
                 }, 75);
             });
-            set_mobile_css();
             $('#header').hide();
             attach_login_handlers();
             return;
@@ -411,7 +410,6 @@ $(document).ready(function(){
     
         //Set interval handler for url hash changes
         watch_hashtag_interval = setInterval(watch_hashtag, 75);
-        set_mobile_css();
         login_fb_user();
     }
     
@@ -811,49 +809,26 @@ $(document).ready(function(){
         'comments': { }
     },
     close_size = 'normal',
-    me = null,
-    production = true;
+    me = null;
     
     if (DetectMobileQuick() === true){
         mobile = true;
         close_size = 'mobile'
         
         if (typeof(_gaq) !== "undefined"){
-            if (production){
-                var meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile_landing.css"/>' +
-                                '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile.css"/>' +
-                                '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
-                                '<link rel="shortcut icon" href="http://portrit.s3.amazonaws.com/img/favicon.ico">' +
-                                '<link rel="apple-touch-icon" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>' +
-                                '<link rel="apple-touch-icon-precomposed" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>';
-            }
-            else{
-                var meta_html = '<link rel="stylesheet" href="/site_media/styles/production/mobile_landing.css"/>' +
-                                '<link rel="stylesheet" href="/site_media/styles/production/mobile.css"/>' +
-                                '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
-                                '<link rel="shortcut icon" href="/site_media/img/favicon.ico">' +
-                                '<link rel="apple-touch-icon" href="/site_media/img/icon128.png"/>' +
-                                '<link rel="apple-touch-icon-precomposed" href="/site_media/img/icon128.png"/>';
-            }
+            var meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-4.css"/>' +
+                            '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
+                            '<link rel="shortcut icon" href="http://portrit.s3.amazonaws.com/img/favicon.ico">' +
+                            '<link rel="apple-touch-icon" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>' +
+                            '<link rel="apple-touch-icon-precomposed" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>';
 
         }
         else{
-            if (production){
-                var meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/trunk/mobile_landing.css"/>' +
-                                '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/trunk/mobile.css"/>' +
-                                '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
-                                '<link rel="shortcut icon" href="http://portrit.s3.amazonaws.com/img/favicon.ico">' +
-                                '<link rel="apple-touch-icon" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>' +
-                                '<link rel="apple-touch-icon-precomposed" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>';
-            }
-            else{
-                var meta_html = '<link rel="stylesheet" href="/site_media/styles/trunk/mobile_landing.css"/>' +
-                                '<link rel="stylesheet" href="/site_media/styles/trunk/mobile.css"/>' +
-                                '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
-                                '<link rel="shortcut icon" href="/site_media/img/favicon.ico">' +
-                                '<link rel="apple-touch-icon" href="/site_media/img/icon128.png"/>' +
-                                '<link rel="apple-touch-icon-precomposed" href="/site_media/img/icon128.png"/>';
-            }
+            var meta_html = '<link rel="stylesheet" href="/site_media/styles/trunk/mobile.css"/>' +
+                            '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
+                            '<link rel="shortcut icon" href="/site_media/img/favicon.ico">' +
+                            '<link rel="apple-touch-icon" href="/site_media/img/icon128.png"/>' +
+                            '<link rel="apple-touch-icon-precomposed" href="/site_media/img/icon128.png"/>';
 
         }
         $('head').append(meta_html);
@@ -878,6 +853,22 @@ $(document).ready(function(){
         close_size = 'mobile';
         mobile = true;
         tablet = true;
+        
+        if (typeof(_gaq) !== "undefined"){
+            var meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/tablet-4.css"/>' +
+                            '<link rel="shortcut icon" href="http://portrit.s3.amazonaws.com/img/favicon.ico">' +
+                            '<link rel="apple-touch-icon" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>' +
+                            '<link rel="apple-touch-icon-precomposed" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>';
+
+        }
+        else{
+            var meta_html = '<link rel="stylesheet" href="/site_media/styles/trunk/tablet.css"/>' +
+                            '<link rel="shortcut icon" href="/site_media/img/favicon.ico">' +
+                            '<link rel="apple-touch-icon" href="/site_media/img/icon128.png"/>' +
+                            '<link rel="apple-touch-icon-precomposed" href="/site_media/img/icon128.png"/>';
+
+        }
+        $('head').append(meta_html);
     }
     
     function update_urls(){
@@ -3046,6 +3037,12 @@ $(document).ready(function(){
                                                     '<li name="Creepy">' +
                                                         '<div class="trophy_img medium creepy"></div>' +
                                                     '</li>' +
+                                                    '<li name="Awesome">' +
+                                                        '<div class="trophy_img medium awesome"></div>' +
+                                                    '</li>' +
+                                                    '<li name="Yummy">' +
+                                                        '<div class="trophy_img medium yummy"></div>' +
+                                                    '</li>' +
                                                 '</ul>' +
                                                 '<div class="clear"></div>' + 
                                             '</div>' +
@@ -3679,6 +3676,7 @@ $(document).ready(function(){
                 clear_canvas(url_vars);
                 clear_event_handles();
                 attach_main_handlers();
+                attach_profile_handlers();
                 main_view();
                 $('html, body').scrollTop(0);
             }
@@ -3716,6 +3714,7 @@ $(document).ready(function(){
                 var url_vars = getUrlVars();
                 clear_canvas(url_vars);
                 clear_event_handles();
+                attach_profile_handlers();
                 // attach_main_handlers();
                 main_view();
                 $('html, body').scrollTop(0);
@@ -4556,6 +4555,7 @@ $(document).ready(function(){
         var alpha_html = "";
         var first_alpha = true;
         var alpha_class = "";
+        var photo_upload_html = '';
         
         // var invite_friends = '<h3 class="sick large invite_friends">Invite Friends</h3>';
         // 
@@ -4563,9 +4563,12 @@ $(document).ready(function(){
         //     invite_friends = '';
         // }
         
-        // $('#wall_cont').html('');
+        if (!mobile){
+            photo_upload_html = '<a class="sick red large" id="show_upload">Post Photo</a>';
+        }
+
         if ($('#main_view_control').length == 0){
-            $('#cont').prepend('<div id="main_view_control"><a id="friend_view" class="main_control sick large main_control_active">Friends</a><a id="wall_view" class="main_control sick large  ">Stream</a><a id="profile_view" class="main_control sick large ">Profile</a></div>');
+            $('#cont').prepend('<div id="main_view_control"><a id="friend_view" class="main_control sick large main_control_active">Friends</a><a id="wall_view" class="main_control sick large  ">Stream</a><a id="profile_view" class="main_control sick large ">Profile</a>' + photo_upload_html + '</div>');
         }
         $('#wall_cont').show();
         $('#friend_cont').show();
@@ -6428,6 +6431,14 @@ $(document).ready(function(){
         $('.prev_photo').live('click', function(){
             var selected = $(this).parent().children().filter('[name="selected"]');
             $(selected).prev().click();
+        });
+        
+        $('#nom_votes_cont a').live('mouseover mouseout', function(event) {
+            if (event.type == 'mouseover') {
+                show_like_tooltip(this);
+            } else {
+                hide_like_tooltip(this);
+            }
         });
     }
     var winners_end = false;
@@ -9228,7 +9239,7 @@ $(document).ready(function(){
                     url: '/upload_photo/',
                     dropZone: $('#upload_right_cont'),
                     initUpload: function(event, files, index, xhr, handler, callback){
-                        var regexp = /\.(png)|(jpg)|(gif)$/i;
+                        var regexp = /\.(png)|(jpg)|(jpeg)|(gif)$/i;
                         if (!regexp.test(files[index].name)) {
                             $('#upload_right_cont').css('background-color', 'white');
                             $('#upload_right_cont > h2').text('Drag Photos Here');
@@ -10815,9 +10826,9 @@ $(document).ready(function(){
             photo_upload_html = '',
             invite_friends = '';
         
-        // if (!mobile){
-        //     photo_upload_html = '<a class="sick red large" id="show_upload">Post Photo</a>';
-        // }
+        if (!mobile){
+            photo_upload_html = '<a class="sick red large" id="show_upload">Post Photo</a>';
+        }
         if (view_to_activate == 'recent'){
             active_view_name = 'latest_photos';
             replace_view_name = 'active_nominations';
