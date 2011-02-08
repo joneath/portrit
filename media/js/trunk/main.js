@@ -1663,7 +1663,7 @@ $(document).ready(function(){
         var meta_html = '';
         if (mobile && !tablet){
             if (typeof(_gaq) !== "undefined"){
-                meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile.css"/>';
+                meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-2.css"/>';
             }
             else{
                 meta_html = '<link rel="stylesheet" href="/site_media/styles/trunk/mobile.css"/>';
@@ -1671,7 +1671,7 @@ $(document).ready(function(){
         }
         else if (mobile && tablet){
             if (typeof(_gaq) !== "undefined"){
-                meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/tablet.css"/>';
+                meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/tablet-2.css"/>';
             }
         }
         $('head').append(meta_html);
