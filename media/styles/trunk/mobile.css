@@ -282,6 +282,39 @@ div#context_cont{
         width:      488px;
     }
     
+#recent_empty_wrap #recent_winners{
+    width:          500px;
+}
+
+    #recent_empty_wrap #main_nom_cont #recent_win_photo_cont{
+        width:          260px;
+    }
+    
+    #recent_empty_wrap #recent_win_photo_cont #recent_win_photo_wrap{
+        width:          260px;
+    }
+    
+    #recent_empty_wrap #recent_win_photo_cont #recent_win_photo{
+        max-width:      260px;
+    }
+    
+    #recent_empty_wrap #main_nom_cont #recent_win_right_cont{
+        padding-left:   10px;
+        width:          230px;
+    }
+    
+    #recent_empty_wrap #recent_win_right_cont .trophy_img{
+        right:          -5px;
+    }
+    
+#recent_win_stream_cont #nom_cat_stream{
+    top:            -5px
+}
+    
+.comment p{
+    font-size:      16px;
+}
+    
 .load_more_comments{
     font-size:      20px;
 }

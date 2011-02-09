@@ -274,6 +274,12 @@ class Photo(models.Model):
         except:
             return None
             
+    def get_portrit_user(self):
+        try:
+            return self.album.portrit_user_albums.all()[0]
+        except:
+            return None
+            
     def delete_local_copy(self):
         import os
         os.remove(self.photo_path)
@@ -335,7 +341,7 @@ class Notification(models.Model):
 class FB_User(models.Model):
     fid = BigIntegerField(null=True, unique=True)
     created_date = models.DateField(auto_now_add=True)
-    albums = models.ManyToManyField(Album, null=True, blank=True)
+    albums = models.ManyToManyField(Album, null=True, blank=True, related_name="fb_user_albums")
     friends = models.ManyToManyField("self", null=True, blank=True)
     winning_noms = models.ManyToManyField(Nomination, blank=True, null=True, related_name="user_winning_noms")
     active_nominations = models.ManyToManyField(Nomination, null=True, blank=True)
@@ -390,7 +396,7 @@ class Portrit_User(models.Model):
     name = models.CharField(max_length=255, null=True, blank=True)
     portrit_album_fid = BigIntegerField(blank=True, null=True, unique=True)
     portrit_photos_album_fid = BigIntegerField(blank=True, null=True, unique=True)
-    portrit_user_albums = models.ManyToManyField(Album, blank=True, null=True)
+    portrit_user_albums = models.ManyToManyField(Album, blank=True, null=True, related_name="portrit_user_albums")
     tutorial_completed = models.BooleanField(default=False)
     given_nomination_count = models.IntegerField(default=0)
     recieved_nomination_count = models.IntegerField(default=0)

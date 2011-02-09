@@ -55,6 +55,7 @@ urlpatterns += patterns('',
 
 #Photo URLs
 urlpatterns += patterns('',
+    url(r'^latest-photos/$', 'main.photo_views.latest_photos', name='latest_photos'),
     url(r'^upload_photo/$', 'main.photo_views.upload_photo', name='upload_photo'),
     url(r'^mark_photos_live/$', 'main.photo_views.mark_photos_live', name='mark_photos_live'),
 )

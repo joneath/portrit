@@ -107,7 +107,7 @@ div#photo_cont{
 }
 
 #search_empty_wrap .empty_cont{
-    width:          900px;
+    width:          920px;
 }
 
 #clear_all_notifications{
@@ -143,8 +143,8 @@ div#wall_cont div#profile_wrap.hide_tabs{
     width:              105px;
 }
 
-div.latest_photos_overlay{
-    width:              950px;
+#recent_win_stream_cont #nom_cat_stream{
+    top:            -5px
 }
 
 #new_photo_cont .winning_nom_cont{

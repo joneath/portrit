@@ -135,11 +135,7 @@ def post_photo_to_facebook(user_fid, access_token, portrit_photos_album_fid, pho
     name = str(photo.id) + '_' + str(now.strftime("%Y%m%dT%H%M%S")) + '.jpg'
     path = photo.photo_path + '_720.jpg'
     
-    print now
-    print name
-    print path
-    
-    message = 'http://portrit.com/#/user=' + str(user_fid)
+    message = 'http://portrit.com/#/user=' + str(user_fid) + '/album=portrit-photos/gallery/photo=' + str(photo.id)
     args = {
         'access_token': access_token,
         'message': message,
@@ -163,7 +159,6 @@ def post_photo_to_facebook(user_fid, access_token, portrit_photos_album_fid, pho
         pass
         
 def create_portrit_photo_album(fb_user, portrit_user):
-    print "here"
     url = 'https://graph.facebook.com/me/albums'
     values = {'access_token' : portrit_user.access_token,
               'name' : 'Portrit Photos',
@@ -175,4 +170,32 @@ def create_portrit_photo_album(fb_user, portrit_user):
     data = simplejson.loads(data)
     portrit_user.portrit_photos_album_fid = data['id']
     portrit_user.save()
+    
+def latest_photos(request):
+    data = False
+    try:
+        cookie = facebook.get_user_from_cookie(
+            request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
+        if cookie:
+            fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
+            friends = fb_user.friends.values_list('fid', flat=True)
+            photos = Photo.objects.filter(active=True, pending=False, portrit_photo=True, album__portrit_user_albums__fb_user__fid__in=friends).order_by('-created_date')[:48]
+            photo_data = [ ]
+            for photo in photos:
+                try:
+                    temp = photo.get_portrit_photo()
+                    portrit_user = photo.get_portrit_user()
+                    photo_data.append({
+                        'user_fid': portrit_user.fb_user.fid,
+                        'name': portrit_user.name,
+                        'photo': photo.get_portrit_photo(),
+                        'album_id': photo.album.id,
+                    })
+                except:
+                    pass
+            data = photo_data
+    except:
+        pass
+    data = json.dumps(data)
+    return HttpResponse(data, mimetype='text/html')
     

@@ -46,7 +46,7 @@ def mobile(request):
 def index(request, template='index.html'):    
     production_code = True
     analytics = True
-    
+
     if ENV == 'LOCAL':
         production_code = False
         analytics = None

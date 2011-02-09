@@ -816,7 +816,7 @@ $(document).ready(function(){
         close_size = 'mobile'
         
         if (typeof(_gaq) !== "undefined"){
-            var meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-4.css"/>' +
+            var meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-5.css"/>' +
                             '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
                             '<link rel="shortcut icon" href="http://portrit.s3.amazonaws.com/img/favicon.ico">' +
                             '<link rel="apple-touch-icon" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>' +
@@ -855,7 +855,7 @@ $(document).ready(function(){
         tablet = true;
         
         if (typeof(_gaq) !== "undefined"){
-            var meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/tablet-4.css"/>' +
+            var meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/tablet-5.css"/>' +
                             '<link rel="shortcut icon" href="http://portrit.s3.amazonaws.com/img/favicon.ico">' +
                             '<link rel="apple-touch-icon" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>' +
                             '<link rel="apple-touch-icon-precomposed" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>';
@@ -3576,26 +3576,26 @@ $(document).ready(function(){
                                         if (function_ptr !== undefined){
                                             if (timeout === true){
                                                 albums = this_albums;
-                                                setTimeout(function_ptr, time);
                                                 get_user_noms();
+                                                setTimeout(function_ptr, time);
                                             }
                                             else if (render_as_received){
                                                 albums = this_albums;
-                                                function_ptr(hidden, offset);
                                                 get_user_noms();
+                                                function_ptr(hidden, offset);
                                             }
                                             else{
                                                 albums = this_albums;
-                                                function_ptr(hidden);
                                                 get_user_noms();
+                                                function_ptr(hidden);
                                             }
                                         }
                                     });   
                                 }
                                 else{
                                     albums = this_albums;
-                                    function_ptr(hidden);
                                     get_user_noms();
+                                    function_ptr(hidden);
                                 }
                             }
                         });   
@@ -3606,8 +3606,8 @@ $(document).ready(function(){
                 }
                 else{
                     albums = this_albums;
-                    function_ptr(hidden);
                     get_user_noms();
+                    function_ptr(hidden);
                 }
             });
         }
@@ -4957,11 +4957,11 @@ $(document).ready(function(){
             });
         }
         else{
+            update_user_albums(user_winning_noms_cache[selected_user].portrit_album_data);
             if (view_active == 'album' || (view_active == 'main' && default_view === 'profile')){
                 update_user_album_nom_cache(user_winning_noms_cache[selected_user].winning_nom_objs);
                 render_active_photo_noms(user_winning_noms_cache[selected_user]);
                 render_winning_photo_noms(user_winning_noms_cache[selected_user]);
-                update_user_albums(user_winning_noms_cache[selected_user].portrit_album_data);
                 render_portrit_photos(user_winning_noms_cache[selected_user]);
             }
             else if (view_active == 'list'){
@@ -5418,7 +5418,6 @@ $(document).ready(function(){
                                                 '<h3>Nominated by <span class="strong"><a href="#/user=' + nom_data[k].nominator + '" class="clear_profile">' + nominator_name + '</a></span></h3>' +
                                                 '<p class="caption">' + caption + '</p>' +
                                             '</div>' +
-                                            '<span value="' + (nom_data[k].created_time * 1000) + '">' + secondsToHms(time_diff) + '</span>' + 
                                             '<a href="#/nom_id=' + nom_data[k].id +'">' +
                                                 '<p class="comments nom_cat_' + nom_cat_underscore + '">Comments: ' + nom_data[k].comment_count + '</p>' +
                                             '</a>' +
@@ -5527,7 +5526,7 @@ $(document).ready(function(){
         var votes_html = '';
         var recent_winners = getUrlVars()['recent-winners'];
         var nom_data = null;
-        if (recent_winners != undefined){
+        if (recent_winners != undefined || $('#empty_noms_cont').length > 0){
             nom_data = winning_noms_cache[nom_id];
         }
         else{
@@ -6094,12 +6093,16 @@ $(document).ready(function(){
         }
     }
     
-    function render_latest_photos(data){
+    function render_latest_fb_photos(data){
         var photo = null,
             photo_id = null,
             owner_id = null,
             owner_name = '',
-            photo_html = '';
+            photo_html = '',
+            top = 48,
+            count = 0;
+        
+
         for (var i = 0; i < data.length; i++){
             if (friends[data[i].source_id]){
                 for (var j = 0; j < data[i].attachment.media.length; j++){
@@ -6118,40 +6121,135 @@ $(document).ready(function(){
                         }
                     }
                 
-                    photo_html ='<div class="new_photo_cont" name="' + owner_name + '" value="' + photo_id + '">' +
-                                    '<img src="' + photo.src + '"/>' +
+                    photo_html ='<div class="new_photo_cont" name="' + owner_name + '" user_id="" album_id="" value="' + photo_id + '">' +
+                                    '<div class="clip">' +
+                                        '<img src="' + photo.src + '"/>' +
+                                    '</div>' +
                                 '</div>';
-                    $('#new_photo_cont').append(photo_html);
+                    $('#latest_fb_photos').append(photo_html);
+                    
+                    count += 1;
+                    if (count >= top){
+                        break;
+                    }
+                }
+                if (count >= top){
+                    break;
                 }
             }
         }
-        if ($(window).height() < 900){
-            $('#wrapper').css('min-height', 900);
+    }
+    
+    function render_latest_portrit_photos(data){
+        var photo = null;
+        for (var i = 0; i < data.length; i++){
+            photo = data[i].photo;
+            photo_html ='<div class="new_photo_cont" name="' + data[i].name + '" user_id="' + data[i].user_fid + '" album_id="' + data[i].album_id + '" value="' + photo.id + '">' +
+                            '<div class="clip">' +
+                                '<img src="' + photo.picture + '"/>' +
+                            '</div>' +
+                        '</div>';
+            $('#latest_portrit_photos').append(photo_html);
         }
     }
     
-    var photo_feed = null;
-    var photo_feed_timeout = null;
+    var fb_photo_feed = null;
+    var fb_photo_feed_timeout = null;
+    var portrit_photo_feed = null;
+    var portrit_photo_feed_timeout = null;
     function init_latest_photos(){
         view_active = 'latest_photos';
-        $('#context_overlay_cont > div').append('<div id="new_photo_cont"><h1>Latest Photos</h1><p class="tooltip"></p></div>');
-        append_load($('#context_overlay_cont > div'), 'light');
-        if (!photo_feed || photo_feed.length == 0){
+        // $('#context_overlay_cont > div').append('<div id="new_photo_cont"><h1>Latest Photos</h1><p class="tooltip"></p></div>');
+        // append_load($('#context_overlay_cont > div'), 'light');
+        var latest_photos_cont_html =   '<div id="latest_photos">' +
+                                            '<h1>Latest Photos</h1>' +
+                                            '<div id="latest_portrit_photos">' +
+                                                '<h2>Portrit Photos</h2>' +
+                                                '<p class="tooltip"></p>' +
+                                                '<img class="loading" src="http://portrit.s3.amazonaws.com/img/ajax-loader-light.gif"/>' +
+                                            '</div>' +
+                                            '<div id="latest_fb_photos">' +
+                                                '<h2>Facebook Photos</h2>' +
+                                                '<p class="tooltip"></p>' +
+                                                '<img class="loading" src="http://portrit.s3.amazonaws.com/img/ajax-loader-light.gif"/>' +
+                                            '</div>' +
+                                        '</div>';
+        $('#canvas_cont').append(latest_photos_cont_html);
+        if (!fb_photo_feed || fb_photo_feed.length == 0){
             //Get newest photo feed from server
-            $.getJSON('https://api.facebook.com/method/stream.get?access_token=' + fb_session.access_token + '&limit=50&filter_key=' + photo_filter + '&format=json&callback=?', function(data){
-                remove_load();
-                photo_feed = data.posts;
-                render_latest_photos(photo_feed);
-                clearTimeout(photo_feed_timeout);
-                photo_feed_timeout = setTimeout(function(){
+            $.getJSON('https://api.facebook.com/method/stream.get?access_token=' + fb_session.access_token + '&limit=100&filter_key=' + photo_filter + '&format=json&callback=?', function(data){
+                $('#latest_fb_photos > img').remove();
+                fb_photo_feed = data.posts;
+                render_latest_fb_photos(fb_photo_feed);
+                clearTimeout(fb_photo_feed_timeout);
+                fb_photo_feed_timeout = setTimeout(function(){
                     photo_feed = null;
                 }, 1000 * 60 * 5);
             });
         }
         else{
-            remove_load();
-            render_latest_photos(photo_feed);
+            $('#latest_fb_photos > img').remove();
+            render_latest_fb_photos(fb_photo_feed);
         }
+        if (!portrit_photo_feed || portrit_photo_feed.length == 0){
+            $.getJSON('/latest-photos', function(data){
+                $('#latest_portrit_photos > img').remove();
+                portrit_photo_feed = data;
+                render_latest_portrit_photos(portrit_photo_feed);
+                clearTimeout(portrit_photo_feed_timeout);
+                portrit_photo_feed_timeout = setTimeout(function(){
+                    portrit_photo_feed = null;
+                }, 1000 * 60 * 5);
+            });
+        }
+        else{
+            $('#latest_portrit_photos > img').remove();
+            render_latest_portrit_photos(portrit_photo_feed);
+        }
+    }
+    
+    function attach_latest_photo_handlers(){
+        $('.new_photo_cont').live('mouseover mouseout', function(event) {
+            if (event.type == 'mouseover') {
+                show_like_tooltip(this);
+            } else {
+                hide_like_tooltip(this);
+            }
+        });
+        
+        $('.new_photo_cont').live('click', function(){
+            var photo_id = $(this).attr('value');
+            var user_id = $(this).attr('user_id');
+            var album_id = $(this).attr('album_id');
+            
+            if (user_id == me.id){
+                user_id = 'me';
+            }
+            
+            if (album_id == ''){
+                $.getJSON('https://api.facebook.com/method/photos.get?access_token=' + fb_session.access_token + '&pids=' + photo_id + '&format=json&callback=?', function(data){
+                    var data = data[0],
+                        user_id = data.owner,
+                        album_id = data.album_object_id,
+                        photo_id = data.object_id;
+                        selected_photo = String(photo_id);
+                     
+                    if (selected_user != user_id){
+                        albums = null;
+                    }
+                    $('#photo_list').html('');
+                    window.location.href = '#/user=' + user_id + '/album=' + album_id + '/gallery';
+                });
+            }
+            else{
+                selected_photo = String(photo_id);
+                if (selected_user != user_id){
+                    albums = null;
+                }
+                $('#photo_list').html('');
+                window.location.href = '#/user=' + user_id + '/album=portrit-photos/gallery';
+            }
+        });
     }
     
     function render_recent_winners(data){
@@ -6195,8 +6293,7 @@ $(document).ready(function(){
             else{
                 caption = data[0].caption;
             }
-            var recent_winners_html =   '<div id="main_view_control"><a class="sick red large" id="show_upload">Post Photo</a></div>' +
-                                        '<div id="recent_winners">' +
+            var recent_winners_html =   '<div id="recent_winners">' +
                                             '<h1>Recent Winners</h1>' +
                                             '<div id="top_stripe"></div>' +
                                             '<div id="main_nom_cont" value="' + data[0].id + '">' +
@@ -6302,7 +6399,26 @@ $(document).ready(function(){
             render_nom_votes(data[0].votes);
         }
         else{
-            $('#new_photo_cont').append('<h2>No Recent Winners.</h2>');
+            var recent_winners_html =   '<div id="main_view_control"><a class="sick red large" id="show_upload">Post Photo</a></div>' +
+                                        '<div id="recent_winners">' +
+                                            '<h1>Recent Winners</h1>' +
+                                            '<div id="top_stripe"></div>' +
+                                            '<div id="main_nom_cont" value="">' +
+                                                '<div id="recent_win_photo_cont">' +
+                                                    '<div id="recent_win_photo_wrap">' +
+                                                        '<h2>No Recent Winners</h2>' +
+                                                    '</div>' +
+                                                '</div>' +
+                                                '<div id="recent_win_right_cont" class="nom_cat_yummy">' +
+                                                '</div>' +
+                                                '<div class="clear"></div>' +
+                                            '</div>' +
+                                            '<div id="recent_win_stream_cont"></div>' +
+                                            '<div id="recent_bottom_cont">' +
+                                            '</div>' +
+                                            '<div class="clear"></div>' +
+                                        '</div>';
+            $('#canvas_cont').append(recent_winners_html);
         }
     }
     
@@ -6977,7 +7093,7 @@ $(document).ready(function(){
             var count = 0;
             
             if (mobile && !tablet){
-                top = 9;
+                top = 12;
             }
             
             for (var i = 0; i < data.length; i++){
@@ -7000,14 +7116,16 @@ $(document).ready(function(){
                                     }
                                 }
 
-                                photo_html ='<div class="new_photo_cont" name="' + owner_name + '" value="' + photo_id + '">' +
-                                                '<img src="' + photo.src + '"/>' +
+                                photo_html ='<div class="new_photo_cont" name="' + owner_name + '" user_id="" album_id="" value="' + photo_id + '">' +
+                                                '<div class="clip">' +
+                                                    '<img src="' + photo.src + '"/>' +
+                                                '</div>' +
                                             '</div>';
-                                $('#latest_empty_wrap > .empty_cont').append(photo_html);
+                                $('#facebook_photos_cont').append(photo_html);
                                 count += 1;
                                 if (count == top){
                                     if (!mobile){
-                                        $('#latest_empty_wrap > .empty_cont').append('<p class="tooltip"></p>');
+                                        $('#facebook_photos_cont').append('<p class="tooltip"></p>');
                                     }
                                     return;
                                 }
@@ -7016,11 +7134,31 @@ $(document).ready(function(){
                     }
                 }
             }
-            if (count > 0){
-                $('#latest_empty_wrap > .empty_cont').append('<p class="tooltip"></p>');
+            if (count == 0){
+                $('#facebook_photos_cont').remove();//append('<h1>No Latest Photos.</h1>');
             }
-            else{
-                $('#latest_empty_wrap > .empty_cont').append('<h1>No Latest Photos.</h1>');
+        }
+        
+        function render_latest_empty_portrit_photos(data){
+            var photo = null;
+            var top = 24;
+            if (mobile && !tablet){
+                top = 12;
+            }
+            if (data.length < top){
+                top = data.length;
+            }
+            for (var i = 0; i < top; i++){
+                photo = data[i].photo;
+                photo_html ='<div class="new_photo_cont" name="' + data[i].name + '" user_id="' + data[i].user_fid + '" album_id="' + data[i].album_id + '" value="' + photo.id + '">' +
+                                '<div class="clip">' +
+                                    '<img src="' + photo.picture + '"/>' +
+                                '</div>' +
+                            '</div>';
+                $('#portrit_photos_cont').append(photo_html);
+            }
+            if (i == 0){
+                $('#portrit_photos_cont').remove();
             }
         }
         
@@ -7028,50 +7166,196 @@ $(document).ready(function(){
         append_load($('#recent_empty_wrap > .empty_cont'), 'light');
         get_user_feed(function(data){
             remove_load();
+            
             var photo = null,
+                nominatee_name = '',
+                nominator_name = '',
                 nom_cat = '',
                 nom_cat_underscore = '',
-                name = '',
-                winning_nom_html = '',
-                top = 8;
-            
+                caption = '',
+                winning_nom_html = ''
+                create_date = null,
+                now = null,
+                time = null,
+                time_diff = null;
+
+            winners_end = false;
+            winners_page = 2;
+
             if (data.length > 0){
-                $('#recent_empty_wrap > h3').after('<p>These photos just won.</p>');
-                if (data.length < top){
-                    top = data.length;
+                create_date = new Date(data[0].create_datetime * 1000);
+                now = new Date();
+                time = create_date.getTime();
+                time_diff = now - time;
+                time_diff /= 1000;
+                nom_cat_underscore = data[0].nomination_category.replace(' ', '_').toLowerCase();
+                if (data[0].nominatee == me.id){
+                    nominatee_name = 'You';
                 }
-                for (var i = 0; i < top; i++){
-                    photo = data[i].photo;
-                    nom_cat = data[i].nomination_category;
-                    nom_cat_underscore = nom_cat.replace(' ', '_').toLowerCase();
-                    if (friends[data[i].nominatee] !== undefined){
-                        name = friends[data[i].nominatee].name;
-                    }
-                    else if(data[i].nominatee == me.id){
-                        name = 'You';
+                else{
+                    nominatee_name = data[0].nominatee_name;
+                }
+                if (data[0].nominator == me.id){
+                    nominator_name = 'You';
+                }
+                else{
+                    nominator_name = data[0].nominator_name;
+                }
+                if (data[0].caption == null){
+                    caption = '';
+                }
+                else{
+                    caption = data[0].caption;
+                }
+                var recent_winners_html =   '<div id="recent_winners">' +
+                                                '<div id="top_stripe"></div>' +
+                                                '<div id="main_nom_cont" value="' + data[0].id + '">' +
+                                                    '<div id="recent_win_photo_cont">' +
+                                                        '<div id="recent_win_photo_wrap">' +
+                                                            '<img id="recent_win_photo" src="' + data[0].photo.src + '"/>' +
+                                                        '</div>' +
+                                                        '<div id="nominator_overlay_cont">' +
+                                                            '<a href="/#/user=' + data[0].nominator + '"><img class="user_img" src="https://graph.facebook.com/' + data[0].nominator + '/picture?type=square"/></a>' +
+                                                            '<h2>Nominated by <span class="strong"><a href="/#/user=' + data[0].nominator + '">' + nominator_name + '</a></span></h2>' +
+                                                            '<p>' + caption + '</p>' +
+                                                        '</div>' +
+                                                    '</div>' +
+                                                    '<div id="recent_win_right_cont" class="nom_cat_' + nom_cat_underscore + '">' +
+                                                        '<img class="user_img" src="https://graph.facebook.com/' + data[0].nominatee + '/picture?type=square"/>' +
+                                                        '<p class="strong"><a href="/#/user=' + data[0].nominator + '">' + nominatee_name + '</a></p>' +
+                                                        '<p>Won</p>' +
+                                                        '<h2>' + data[0].nomination_category + '</h2>' +
+                                                        '<div id="nom_create_date">' +
+                                                            '<h3>' + secondsToHms(parseInt(time_diff)) + '</h3>' +
+                                                        '</div>' +
+                                                        '<div class="trophy_img large ' + nom_cat_underscore + '"></div>' +
+                                                    '</div>' +
+                                                    '<div class="clear"></div>' +
+                                                '</div>' +
+                                                '<div id="recent_win_stream_cont"></div>' +
+                                                '<div class="clear"></div>' +
+                                            '</div>';
+
+                $('#recent_empty_wrap > .empty_cont').append(recent_winners_html);
+
+                var nom_stream_html = '<div id="nom_cat_stream"><div class="prev_photo"><div class="prev_photo_img"></div></div><div class="next_photo"><div class="next_photo_img"></div></div>';
+                for (var i = 0; i < data.length; i++){
+                    nom_cat_underscore = data[i].nomination_category.replace(' ', '_').toLowerCase();
+                    if (i == 0){
+                        nom_stream_html +=  '<div id="nom_photo_' + data[i].id + '" class="nom_photo_thumbnail" style="height:' + data[i].photo.small_height + 'px; opacity: 1.0;" name="selected">' +
+                                                '<img src="' + data[i].photo.src_small + '"/>' +
+                                                '<div class="trophy_img small ' + nom_cat_underscore + '"></div>' +
+                                            '</div>';
                     }
                     else{
-                        name = '';
+                        nom_stream_html +=  '<div id="nom_photo_' + data[i].id + '" class="nom_photo_thumbnail" style="height:' + data[i].photo.small_height + 'px; opacity: 0.6;">' +
+                                                '<img src="' + data[i].photo.src_small + '"/>' +
+                                                '<div class="trophy_img small ' + nom_cat_underscore + '"></div>' +
+                                            '</div>';            
                     }
-                    winning_nom_html =  '<div class="winning_nom_cont">' +
-                                            '<a href="/#/nom_id=' + data[i].id + '/won/">' +
-                                                '<img src="' + photo.src + '"/>' +
-                                            '</a>' +
-                                            '<div class="winning_nom_overlay">' +
-                                                '<a href="/#/user=' + data[i].nominatee + '">' +
-                                                    '<p class="nom_cat_' + nom_cat_underscore + '_text">' + name + '</p>' +
-                                                '</a>' +
-                                                '<div class="trophy_img medium ' + nom_cat_underscore + '"></div>' +
-                                            '</div>' +
-                                        '</div>';
-                    $('#recent_empty_wrap > .empty_cont').append(winning_nom_html);
                 }
-                $('#recent_empty_wrap > .empty_cont').append('<div class="clear"></div>');
+                nom_stream_html += '</div>';
+                $('#recent_win_stream_cont').append(nom_stream_html);
+
+                var slide_images = $('.nom_photo_thumbnail');
+
+                var img_widths = [ ];
+                var slide_center = 0;
+                var slide_img_width = 0;
+                var center_found = false;
+                var mid_screen = $('#nom_cat_stream').width() / 2;
+                $(slide_images).each(function(j, selected){
+                    slide_img_width = parseInt(data[j].photo.small_width);
+                    if ($(this).attr('name') === 'selected'){
+                        slide_center += (slide_img_width / 2);
+                        center_found = true;
+                    }
+                    else if (center_found === false){
+                        slide_center += slide_img_width + 20;
+                    }
+
+                    img_widths.push(slide_img_width + 20);
+                });
+
+                var previous_x = 0;
+                var margin_offset = mid_screen - slide_center;
+
+                $(slide_images).each(function(i, selected){
+                        $(this).css({
+                            'left': previous_x + margin_offset,
+                            'top': 0
+                        });
+                    previous_x += img_widths[i];
+                });
+                attach_recent_winner_handlers();
             }
             else{
-                $('#recent_empty_wrap > h3').after('<h1>No Recent Winners.</h1>');
-                $('#recent_empty_wrap > h3').after('<p>These photos just won.</p>');
+                var recent_winners_html =   '<div id="main_view_control"><a class="sick red large" id="show_upload">Post Photo</a></div>' +
+                                            '<div id="recent_winners">' +
+                                                '<h1>Recent Winners</h1>' +
+                                                '<div id="top_stripe"></div>' +
+                                                '<div id="main_nom_cont" value="">' +
+                                                    '<div id="recent_win_photo_cont">' +
+                                                        '<div id="recent_win_photo_wrap">' +
+                                                            '<h2>No Recent Winners</h2>' +
+                                                        '</div>' +
+                                                    '</div>' +
+                                                    '<div id="recent_win_right_cont" class="nom_cat_yummy">' +
+                                                    '</div>' +
+                                                    '<div class="clear"></div>' +
+                                                '</div>' +
+                                                '<div id="recent_win_stream_cont"></div>' +
+                                                '<div id="recent_bottom_cont">' +
+                                                '</div>' +
+                                                '<div class="clear"></div>' +
+                                            '</div>';
+                $('#recent_empty_wrap > .empty_cont').append(recent_winners_html);
             }
+            
+            // var photo = null,
+            //     nom_cat = '',
+            //     nom_cat_underscore = '',
+            //     name = '',
+            //     winning_nom_html = '',
+            //     top = 8;
+            // 
+            // if (data.length > 0){
+            //     $('#recent_empty_wrap > h3').after('<p>These photos just won.</p>');
+            //     if (data.length < top){
+            //         top = data.length;
+            //     }
+            //     for (var i = 0; i < top; i++){
+            //         photo = data[i].photo;
+            //         nom_cat = data[i].nomination_category;
+            //         nom_cat_underscore = nom_cat.replace(' ', '_').toLowerCase();
+            //         if (friends[data[i].nominatee] !== undefined){
+            //             name = friends[data[i].nominatee].name;
+            //         }
+            //         else if(data[i].nominatee == me.id){
+            //             name = 'You';
+            //         }
+            //         else{
+            //             name = '';
+            //         }
+            //         winning_nom_html =  '<div class="winning_nom_cont">' +
+            //                                 '<a href="/#/nom_id=' + data[i].id + '/won/">' +
+            //                                     '<img src="' + photo.src + '"/>' +
+            //                                 '</a>' +
+            //                                 '<div class="winning_nom_overlay">' +
+            //                                     '<a href="/#/user=' + data[i].nominatee + '">' +
+            //                                         '<p class="nom_cat_' + nom_cat_underscore + '_text">' + name + '</p>' +
+            //                                     '</a>' +
+            //                                     '<div class="trophy_img medium ' + nom_cat_underscore + '"></div>' +
+            //                                 '</div>' +
+            //                             '</div>';
+            //         $('#recent_empty_wrap > .empty_cont').append(winning_nom_html);
+            //     }
+            //     $('#recent_empty_wrap > .empty_cont').append('<div class="clear"></div>');
+            // }
+            // else{
+            //     $('#recent_empty_wrap > h3').after('<h1>No Recent Winners.</h1>');
+            //     $('#recent_empty_wrap > h3').after('<p>These photos just won.</p>');
+            // }
         }, 'won');
         
         empty_html ='<div id="empty_noms_cont">' +
@@ -7096,24 +7380,41 @@ $(document).ready(function(){
                             '<div class="empty_cont">' +
                             '</div>' +
                         '</div>' +
-                        '<div id="latest_empty_wrap">' +
-                            '<h3>Latest Photos</h3>' +
-                            '<p>The newest photos on Facebook.</p>' +
-                            '<div class="empty_cont"></div>' +
-                        '</div>' +
                         '<div id="recent_empty_wrap">' +
                             '<h3>Recent Winners</h3>' +
                             '<div class="empty_cont"></div>' +
+                        '</div>' +
+                        '<div id="latest_empty_wrap">' +
+                            '<h3>Latest Photos</h3>' +
+                            '<div id="portrit_photos_cont" class="empty_cont">' +
+                                '<h4>Portrit</h4>' +
+                                '<img class="loading" src="http://portrit.s3.amazonaws.com/img/ajax-loader-light.gif"/>' +
+                                '<p class="tooltip"></p>' +
+                            '</div>' +
+                            '<div id="facebook_photos_cont" class="empty_cont">' +
+                                '<h4>Facebook</h4>' +
+                                '<img class="loading" src="http://portrit.s3.amazonaws.com/img/ajax-loader-light.gif"/>' +
+                                '<p class="tooltip"></p>' +
+                            '</div>' +
                         '</div>' +
                     '</div>';
                     
         $('#scroller').append(empty_html);
         
-        $('#latest_empty_wrap .empty_cont').append('<div id="loader_short"><img src="http://portrit.s3.amazonaws.com/img/ajax-loader-light.gif"/></div>');
         //Empty Recent Photos
         $.getJSON('https://api.facebook.com/method/stream.get?access_token=' + fb_session.access_token + '&limit=50&filter_key=' + photo_filter + '&format=json&callback=?', function(data){
-            $('#loader_short').remove();
+            $('#facebook_photos_cont > img').remove();
             render_empty_recent(data.posts);
+        });
+        
+        $.getJSON('/latest-photos', function(data){
+            $('#portrit_photos_cont > img').remove();
+            portrit_photo_feed = data;
+            render_latest_empty_portrit_photos(portrit_photo_feed);
+            clearTimeout(portrit_photo_feed_timeout);
+            portrit_photo_feed_timeout = setTimeout(function(){
+                portrit_photo_feed = null;
+            }, 1000 * 60 * 5);
         });
         
         //Unbind empty handlers
@@ -7196,7 +7497,7 @@ $(document).ready(function(){
                 
                 if (ret.length > 0){
                     $('#search_empty_wrap .empty_cont').css({
-                        'padding': '10px 10px'
+                        'padding': '10px 0px'
                     });
                     $('#empty_search_cont').css({
                         'border-bottom-left-radius':      '0px',
@@ -7303,17 +7604,6 @@ $(document).ready(function(){
                 else{
                     $('#profile_cont').show();
                 }
-                
-                // $.getJSON('https://api.facebook.com/method/stream.get?access_token=' + fb_session.access_token + '&limit=50&filter_key=' + photo_filter + '&format=json&callback=?', function(data){
-                //     remove_load();
-                //     photo_feed = data.posts;
-                //     // render_latest_photos(photo_feed);
-                //     render_latest_photos_top_stream(photo_feed);
-                //     clearTimeout(photo_feed_timeout);
-                //     photo_feed_timeout = setTimeout(function(){
-                //         photo_feed = null;
-                //     }, 1000 * 60 * 5);
-                // });
             }
             else{
                 render_empty_nom_page();
@@ -8221,7 +8511,7 @@ $(document).ready(function(){
                 }
             }
         }
-        if (!mobile || tablet){
+        if ((!mobile || tablet) && photo != null){
             photo_width = photo.width;
         }
         
@@ -8730,117 +9020,11 @@ $(document).ready(function(){
         }
     }
     
-    function attach_upgrade_handlers(){
-        $('.friend_ref_cont').live('click', function(){
-            var id = $(this).attr('id');
-            var fid = $(this).attr('value');
-            var name = $(this).attr('name');
-            
-            $(this).remove();
-            
-            var ref_freiend_html =  '<div class="reffed_friend" id="' + id + '" value="' + fid + '" name="' + name + '">' +
-                                        '<img src="https://graph.facebook.com/' + fid + '/picture?type=square">' +
-                                        '<img class="kill_referral" src="http://portrit.s3.amazonaws.com/img/x_medium.png">' +
-                                    '</div>';
-            
-            if ($('#refer_button').length === 0){
-                $('#refferal_cont').append('<h3>Tell your friends how much you love Portrit!</h3><textarea id="refer_post" class="comment_body"></textarea><a id="refer_button" class="sick">Refer 1 friend</a>');
-                $('#reffered_friends').append('<div class="clear"></div>');
-            }
-            else{
-                var refs_added = $('.reffed_friend').length + 1;
-                $('#refer_button').text('Refer ' + refs_added + ' friends');
-            }
-            $('#reffered_friends > .clear').before(ref_freiend_html);
-            
-            if (typeof(_gaq) !== "undefined"){
-                _gaq.push(['_trackEvent', 'Referral', 'Added', '']);
-            }
-        });
-        
-        $('.comment_body').live('focus', function(e){
-            comment_form_shownn = true;
-            e.stopPropagation();
-        });
-        
-        $('.kill_referral').live('click', function(){
-            $(this).parent().remove();
-            if ($('.reffed_friend').length === 0){
-                $('#reffered_friends').html('');
-                $('#refer_button').remove();
-                $('#refer_post').remove();
-            }
-            else{
-                var refs_added = $('.reffed_friend').length;
-                if (refs_added === 1){
-                    $('#refer_button').text('Refer ' + refs_added + ' friend');
-                }
-                else{
-                    $('#refer_button').text('Refer ' + refs_added + ' friends');
-                }
-            }
-            
-            if (typeof(_gaq) !== "undefined"){
-                _gaq.push(['_trackEvent', 'Referral', 'Removed', '']);
-            }
-        });
-    }
-    
-    
     function attach_mobile_alpha_handlers(){
         $('.friend').live('click', function(){
             selected_user = $(this).attr('value');
             update_urls();
         });
-        // 
-        // $('.text_wrapper').live('click', function(e){
-        //     var friend_id = $(this).parent().parent().attr('value');
-        //     var that = this;
-        //     if ($(this).hasClass('text_expanded')){
-        //         $('.text_expanded').animate({
-        //             bottom: '-100px'
-        //         }, 300, function(){
-        //             $('.friend_controls', this).html('');
-        //             $('.user_status').remove();
-        //         });
-        //         
-        //         diff_status = true;
-        //         $('.text_expanded').removeClass('text_expanded');
-        //     }
-        //     else{
-        //         var friend_controls_html = '';
-        //         diff_status = false;
-        // 
-        //         $('.text_expanded').animate({
-        //             bottom: '-100px'
-        //         }, 300, function(){
-        //             $('.friend_controls', this).html('');
-        //         });
-        //         
-        //         $('.text_expanded').removeClass('text_expanded');
-        //         $('.friend_controls', this).append(friend_controls_html);
-        //         
-        //         $(this).addClass('text_expanded');
-        //         $(this).animate({
-        //             bottom: '-60px'
-        //         }, 300);
-        //     }
-        //     e.stopPropagation();
-        //     return false;
-        // });
-        // 
-        // $('.control_click').live('click', function(e){
-        //     var name = $(this).attr('name');
-        //     var friend = $(this).parent().parent().parent().parent();
-        //     var cont = $(this).parent().parent();
-        //     var friend_fid = $(friend).attr('value');
-        //     var user_fid = me.id;
-        //     if (name == ''){
-        //     
-        //     }
-        //     e.stopPropagation();
-        //     return false;
-        // });
     }
     
     function attach_alpha_handlers(){
@@ -9131,11 +9315,13 @@ $(document).ready(function(){
         $('.vote_down').live('click', vote_down_handler)
         
         $('#activate_latest_photos').live('click', function(){
-            $('#tab_nav > .selected').removeClass('selected');
-            $(this).addClass('selected');
-            $('#context_overlay_cont').removeClass().addClass('latest_photos_overlay');
-            show_context_overlay(true, true);
-            init_latest_photos();
+            // $('#tab_nav > .selected').removeClass('selected');
+            // $(this).addClass('selected');
+            // $('#context_overlay_cont').removeClass().addClass('latest_photos_overlay');
+            // show_context_overlay(true, true);
+            // init_latest_photos();
+            
+            window.location.href = '/#/latest-photos'
             
             if (typeof(_gaq) !== "undefined"){
                 _gaq.push(['_trackEvent', 'Latest Photos', 'Shown', '']);
@@ -9165,21 +9351,55 @@ $(document).ready(function(){
         });
         
         
+        // $('.new_photo_cont').live('click', function(){
+        //     var photo_id = $(this).attr('value');
+        //     
+        //     $('#photo_list').html('');
+        //     $.getJSON('https://api.facebook.com/method/photos.get?access_token=' + fb_session.access_token + '&pids=' + photo_id + '&format=json&callback=?', function(data){
+        //         var data = data[0],
+        //             user_id = data.owner,
+        //             album_id = data.album_object_id,
+        //             photo_id = data.object_id;
+        //             selected_photo = String(photo_id);
+        //             
+        //         window.location.href = '#/user=' + user_id + '/album=' + album_id + '/gallery';
+        //         $('#close_overlay').click();
+        //     });
+        //     
+        // });
+        
         $('.new_photo_cont').live('click', function(){
             var photo_id = $(this).attr('value');
+            var user_id = $(this).attr('user_id');
+            var album_id = $(this).attr('album_id');
             
-            $('#photo_list').html('');
-            $.getJSON('https://api.facebook.com/method/photos.get?access_token=' + fb_session.access_token + '&pids=' + photo_id + '&format=json&callback=?', function(data){
-                var data = data[0],
-                    user_id = data.owner,
-                    album_id = data.album_object_id,
-                    photo_id = data.object_id;
-                    selected_photo = String(photo_id);
-                    
-                window.location.href = '#/user=' + user_id + '/album=' + album_id + '/gallery';
-                $('#close_overlay').click();
-            });
+            if (user_id == me.id){
+                user_id = 'me';
+            }
             
+            if (album_id == ''){
+                $.getJSON('https://api.facebook.com/method/photos.get?access_token=' + fb_session.access_token + '&pids=' + photo_id + '&format=json&callback=?', function(data){
+                    var data = data[0],
+                        user_id = data.owner,
+                        album_id = data.album_object_id,
+                        photo_id = data.object_id;
+                        selected_photo = String(photo_id);
+                     
+                    if (selected_user != user_id){
+                        albums = null;
+                    }
+                    $('#photo_list').html('');
+                    window.location.href = '#/user=' + user_id + '/album=' + album_id + '/gallery';
+                });
+            }
+            else{
+                selected_photo = String(photo_id);
+                if (selected_user != user_id){
+                    albums = null;
+                }
+                $('#photo_list').html('');
+                window.location.href = '#/user=' + user_id + '/album=portrit-photos/gallery';
+            }
         });
         
         $('.next_photo').live('click', function(){
@@ -11153,7 +11373,7 @@ $(document).ready(function(){
                     if (selected_user == 'me'){
                         user_name = 'Your';
                     }
-                    else if (selected_user !== undefined && selected_user != '' && selected_user != undefined){
+                    else if (selected_user !== undefined && selected_user != '' && selected_user != undefined && friends[selected_user] != undefined){
                         user_name = friends[selected_user].name.split(" ", 1) + '\'s';
                     }
                     $('#photo_list').append('<div id="album_link_loader"><h2>Loading ' + user_name + ' Albums...</h2><div id="loader"><img src="http://portrit.s3.amazonaws.com/img/album-loader-dark.gif"/></div></div>');
@@ -11161,7 +11381,10 @@ $(document).ready(function(){
                     photo_load_wait = setInterval(function(){
                         if (album_completed || url_vars.album == 'tagged'){
                             clearInterval(photo_load_wait);
-                            if (selected_photo == ''){
+                            if (url_vars.photo){
+                                selected_photo = url_vars.photo;
+                            }
+                            else if (selected_photo == ''){
                                 selected_photo = $('.photo_thumbs:first > img').attr('id');
                                 photo_id = selected_photo;
                             }
@@ -11170,7 +11393,7 @@ $(document).ready(function(){
                                 user_name = 'Your';
                                 selected_user = me.id;
                             }
-                            else{
+                            else if (friends[selected_user] != undefined){
                                 user_name = friends[selected_user].name.split(' ')[0] + '\'s';
                             }
                             $('#album_link_loader').remove();
@@ -11189,10 +11412,13 @@ $(document).ready(function(){
                         user_name = 'Your';
                         selected_user = me.id;
                     }
-                    else{
+                    else if (friends[selected_user] != undefined){
                         user_name = friends[selected_user].name.split(' ')[0] + '\'s';
                     }
-                    if (selected_photo == ''){
+                    if (url_vars.photo){
+                        selected_photo = url_vars.photo;
+                    }
+                    else if (selected_photo == ''){
                         selected_photo = $('.photo_thumbs:first > img').attr('id');
                         photo_id = selected_photo;
                     }
@@ -11232,15 +11458,6 @@ $(document).ready(function(){
         else if (url_vars.context !== undefined){
             clear_canvas(url_vars);
             info_context_delagate(url_vars.context);
-        }
-        else if (url_vars.upgrade !== undefined){
-            clear_canvas(url_vars);
-            attach_upgrade_handlers();
-            render_upgrade(url_vars.upgrade);
-        }
-        else if (url_vars.tour !== undefined){
-            clear_canvas(url_vars);
-            render_tour();
         }
         else if (url_vars.alpha !== undefined){
             clear_canvas(url_vars);
@@ -11298,28 +11515,29 @@ $(document).ready(function(){
             $('html, body').scrollTop(0);
             clear_canvas(url_vars);
             attach_recent_winner_handlers();
-            if (prev_active_view == 'nom_detail' || prev_active_view == ''){
-                // $('#canvas_cont').html('');
-                // attach_main_handlers();
-                // attach_profile_handlers();
-                // $('#active_stream_text_cont').hide();
-                // append_wall_html('winners');
-            }
+            // if (prev_active_view == 'nom_detail' || prev_active_view == ''){
+            //     $('#canvas_cont').html('');
+            //     attach_main_handlers();
+            //     attach_profile_handlers();
+            //     $('#active_stream_text_cont').hide();
+            //     append_wall_html('winners');
+            // }
             init_winners_view();
         }
         else if (url_vars['latest-photos'] != undefined){
             $('html, body').scrollTop(0);
-            $('#profile_cont').html('');
-            if (prev_active_view == 'gallery' || prev_active_view == ''){
-                $('#photo_cont').html('').css({
-                    'min-height': ''
-                });
-                $('#friend_cont').show();
-                $('#active_stream_text_cont').hide();
-                attach_main_handlers();
-                attach_profile_handlers();
-                append_wall_html('recent');
-            }
+            clear_canvas(url_vars);
+            attach_latest_photo_handlers();
+            // if (prev_active_view == 'gallery' || prev_active_view == ''){
+            //     $('#photo_cont').html('').css({
+            //         'min-height': ''
+            //     });
+            //     $('#friend_cont').show();
+            //     $('#active_stream_text_cont').hide();
+            //     attach_main_handlers();
+            //     attach_profile_handlers();
+            //     append_wall_html('recent');
+            // }
             init_latest_photos();
         }
         else if (url_vars['trophy'] != undefined){
@@ -11336,12 +11554,7 @@ $(document).ready(function(){
             $('html, body').scrollTop(0);
         }
         else if (default_view === 'wall'){
-            if (prev_active_view == 'latest_photos' || prev_active_view == 'winners_view'){
-                $('#profile_cont').html('');
-            }
-            else{
-                clear_canvas(url_vars);
-            }
+            clear_canvas(url_vars);
             attach_main_handlers();
             attach_profile_handlers();
             main_view();
