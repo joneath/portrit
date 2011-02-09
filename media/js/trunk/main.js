@@ -6275,11 +6275,17 @@ $(document).ready(function(){
             time_diff = now - time;
             time_diff /= 1000;
             nom_cat_underscore = data[0].nomination_category.replace(' ', '_').toLowerCase();
-            if (data[0].nominatee == me.id){
+            if (data[0].nominatee_name == me.id){
                 nominatee_name = 'You';
             }
-            else{
+            else if (data[0].nominatee_name){
                 nominatee_name = data[0].nominatee_name;
+            }
+            else if (friends[data[0].nominatee]){
+                nominatee_name = friends[data[0].nominatee].name;
+            }
+            else{
+                nominatee_name = '';
             }
             if (data[0].nominator == me.id){
                 nominator_name = 'You';
@@ -6308,7 +6314,9 @@ $(document).ready(function(){
                                                     '</div>' +
                                                 '</div>' +
                                                 '<div id="recent_win_right_cont" class="nom_cat_' + nom_cat_underscore + '">' +
-                                                    '<img class="user_img" src="https://graph.facebook.com/' + data[0].nominatee + '/picture?type=square"/>' +
+                                                    '<a href="/#/user=' + data[0].nominatee + '">' +
+                                                        '<img class="user_img" src="https://graph.facebook.com/' + data[0].nominatee + '/picture?type=square"/>' +
+                                                    '</a>' +
                                                     '<p class="strong"><a href="/#/user=' + data[0].nominator + '">' + nominatee_name + '</a></p>' +
                                                     '<p>Won</p>' +
                                                     '<h2>' + data[0].nomination_category + '</h2>' +
@@ -6646,7 +6654,7 @@ $(document).ready(function(){
         $('#recent_win_right_cont').removeClass().addClass('nom_cat_' + nom_cat_underscore);
         $('#recent_win_right_cont h2').text(nom.nomination_category);
         $('#recent_win_right_cont .user_img').attr('src', 'https://graph.facebook.com/' + nom.nominatee + '/picture?type=square');
-        $('#recent_win_right_cont p.strong a').attr('href', '/#/user=' + nom.nominatee);
+        $('#recent_win_right_cont a').attr('href', '/#/user=' + nom.nominatee);
         $('#recent_win_right_cont p.strong a').text(nom.nominatee_name);
         $('#recent_win_right_cont .trophy_img').removeClass().addClass('trophy_img large ' + nom_cat_underscore);
         $('#nom_votes_wrap a').remove();
@@ -7616,7 +7624,7 @@ $(document).ready(function(){
     var month = date.getMonth();
     var todays_date = date.getDate();
     var todays_year = date.getFullYear();
-    dateFuture = new Date(todays_year,todays_date,todays_date,24,0,0);
+    dateFuture = new Date(todays_year,todays_date,todays_date,22,0,0);
     tzOffset = -8;
     dx = dateFuture.toGMTString();
     dx = dx.substr(0,dx.length -3);
@@ -7634,7 +7642,7 @@ $(document).ready(function(){
     	    var month = date.getMonth();
             var todays_date = date.getDate();
             var todays_year = date.getFullYear();
-            dateFuture = new Date(todays_year,todays_date,todays_date,24,0,0);
+            dateFuture = new Date(todays_year,todays_date,todays_date,22,0,0);
             tzOffset = -8;
             dx = dateFuture.toGMTString();
             dx = dx.substr(0,dx.length -3);

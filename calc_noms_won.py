@@ -44,7 +44,7 @@ def calc_noms_won():
             
                     try:
                         if user_cat_stream[0].id == nom.id:
-                            if (nom.won == False and nom.current_vote_count > 0):
+                            if (nom.won == False and nom.current_vote_count > 1):
                                 mark_nom_as_won(nom)
                                 user_wins.append(nom)
                         
@@ -115,7 +115,7 @@ def mark_nom_as_won(nom):
         pass
     
     target_friends.append(nom.nominatee.fid)
-    
+    target_friends.append(nom.nominator.fid)
     for friend in active_voters.iterator():
         target_friends.append(friend.fid)
     for friend in active_commentors.iterator():
