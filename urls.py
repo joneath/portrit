@@ -42,6 +42,7 @@ urlpatterns += patterns('',
 #Nomination Views
 urlpatterns += patterns('',
     url(r'^nominate_photo/$', 'main.nomination_views.nominate_photo', name='nominate_photo'),
+    url(r'^reactivate_nom/$', 'main.nomination_views.reactivate_nom', name='reactivate_nom'),
     url(r'^vote/$', 'main.nomination_views.vote_on_nomination', name='vote_on_nomination'),
     url(r'^get_trophy_wins/$', 'main.nomination_views.get_trophy_wins', name='get_trophy_wins'),
     url(r'^get_user_album_nom_data/$', 'main.nomination_views.get_user_album_nom_data', name='get_user_album_nom_data'),
@@ -58,6 +59,12 @@ urlpatterns += patterns('',
     url(r'^latest-photos/$', 'main.photo_views.latest_photos', name='latest_photos'),
     url(r'^upload_photo/$', 'main.photo_views.upload_photo', name='upload_photo'),
     url(r'^mark_photos_live/$', 'main.photo_views.mark_photos_live', name='mark_photos_live'),
+)
+
+#Public URLs
+urlpatterns += patterns('',
+    url(r'^get_photo/$', 'main.public_views.get_photo', name='get_photo'),
+    url(r'^get_nom/$', 'main.public_views.get_nom', name='get_nom'),
 )
 
 #Notification URLs

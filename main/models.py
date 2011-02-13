@@ -255,7 +255,12 @@ class Photo(models.Model):
         
     def get_album_fid(self):
         try:
-            return self.album.fid
+            if self.portrit_photo:
+                return 'portrit-photos'
+            elif self.album.fid:
+                return self.album.fid
+            else:
+                return self.album.id
         except:
             return None
             
@@ -263,6 +268,7 @@ class Photo(models.Model):
         try:
             return {
                 'id': self.id,
+                'fid': self.id,
                 'caption': self.caption,
                 'picture': self.thumbnail_src,
                 'source': self.large_src,

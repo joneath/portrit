@@ -31,7 +31,6 @@ class Portrit_FB(object):
         friend_query = self.fb_user.friends.values_list('fid', flat=True)
         for fid in friend_ids:
             if not (fid in friend_query):
-                print fid
                 new_fb_user, created = FB_User.objects.get_or_create(fid=fid)
                 self.fb_user.friends.add(new_fb_user)
             else:

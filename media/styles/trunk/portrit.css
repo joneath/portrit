@@ -557,6 +557,159 @@ div#login_cont{
                         #screenshot_position_controls .screenshot_control.active{
                             background-color:       #E95C41;
                         }
+                        
+    #public_login_cont{
+        
+    }
+    
+        #public_login_header{
+            background-color:   #333367;
+            padding:            10px;
+            border-top-right-radius:             10px;
+            border-top-left-radius:              10px;
+            -moz-border-radius-topright:         10px;
+            -moz-border-radius-topleft:          10px;
+        }
+        
+            #public_login_header h1{
+                font-size:          28px;
+                float:              left;
+                margin-left:        10px;
+                margin-top:         3px;
+            }
+            
+            #public_login_header #public_header_right{
+                float:              right;
+                margin-top:         6px;
+                width:              300px;
+            }
+            
+                #public_header_right p{
+                    float:          left;
+                    margin-top:     5px;
+                }
+                
+                #public_header_right #login{
+                    cursor:         pointer;
+                    float:          right;
+                }
+                
+        #public_middle_cont{
+            background-color:   #669ACC;
+            height:             350px;
+        }
+        
+            #public_photo_cont{
+                float:              left;
+                width:              460px;
+                background-color:   black;
+                height:             350px;
+                margin-left:        30px
+            }
+            
+                #public_photo_wrap{
+                    display:            table-cell;
+                    vertical-align:     middle;
+                    text-align:         center;
+                    width:              460px;
+                    height:             350px;
+                }
+            
+                    #public_photo_wrap img{
+                        max-width:          460px;
+                        max-height:         350px;
+                    }
+                    
+            #public_middle_right_cont{
+                height:             350px;
+                width:              470px;
+                float:              left;
+                position:           relative;
+            }
+            
+                #public_user_cont{
+                    margin-top:         70px;
+                    text-align:         left;
+                    margin-left:        70px;
+                }
+                
+                #public_user_cont.public_nom{
+                    margin-top:         20px;
+                    margin-left:        20px;
+                    width:              325px;
+                }
+                
+                #public_user_top_cont > img{
+                    float:              left;
+                }
+                
+                #public_user_top_cont > h2{
+                    font-size:          20px;
+                    position:           relative;
+                    top:                12px;
+                    margin-left:        60px;
+                }
+                
+                #public_user_bottom_cont{
+                    background:         rgba(0,0,0,0.65);
+                    margin-top:         15px;
+                    padding:            10px;
+                    position:           relative;
+                    text-shadow:        rgba(0, 0, 0, 0.246094) 0px -1px 1px;
+                    border-radius:              5px;
+                    -moz-border-radius:         5px;
+                }
+                
+                    .triangle_small{
+                        height:                 11px;
+                        width:                  12px;
+                        background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+                        background-position:    -500px -714px;
+                    }
+                    
+                    #public_user_bottom_cont .triangle_small{
+                        position:               absolute;
+                        bottom:                 -10px;
+                        right:                  100px;
+                    }
+                
+                #public_nom_cont{
+                    margin-top:         20px;
+                    text-align:         right;
+                }
+                
+                    #public_nom_cont h3{
+                        font-size:          18px;
+                        text-shadow:        rgba(0, 0, 0, 0.246094) 0px -1px 1px;
+                    }
+                    
+                    #public_nom_cont h2{
+                        font-size:          24px;
+                        font-weight:        bold;
+                        text-shadow:        rgba(0, 0, 0, 0.246094) 0px -1px 1px;
+                    }
+                
+                    #public_nom_cont .trophy_img{
+                        position:           absolute;
+                        bottom:             0;
+                        right:              0;
+                    }
+        
+        #public_login_cont #login_bottom_cont{
+            border-bottom-right-radius:             10px;
+            border-bottom-left-radius:              10px;
+            -moz-border-radius-bottomright:         10px;
+            -moz-border-radius-bottomleft:          10px;
+        }
+        
+            #public_login_cont #login_bottom_cont > h1{
+                font-size:          30px;
+                margin-bottom:      20px;
+            }
+        
+        #public_login_cont .login_points_cont{
+            padding-bottom:         100px;
+        }
             
 div#content_loading{
     margin-top:         300px;
@@ -597,7 +750,7 @@ div#right_nav{
     }
     
         div#right_nav #notifications img{
-            border-radius:      5px;
+            border-radius:              5px;
             -moz-border-radius:         5px;
         }
     
@@ -1651,7 +1804,7 @@ div#nom_detail_cont{
         }
         
     div#main_nom_cont{
-        background-color:   white;
+        background-color:   #eee;
         display:            inline-block;
         margin:             0 auto;
         position:           relative;
@@ -1887,7 +2040,7 @@ div#nom_detail_cont{
                 }
                 
     div#main_nom_bottom_cont{
-        background-color:   white;
+        background-color:   #eee;
         float:              right;
         min-height:         105px;
         position:           relative;
@@ -2297,6 +2450,46 @@ div#new_comment_cont{
         height:                 84px;
         z-index:                20001;
     }
+    
+#noms_empty_top_cont{
+    margin-bottom:      5px;
+}
+
+    #noms_empty_top_cont > h1{
+        font-size:          30px;
+        margin-bottom:      5px;
+        background-color:   #E95C41;
+        padding:            10px;
+        color:              white;
+    }
+
+/*    #noms_empty_top_cont > h2{
+        font-size:              20px;
+        margin-bottom:          5px;
+    }
+    
+    #noms_empty_top_cont ul{
+        color:                  white;
+        float:                  left;
+        list-style:             none;
+        margin-left:            -5px;
+        margin-top:             -12px;
+        padding:                5px;
+    }
+    
+        #noms_empty_top_cont ul li{
+            font-size:          14px;
+            line-height:        20px;
+        }
+        
+    #noms_empty_top_cont #empty_search_cont{
+        width:          605px;
+        margin-right:   10px;
+    }
+    
+    #noms_empty_top_cont #empty_search_cont input{
+        width:              375px;
+    }*/
     
 #empty_noms_cont{
     padding:                10px 20px;
@@ -4244,6 +4437,19 @@ div#latest_photos{
             font-size:          22px;
             padding:            15px 70px 19px;
         }
+        
+    #recent_left_cont #inactive_nom_cont{
+        height:                 60px;
+    }
+    
+        #inactive_nom_cont > h2{
+            font-size:          30px;
+            background-color:   #333367;
+            color:              white;
+            margin-bottom:      10px;
+            padding:            10px;
+            z-index:            1000;
+        }
 
 #top_right_cont{
     float:              left;
@@ -4526,11 +4732,29 @@ div#latest_photos{
         height:                 250px;
         text-align:             center;
         width:                  179px;
+        position:               relative;
     }
     
         .recent_nom_photo_right_cont .recent_nom_vote_count{
             color:                  white;
         }
+        
+            .recent_nom_vote_count .reactivate_nom{
+                background:         #E95C41 url(http://portrit.s3.amazonaws.com/img/alert-overlay.png) repeat-x;
+                cursor:             pointer;
+                padding:            12px;
+                font-size:          20px;
+                font-weight:        bold;
+                opacity:            .85;
+                position:           absolute;
+                text-shadow:        0 -1px 1px rgba(0,0,0,0.25);
+                width:              155px;
+                z-index:            1;
+            }
+            
+                .recent_nom_vote_count .reactivate_nom:hover{
+                    opacity:            1;
+                }
         
             .recent_nom_vote_count .trophy_img{
                 margin-left:            40px;
@@ -5460,7 +5684,7 @@ div#photo_cont{
                     float:              right;
                 }
                 
-                    #post_nomination{
+                    #post_nomination, #reactivate_nom{
                         color:              #99CB6E;
                     }
                     

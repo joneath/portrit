@@ -15,7 +15,7 @@ from main.models import Portrit_User, FB_User, Album, Photo, Nomination, Nominat
 from settings import ENV, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, NODE_SOCKET, NODE_HOST
 
 from portrit_fb import Portrit_FB
-
+from datetime import datetime
 from itertools import chain
 import facebook, json, socket, time
 
@@ -532,6 +532,158 @@ def nominate_photo(request):
     data = simplejson.dumps(data) 
     return HttpResponse(data, mimetype='application/json')
     
+def reactivate_nom(request):
+    data = False
+    try:
+        cookie = facebook.get_user_from_cookie(
+            request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
+        if cookie:
+            nom_id = request.POST.get('nom_id')
+            comment_text = request.POST.get('comment_text')
+            nominations = request.POST.get('nominations').split(',')
+            del nominations[-1]
+            owner = FB_User.objects.get(fid=int(cookie["uid"]))
+            
+            orig_nomination = Nomination.objects.get(id=nom_id)
+            nom_count = 0
+            photo = None
+            photo_data = { }
+            nom_data = [ ]
+            caption_text = ''
+            nominatee = None
+            notification_type = Notification_Type.objects.get(name="new_nom")
+            for nomination in nominations:
+                nom_cat = Nomination_Category.objects.get(name=nomination)
+                if comment_text != '':
+                    caption_text = comment_text
+                else:
+                    caption_text = ''
+                    
+                if nom_count == 0:
+                    nomination = orig_nomination
+                    nominatee = nomination.nominatee
+                    nomination.nomination_category = nom_cat
+                    nomination.nominator = owner
+                    nomination.caption = caption_text
+                    nomination.votes.clear()
+                    nomination.votes.add(owner)
+                    nomination.current_vote_count = 1
+                    nomination.comments.clear()
+                    nomination.active = True
+                    nomination.created_date = datetime.now()
+                    nomination.save()
+                    
+                    photo = nomination.photo_set.filter(active=True)[0]
+                    photo_data = nomination.get_photo()
+                    owner.active_nominations.add(nomination)
+                    
+                    notification = Notification(source=owner, destination=nominatee, nomination=nomination, notification_type=notification_type)
+                    notification.save()
+                else:
+                    nomination = Nomination(nomination_category=nom_cat)
+                    nomination.caption = comment_text
+                    nomination.nominatee = nominatee
+                    nomination.nominator = owner
+                    nomination.save()
+                    nomination.votes.add(owner)
+                    photo.nominations.add(nomination)
+                    owner.active_nominations.add(nomination)
+                    #Create notification record
+                    notification = Notification(source=owner, destination=nominatee, nomination=nomination, notification_type=notification_type)
+                    notification.save()
+                    
+                    try:
+                        portrit_user = Portrit_User.objects.get(fb_user=nominatee)
+                        portrit_user.notifications.add(notification)
+                    except:
+                        pass
+                    
+                nominator_name = None
+                nominatee_name = None
+                try:
+                    nominator_name = nomination.nominator.get_name()
+                except:
+                    pass
+                try:
+                    nominatee_name = nomination.nominatee.get_name()
+                except:
+                    pass
+                
+                nom_data.append({
+                    'id': nomination.id,
+                    'active': nomination.active,
+                    'nomination_category': nom_cat.name,
+                    'nominator': nomination.nominator.fid,
+                    'nominator_name': nominator_name,
+                    'nominatee': nomination.nominatee.fid,
+                    'nominatee_name': nominatee_name,
+                    'won': nomination.won,
+                    'created_time': time.mktime(nomination.created_date.utctimetuple()),
+                    'caption': caption_text,
+                    'comments': False,
+                    'comment_count': 0,
+                    'photo': photo_data,
+                    'vote_count': nomination.current_vote_count,
+                    'votes': [{
+                        'vote_user': owner.fid,
+                        'vote_name': owner.get_name(), #Portrit_User.objects.get(fb_user=fb_user).name,
+                    },],
+                    'notification_id': notification.id,
+                })
+                
+                nom_count += 1
+                
+            target_friends = get_target_friends(nominatee, owner)
+            friends = { }
+            for friend in target_friends:
+                try:
+                    friend = FB_User.objects.get(fid=friend)
+                    friends[friend.fid] = {'fid': friend.fid,
+                                    'allow_notifications': friend.get_portrit_user_notification_permission()}
+                except:
+                    friends = { }
+
+                try:
+                    recent_nom_cache = cache.get(str(friend.fid) + '_recent_stream')
+                    user_top_stream = cache.get(str(friend.fid) + '_user_top_stream')
+                    if recent_nom_cache != None:
+                        for nom in nom_data:
+                            nom['quick_comments'] = [ ]
+                            recent_nom_cache.insert(0, nom)
+                        cache.set(str(friend.fid) + '_recent_stream', recent_nom_cache, 60*5)
+                    if user_top_stream != None:
+                        try:
+                            cache.delete(str(friend.fid) + '_user_top_stream')
+                        except:
+                            pass
+                except:
+                    pass
+
+            node_data = {
+                'method': 'new_nom',
+                'payload': {
+                    'nom_data': nom_data,
+                    'friends': friends,
+                }
+            }
+
+            node_data = json.dumps(node_data)
+            try:
+                sock = socket.socket(
+                    socket.AF_INET, socket.SOCK_STREAM)
+                sock.connect((NODE_HOST, NODE_SOCKET))
+                sock.send(node_data)
+                sock.close()
+            except:
+                pass
+
+            data = nom_data
+    except:
+        pass
+        
+    data = simplejson.dumps(data) 
+    return HttpResponse(data, mimetype='application/json')
+    
 def get_user_album_nom_data(request):
     data = False
     user_id = request.GET.get('user')
@@ -724,13 +876,13 @@ def get_recent_stream(fb_user, created_date=None):
                     Q(nominatee__in=friends) |
                     Q(nominatee=fb_user) |
                     Q(nominator=fb_user),
-                    created_date__lt=created_date, active=True, won=False).distinct('id').order_by('-created_date')[:PAGE_SIZE]
+                    created_date__lt=created_date, won=False).distinct('id').order_by('-created_date')[:PAGE_SIZE]
             else:
                 nominations = Nomination.objects.select_related().filter(
                     Q(nominatee__in=friends) |
                     Q(nominatee=fb_user) |
                     Q(nominator=fb_user),
-                    active=True, won=False).distinct('id').order_by('-created_date')[:PAGE_SIZE]
+                    won=False).distinct('id').order_by('-created_date')[:PAGE_SIZE]
             for nom in nominations.iterator():
                 comment_count = nom.get_comment_count()
                 quick_comments = nom.get_quick_comments()
@@ -773,7 +925,7 @@ def get_recent_stream(fb_user, created_date=None):
         else:
             data = user_recent_stream
         
-        if data.count() == 0:
+        if data.count() == 0 or data[0].active == False:
             data = "empty"
     except:
         pass
