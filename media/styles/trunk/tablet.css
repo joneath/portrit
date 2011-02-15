@@ -123,16 +123,15 @@ div#photo_cont{
 }
 
 div#wall_cont div#profile_wrap{
-    width:              940px;
-    right:              20px;
+    width:              980px;
 }
 
 div#wall_cont div#profile_wrap.hide_tabs{
-    width:              960px;
+    width:              980px;
 }
 
 #top_right_cont{
-    width:              280px;
+    width:              320px;
 }
 
 .top_nom_bottom_cont .top_nom_comment_cont{
@@ -140,11 +139,19 @@ div#wall_cont div#profile_wrap.hide_tabs{
 }
 
 .top_nom_bottom_cont .top_nom_vote_count{
-    width:              105px;
+    width:              125px;
+}
+
+#top_right_cont .top_nom_cont{
+    margin-left:    20px;
 }
 
 #recent_win_stream_cont #nom_cat_stream{
-    top:            -5px
+    top:            0px
+}
+
+#recent_winners, div#latest_photos{
+    width:          980px;
 }
 
 #new_photo_cont .winning_nom_cont{

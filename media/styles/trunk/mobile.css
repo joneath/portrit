@@ -170,10 +170,6 @@ div.autocomplete{
     overflow-y:         hidden;
 }
 
-div#profile_wrap > ul{
-    margin-bottom:          0px;
-}
-
 div#main_view_control{
     background-color:       black;
     padding-top:            10px;
@@ -253,9 +249,9 @@ div#context_cont{
 }
 
 #recent_left_cont{
-    width:          510px;
-    padding-left:   5px;
-    padding-right:  5px;
+    width:          520px;
+    padding-left:   0px;
+    padding-right:  0px;
 }
 
     .recent_nom_cont .recent_nom_photo_left_cont{
@@ -275,7 +271,7 @@ div#context_cont{
     }
     
     .recent_nom_cont .recent_nom_photo_right_cont{
-        width:      110px;
+        width:      120px;
     }
     
     .recent_nom_cont .recent_nom_comment_cont{
@@ -284,6 +280,35 @@ div#context_cont{
     
     .recent_nom_comment_cont .comment_body{
         width:      488px;
+    }
+    
+#recent_winners{
+    width:          520px;
+}
+
+    #main_nom_cont #recent_win_photo_cont{
+        width:          280px;
+    }
+    
+    #recent_win_photo_cont #recent_win_photo_wrap{
+        width:          280px;
+    }
+    
+    #recent_win_photo_cont #recent_win_photo{
+        max-width:      280px;
+    }
+    
+    #main_nom_cont #recent_win_right_cont{
+        padding-left:   10px;
+        width:          230px;
+    }
+    
+    #recent_win_right_cont .trophy_img{
+        right:          -5px;
+    }
+    
+    #recent_win_photo_cont #nominator_overlay_cont{
+        width:          280px;
     }
     
 #recent_empty_wrap #recent_winners{
@@ -310,6 +335,10 @@ div#context_cont{
     #recent_empty_wrap #recent_win_right_cont .trophy_img{
         right:          -5px;
     }
+    
+div#latest_photos{
+    width:          520px;
+}
     
 #recent_win_stream_cont #nom_cat_stream{
     top:            -5px
@@ -544,7 +573,7 @@ div#feedback div#feedback_cont{
     }
     
 .nom_photo_bottom_wrap .nominator_cont{
-    width:              120px;
+    width:              200px;
 }
     
 div#active_stream_text_cont{
@@ -555,6 +584,11 @@ div#active_stream_text_cont{
 
 div#active_stream_text_cont > span{
     line-height:        26px;
+}
+
+.stream_nav{
+    font-size:          22px;
+    padding:            10px 20px;
 }
 
 .from_username{
@@ -587,7 +621,7 @@ div#active_stream_text_cont > span{
 }
 
 .recent_nom_photo_right_cont .recent_nom_vote_count{
-    margin-top:         40px;
+    margin-top:         0px;
 }
 
     .recent_nom_vote_count .reactivate_nom{
@@ -611,7 +645,7 @@ div#active_stream_text_cont > span{
 }
 
 .recent_nom_vote_count .trophy_img{
-    margin-left:        30px;
+    margin-left:        9px;
 }
 
 .recent_nom_comment_heading h1{
@@ -621,11 +655,6 @@ div#active_stream_text_cont > span{
 .recent_nom_top_cont h2{
     margin-top:         3px;
     width:              200px;
-}
-    
-div#profile_wrap h1{
-    margin-bottom:      10px;
-    padding-bottom:     10px;
 }
 
 div#title h3{
@@ -746,7 +775,7 @@ div#new_comment_cont .comment_body{
     }
 
 .feed_post_cont .stream_photo_cont{
-    top:                -15px;
+    top:                1px;
     width:              430px;
     height:             349px;
 }
@@ -847,11 +876,20 @@ div#nom_detail_cont{
             right:          80px;
             top:            70px;
         }
+        
+            #vote_tooltip{
+                left:                   -35px;
+            }
+            
+            span.vote_tooltip_arrow{
+                left:                   119px;
+                bottom:                 -8px;
+            }
     
         div#main_nom_cont_right h2{
             float:          right;
             font-size:      26px;
-            width:          250px;
+            width:          285px;
         }
         
         div#main_nom_cont_right_wrap div#trophy_cont{
@@ -1031,14 +1069,14 @@ div#mutual_friend_cont{
     position:           absolute;
     left:               0px;
     top:                200px;
-    z-index:            1;
+    z-index:            11;
 }
 
 #forward_gallery{
     position:           absolute;
     right:              0px;
     top:                200px;
-    z-index:            1;
+    z-index:            11;
 }
 
 img#photo_large_inline{

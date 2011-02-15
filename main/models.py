@@ -131,6 +131,7 @@ class Nomination(models.Model):
     caption = models.TextField(null=True, blank=True)
     nominator = models.ForeignKey('FB_User', null=True, related_name="nominator_user")
     nominatee = models.ForeignKey('FB_User', null=True, related_name="nominated_user")
+    tagged_friends = models.ManyToManyField('FB_User', null=True, blank=True, related_name="tagged_users")
     comments = models.ManyToManyField(Comment, null=True, blank=True)
     votes = models.ManyToManyField('FB_User', null=True, blank=True, related_name="vote_users")
     

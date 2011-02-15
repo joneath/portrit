@@ -44,7 +44,7 @@ def calc_noms_won():
             
                     try:
                         if user_cat_stream[0].id == nom.id:
-                            if (nom.won == False and nom.current_vote_count > 1):
+                            if (nom.won == False and nom.current_vote_count >= 1):
                                 mark_nom_as_won(nom)
                                 user_wins.append(nom)
                         

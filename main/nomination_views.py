@@ -568,7 +568,8 @@ def reactivate_nom(request):
                     nomination.votes.clear()
                     nomination.votes.add(owner)
                     nomination.current_vote_count = 1
-                    nomination.comments.clear()
+                    nomination.up_votes = 1
+                    nomination.down_votes = 0
                     nomination.active = True
                     nomination.created_date = datetime.now()
                     nomination.save()
@@ -584,6 +585,7 @@ def reactivate_nom(request):
                     nomination.caption = comment_text
                     nomination.nominatee = nominatee
                     nomination.nominator = owner
+                    nomination.current_vote_count = 1
                     nomination.save()
                     nomination.votes.add(owner)
                     photo.nominations.add(nomination)
@@ -849,8 +851,9 @@ def init_recent_stream(request):
         cookie = facebook.get_user_from_cookie(
             request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
         if cookie:
+            page_size = request.GET.get('page_size')
             owner = FB_User.objects.get(fid=int(cookie["uid"]))
-            recent_stream = get_recent_stream(owner)
+            recent_stream = get_recent_stream(owner, None, page_size)
             top_stream = get_top_stream(owner)
             top_users = get_top_users(owner)
             data = {
@@ -864,9 +867,9 @@ def init_recent_stream(request):
     data = simplejson.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
-def get_recent_stream(fb_user, created_date=None):
+def get_recent_stream(fb_user, created_date=None, page_size=10):
     data = [ ]
-    PAGE_SIZE = 10
+    PAGE_SIZE = page_size
     try:
         friends = fb_user.friends.all()
         user_recent_stream = cache.get(str(fb_user.fid) + '_recent_stream')

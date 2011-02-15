@@ -143,7 +143,7 @@ a:hover{
 .red.sick, .red.sick:visited, .red.sick_abs			    { background-color: #e33100; }
 .red.sick:hover							    { background-color: #872300; }
 .magenta.sick, .magenta.sick:visited, .magenta.sick_abs		{ background-color: #a9014b; }
-.magenta.sick:hover							{ background-color: #630030; }
+.magenta.sick:hover, .magenta.sick_abs:hover							{ background-color: #630030; }
 .orange.sick, .orange.sick:visited, .orange.sick_abs		{ background-color: #ff5c00; }
 .orange.sick:hover							{ background-color: #d45500; }
 .yellow.sick, .yellow.sick:visited, .yellow.sick_abs		{ background-color: #ffb515; }
@@ -225,6 +225,7 @@ div#login_cont{
             color:              white;
             height:             200px;
             position:           relative;
+            z-index:            0;
             border-top-left-radius:             10px;
             border-top-right-radius:            10px;
             -moz-border-radius-topleft:         10px;
@@ -236,6 +237,8 @@ div#login_cont{
             color:              #333;
             padding:            0px 20px;
             padding-top:        20px;
+            position:           relative;
+            z-index:            1;
         }
         
             .point_header{
@@ -349,21 +352,37 @@ div#login_cont{
             background-color:   white;
             border-bottom:      1px solid #dedede;
             color:              #333;
-            height:             100px;
+            height:             75px;
             text-align:         center;
             width:              340px;
             padding-top:        30px;
             position:           absolute;
             z-index:            10000;
-            box-shadow:         rgba(0, 0, 0, 0.25) 0px -2px 2px 0px;
-            -webkit-box-shadow: rgba(0, 0, 0, 0.25) 0px -2px 2px 0px;
-            -moz-box-shadow:    0px -2px 2px 0px rgba(0, 0, 0, 0.25);
+            box-shadow:         rgba(0, 0, 0, 0.25) 0px 0px 2px 1px;
+            -webkit-box-shadow: rgba(0, 0, 0, 0.25) 0px 0px 2px 1px;
+            -moz-box-shadow:    0px 0px 2px 1px rgba(0, 0, 0, 0.25);
         }
+        
+            #login_arrow{
+                position:           absolute;
+                top:                -112px;
+                left:               -163px;
+            }
+            
+            #login_arrow_text{
+                color:              white;
+                font-size:          24px;
+                position:           absolute;
+                top:                -35px;
+                left:               -7px;
+                text-shadow:        rgba(0, 0, 0, 0.246094) 0px -1px 1px;
+                font-weight:        bold;
+            }
         
             div#login_content div#login_right_cont p{
                 text-align:         center;
                 font-size:          13px;
-                width:              200px;
+                width:              250px;
                 margin:             0 auto;
                 margin-top:         7px;
             }
@@ -1724,11 +1743,25 @@ div#wall_cont{
         -moz-border-radius-bottomleft:      0px;
     }
     
-    div#main_view_control #show_upload{
-        position:                   absolute;
-        right:                      0px;
-        top:                        0px;
-    }
+span.tooltip_arrow{
+    height:             10px;
+    width:              12px;
+    bottom:             -8px;
+    left:               73px;
+    position:           absolute;
+    background-image:   url(http://portrit.s3.amazonaws.com/img/sprite.png);
+    background-position:-500px -714px;
+}
+
+span.vote_tooltip_arrow{
+    height:             10px;
+    width:              12px;
+    bottom:             -9px;
+    left:               104px;
+    position:           absolute;
+    background-image:   url(http://portrit.s3.amazonaws.com/img/sprite.png);
+    background-position:-500px -714px;
+}
     
 #canvas_cont .title{
     font-size:          36px;
@@ -1804,7 +1837,7 @@ div#nom_detail_cont{
         }
         
     div#main_nom_cont{
-        background-color:   #eee;
+        background-color:   white;
         display:            inline-block;
         margin:             0 auto;
         position:           relative;
@@ -1901,7 +1934,22 @@ div#nom_detail_cont{
             
             div#vote_cont{
                 margin-top:             85px;
+                position:               relative;
             }
+            
+                #vote_tooltip{
+                    position:               absolute;
+                    top:                    -42px;
+                    background-color:       #333;
+                    width:                  220px;
+                    padding:                10px;
+                    left:                   5px;
+                    font-size:              14px;
+                }
+                
+                    #vote_tooltip span{
+                        color:                  #99CB6E;
+                    }
             
                 div#vote_cont_left{
                     float:                  left;
@@ -1927,6 +1975,11 @@ div#nom_detail_cont{
                 div#vote_cont_left .won{
                     cursor:                 default;
                     opacity:                0.4;
+                    border-radius:          5px;
+                    -moz-border-radius:     5px;
+                    box-shadow:         inset rgba(0, 0, 0, 0.5) 0px 0px 3px 0px;
+                    -moz-box-shadow:    inset 0px 0px 3px 0px rgba(0, 0, 0, 0.5);
+                    -webkit-box-shadow: inset rgba(0, 0, 0, 0.5) 0px 0px 3px 0px;
                 }
                 
                 div#vote_cont_left .won:hover{
@@ -2040,8 +2093,9 @@ div#nom_detail_cont{
                 }
                 
     div#main_nom_bottom_cont{
-        background-color:   #eee;
+        background-color:   white;
         float:              right;
+        margin-bottom:      10px;
         min-height:         105px;
         position:           relative;
         top:                -5px;
@@ -2671,7 +2725,7 @@ div#profile_cont{
     .feed_post_cont{
         background-color:       #333;
         clear:                  both;
-        margin-right:           25px;
+        margin-right:           15px;
 		min-height:             350px;
 		margin-bottom:          20px;
         position:               relative;
@@ -2957,7 +3011,8 @@ div#profile_cont{
             height:             350px;
             position:           relative;
             text-align:         center;
-            width:              690px;
+            width:              700px;
+            z-index:            0;
         }
         
         
@@ -3005,7 +3060,7 @@ div#profile_cont{
                 display:            table-cell;
                 height:             250px;
                 vertical-align:     middle;
-                width:              690px;
+                width:              700px;
             }
             
                 .stream_photo_cont .nom_photo_bottom_wrap{
@@ -3029,7 +3084,7 @@ div#profile_cont{
                 
                     .nom_photo_bottom_wrap .nominator_cont{
                         float:              left;
-                        width:              390px;
+                        width:              500px;
                     }
                     
                         .nom_photo_bottom_wrap .nominator_cont h3{
@@ -4166,6 +4221,41 @@ div#context_overlay{
                     font-weight:        normal;
                     margin:             25px 0px;
                 }
+                
+.stream_nav{
+    background-color:   #cecece;
+    color:              #333;
+    float:              left;
+    font-size:          18px;
+    font-weight:        normal;
+    position:           relative;
+    padding:            10px 20px;
+    border-top-right-radius:    10px;
+    border-top-left-radius:     10px;
+    -moz-border-radius-topleft:         10px;
+    -moz-border-radius-topright:        10px;
+    -webkit-box-shadow: inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -5px;
+    -moz-box-shadow:    inset 0px -5px 3px -5px rgba(0, 0, 0, 0.5);
+    box-shadow:         inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -5px;
+}
+
+    .stream_nav:hover{
+        background-color:       white;
+    }
+
+.stream_nav.selected{
+    color:              #333;
+    background-color:   white;
+    font-weight:        bold;
+    margin-top:         0px;
+    border-top-right-radius:    10px;
+    border-top-left-radius:     10px;
+    -moz-border-radius-topleft:         10px;
+    -moz-border-radius-topright:        10px;
+    -webkit-box-shadow: none;
+    -moz-box-shadow:    none;
+    box-shadow:         none;
+}
     
 div#wall_cont div#profile_wrap{
 	background-color:		white;
@@ -4182,7 +4272,7 @@ div#wall_cont div#profile_wrap{
     div#tab_nav{
         position:           absolute;
         right:              -160px;
-        top:                189px;
+        top:                179px;
         z-index:            0;
         -webkit-transform: rotate(90deg);
         -moz-transform: rotate(90deg);
@@ -4248,8 +4338,8 @@ div#wall_cont div#profile_wrap{
 
     div#active_stream_text_cont{
         float:              right;
-        margin-top:         17px;
-        margin-right:       25px;
+        margin-top:         10px;
+        margin-right:       10px;
     }
 
     div#active_stream_text_cont > h3{
@@ -4298,61 +4388,59 @@ div#wall_cont div#profile_wrap{
             opacity:            1;
         }
     
-    div#profile_wrap  > ul > h1{
-        color:              #6e6e6e;
-        float:              left;
-        font-size:          30px;
-        margin-left:        15px;
-        margin-top:         20px;
-        position:           relative;
-    }
-    
     div#profile_wrap > a{
         float:              right;
         margin-right:       30px;
         margin-top:         25px;
     }
     
-        div#profile_wrap  > ul{
-            float:              left;
+        div#profile_wrap > ul{
+            background-color:   #333;
             list-style:         none;
-            margin-bottom:      10px;
+            margin-bottom:      15px;
+            padding-top:        10px;
+            padding-left:       15px;
             position:           relative;
+            border-top-right-radius:    5px;
+            border-top-left-radius:     5px;
+            -moz-border-radius-topleft:         5px;
+            -moz-border-radius-topright:        5px;
+            -webkit-box-shadow: inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -5px;
+            -moz-box-shadow:    inset 0px -5px 3px -5px rgba(0, 0, 0, 0.5);
+            box-shadow:         inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -5px;
         }
         
-            div#profile_wrap  > ul li{
-                cursor:             pointer;
+            div#profile_wrap > ul > li{
                 float:              left;
-                margin-bottom:      5px;
-                margin-left:        15px;
-                margin-top:         5px;
-                width:              100%;
+                cursor:             pointer;
+                margin:             0px 5px;
             }
             
-            div#profile_wrap  > ul #drop_down_cont{
-                background-color:   rgba(0,0,0,0.8);
-                position:           absolute;
-                width:              275px;
-                z-index:            10;
-                border-bottom-right-radius: 10px;
-                border-top-right-radius:    10px;
-                -moz-border-radius-topright:        10px;
-                -moz-border-radius-bottomright:     10px;
+            div#profile_wrap > ul > li#show_upload{
+                background-color:   #e15e32;
+                color:              white;
+                float:              right;
+                font-size:          18px;
+                font-weight:        normal;
+                margin-right:       30px;
+                position:           relative;
+                padding:            10px 20px;
+                border-top-right-radius: 10px;
+                border-top-left-radius: 10px;
+                -moz-border-radius-topleft: 10px;
+                -moz-border-radius-topright: 10px;
+                -webkit-box-shadow: inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -5px;
+                -moz-box-shadow: inset 0px -5px 3px -5px rgba(0, 0, 0, 0.5);
+                box-shadow: inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -5px;
             }
             
-            div#profile_wrap  > ul li h1{
-                color:              #dedede;
-                font-size:          30px;
+            div#profile_wrap > ul > li#show_upload:hover{
+                background-color:   #cd491d;
             }
-            
-            div#profile_wrap  > ul li h1:hover{
-                color:              #fff;
-            }
-    
-        #stream_triangle{
-            bottom:             -9px;
-            left:               50%;
-            position:           absolute;
+        
+        div#profile_wrap > ul > h1{
+            color:              #6e6e6e;
+            font-size:          30px;
         }
         
 .loading{
@@ -4363,9 +4451,6 @@ div#latest_photos{
     background-color:   white;
     color:              #333;
     margin:             0 auto;
-    margin-top:         10px;
-    margin-bottom:      10px;
-    padding-bottom:     10px;
     position:           relative;
     width:              960px;
     border-radius:      10px;
@@ -4373,11 +4458,16 @@ div#latest_photos{
 }
 
     #latest_photos > h1{
-        font-size:          30px;
+        font-size:          24px;
+        font-weight:        bold;
         margin-bottom:      5px;
         padding-left:       20px;
-        padding-top:        10px;
         text-align:         left;
+        background-color:   #69CCCB;
+        height:             50px;
+        line-height:        50px;
+        color:              white;
+        text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
     }
     
     #latest_photos h2{
@@ -4407,6 +4497,7 @@ div#latest_photos{
         border:             1px solid #DEDEDE;
         margin:             10px 20px;
         margin-bottom:      20px;
+        text-align:         center;
     }
     
     #latest_photos #latest_fb_photos{
@@ -4414,6 +4505,7 @@ div#latest_photos{
         border:             1px solid #DEDEDE;
         margin:             20px;
         margin-bottom:      20px;
+        text-align:         center;
     }
         
 #recent_left_cont{
@@ -4512,6 +4604,8 @@ div#latest_photos{
                 font-weight:        bold;
                 margin-top:         23px;
                 text-align:         center;
+                color:              white;
+                text-shadow:        0 -1px 1px rgba(0, 0, 0, 0.25);
             }
         
         .top_nom_cont .top_nom_right_cont{
@@ -4610,7 +4704,8 @@ div#latest_photos{
                 margin-left:        8px;
                 margin-top:         8px;
                 padding:            5px;
-                border-radius:  5px;
+                width:              45px;
+                border-radius:      5px;
                 -moz-border-radius:     5px;
                 text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
             }
@@ -4621,7 +4716,8 @@ div#latest_photos{
                 font-size:          14px;
                 font-weight:        bold;
                 margin-top:         9px;
-                width:              165px;
+                margin-left:        5px;
+                width:              160px;
                 text-align:         left;
             }
             
@@ -4631,6 +4727,17 @@ div#latest_photos{
             
             .top_friend img{
                 float:              right;
+            }
+            
+            .top_friend span{
+                color:              white;
+                font-size:          14px;
+                position:           absolute;
+                right:              0px;
+                padding:            4px 6px;
+                bottom:             0px;
+                border-top-left-radius:         5px;
+                -moz-border-radius-topleft:     5px;
             }
                 
 #recent_cont_1{
@@ -4658,6 +4765,8 @@ div#latest_photos{
             font-size:              16px;
             margin-top:             7px;
             margin-right:           10px;
+            text-shadow:            0 -1px 1px rgba(0, 0, 0, 0.25);
+            font-weight:            bold;
         }
         
             .recent_nom_top_cont h3 > span.strong{
@@ -4766,8 +4875,8 @@ div#latest_photos{
                 margin-bottom:          20px;
                 padding:                10px 20px;
                 text-align:             center;
-                border-radius:  15px;
-                -moz-border-radius:     15px;
+                border-radius:          10px;
+                -moz-border-radius:     10px;
             }
             
             .recent_nom_vote_count a{
@@ -4793,6 +4902,7 @@ div#latest_photos{
         .comment_empty{
             color:              #4e4e4e;
             margin-top:         10px;
+            text-align:         center;
         }
         
             div#main_nom_bottom_cont .comment_empty h2{
@@ -4833,28 +4943,26 @@ div#latest_photos{
     background-color:       white;
     color:                  #333;
     margin:                 0 auto;
-    margin-top:             10px;
     margin-bottom:          10px;
     position:               relative;
     width:                  960px;
     border-radius:          10px;
     -moz-border-radius:     10px;
 }
-
-    #recent_winners h1{
-        font-size:              30px;
-        margin-bottom:          5px;
-        padding-left:           20px;
-        padding-top:            10px;
-        text-align:             left;
-    }
     
     #recent_winners #top_stripe{
         background-color:       #333367;
         height:                 50px;
+        color:                  white;
+        font-size:              24px;
+        font-weight:            bold;
+        padding-left:           20px;
+        line-height:            50px;
+        text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
     }
     
     #recent_winners #main_nom_cont{
+        display:            block;
         height:             300px;
         margin:             0 auto;
         width:              840px;
@@ -4873,6 +4981,7 @@ div#latest_photos{
         
             #recent_win_photo_cont #recent_win_photo_wrap{
                 display:            table-cell;
+                text-align:         center;
                 vertical-align:     middle;
                 height:             300px;
                 width:              420px;
@@ -4949,6 +5058,12 @@ div#latest_photos{
                 text-shadow:        0 -1px 1px rgba(0,0,0,0.25);
             }
             
+            #recent_win_right_cont h3{
+                font-size:          22px;
+                font-weight:        bold;
+                text-shadow:        0 -1px 1px rgba(0,0,0,0.25);
+            }
+            
             #recent_win_right_cont .trophy_img{
                 bottom:             0px;
                 right:              15px;
@@ -4956,7 +5071,7 @@ div#latest_photos{
             }
             
         #recent_win_stream_cont #nom_cat_stream{
-            top:                    -4px;
+            top:                    0px;
             -webkit-box-shadow:     inset rgba(0, 0, 0, 0.496094) 0px 0px 8px 3px;
             -moz-box-shadow:        inset 0px 0px 8px 3px rgba(0, 0, 0, 0.5);
             box-shadow:             inset rgba(0, 0, 0, 0.496094) 0px 0px 8px 3px;
@@ -5411,8 +5526,8 @@ div#photo_cont{
         #photo_large_inline_cont{
             border:             5px solid #1e1e1e;
             display:            inline-block;
-            overflow:           hidden;
             position:           relative;
+            z-index:            10;
         }
         
             #photo_large_inline_cont .trophy_cont_gallery{
@@ -5421,55 +5536,26 @@ div#photo_cont{
                 right:          0px;
             }
         
-            #photo_large_inline_cont #nominate_photo{
+            #photo_large_inline_cont #nominate_photo, #photo_large_inline_cont #go_nom_detail{
                 position:           absolute;
                 font-size:          16px;
                 font-weight:        bold;
-                top:                0px;
+                top:                -46px;
                 left:               0px;
-                opacity:            0.7;
                 padding:            12px 5px;
                 width:              120px;
-                border-bottom-left-radius:  10px;
-                border-top-left-radius:     0px;
-                border-top-right-radius:    0px;
-                border-bottom-right-radius: 10px;
-                -moz-border-radius-topleft:         0px;
-                -moz-border-radius-topright:        0px;
-                -moz-border-radius-bottomleft:      10px;
-                -moz-border-radius-bottomright:     10px;
+                border-bottom-left-radius:  0px;
+                border-top-left-radius:     10px;
+                border-top-right-radius:    10px;
+                border-bottom-right-radius: 0px;
+                z-index:            1;
+                -moz-border-radius-topleft:         10px;
+                -moz-border-radius-topright:        10px;
+                -moz-border-radius-bottomleft:      0px;
+                -moz-border-radius-bottomright:     0px;
                 -webkit-box-shadow:     none;
                 box-shadow:     none;
             }
-            
-                #photo_large_inline_cont #nominate_photo:hover{
-                    opacity:            1.0;
-                }
-            
-            #photo_large_inline_cont #go_nom_detail{
-                position:           absolute;
-                font-size:          16px;
-                font-weight:        bold;
-                top:                0px;
-                left:               0px;
-                opacitborder-radiusy:            0.7;
-                padding:            12px 5px;
-                width:              120px;
-                border-bottom-left-radius:  10px;
-                border-top-left-radius:     0px;
-                border-top-right-radius:    0px;
-                border-bottom-right-radius: 10px;
-                -moz-border-radius-topleft:         0px;
-                -moz-border-radius-topright:        0px;
-                -moz-border-radius-bottomleft:      10px;
-                -moz-border-radius-bottomright:     10px;
-                -webkit-box-shadow:     none;
-                box-shadow:     none;
-            }
-            
-                #photo_large_inline_cont #go_nom_detail:hover{
-                    opacity:            1.0;
-                }
             
         #new_nom_wrap{
             padding:            20px;
@@ -5543,13 +5629,13 @@ div#photo_cont{
                     height:             215px;
                     text-align:         center;
                     position:           relative;
-                    width:              320px;
+                    width:              300px;
                 }
                 
                     #selected_nom_image_cont > div{
                         display:            table-cell;
                         height:             217px;
-                        width:              320px;
+                        width:              300px;
                         text-align:         center;
                         position:           relative;
                         vertical-align:     middle;
@@ -5557,7 +5643,7 @@ div#photo_cont{
                 
                     #selected_nom_image_cont img{
                         max-height:         215px;
-                        max-width:          320px;
+                        max-width:          300px;
                     }
                 
                     #selected_nom_image_cont p{
@@ -5575,8 +5661,8 @@ div#photo_cont{
                     }
                 
                 #selected_nom_cont{
-                    float:              right;
-                    width:              600px;
+                    float:              left;
+                    width:              620px;
                 }
                 
                     #selected_nom_cont h2{
@@ -5597,11 +5683,11 @@ div#photo_cont{
                         #selected_noms > div{
                             cursor:                 pointer;
                             display:                inline-block;
-                            margin:                 0px 10px;
+                            font-size:              14px;
                             margin-top:             20px;
                             opacity:                0;
                             position:               relative;
-                            width:                  100px;
+                            width:                  85px;
                             -webkit-transition: opacity .3s ease-in-out;
                             -moz-transition: opacity .3s ease-in-out;
                             -o-transition: opacity .3s ease-in-out;
@@ -5621,6 +5707,99 @@ div#photo_cont{
                         
                         #selected_noms h3{
                             margin-top:             10px;
+                        }
+                        
+                #new_nom_tagged_cont{
+                    background-color:   #666;
+                    border-right:       1px solid #dedede;
+                    float:              left;
+                    position:           relative;
+                    height:             215px;
+                    width:              319px;
+                }
+                
+                    #new_nom_tagged_cont > div{
+                        overflow:           auto;
+                        height:             168px;
+                    }
+                
+                    #new_nom_tagged_cont h2{
+                        background-color:   white;
+                        border-bottom:      1px solid #dedede;
+                        border-top:         1px solid #DEDEDE;
+                        clear:              both;
+                        font-size:          27px;
+                        height:             28px;
+                        padding:            8px;
+                    }
+                    
+                    #tagged_friends_header{
+                        position:           absolute;
+                        top:                0px;
+                        width:              288px;
+                    }
+                    
+                    #tagged_friends_cont{
+                        background-color:   white;
+                        padding:            5px 10px;
+                    }
+                    
+                    #tagged_friends_cont .tagged_user{
+                        cursor:             pointer;
+                        display:            inline-block;
+                        height:             50px;
+                        width:              50px;
+                        padding:            3px;
+                    }
+                    
+                        #tagged_friends_cont .tagged_user img{
+                        }
+                        
+                    #tagged_friends_cont .tagged_user.nominatee_user{
+                        cursor:             default;
+                    }
+                    
+                    #tag_search_cont{
+                        background-color:   #dedede;
+                        padding:            5px 0px;
+                        text-align:         center;
+                        box-shadow:         rgba(0, 0, 0, 0.496094) 0px 4px 3px 0px;
+                        -webkit-box-shadow: rgba(0, 0, 0, 0.496094) 0px 4px 3px 0px;
+                        -moz-box-shadow:    0px 4px 3px 0px rgba(0, 0, 0, 0.5);
+                    }
+                    
+                        #tag_search_cont #tag_search{
+                            color:              #5e5e5e;
+                            font-size:          14px;
+                            padding:            5px;
+                            width:              270px;
+                        }
+                        
+                    #mutual_friends_cont .mutual_user{
+                        background-color:   inherit;
+                        clear:              both;
+                        cursor:             pointer;
+                    }
+                    
+                        #mutual_friends_cont .mutual_user.selected{
+                            background-color:   #333;
+                        }
+                        
+                        #mutual_friends_cont .mutual_user .checked{
+                            float:              right;
+                            margin-top:         8px;
+                            margin-right:       5px;
+                        }
+                    
+                        #mutual_friends_cont .mutual_user img{
+                            float:              left;
+                        }
+                    
+                        #mutual_friends_cont .mutual_user p{
+                            color:              white;
+                            float:              left;
+                            margin-top:         16px;
+                            margin-left:        10px;
                         }
                         
             #new_nom_photo_stream_cont{
@@ -5693,7 +5872,8 @@ div#photo_cont{
                     }
         
         #photo_large_inline{
-
+            position:           relative;
+            z-index:            10;
         }
         
         #back_gallery{
@@ -5702,8 +5882,8 @@ div#photo_cont{
             position:           absolute;
             left:               20px;
             top:                200px;
-            z-index:            1;
             padding:            0px 20px;
+            z-index:            11;
         }
         
         #back_gallery_img{
@@ -5719,8 +5899,8 @@ div#photo_cont{
             position:           absolute;
             right:              20px;
             top:                200px;
-            z-index:            1;
             padding:            0px 20px;
+            z-index:            11;
         }
         
         #forward_gallery_img{
