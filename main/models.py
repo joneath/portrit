@@ -155,6 +155,16 @@ class Nomination(models.Model):
             
         return photo_data
         
+    def get_tagged_users(self):
+        tagged_users = [ ]
+        try:
+            for user in self.tagged_friends.all():
+                tagged_users.append(user.fid)
+        except:
+            pass
+            
+        return tagged_users
+        
     def get_time_remaining(self):
         """Returns seconds remaining in 24 hour period for active nomination.
             Retruns 0 if period has been passed."""

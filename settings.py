@@ -40,6 +40,9 @@ if ENV == "LOCAL":
     AWS_KEY = 'AKIAIYXPXPJDU2VIKQKQ'
     AWS_SECRET_KEY = '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'
     
+    BITLY_LOGIN = 'portrit'
+    BITLY_APIKEY = 'R_554a2c395f085d017040066581d65325'
+    
 elif ENV == "TEST":
     DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
     DATABASE_NAME = 'portrit'             # Or path to database file if using sqlite3.
@@ -72,6 +75,9 @@ elif ENV == "TEST":
     
     AWS_KEY = 'AKIAIYXPXPJDU2VIKQKQ'
     AWS_SECRET_KEY = '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'
+    
+    BITLY_LOGIN = 'portrit'
+    BITLY_APIKEY = 'R_554a2c395f085d017040066581d65325'
     
 else:
     DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
@@ -106,6 +112,9 @@ else:
 
     AWS_KEY = 'AKIAIYXPXPJDU2VIKQKQ'
     AWS_SECRET_KEY = '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'
+    
+    BITLY_LOGIN = 'portrit'
+    BITLY_APIKEY = 'R_554a2c395f085d017040066581d65325'
     
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name

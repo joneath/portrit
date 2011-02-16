@@ -58,6 +58,7 @@ def get_trophy_wins(request):
                     'nominator_name': nom.nominator.get_name(),
                     'nominatee': nom.nominatee.fid,
                     'nominatee_name': nom.nominatee.get_name(),
+                    'tagged_users': nom.get_tagged_users(),
                     'won': nom.won,
                     'photo': nom.get_photo(),
                     'caption': nom.caption,
@@ -110,6 +111,7 @@ def get_recent_winners(request):
                             'nominator_name': nom.nominator.get_name(),
                             'nominatee': nom.nominatee.fid,
                             'nominatee_name': nom.nominatee.get_name(),
+                            'tagged_users': nom.get_tagged_users(),
                             'won': nom.won,
                             'photo': nom.get_photo(),
                             'caption': nom.caption,
@@ -138,6 +140,7 @@ def get_recent_winners(request):
                     'nominator_name': nom.nominator.get_name(),
                     'nominatee': nom.nominatee.fid,
                     'nominatee_name': nom.nominatee.get_name(),
+                    'tagged_users': nom.get_tagged_users(),
                     'won': nom.won,
                     'photo': nom.get_photo(),
                     'caption': nom.caption,
@@ -159,7 +162,8 @@ def get_users_active_noms(request):
     if cookie:
         fid = request.GET.get('id')
         fb_user = FB_User.objects.get(fid=int(fid))
-        active_noms = Nomination.objects.select_related().filter(nominatee=fb_user, active=True, won=False).order_by('-current_vote_count')
+        fb_user_id = [fb_user.fid]
+        active_noms = Nomination.objects.select_related().filter(Q(nominatee=fb_user) | Q(tagged_friends__fid__in=fb_user_id), active=True, won=False).order_by('-current_vote_count')
         data = serialize_noms(active_noms)
         
     data = simplejson.dumps(data) 
@@ -361,6 +365,7 @@ def nominate_photo(request):
         photo_height = request.POST.get('photo_height')
         owner = request.POST.get('owner')
         nominations = request.POST.get('nominations').split(',')
+        tags = request.POST.get('tags').split(',')
         comment_text = request.POST.get('comment_text')
         
         try:
@@ -422,6 +427,8 @@ def nominate_photo(request):
                 
             nom_data = [ ]
             notification_type = Notification_Type.objects.get(name="new_nom")
+            tagged_notification = Notification_Type.objects.get(name="tagged_nom")
+            tagged_user_list = [ ]
             for nomination in nominations:
                 if nomination != '':
                     nom_cat = Nomination_Category.objects.get(name=nomination)
@@ -429,8 +436,27 @@ def nominate_photo(request):
                     if comment_text != "":
                         nomination.caption = comment_text
                     nomination.nominatee = owner_fb_user
-                    nomination.nominator = fb_user
+                    nomination.nominator = fb_user    
                     nomination.save()
+                    
+                    try:
+                        for tag in tags:
+                            if tag != '':
+                                tagged_user_list.append(int(tag))
+                                tagged_user = FB_User.objects.get(fid=int(tag))
+                                tagged_user.active_nominations.add(nomination)
+                                nomination.tagged_friends.add(tagged_user)
+                                
+                                try:
+                                    notification = Notification(source=fb_user, destination=tagged_user, nomination=nomination, notification_type=tagged_notification)
+                                    notification.save()
+                                    tagged_portrit_user = tagged_user.get_portrit_user()
+                                    tagged_portrit_user.notifications.add(notification)
+                                except:
+                                    pass
+                    except:
+                        pass
+                        
                     nomination.votes.add(fb_user)
                     comments = nomination.get_comments()
                     comment_count = comments['count']
@@ -466,6 +492,7 @@ def nominate_photo(request):
                         'nominator_name': nominator_name,
                         'nominatee': nomination.nominatee.fid,
                         'nominatee_name': nominatee_name,
+                        'tagged_users': nomination.get_tagged_users(),
                         'won': nomination.won,
                         'created_time': time.mktime(nomination.created_date.utctimetuple()),
                         'caption': comment_text,
@@ -481,8 +508,13 @@ def nominate_photo(request):
                     })
                     
             #Send update notification to event handlers
+            tagged_user_list = list(set(tagged_user_list))
             target_friends = get_target_friends(owner_fb_user, fb_user)
             friends = { }
+            for tagged_user in tagged_user_list:
+                target_friends.append(tagged_user)
+                
+            target_friends = list(set(target_friends))
             for friend in target_friends:
                 try:
                     friend = FB_User.objects.get(fid=friend)
@@ -540,6 +572,7 @@ def reactivate_nom(request):
         if cookie:
             nom_id = request.POST.get('nom_id')
             comment_text = request.POST.get('comment_text')
+            tags = request.POST.get('tags').split(',')
             nominations = request.POST.get('nominations').split(',')
             del nominations[-1]
             owner = FB_User.objects.get(fid=int(cookie["uid"]))
@@ -552,6 +585,8 @@ def reactivate_nom(request):
             caption_text = ''
             nominatee = None
             notification_type = Notification_Type.objects.get(name="new_nom")
+            tagged_notification = Notification_Type.objects.get(name="tagged_nom")
+            tagged_user_list = [ ]
             for nomination in nominations:
                 nom_cat = Nomination_Category.objects.get(name=nomination)
                 if comment_text != '':
@@ -566,6 +601,7 @@ def reactivate_nom(request):
                     nomination.nominator = owner
                     nomination.caption = caption_text
                     nomination.votes.clear()
+                    nomination.tagged_friends.clear()
                     nomination.votes.add(owner)
                     nomination.current_vote_count = 1
                     nomination.up_votes = 1
@@ -573,6 +609,24 @@ def reactivate_nom(request):
                     nomination.active = True
                     nomination.created_date = datetime.now()
                     nomination.save()
+                    
+                    try:
+                        for tag in tags:
+                            if tag != '':
+                                tagged_user_list.append(tag)
+                                tagged_user = FB_User.objects.get(fid=int(tag))
+                                tagged_user.active_nominations.add(nomination)
+                                nomination.tagged_friends.add(tagged_user)
+                                
+                                try:
+                                    notification = Notification(source=fb_user, destination=tagged_user, nomination=nomination, notification_type=tagged_notification)
+                                    notification.save()
+                                    tagged_portrit_user = tagged_user.get_portrit_user()
+                                    tagged_portrit_user.notifications.add(notification)
+                                except:
+                                    pass
+                    except:
+                        pass
                     
                     photo = nomination.photo_set.filter(active=True)[0]
                     photo_data = nomination.get_photo()
@@ -588,6 +642,25 @@ def reactivate_nom(request):
                     nomination.current_vote_count = 1
                     nomination.save()
                     nomination.votes.add(owner)
+                    
+                    try:
+                        for tag in tags:
+                            if tag != '':
+                                tagged_user_list.append(tag)
+                                tagged_user = FB_User.objects.get(fid=int(tag))
+                                tagged_user.active_nominations.add(nomination)
+                                nomination.tagged_friends.add(tagged_user)
+                                
+                                try:
+                                    notification = Notification(source=fb_user, destination=tagged_user, nomination=nomination, notification_type=tagged_notification)
+                                    notification.save()
+                                    tagged_portrit_user = tagged_user.get_portrit_user()
+                                    tagged_portrit_user.notifications.add(notification)
+                                except:
+                                    pass
+                    except:
+                        pass
+                    
                     photo.nominations.add(nomination)
                     owner.active_nominations.add(nomination)
                     #Create notification record
@@ -630,13 +703,21 @@ def reactivate_nom(request):
                         'vote_user': owner.fid,
                         'vote_name': owner.get_name(), #Portrit_User.objects.get(fb_user=fb_user).name,
                     },],
+                    'tagged_users': nomination.get_tagged_users(),
                     'notification_id': notification.id,
                 })
                 
                 nom_count += 1
-                
+            
+            
+            tagged_user_list = list(set(tagged_user_list))
             target_friends = get_target_friends(nominatee, owner)
             friends = { }
+            
+            for tagged_user in tagged_user_list:
+                target_friends.append(tagged_user)
+
+            target_friends = list(set(target_friends))
             for friend in target_friends:
                 try:
                     friend = FB_User.objects.get(fid=friend)
@@ -910,6 +991,7 @@ def get_recent_stream(fb_user, created_date=None, page_size=10):
                         'nominator_name': nom.nominator.get_name(),
                         'nominatee': nom.nominatee.fid,
                         'nominatee_name': nom.nominatee.get_name(),
+                        'tagged_users': nom.get_tagged_users(),
                         'won': nom.won,
                         'created_time': time.mktime(nom.created_date.utctimetuple()),
                         'photo': nom.get_photo(),
@@ -964,6 +1046,7 @@ def get_top_stream(fb_user):
                     'nominator_name': nom.nominator.get_name(),
                     'nominatee': nom.nominatee.fid,
                     'nominatee_name': nom.nominatee.get_name(),
+                    'tagged_users': nom.get_tagged_users(),
                     'won': nom.won,
                     'time_remaining': nom.get_time_remaining(),
                     'created_time': time.mktime(nom.created_date.utctimetuple()),
@@ -1038,6 +1121,7 @@ def serialize_noms(noms):
             'nominator_name': nom.nominator.get_name(),
             'nominatee': nom.nominatee.fid,
             'nominatee_name': nom.nominatee.get_name(),
+            'tagged_users': nom.get_tagged_users(),
             'won': nom.won,
             'photo': nom.get_photo(),
             'caption': nom.caption,

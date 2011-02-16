@@ -1857,8 +1857,35 @@ div#nom_detail_cont{
             height:                 490px;
             margin-left:            10px;
             margin-top:             10px;
+            position:               relative;
             width:                  700px;
         }
+        
+            div#main_nom_cont_left .nom_tag_cont{
+                height:             490px;
+                width:              60px;
+                position:           absolute;
+                padding:            0px 3px;
+                top:                0px;
+                right:              0px;
+                background-color:   #333;
+                color:              white;
+                text-align:         center;
+                z-index:            1;
+            }
+            
+                div#main_nom_cont_left .nom_tag_cont h3{
+                    margin:             10px 0px;
+                }
+                
+                div#main_nom_cont_left .nom_tag_cont a{
+                    display:            inline-block;
+                }
+                
+                div#main_nom_cont_left .nom_tag_cont img{
+                    height:             50px;
+                    width:              50px;
+                }
         
             div#main_nom_cont_left_wrap{
                 display:            table-cell;
@@ -2737,7 +2764,7 @@ div#profile_cont{
             position:               absolute;
             right:                  0px;
             top:                    0px;
-            width:                  690px;
+            width:                  700px;
             z-index:                100;
         }
         
@@ -2930,6 +2957,8 @@ div#profile_cont{
             float:              left;
             min-height:         350px;
             width:              245px;
+            position:           relative;
+            z-index:            10;
         }
             
             .nom_stream_left_cont .voted_cont{
@@ -2937,10 +2966,15 @@ div#profile_cont{
                 margin:             0px 20px 20px;
                 min-height:         82px;
                 padding:            15px 10px 5px;
+                position:           relative;
+                z-index:            1;
                 border-bottom-left-radius:      5px;
                 border-bottom-right-radius:     5px;
                 -moz-border-radius-bottomleft:          5px;
                 -moz-border-radius-bottomright:         5px;
+                box-shadow:         rgba(0, 0, 0, 0.496094) 0px 5px 4px -2px;
+                -webkit-box-shadow: rgba(0, 0, 0, 0.496094) 0px 5px 4px -2px;
+                -moz-box-shadow:    0px 5px 4px -2px rgba(0, 0, 0, 0.5);
             }
             
                 .voted_cont a{
@@ -2957,6 +2991,38 @@ div#profile_cont{
                 }
                 
                 .voted_cont img{
+                    max-height:         40px;
+                    padding:            3px;
+                }
+                
+            .nom_stream_left_cont .nom_tag_cont{
+                background-color:   white;
+                margin:             0px 20px 20px;
+                min-height:         82px;
+                padding:            15px 10px 5px;
+                position:           relative;
+                top:                -25px;
+                z-index:            0;
+                border-bottom-left-radius:      5px;
+                border-bottom-right-radius:     5px;
+                -moz-border-radius-bottomleft:          5px;
+                -moz-border-radius-bottomright:         5px;
+            }
+            
+                .nom_stream_left_cont .nom_tag_cont a{
+                    display:            inline-block;
+                }
+            
+                .nom_stream_left_cont .nom_tag_cont h3{
+                    border-bottom:      1px solid #DEDEDE;
+                    color:              #444;
+                    font-size:          14px;
+                    font-weight:        bold;
+                    margin-bottom:      10px;
+                    padding-bottom:     5px;
+                }
+                
+                .nom_stream_left_cont .nom_tag_cont img{
                     max-height:         40px;
                     padding:            3px;
                 }
@@ -3175,7 +3241,7 @@ div#profile_cont{
             
                     .nom_cat_main_photo_wrap .nom_main_photo{
                         max-height:         250px;
-                        max-width:          690px;
+                        max-width:          700px;
                     }
                     
                 .nom_cat_main_photo_cont .prev_photo{
@@ -3537,10 +3603,10 @@ div#user_profile_cont{
         color:                  #FAC86E;
         cursor:                 pointer;
         font-weight:            bold;
-        padding:                12px 18px;
+        padding:                9px 18px;
         position:               absolute;
         right:                  10px;
-        top:                    15px;
+        top:                    -42px;
         z-index:                100;
         -moz-border-radius:     15px;
         border-radius:  15px;
@@ -3558,7 +3624,7 @@ div#user_profile_cont{
             width:                  9px;
             position:               absolute;
             right:                  2px;
-            top:                    18px;
+            top:                    14px;
             background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
             background-position:    -103px -697px;
         }
@@ -3568,7 +3634,7 @@ div#user_profile_cont{
             width:                  9px;
             position:               absolute;
             left:                   2px;
-            top:                    16px;
+            top:                    14px;
             background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
             background-position:    -86px -697px;
         }
@@ -4727,6 +4793,8 @@ div#latest_photos{
             
             .top_friend img{
                 float:              right;
+                height:             50px;
+                width:              50px;
             }
             
             .top_friend span{
@@ -4810,6 +4878,32 @@ div#latest_photos{
         position:                   relative;
         width:                      466px;
     }
+    
+        .recent_nom_cont .recent_nom_photo_left_cont .nom_tag_cont{
+            height:                     250px;
+            width:                      60px;
+            position:                   absolute;
+            padding:                    0px 3px;
+            top:                        0px;
+            right:                      0px;
+            background-color:           #333;
+            color:                      white;
+            text-align:                 center;
+        }
+        
+            .recent_nom_photo_left_cont .nom_tag_cont h3{
+                margin-top:                 5px;
+                margin-bottom:              5px;
+            }
+            
+            .recent_nom_photo_left_cont .nom_tag_cont a{
+                display:                    inline-block;
+            }
+        
+            .recent_nom_photo_left_cont .nom_tag_cont img{
+                height:                     50px;
+                width:                      50px;
+            }
     
         div.recent_nom_photo_left_cont div#nominator_overlay_cont{
             background:         rgba(0,0,0,0.7);
@@ -5058,7 +5152,7 @@ div#latest_photos{
                 text-shadow:        0 -1px 1px rgba(0,0,0,0.25);
             }
             
-            #recent_win_right_cont h3{
+            #recent_win_right_cont > h3{
                 font-size:          22px;
                 font-weight:        bold;
                 text-shadow:        0 -1px 1px rgba(0,0,0,0.25);
@@ -5747,12 +5841,14 @@ div#photo_cont{
                     #tagged_friends_cont .tagged_user{
                         cursor:             pointer;
                         display:            inline-block;
-                        height:             50px;
-                        width:              50px;
+                        height:             40px;
+                        width:              40px;
                         padding:            3px;
                     }
                     
                         #tagged_friends_cont .tagged_user img{
+                            height:             40px;
+                            width:              40px;
                         }
                         
                     #tagged_friends_cont .tagged_user.nominatee_user{
@@ -5787,18 +5883,19 @@ div#photo_cont{
                         
                         #mutual_friends_cont .mutual_user .checked{
                             float:              right;
-                            margin-top:         8px;
+                            margin-top:         5px;
                             margin-right:       5px;
                         }
                     
                         #mutual_friends_cont .mutual_user img{
                             float:              left;
+                            height:             40px;
                         }
                     
                         #mutual_friends_cont .mutual_user p{
                             color:              white;
                             float:              left;
-                            margin-top:         16px;
+                            margin-top:         13px;
                             margin-left:        10px;
                         }
                         

@@ -158,8 +158,20 @@ div#wall_cont div#profile_wrap.hide_tabs{
     margin:             6px;
 }
 
+.feed_post_cont .stream_photo_cont{
+    width:              720px;
+}
+
+.stream_photo_cont .nom_cat_main_photo_cont{
+    width:              720px;
+}
+
+.nom_cat_main_photo_wrap .nom_main_photo{
+    max-width:          720px;
+}
+
 .feed_post_cont .nom_stream_left_cont{
-    width:              225px;
+    width:              245px;
 }
 
 .feed_post_cont .add_comment_peek{

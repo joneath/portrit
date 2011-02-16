@@ -844,7 +844,7 @@ div#nom_detail_cont{
     }
     
     div#main_nom_cont_left_wrap div#nominator_overlay_cont{
-        bottom:         250px;
+        bottom:         0px;
         width:          500px;
     }
     

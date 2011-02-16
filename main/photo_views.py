@@ -12,7 +12,8 @@ from django.core.cache import cache
 
 from main.models import Portrit_User, FB_User, Album, Photo, Nomination, Nomination_Category, Comment, \
                         Notification, Notification_Type
-from settings import ENV, MEDIA_ROOT, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, NODE_SOCKET, AWS_KEY, AWS_SECRET_KEY, MEDIA_ROOT
+from settings import ENV, MEDIA_ROOT, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, NODE_SOCKET, AWS_KEY, AWS_SECRET_KEY, MEDIA_ROOT, \
+                        BITLY_LOGIN, BITLY_APIKEY
 
 from portrit_fb import Portrit_FB
 
@@ -136,6 +137,19 @@ def post_photo_to_facebook(user_fid, access_token, portrit_photos_album_fid, pho
     path = photo.photo_path + '_720.jpg'
     
     message = 'http://portrit.com/#/user=' + str(user_fid) + '/album=portrit-photos/gallery/photo=' + str(photo.id)
+    
+    bitly_params = {
+        'login': BITLY_LOGIN,
+        'apiKey': BITLY_APIKEY,
+        'longUrl': message,
+        'format': 'json',
+    }
+    params = urllib.urlencode(bitly_params)
+    bitly_request_url = 'http://api.bit.ly/v3/shorten?' + params
+    data = urllib2.urlopen(bitly_request_url).read()
+    data = simplejson.loads(data)
+    message = data['data']['url']
+    
     args = {
         'access_token': access_token,
         'message': message,
@@ -150,7 +164,6 @@ def post_photo_to_facebook(user_fid, access_token, portrit_photos_album_fid, pho
     try:
         response = urllib2.urlopen(request)
         data = response.read()
-        print "photo uploaded"
     except HTTPError, e:
         print 'Error code: ', e.code
     except URLError, e:
