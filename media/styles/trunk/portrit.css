@@ -4300,9 +4300,9 @@ div#context_overlay{
     border-top-left-radius:     10px;
     -moz-border-radius-topleft:         10px;
     -moz-border-radius-topright:        10px;
-    -webkit-box-shadow: inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -5px;
+    -webkit-box-shadow: inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -4px;
     -moz-box-shadow:    inset 0px -5px 3px -5px rgba(0, 0, 0, 0.5);
-    box-shadow:         inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -5px;
+    box-shadow:         inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -4px;
 }
 
     .stream_nav:hover{
@@ -4471,9 +4471,9 @@ div#wall_cont div#profile_wrap{
             border-top-left-radius:     5px;
             -moz-border-radius-topleft:         5px;
             -moz-border-radius-topright:        5px;
-            -webkit-box-shadow: inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -5px;
-            -moz-box-shadow:    inset 0px -5px 3px -5px rgba(0, 0, 0, 0.5);
-            box-shadow:         inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -5px;
+            -webkit-box-shadow: inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -4px;
+            -moz-box-shadow:    inset 0px -5px 3px -4px rgba(0, 0, 0, 0.5);
+            box-shadow:         inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -4px;
         }
         
             div#profile_wrap > ul > li{
@@ -4485,20 +4485,62 @@ div#wall_cont div#profile_wrap{
             div#profile_wrap > ul > li#show_upload{
                 background-color:   #e15e32;
                 color:              white;
-                float:              right;
+                float:              left;
                 font-size:          18px;
                 font-weight:        normal;
-                margin-right:       30px;
+                margin-left:        100px;
                 position:           relative;
                 padding:            10px 20px;
                 border-top-right-radius: 10px;
                 border-top-left-radius: 10px;
                 -moz-border-radius-topleft: 10px;
                 -moz-border-radius-topright: 10px;
-                -webkit-box-shadow: inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -5px;
-                -moz-box-shadow: inset 0px -5px 3px -5px rgba(0, 0, 0, 0.5);
-                box-shadow: inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -5px;
+                -webkit-box-shadow: inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -4px;
+                -moz-box-shadow: inset 0px -5px 3px -4px rgba(0, 0, 0, 0.5);
+                box-shadow: inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -4px;
             }
+            
+            div#profile_wrap > ul > li#countdown_cont{
+                width:              300px;
+                height:             100%;
+                background-color:   #444;
+                color:              white;
+                font-size:          20px;
+                text-align:         center;
+                position:           absolute;
+                right:              0;
+                top:                0px;
+                margin:             0px;
+                border-top-right-radius:        5px;
+                -moz-border-radius-topright:    5px;
+                -webkit-box-shadow: inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -4px;
+                -moz-box-shadow: inset 0px -5px 3px -4px rgba(0, 0, 0, 0.5);
+                box-shadow: inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -4px;
+            }
+            
+                #countdown_cont > div{
+                    margin-top:         18px;
+                }
+            
+                #countdown_cont h1{
+                    display:            inline-block;
+                }
+                
+                #countdown_cont p{
+                    display:            inline-block;
+                    width:              6px;
+                    height:             6px;
+                    background-color:   #666;
+                    margin:             0px 10px;
+                    position:           relative;
+                    bottom:             3px
+                }
+                
+                #countdown_cont h2{
+                    display:            inline-block;
+                    font-size:          18px;
+                    text-shadow:        0 -1px 1px rgba(0, 0, 0, 0.25);
+                }
             
             div#profile_wrap > ul > li#show_upload:hover{
                 background-color:   #cd491d;

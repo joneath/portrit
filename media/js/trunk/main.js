@@ -8328,7 +8328,7 @@ $(document).ready(function(){
     
     function render_countdown_clock(){
         if ($('#top_right_cont').children().length == 0){
-            $('#top_right_cont').prepend('<h1>Time <span class="strong">Remaining</strong></h1><h2 id="time_countdown"></h2></h1>');
+            $('#profile_wrap > ul > .clear').before('<li id="countdown_cont"><div><h1>Time Remaining</h1><p></p><h2 id="time_countdown"></h2></h1></div></li>');
         }
         GetCount();
     }
