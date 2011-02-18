@@ -2633,6 +2633,32 @@ div#new_comment_cont{
         #recent_empty_wrap #main_nom_cont #recent_win_photo_cont{
             width:                  500px;
         }
+        
+            div#recent_win_photo_cont .nom_tag_cont{
+                height:             300px;
+                width:              60px;
+                position:           absolute;
+                padding:            0px 3px;
+                top:                0px;
+                right:              0px;
+                background-color:   #333;
+                color:              white;
+                text-align:         center;
+                z-index:            1;
+            }
+            
+                div#recent_win_photo_cont .nom_tag_cont h3{
+                    margin:             10px 0px;
+                }
+                
+                div#recent_win_photo_cont .nom_tag_cont a{
+                    display:            inline-block;
+                }
+                
+                div#recent_win_photo_cont .nom_tag_cont img{
+                    height:             50px;
+                    width:              50px;
+                }
     
             #recent_empty_wrap #recent_win_photo_cont #recent_win_photo_wrap{
                 width:                  500px;
@@ -5703,7 +5729,7 @@ div#photo_cont{
                 
                 #selected_nom_cont{
                     float:              left;
-                    width:              620px;
+                    width:              300px;
                 }
                 
                     #selected_nom_cont h2{
@@ -5806,9 +5832,6 @@ div#photo_cont{
                         background-color:   #dedede;
                         padding:            5px 0px;
                         text-align:         center;
-                        box-shadow:         rgba(0, 0, 0, 0.496094) 0px 4px 3px 0px;
-                        -webkit-box-shadow: rgba(0, 0, 0, 0.496094) 0px 4px 3px 0px;
-                        -moz-box-shadow:    0px 4px 3px 0px rgba(0, 0, 0, 0.5);
                     }
                     
                         #tag_search_cont #tag_search{

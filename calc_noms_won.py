@@ -58,6 +58,18 @@ def calc_noms_won():
                                         to_facebook_trophy_album(portrit_user.access_token, nom.get_photo()['src'], portrit_user.portrit_album_fid, nom)
                                 except:
                                     pass
+                                    
+                                try:
+                                    for tagged_user in nom.tagged_friends.all():
+                                        portrit_user = tagged_user.get_portrit_user()
+                                        if portrit_user.allow_portrit_album and portrit_user.ask_permission == False:
+                                            from to_facebook_trophy_album import to_facebook_trophy_album
+                                            if not portrit_user.portrit_album_fid:
+                                                from main.user_views import create_portrit_album
+                                                create_portrit_album(nominatee, portrit_user)
+                                            to_facebook_trophy_album(portrit_user.access_token, nom.get_photo()['src'], portrit_user.portrit_album_fid, nom)
+                                except:
+                                    pass
                         else:
                             pass
                     except:
@@ -94,6 +106,36 @@ def calc_noms_won():
                             pass
                 except:
                     pass
+                    
+                try:
+                    for tagged_user in user_wins[0].tagged_friends.all():
+                        portrit_user = tagged_user.get_portrit_user()
+                        if portrit_user.allow_notifications and portrit_user.allow_portrit_album == False:
+                            try:
+                                nom_cat = user_wins[0].nomination_category.name
+                                name = portrit_user.name.split(' ')[0]
+                                if len(user_wins) == 1:
+                                    trophy = 'http://s3.amazonaws.com/portrit/img/invite/' + nom_cat.replace(' ', '_').lower() + '.png'
+                                    trophy_text = name + ', won the ' + nom_cat + ' trophy for their rockin\' photo!'
+                                else:
+                                    trophy = 'http://s3.amazonaws.com/portrit/img/invite/blank.png'
+                                    trophy_text = name + ', won ' + str(len(user_wins)) + ' trophies for their rockin\' photos!'
+
+                                values = {'access_token' : portrit_user.access_token,
+                                          'picture' : trophy,
+                                          'link' : 'http://portrit.com/#/nom_id=' + str(nom.id) + '/ref=facebook',
+                                          'name': trophy_text, 
+                                          'caption': 'Click the trophy to see ' + name + '\'s winning photos.',
+                                          }
+                                url = 'https://graph.facebook.com/' + str(user_wins[0].nominatee.fid) + '/feed?' + urllib.urlencode(values)
+                                data = urllib.urlencode(values)
+                                req = urllib2.Request(url, data)
+                                response = urllib2.urlopen(req)
+                                data = response.read()
+                            except:
+                                pass
+                except:
+                    pass
         except:
             pass
                 
@@ -113,6 +155,17 @@ def mark_nom_as_won(nom):
         portrit_nominatee.save()
     except:
         pass
+        
+    try:
+        for tagged_user in nom.tagged_friends.all():
+            try:
+                portrit_tagged_user = Portrit_User.objects.get(fb_user=tagged_user)
+                portrit_tagged_user.winning_nomination_count += 1
+                portrit_tagged_user.save()
+            except:
+                pass
+    except:
+        pass
     
     target_friends.append(nom.nominatee.fid)
     target_friends.append(nom.nominator.fid)
@@ -120,6 +173,8 @@ def mark_nom_as_won(nom):
         target_friends.append(friend.fid)
     for friend in active_commentors.iterator():
         target_friends.append(friend.fid)
+    for tagged_user in nom.tagged_friends.all():
+        target_friends.append(tagged_user.fid)
         
     target_friends = list(set(target_friends))
     

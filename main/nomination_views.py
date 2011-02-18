@@ -31,7 +31,8 @@ def get_trophy_wins(request):
             cat = cat.replace('_', ' ').title()
             if user_id:
                 user = FB_User.objects.get(fid=user_id)
-                winning_noms = Nomination.objects.select_related().filter(won=True, nominatee=user, nomination_category__name=cat).order_by('-current_vote_count', '-created_date')
+                fb_user_id = [user.fid]
+                winning_noms = Nomination.objects.select_related().filter(Q(nominatee=user) | Q(tagged_friends__fid__in=fb_user_id), won=True, nomination_category__name=cat).order_by('-current_vote_count', '-created_date')
             else:
                 user = FB_User.objects.get(fid=int(cookie["uid"]))
                 friends = user.friends.all()
@@ -203,7 +204,7 @@ def new_comment(request):
             
             voters = nomination.votes.all()
             all_commentors = FB_User.objects.filter(comment__nomination=nomination).distinct('fid')
-
+            tagged_friends = nomination.tagged_friends.all()
             friends = { }
             # friends = [ ]
             friends[nomination.nominator.fid] = {'fid': nomination.nominator.fid,
@@ -223,7 +224,13 @@ def new_comment(request):
                 if friend.fid != fb_user.fid:
                     if friend.fid != nomination.nominator.fid:
                         friends[friend.fid] = {'fid': friend.fid,
-                                                'allow_notifications': friend.get_portrit_user_notification_permission()} 
+                                                'allow_notifications': friend.get_portrit_user_notification_permission()}
+                                                
+            for friend in tagged_friends.iterator():
+                if friend.fid != fb_user.fid:
+                    if friend.fid != nomination.nominator.fid:
+                        friends[friend.fid] = {'fid': friend.fid,
+                                                'allow_notifications': friend.get_portrit_user_notification_permission()}                              
             
             for friend in friends:
                 friend = friends[friend]
@@ -779,7 +786,8 @@ def get_user_album_nom_data(request):
         if cookie:
             owner = FB_User.objects.get(fid=int(cookie["uid"]))
             user = FB_User.objects.get(fid=user_id)
-            winning_nominations = Nomination.objects.select_related().filter(nominatee=user, won=True).order_by('-created_date')
+            fb_user_id = [user.fid]
+            winning_nominations = Nomination.objects.select_related().filter(Q(nominatee=user) | Q(tagged_friends__fid__in=fb_user_id), won=True).order_by('-created_date')
             active_nominations = Nomination.objects.select_related().filter(nominatee=user, won=False, active=True).order_by('-current_vote_count')
             try:
                 portrit_user = user.get_portrit_user()
