@@ -530,6 +530,7 @@ def nominate_photo(request):
                         for nom in nom_data:
                             nom['quick_comments'] = [ ]
                             recent_nom_cache.insert(0, nom)
+                        recent_nom_cache = recent_nom_cache[:10]
                         cache.set(str(friend.fid) + '_recent_stream', recent_nom_cache, 60*5)
                     if user_top_stream != None:
                         try:
@@ -733,6 +734,7 @@ def reactivate_nom(request):
                         for nom in nom_data:
                             nom['quick_comments'] = [ ]
                             recent_nom_cache.insert(0, nom)
+                        recent_nom_cache = recent_nom_cache[:10]
                         cache.set(str(friend.fid) + '_recent_stream', recent_nom_cache, 60*5)
                     if user_top_stream != None:
                         try:
@@ -950,7 +952,7 @@ def init_recent_stream(request):
     
 def get_recent_stream(fb_user, created_date=None, page_size=10):
     data = [ ]
-    PAGE_SIZE = page_size
+    PAGE_SIZE = int(page_size)
     try:
         friends = fb_user.friends.all()
         user_recent_stream = cache.get(str(fb_user.fid) + '_recent_stream')
@@ -1008,8 +1010,7 @@ def get_recent_stream(fb_user, created_date=None, page_size=10):
             if not created_date:        
                 cache.set(str(fb_user.fid) + '_recent_stream', data, 60*5)
         else:
-            data = user_recent_stream
-        
+            data = user_recent_stream[:PAGE_SIZE]
         if data.count() == 0 or data[0].active == False:
             data = "empty"
     except:

@@ -960,7 +960,7 @@ $(document).ready(function(){
         close_size = 'mobile'
         
         if (typeof(_gaq) !== "undefined"){
-            var meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-8.css"/>' +
+            var meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-9.css"/>' +
                             '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
                             '<link rel="shortcut icon" href="http://portrit.s3.amazonaws.com/img/favicon.ico">' +
                             '<link rel="apple-touch-icon" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>' +
@@ -999,7 +999,7 @@ $(document).ready(function(){
         tablet = true;
         
         if (typeof(_gaq) !== "undefined"){
-            var meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/tablet-8.css"/>' +
+            var meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/tablet-9.css"/>' +
                             '<link rel="shortcut icon" href="http://portrit.s3.amazonaws.com/img/favicon.ico">' +
                             '<link rel="apple-touch-icon" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>' +
                             '<link rel="apple-touch-icon-precomposed" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>';
@@ -1902,7 +1902,13 @@ $(document).ready(function(){
                     $('#new_noms_action').bind('click', function(){
                         $('#new_noms_action').unbind('click');
                         stream_view = '';
-                        active_nav_click();
+                        stream_view = 'recent_noms';
+                        clear_canvas(getUrlVars());
+                        attach_main_handlers();
+                        attach_profile_handlers();
+                        main_view();
+                        $('#wall_view').addClass('main_control_active');
+                        $('html, body').scrollTop(0);
                     });
                 }
                 else if (view_active == 'main' && default_view == 'wall' && stream_view == 'recent_noms'){
@@ -4057,7 +4063,7 @@ $(document).ready(function(){
         }
         else if (default_view === 'profile'){
             $('#wall_cont').hide();
-            var wall_html = '<div id="user_profile_cont"><div id="profile_nav_cont" value="albums"><h2>Albums</h2><p id="album_left_arrow" style="display:none;"></p><p id="album_right_arrow"></p></div><div id="user_profile"></div><div id="album_cont" style="display:none;"></div></div>';
+            var wall_html = '<div id="user_profile_cont"><div id="profile_nav_cont" value="albums"><h2>Profile</h2><p id="album_left_arrow" style="display:none;"></p><p id="album_right_arrow"></p></div><div id="album_cont"></div><div id="user_profile" style="display:none;"></div></div>';
             $('#wall_cont').append(wall_html);
             selected_user = 'me';
             get_user_albums('me', 5, render_albums);
@@ -6423,14 +6429,19 @@ $(document).ready(function(){
     
     function render_latest_portrit_photos(data){
         var photo = null;
-        for (var i = 0; i < data.length; i++){
-            photo = data[i].photo;
-            photo_html ='<div class="new_photo_cont" name="' + data[i].name + '" user_id="' + data[i].user_fid + '" album_id="' + data[i].album_id + '" value="' + photo.id + '">' +
-                            '<div class="clip">' +
-                                '<img src="' + photo.picture + '"/>' +
-                            '</div>' +
-                        '</div>';
-            $('#latest_portrit_photos').append(photo_html);
+        if (data.length > 0){
+            for (var i = 0; i < data.length; i++){
+                photo = data[i].photo;
+                photo_html ='<div class="new_photo_cont" name="' + data[i].name + '" user_id="' + data[i].user_fid + '" album_id="' + data[i].album_id + '" value="' + photo.id + '">' +
+                                '<div class="clip">' +
+                                    '<img src="' + photo.picture + '"/>' +
+                                '</div>' +
+                            '</div>';
+                $('#latest_portrit_photos').append(photo_html);
+            }
+        }
+        else{
+            $('#latest_portrit_photos').remove();
         }
     }
     
@@ -6689,8 +6700,7 @@ $(document).ready(function(){
         }
         else{
             var recent_winners_html =   '<div id="recent_winners">' +
-                                            '<h1>Recent Winners</h1>' +
-                                            '<div id="top_stripe"></div>' +
+                                            '<div id="top_stripe">Recent Winners</div>' +
                                             '<div id="main_nom_cont" value="">' +
                                                 '<div id="recent_win_photo_cont">' +
                                                     '<div id="recent_win_photo_wrap">' +
@@ -7971,7 +7981,7 @@ $(document).ready(function(){
             remove_load();
             stream_view = 'recent_noms';
             if (data.recent.length > 0){
-                $('.stream_nav').show();
+                $('#profile_wrap > ul').show();
                 inactive_nom_found = false;
                 render_recent_stream(data.recent);
                 if (!mobile || tablet){
@@ -7992,7 +8002,7 @@ $(document).ready(function(){
                 }
             }
             else{
-                $('.stream_nav').hide();
+                $('#profile_wrap > ul').hide();
                 render_empty_nom_page();
                 if (scroll_to_toggle){
                     pop_scroll_pos();
@@ -8327,7 +8337,7 @@ $(document).ready(function(){
     }
     
     function render_countdown_clock(){
-        if ($('#top_right_cont').children().length == 0){
+        if ($('#countdown_cont').length == 0){
             $('#profile_wrap > ul > .clear').before('<li id="countdown_cont"><div><h1>Time Remaining</h1><p></p><h2 id="time_countdown"></h2></h1></div></li>');
         }
         GetCount();
@@ -11133,10 +11143,10 @@ $(document).ready(function(){
         var album_current_height = $('#album_cont').height();
         var profile_nav_control = $('#profile_nav_cont');
         $(profile_nav_control).attr('value', 'trophies');
-        $('h2', profile_nav_control).text('Profile');
+        $('h2', profile_nav_control).text('Albums');
         $('#album_right_arrow').hide();
         $('#album_left_arrow').show();
-        $('#album_cont').show();
+        $('#user_profile').show();
         $('#user_profile_cont').css({
             'min-height': album_current_height
         });
@@ -11185,7 +11195,7 @@ $(document).ready(function(){
     function transition_album_view(instant){
         var profile_nav_control = $('#profile_nav_cont');
         $(profile_nav_control).attr('value', 'albums');
-        $('h2', profile_nav_control).text('Albums');
+        $('h2', profile_nav_control).text('Profile');
         $('#album_right_arrow').show();
         $('#album_left_arrow').hide();
         $('#user_profile_cont').css({
@@ -12145,6 +12155,8 @@ $(document).ready(function(){
                         '</div>';
         
         $('#wall_cont').append(wall_html);
+        
+        render_countdown_clock();
         
         $('.stream_nav').removeClass('selected');
         if (view_to_activate == 'top'){

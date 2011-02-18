@@ -126,6 +126,10 @@ div#wall_cont div#profile_wrap{
     width:              980px;
 }
 
+div#profile_wrap > ul > li#countdown_cont{
+    width:              320px
+}
+
 div#wall_cont div#profile_wrap.hide_tabs{
     width:              980px;
 }

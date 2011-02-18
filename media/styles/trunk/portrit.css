@@ -990,9 +990,6 @@ div#feedback{
         width:              600px;
         border-radius:      10px;
         -moz-border-radius:         10px;
-        -webkit-box-shadow:     rgba(0, 0, 0, 0.496094) 0px 0px 8px 3px;
-        -moz-box-shadow:        0px 0px 8px 3px rgba(0, 0, 0, 0.5);
-        box-shadow:     rgba(0, 0, 0, 0.496094) 0px 0px 8px 3px;
     }
     
     div#feedback_cont h2{
@@ -1846,9 +1843,6 @@ div#nom_detail_cont{
         border-top-right-radius:    10px;
         -moz-border-radius-topleft:         10px;
         -moz-border-radius-topright:        10px;
-        -moz-box-shadow:        0 3px 3px rgba(0, 0, 0, 0.5);
-        -webkit-box-shadow:     rgba(0, 0, 0, 0.496094) 0px 3px 3px;
-        box-shadow:     rgba(0, 0, 0, 0.496094) 0px 3px 3px;
     }
     
         div#main_nom_cont_left{
@@ -2132,9 +2126,6 @@ div#nom_detail_cont{
         border-bottom-left-radius:     10px;
         -moz-border-radius-bottomright:        10px;
         -moz-border-radius-bottomleft:         10px;
-        -moz-box-shadow:        0 -3px 3px rgba(0, 0, 0, 0.5);
-        -webkit-box-shadow:     rgba(0, 0, 0, 0.496094) 0px -3px 3px;
-        box-shadow:     rgba(0, 0, 0, 0.496094) 0px -3px 3px;
     }
     
         div#nom_comments_cont{
@@ -3088,9 +3079,6 @@ div#profile_cont{
                 overflow-x:         hidden;
                 position:           relative;
                 z-index:            1;
-                -webkit-box-shadow: inset rgba(0, 0, 0, 0.496094) 5px 3px 3px -3px, rgba(0, 0, 0, 0.496094) 0px 6px 3px -3px;
-                -moz-box-shadow:    inset 5px 3px 3px -3px rgba(0, 0, 0, 0.5), 0 6px 3px -3px rgba(0, 0, 0, 0.5);
-                box-shadow:         inset rgba(0, 0, 0, 0.496094) 5px 3px 3px -3px, rgba(0, 0, 0, 0.496094) 0px 6px 3px -3px
             }
             
                 .nom_cat_stream_cont .nom_photo_thumbnail{
@@ -3643,6 +3631,9 @@ div#user_profile_cont{
         background-color:       #222;
         color:                  #333;
         margin:                 0 auto;
+        position:               absolute;
+        right:                  -960px;
+        top:                    0px;
         width:                  960px;
         text-align:             left;
         -moz-border-radius:     15px;
@@ -3791,10 +3782,7 @@ div#user_profile_cont{
             
 
     div#user_profile_cont #album_cont{
-        position:               absolute;
-        right:                  -960px;
-        top:                    0px;
-        width:                  960px;
+
     }
     
     div#user_profile_cont #trophy_cont{
@@ -4001,8 +3989,6 @@ div#context_overlay{
         box-shadow:     rgba(0, 0, 0, 0.496094) 0px 0px 8px 3px;
         border-radius:  10px;
         -moz-border-radius:     10px;
-        -webkit-box-shadow:     rgba(0, 0, 0, 0.496094) 0px 0px 8px 3px;
-        -moz-box-shadow:        0px 0px 8px 3px rgba(0, 0, 0, 0.5);
     }
     
         div#context_overlay_cont.nominate_photo{
@@ -4300,9 +4286,6 @@ div#context_overlay{
     border-top-left-radius:     10px;
     -moz-border-radius-topleft:         10px;
     -moz-border-radius-topright:        10px;
-    -webkit-box-shadow: inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -4px;
-    -moz-box-shadow:    inset 0px -5px 3px -5px rgba(0, 0, 0, 0.5);
-    box-shadow:         inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -4px;
 }
 
     .stream_nav:hover{
@@ -4318,9 +4301,6 @@ div#context_overlay{
     border-top-left-radius:     10px;
     -moz-border-radius-topleft:         10px;
     -moz-border-radius-topright:        10px;
-    -webkit-box-shadow: none;
-    -moz-box-shadow:    none;
-    box-shadow:         none;
 }
     
 div#wall_cont div#profile_wrap{
@@ -4334,73 +4314,6 @@ div#wall_cont div#profile_wrap{
     border-radius:  10px;
     -moz-border-radius:     10px;
 }
-
-    div#tab_nav{
-        position:           absolute;
-        right:              -160px;
-        top:                179px;
-        z-index:            0;
-        -webkit-transform: rotate(90deg);
-        -moz-transform: rotate(90deg);
-        filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
-    }
-
-    div#activate_recent_winners{
-        background-color:   white;
-        color:              #444;
-        cursor:             pointer;
-        float:              left;
-        font-size:          16px;
-        font-weight:        bold;
-        margin-right:       5px;
-        padding-top:        10px;
-        text-align:         center;
-        height:             25px;
-        width:              140px;
-        border-top-left-radius:     5px;
-        border-top-right-radius:    5px;
-        -moz-border-radius-topright:        5px;
-        -moz-border-radius-topleft:         5px;
-        -webkit-box-shadow: inset rgba(0, 0, 0, 0.496094) 0px -2px 3px 0px;
-        -moz-box-shadow:    inset 0px -2px 3px 0px rgba(0, 0, 0, 0.5);
-        box-shadow:         inset rgba(0, 0, 0, 0.496094) 0px -2px 3px 0px;
-    }
-        
-        div#activate_recent_winners:hover{
-            background-color:       #bebebe;
-        }
-    
-    div#activate_recent_winners.selected{
-        background-color:       #bebebe;
-    }
-
-    div#activate_latest_photos{
-        background-color:   white;
-        color:              #444;
-        cursor:             pointer;
-        float:              left;
-        font-size:          16px;
-        font-weight:        bold;
-        padding-top:        10px;
-        text-align:         center;
-        height:             25px;
-        width:              140px;
-        border-top-left-radius:     5px;
-        border-top-right-radius:    5px;
-        -moz-border-radius-topright:        5px;
-        -moz-border-radius-topleft:         5px;
-        -webkit-box-shadow: inset rgba(0, 0, 0, 0.496094) 0px -2px 3px 0px;
-        -moz-box-shadow:    inset 0px -2px 3px 0px rgba(0, 0, 0, 0.5);
-        box-shadow:         inset rgba(0, 0, 0, 0.496094) 0px -2px 3px 0px;
-    }
-    
-        div#activate_latest_photos:hover{
-            background-color:       #bebebe;
-        }
-        
-    div#activate_latest_photos.selected{
-        background-color:       #bebebe;
-    }
 
     div#active_stream_text_cont{
         float:              right;
@@ -4471,9 +4384,6 @@ div#wall_cont div#profile_wrap{
             border-top-left-radius:     5px;
             -moz-border-radius-topleft:         5px;
             -moz-border-radius-topright:        5px;
-            -webkit-box-shadow: inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -4px;
-            -moz-box-shadow:    inset 0px -5px 3px -4px rgba(0, 0, 0, 0.5);
-            box-shadow:         inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -4px;
         }
         
             div#profile_wrap > ul > li{
@@ -4485,19 +4395,17 @@ div#wall_cont div#profile_wrap{
             div#profile_wrap > ul > li#show_upload{
                 background-color:   #e15e32;
                 color:              white;
-                float:              left;
+                float:              right;
                 font-size:          18px;
-                font-weight:        normal;
-                margin-left:        100px;
+                font-weight:        bold;
+                margin-right:       310px;
                 position:           relative;
                 padding:            10px 20px;
                 border-top-right-radius: 10px;
                 border-top-left-radius: 10px;
                 -moz-border-radius-topleft: 10px;
                 -moz-border-radius-topright: 10px;
-                -webkit-box-shadow: inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -4px;
-                -moz-box-shadow: inset 0px -5px 3px -4px rgba(0, 0, 0, 0.5);
-                box-shadow: inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -4px;
+                text-shadow:        0 -1px 1px rgba(0, 0, 0, 0.25);
             }
             
             div#profile_wrap > ul > li#countdown_cont{
@@ -4513,9 +4421,6 @@ div#wall_cont div#profile_wrap{
                 margin:             0px;
                 border-top-right-radius:        5px;
                 -moz-border-radius-topright:    5px;
-                -webkit-box-shadow: inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -4px;
-                -moz-box-shadow: inset 0px -5px 3px -4px rgba(0, 0, 0, 0.5);
-                box-shadow: inset rgba(0, 0, 0, 0.496094) 0px -5px 3px -4px;
             }
             
                 #countdown_cont > div{
