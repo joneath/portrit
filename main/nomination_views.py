@@ -788,7 +788,7 @@ def get_user_album_nom_data(request):
             user = FB_User.objects.get(fid=user_id)
             fb_user_id = [user.fid]
             winning_nominations = Nomination.objects.select_related().filter(Q(nominatee=user) | Q(tagged_friends__fid__in=fb_user_id), won=True).order_by('-created_date')
-            active_nominations = Nomination.objects.select_related().filter(nominatee=user, won=False, active=True).order_by('-current_vote_count')
+            active_nominations = Nomination.objects.select_related().filter(Q(nominatee=user) | Q(tagged_friends__fid__in=fb_user_id), won=False, active=True).order_by('-current_vote_count')
             try:
                 portrit_user = user.get_portrit_user()
                 portrit_album = portrit_user.get_portrit_album()
