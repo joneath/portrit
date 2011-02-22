@@ -1509,7 +1509,7 @@ div#initial_tut_cont{
     
         .trophy_img.large.artsy{
             background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
-            background-position:    -16px -84px;
+            background-position:    -20px -84px;
         }
         .trophy_img.large.wtf{
             background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
@@ -3808,36 +3808,30 @@ div#user_profile_cont{
             
 
     div#user_profile_cont #album_cont{
-
+        margin-top:             0px;
     }
     
     div#user_profile_cont #trophy_cont{
         margin-top:             0px;
     }
     
+#portrit_trophies_cont{
+    border-bottom:      1px solid #dedede;
+    margin-bottom:      5px;
+}
+    
 #portrit_photo_cont{
-    background-color:   #111;
+    border-bottom:      1px solid #dedede;
     margin:             0px auto;
-    margin-top:         5px;
-    margin-bottom:      10px;
-    margin-right:       10px;
-    margin-left:        10px;
+    margin-bottom:      5px;
     max-width:          1100px;
-    padding-top:        10px;
     position:           relative;
-    border-radius:      10px;
-    -moz-border-radius: 10px;
 }
 
     #portrit_photo_cont a{
-        color:              #99CB6E;
         position:           absolute;
         bottom:             10px;
         right:              10px;
-    }
-    
-    #portrit_photo_cont a:hover{
-        text-decoration:    underline;
     }
 
     #portrit_photo_cont h1{
@@ -3859,7 +3853,7 @@ div#user_profile_cont{
     }
     
         #portrit_photo_cont .portrit_photo img{
-            border:             solid 5px white;
+            border:             solid 3px #bebebe;
         }
     
 #album_link_loader{
@@ -4303,9 +4297,11 @@ div#context_overlay{
 .stream_nav{
     background-color:   #cecece;
     color:              #333;
+    cursor:             pointer;
     float:              left;
     font-size:          18px;
     font-weight:        normal;
+    list-style:         none;
     position:           relative;
     padding:            10px 20px;
     border-top-right-radius:    10px;
@@ -4327,6 +4323,18 @@ div#context_overlay{
     border-top-left-radius:     10px;
     -moz-border-radius-topleft:         10px;
     -moz-border-radius-topright:        10px;
+}
+
+.stream_nav #active_nom_count{
+    position:           absolute;
+    top:                -10px;
+    right:              -10px;
+    background-color:   #689AC9;
+    color:              white;
+    font-weight:        bold;
+    padding:            5px 10px;
+    border-radius:      20px;
+    -moz-border-radius: 20px;
 }
     
 div#wall_cont div#profile_wrap{
@@ -4419,11 +4427,10 @@ div#wall_cont div#profile_wrap{
             }
             
             div#profile_wrap > ul > li#show_upload{
-                background-color:   #e15e32;
+                background-color:   #E95C41;
                 color:              white;
                 float:              right;
                 font-size:          18px;
-                font-weight:        bold;
                 margin-right:       310px;
                 position:           relative;
                 padding:            10px 20px;
@@ -4431,7 +4438,6 @@ div#wall_cont div#profile_wrap{
                 border-top-left-radius: 10px;
                 -moz-border-radius-topleft: 10px;
                 -moz-border-radius-topright: 10px;
-                text-shadow:        0 -1px 1px rgba(0, 0, 0, 0.25);
             }
             
             div#profile_wrap > ul > li#countdown_cont{
@@ -4439,6 +4445,7 @@ div#wall_cont div#profile_wrap{
                 height:             100%;
                 background-color:   #444;
                 color:              white;
+                cursor:             default;
                 font-size:          20px;
                 text-align:         center;
                 position:           absolute;
@@ -4506,7 +4513,6 @@ div#latest_photos{
         height:             50px;
         line-height:        50px;
         color:              white;
-        text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
     }
     
     #latest_photos h2{
@@ -4569,7 +4575,7 @@ div#latest_photos{
             padding:            15px 70px 19px;
         }
         
-    #recent_left_cont #inactive_nom_cont{
+    #inactive_nom_cont{
         height:                 60px;
     }
     
@@ -4595,8 +4601,13 @@ div#latest_photos{
         margin:             15px 25px;
         position:           relative;
         text-align:         center;
-        border-radius:  15px;
-        -moz-border-radius:     15px;
+        border-radius:      15px;
+        -moz-border-radius: 15px;
+    }
+    
+    #top_right_cont > h2{
+        text-align:         center;
+        color:              white;
     }
     
     #top_right_cont #time_countdown{
@@ -4746,7 +4757,6 @@ div#latest_photos{
                 width:              45px;
                 border-radius:      5px;
                 -moz-border-radius:     5px;
-                text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
             }
             
             .top_friend h2{
@@ -4806,8 +4816,6 @@ div#latest_photos{
             font-size:              16px;
             margin-top:             7px;
             margin-right:           10px;
-            text-shadow:            0 -1px 1px rgba(0, 0, 0, 0.25);
-            font-weight:            bold;
         }
         
             .recent_nom_top_cont h3 > span.strong{
@@ -4833,7 +4841,6 @@ div#latest_photos{
             font-weight:            bold;
             margin-left:            10px;
             margin-top:             15px;
-            text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
         }
         
         .recent_nom_top_cont a{
@@ -4920,16 +4927,13 @@ div#latest_photos{
                 cursor:             pointer;
                 padding:            12px;
                 font-size:          20px;
-                font-weight:        bold;
-                opacity:            .85;
                 position:           absolute;
-                text-shadow:        0 -1px 1px rgba(0,0,0,0.25);
                 width:              155px;
                 z-index:            1;
             }
             
                 .recent_nom_vote_count .reactivate_nom:hover{
-                    opacity:            1;
+                    background:         #E95C41;
                 }
         
             .recent_nom_vote_count .trophy_img{
@@ -5025,14 +5029,13 @@ div#latest_photos{
         font-weight:            bold;
         padding-left:           20px;
         line-height:            50px;
-        text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
     }
     
     #recent_winners #main_nom_cont{
         display:            block;
         height:             300px;
         margin:             0 auto;
-        width:              840px;
+        width:              920px;
         -webkit-box-shadow: none;
         -moz-box-shadow:    none;
         box-shadow:         none;
@@ -5042,7 +5045,7 @@ div#latest_photos{
             background-color:   black;
             float:              left;
             height:             300px;
-            width:              420px;
+            width:              500px;
             position:           relative;
         }
         
@@ -5051,7 +5054,7 @@ div#latest_photos{
                 text-align:         center;
                 vertical-align:     middle;
                 height:             300px;
-                width:              420px;
+                width:              500px;
             }
             
                 #recent_win_photo_cont #recent_win_photo_wrap h2{
@@ -5061,7 +5064,7 @@ div#latest_photos{
         
             #recent_win_photo_cont #recent_win_photo{
                 max-height:         300px;
-                max-width:          420px;
+                max-width:          500px;
             }
             
             #recent_win_photo_cont #nominator_overlay_cont{
@@ -5071,7 +5074,7 @@ div#latest_photos{
                 overflow:           hidden;
                 position:           absolute;
                 text-align:         left;
-                width:              420px;
+                width:              500px;
             }
         
         #main_nom_cont #recent_win_right_cont{
@@ -5122,13 +5125,11 @@ div#latest_photos{
                 font-size:          32px;
                 font-weight:        bold;
                 margin-top:         40px;
-                text-shadow:        0 -1px 1px rgba(0,0,0,0.25);
             }
             
             #recent_win_right_cont > h3{
                 font-size:          22px;
                 font-weight:        bold;
-                text-shadow:        0 -1px 1px rgba(0,0,0,0.25);
             }
             
             #recent_win_right_cont .trophy_img{
@@ -5251,22 +5252,60 @@ div#user_peek_cont{
     }
     
 div#album_wrap{
-    margin: 0px auto;
-    max-width: 1200px;
+    margin:                 0px auto;
+    width:                  960px;
 }
 
 div#album_cont div#active_cont{
-    background-color:       #444;
     margin:                 0px auto;
-    margin-top:             5px;
-    margin-bottom:          10px;
-    margin-right:           10px;
-    margin-left:            10px;
-    max-width:              1100px;
-    padding-top:            10px;
-    border-radius:  10px;
-    -moz-border-radius:     10px;
+    position:               relative;
+    z-index:                1;
+    border-bottom-right-radius:     8px;
+    -moz-border-radius-bottomright: 8px;
 }
+
+    div#album_cont div#active_cont.stream{
+        background-color:       white;
+        padding-top:            10px;
+    }
+    
+    div#album_cont div#active_cont.photos{
+        background-color:       white;
+        color:                  #333;
+        padding-top:            10px;
+        padding-bottom:         30px;
+    }
+
+    div#album_cont div#active_cont .recent_nom_cont{
+        margin:                 0 auto;
+        padding-bottom:         15px;
+        width:                  740px;
+    }
+    
+        div#active_cont #load_more_noms_cont{
+            padding-bottom:     20px;
+            text-align:         center;
+        }
+    
+        div#active_cont .recent_nom_cont .recent_nom_photo_left_cont{
+            width:                  561px;
+        }
+    
+            div#active_cont .recent_nom_photo_left_cont .recent_nom_photo_left_wrap{
+                width:              561px;
+            }
+            
+            div#active_cont .recent_nom_photo_left_wrap img{
+                max-width:          561px;
+            }
+            
+            div#active_cont div.recent_nom_photo_left_cont div#nominator_overlay_cont{
+                width:              561px;
+            }
+            
+            div#active_cont .recent_nom_cont .recent_nom_comment_cont{
+                width:              740px;
+            }
 
     div#album_cont div#active_cont #loader{
         padding-top:            0px;
@@ -5353,15 +5392,14 @@ div#album_cont div#trophy_cont{
         padding-top:            0px;
     }
 
-    div#album_cont div#trophy_cont > h1, div#album_cont div#active_cont > h1, #portrit_photo_cont > h1{
+    div#album_cont div#active_cont.photos h1{
         font-size:          24px;
         font-weight:        bold;
-        padding-bottom:     10px;
         margin-left:        10px;
         text-align:         left;
     }
     
-    div#album_cont div#trophy_cont > h2, div#album_cont div#active_cont > h2{
+    div#album_cont div#active_cont > h2{
         font-size:          18px;
         font-weight:        bold;
         padding-bottom:     10px;
@@ -5371,28 +5409,23 @@ div#album_cont div#trophy_cont{
         margin-left:        20px;
     }
     
-    div#trophy_cont .trophy_album{
+    div#active_cont .trophy_album{
         cursor:             pointer;
         display:            inline-block;
         position:           relative;
-        width:              175px;
-        margin:             40px 40px 50px 40px;
+        width:              150px;
+        margin:             40px;
     }
-    
-        div#trophy_cont .img_thumbs{
-            display:            block;
-            position:           relative;
-            height:             175px;
-        }
         
         .trophy_album .trophy_count{
+            color:              white;
             font-size:          18px;
             font-weight:        bold;
             line-height:        40px;
             height:             40px;
             width:              40px;
             position:           absolute;
-            right:              30px;
+            right:              -13px;
             bottom:             15px;
             z-index:            100001;
         	text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
@@ -5400,29 +5433,142 @@ div#album_cont div#trophy_cont{
             -moz-border-radius:     40px;
         }
         
-        div#trophy_cont div.album_title{
+/*        div#trophy_cont div.album_title{
             font-size:          18px;
-        }
+        }*/
         
-        div#trophy_cont .trophy_img{
+        div#active_cont.photos .trophy_img{
             position:           absolute;
             bottom:             0px;
-            right:              0px;
+            right:              -45px;
             z-index:            99;
         }
     
 div#album_cont{
-    max-width:          1100px;
+    background-color:   #333;
     margin:             0 auto;
     margin-bottom:      30px;
+    margin-top:         10px;
     position:           relative;
+    border-radius:      10px;
+    -moz-border-radius: 10px;
 }
 
+    div#album_cont #user_profile_left_cont{
+        color:                  white;
+        float:                  left;
+        padding:                10px;
+        text-align:             left;
+        width:                  180px;
+    }
+    
+        #user_profile_left_cont > h2{
+            font-size:              36px;
+            height:                 50px;
+        }
+        
+        #user_profile_left_cont h3{
+            font-size:              24px;
+            margin:                 5px 0px;
+        }
+    
+        #user_profile_left_cont #large_profile_img{
+            max-width:              180px;
+        }
+        
+        #user_profile_left_cont .trophy_count{
+            cursor:                 pointer;
+            margin:                 5px 0px;
+            opacity:                0.95;
+            position:               relative;
+            border-radius:          5px;
+            -moz-border-radius:     5px;
+        }
+        
+        #user_profile_left_cont .trophy_count:hover{
+            opacity:                1;
+        }
+        
+            #user_profile_left_cont .trophy_count > p{
+                color:                  white;
+                float:                  left;
+                font-size:              17px;
+                font-weight:            bold;
+                margin:                 10px 0px;
+                margin-left:            8px;
+                padding:                5px;
+                width:                  130px;
+                border-radius:          5px;
+                -moz-border-radius:     5px;
+                text-shadow:            0 -1px 1px rgba(0, 0, 0, 0.25);
+            }
+            
+            #user_profile_left_cont .trophy_count > .trophy_img{
+                position:               absolute;
+                right:                  0px;
+                bottom:                 0px;
+            }
+
+    div#album_cont #user_profile_right_cont{
+        background-color:       #333;
+        float:                  left;
+        position:               relative;
+        width:                  760px;
+        border-top-right-radius:        8px;
+        border-bottom-right-radius:     8px;
+        -moz-border-radius-topright:    8px;
+        -moz-border-radius-bottomright: 8px;
+    }
+    
+        div#album_cont #user_profile_right_cont > ul{
+            height:                 40px;
+            list-style:             none;
+            margin-top:             10px;
+            position:               relative;
+            z-index:                0;
+        }
+    
+        #user_profile_right_cont li{
+            margin-left:            10px;
+        }
+        
+        div#user_profile_right_cont > ul > li#show_upload{
+            background-color:   #E95C41;
+            color:              white;
+            cursor:             pointer;
+            float:              right;
+            font-size:          18px;
+            margin-right:       10px;
+            position:           relative;
+            padding:            10px 20px;
+            border-top-right-radius: 10px;
+            border-top-left-radius: 10px;
+            -moz-border-radius-topleft: 10px;
+            -moz-border-radius-topright: 10px;
+        }
+        
+        div#user_profile_right_cont > ul > li#show_upload:hover{
+            background-color:   #cd491d;
+        }
+        
+        #user_profile_right_cont #first_profile_nav{
+            margin-left:            0px;
+        }
+    
+        #user_profile_right_cont #user_profile_name{
+            color:                  white;
+            font-size:              38px;
+            margin:                 5px 0px;
+        }
+
     #load_more_fb_albums, #hide_more_fb_albums{
+        margin-bottom:      10px;
+        margin-right:       10px;
         position:           absolute;
-        bottom:             -20px;
-        right:              20px;
+        bottom:             0;
+        right:              0;
         width:              90px;
+        z-index:            10000;
     }
     
     #user_profile_cont #load_more_fb_albums, #hide_more_fb_albums{
@@ -5439,21 +5585,22 @@ div#album_cont{
 
     div#album_cont div.album_title{
         font-size:          16px;
-        background-color:   #444;
+        background-color:   #333;
+        color:              white;
         padding:            5px 10px;
         width:              130px;
         position:           absolute;
         top:                135px;
         font-weight:        bold;
-        border-radius:  10px;
-        -moz-border-radius:     10px;
+        border-radius:      5px;
+        -moz-border-radius: 5px;
         z-index:            1001;
     }
 
     h2.alert_title{
         font-weight:        bold;
         font-size:          1.5em;
-        padding-top:         100px;
+        padding-top:        100px;
         vertical-align:     center;
     }
 
@@ -5461,7 +5608,7 @@ div#album_cont{
         display:            inline-block;
         position:           relative;
         width:              135px;
-        margin:             65px 55px;
+        margin:             55px 25px;
     }
     
     div.photo_album:hover{
@@ -5478,10 +5625,11 @@ div#album_cont{
         display:            block;
         position:           relative;
         height:             130px;
+        left:               10px;
     }
     
         .img_thumbs > img{
-            border:                 solid 5px #ffffff;
+            border:                 3px solid #BEBEBE;
             position:               absolute;
             left:                   0px;
             -webkit-transition:     -webkit-transform .35s ease-out;
@@ -5489,22 +5637,26 @@ div#album_cont{
         }
    
         .img_thumb_0{
-            -webkit-transform:      rotate(30deg);
-            -moz-transform:         translate(-15px, 15px);
+/*            -webkit-transform:      rotate(30deg);*/
+            -webkit-transform:      translate(0px, 0px);
+            -moz-transform:         translate(0px, 0px);
         }
         
         .img_thumb_1{
-            -webkit-transform:      rotate(-30deg);
-            -moz-transform:         translate(10px, 10px);
+/*            -webkit-transform:      rotate(-30deg);*/
+            -webkit-transform:      translate(15px, 30px);
+            -moz-transform:         translate(15px, 30px);
         }
        
         .img_thumb_2{
-            -webkit-transform:      rotate(15deg);
-            -moz-transform:         translate(-10px, -15px);
+/*            -webkit-transform:      rotate(15deg);*/
+            -webkit-transform:      translate(-20px, 20px);
+            -moz-transform:         translate(-20px, 20px);
         }
        
         .img_thumb_3{
-            -webkit-transform:      rotate(-15deg);
+/*            -webkit-transform:      rotate(-15deg);*/
+            -webkit-transform:      translate(10px, -10px);
             -moz-transform:         translate(10px, -10px);
         }
         
@@ -6005,8 +6157,8 @@ div#photo_cont{
             border-bottom:      1px solid #dedede;
             color:              #333;
             font-family:        'lucida grande', tahoma, verdana, arial, sans-serif;
-            margin:             10px 0px;
-            padding-bottom:     10px;
+            margin:             5px 0px;
+            padding-bottom:     5px;
             min-height:         50px;
             overflow-x:         hidden;
             text-align:         left;

@@ -32,7 +32,7 @@ def get_trophy_wins(request):
             if user_id:
                 user = FB_User.objects.get(fid=user_id)
                 fb_user_id = [user.fid]
-                winning_noms = Nomination.objects.select_related().filter(Q(nominatee=user) | Q(tagged_friends__fid__in=fb_user_id), won=True, nomination_category__name=cat).order_by('-current_vote_count', '-created_date')
+                winning_noms = Nomination.objects.select_related().filter(Q(nominatee=user) | Q(tagged_friends__fid__in=fb_user_id), won=True, nomination_category__name=cat).distinct('id').order_by('-current_vote_count', '-created_date')
             else:
                 user = FB_User.objects.get(fid=int(cookie["uid"]))
                 friends = user.friends.all()
@@ -164,7 +164,7 @@ def get_users_active_noms(request):
         fid = request.GET.get('id')
         fb_user = FB_User.objects.get(fid=int(fid))
         fb_user_id = [fb_user.fid]
-        active_noms = Nomination.objects.select_related().filter(Q(nominatee=fb_user) | Q(tagged_friends__fid__in=fb_user_id), active=True, won=False).order_by('-current_vote_count')
+        active_noms = Nomination.objects.select_related().filter(Q(nominatee=fb_user) | Q(tagged_friends__fid__in=fb_user_id), active=True, won=False).distinct('id').order_by('-created_date')
         data = serialize_noms(active_noms)
         
     data = simplejson.dumps(data) 
@@ -475,8 +475,9 @@ def nominate_photo(request):
                     notification.save()
                     
                     try:
-                        portrit_user = Portrit_User.objects.get(fb_user=owner_fb_user)
-                        portrit_user.notifications.add(notification)
+                        if owner_fb_user.fid != fb_user.fid:
+                            portrit_user = Portrit_User.objects.get(fb_user=owner_fb_user)
+                            portrit_user.notifications.add(notification)
                     except:
                         pass
                     
@@ -509,7 +510,7 @@ def nominate_photo(request):
                         'vote_count': nomination.current_vote_count,
                         'votes': [{
                             'vote_user': fb_user.fid,
-                            'vote_name': fb_user.get_name(), #Portrit_User.objects.get(fb_user=fb_user).name,
+                            'vote_name': fb_user.get_name(),
                         },],
                         'notification_id': notification.id,
                     })
@@ -709,7 +710,7 @@ def reactivate_nom(request):
                     'vote_count': nomination.current_vote_count,
                     'votes': [{
                         'vote_user': owner.fid,
-                        'vote_name': owner.get_name(), #Portrit_User.objects.get(fb_user=fb_user).name,
+                        'vote_name': owner.get_name(),
                     },],
                     'tagged_users': nomination.get_tagged_users(),
                     'notification_id': notification.id,
@@ -787,8 +788,16 @@ def get_user_album_nom_data(request):
             owner = FB_User.objects.get(fid=int(cookie["uid"]))
             user = FB_User.objects.get(fid=user_id)
             fb_user_id = [user.fid]
-            winning_nominations = Nomination.objects.select_related().filter(Q(nominatee=user) | Q(tagged_friends__fid__in=fb_user_id), won=True).order_by('-created_date')
-            active_nominations = Nomination.objects.select_related().filter(Q(nominatee=user) | Q(tagged_friends__fid__in=fb_user_id), won=False, active=True).order_by('-current_vote_count')
+            winning_nominations = Nomination.objects.select_related().filter(Q(nominatee=user) | Q(tagged_friends__fid__in=fb_user_id), won=True).distinct('id').order_by('-created_date')
+            active_nominations = Nomination.objects.select_related().filter(Q(nominatee=user) | Q(tagged_friends__fid__in=fb_user_id), won=False, active=True).distinct('id').order_by('-created_date')
+            
+            active_noms_count = active_nominations.all().count()
+            active_nom_target = 10
+            if active_nominations.all().count() < active_nom_target:
+                active_nom_diff = active_nom_target - active_noms_count
+                inactive_noms = Nomination.objects.select_related().filter(Q(nominatee=user) | Q(tagged_friends__fid__in=fb_user_id), won=False, active=False).distinct('id').order_by('-created_date')[:active_nom_diff]
+                active_nominations = active_nominations | inactive_noms
+            
             try:
                 portrit_user = user.get_portrit_user()
                 portrit_album = portrit_user.get_portrit_album()
@@ -802,25 +811,9 @@ def get_user_album_nom_data(request):
                 portrit_album_data = { }
             winning_nom_objs = [ ]
             active_nom_objs = [ ]
-        
-            for nom in winning_nominations.iterator():
-                try:
-                    winning_nom_objs.append({'id': nom.id, 
-                                            'vote_count': nom.current_vote_count,
-                                            'nomination_category': nom.nomination_category.name,
-                                            'photo': nom.get_photo()})
-                except:
-                    pass
             
-            for nom in active_nominations.iterator():
-                try:
-                    active_nom_objs.append({'id': nom.id, 
-                                            'vote_count': nom.current_vote_count,
-                                            'comment_count': nom.get_comment_count(),
-                                            'nomination_category': nom.nomination_category.name,
-                                            'photo': nom.get_photo()})
-                except:
-                    pass
+            winning_nom_objs = serialize_noms(winning_nominations)
+            active_nom_objs = serialize_noms(active_nominations)
             
             data = {
                 'winning_nom_objs': winning_nom_objs,
@@ -1125,6 +1118,7 @@ def serialize_noms(noms):
         data.append({
             'id': nom.id,
             'active': nom.active,
+            'created_time': time.mktime(nom.created_date.utctimetuple()),
             'nomination_category': nom.nomination_category.name,
             'nominator': nom.nominator.fid,
             'nominator_name': nom.nominator.get_name(),
@@ -1135,6 +1129,7 @@ def serialize_noms(noms):
             'photo': nom.get_photo(),
             'caption': nom.caption,
             'comments': False,
+            'quick_comments': nom.get_quick_comments(),
             'comment_count': comment_count,
             'vote_count': nom.current_vote_count,
             'votes': votes,

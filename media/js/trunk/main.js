@@ -24,6 +24,8 @@ $(document).ready(function(){
             default_view = 'wall';
             update_urls();
         }
+        $('.stream_nav').removeClass('selected');
+        $('#active_stream_view').addClass('selected');
     });
     
     //Settings controller
@@ -960,7 +962,7 @@ $(document).ready(function(){
         close_size = 'mobile'
         
         if (typeof(_gaq) !== "undefined"){
-            var meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-10.css"/>' +
+            var meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-11.css"/>' +
                             '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
                             '<link rel="shortcut icon" href="http://portrit.s3.amazonaws.com/img/favicon.ico">' +
                             '<link rel="apple-touch-icon" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>' +
@@ -999,7 +1001,7 @@ $(document).ready(function(){
         tablet = true;
         
         if (typeof(_gaq) !== "undefined"){
-            var meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/tablet-10.css"/>' +
+            var meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/tablet-11.css"/>' +
                             '<link rel="shortcut icon" href="http://portrit.s3.amazonaws.com/img/favicon.ico">' +
                             '<link rel="apple-touch-icon" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>' +
                             '<link rel="apple-touch-icon-precomposed" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>';
@@ -3511,6 +3513,7 @@ $(document).ready(function(){
             if (friend_array[i].name === value){
                 selected_user = get_friend_id_by_name(value);
                 $('#profile_cont').html('');
+                $('#album_wrap').html('');
                 user_profile = null;
                 user_likes = null;
                 user_movies = null;
@@ -3803,12 +3806,12 @@ $(document).ready(function(){
             }
             if (function_ptr !== undefined){
                 if (timeout === true){
-                    setTimeout(function_ptr, time);
                     get_user_noms();
+                    setTimeout(function_ptr, time);
                 }
                 else{
-                    function_ptr(hidden);
                     get_user_noms();
+                    function_ptr(hidden);
                 }
             }
         }
@@ -3881,6 +3884,9 @@ $(document).ready(function(){
             else{
                 window.location.hash = '#/';
             }
+        }
+        else{
+            $('#active_stream_view').click();
         }
     }
     
@@ -4064,12 +4070,43 @@ $(document).ready(function(){
         }
         else if (default_view === 'profile'){
             $('#wall_cont').hide();
-            var wall_html = '<div id="user_profile_cont"><div id="profile_nav_cont" value="albums"><h2>Profile</h2><p id="album_left_arrow" style="display:none;"></p><p id="album_right_arrow"></p></div><div id="album_cont"></div><div id="user_profile" style="display:none;"></div></div>';
+            var wall_html = '<div id="user_profile_cont">' +
+                                '<div id="album_wrap">' +
+                                    '<div id="album_cont">' +
+                                        '<div id="user_profile_left_cont">' +
+                                            '<h2>Profile</h2>' +
+                                            '<img id="large_profile_img" src="http://graph.facebook.com/' + me.id + '/picture?type=large"/>' +
+                                            '<div id="user_profile_trophy_cont">' +
+                                                '<h3>Trophies</h3>' +
+                                                '<div></div>' +
+                                            '</div>' +
+                                        '</div>' +
+                                        '<div id="user_profile_right_cont">' +
+                                            '<ul>' +
+                                                '<li id="first_profile_nav" class="stream_nav selected" name="photos">' +
+                                                    '<h3>Photos</h3>' +
+                                                '</li>' +
+                                                '<li class="stream_nav" name="stream">' +
+                                                    '<h3>Nominations</h3>' +
+                                                '</li>' +
+                                                '<li id="show_upload">' +
+                                                    '<h1>Post Photo</h1>' +
+                                                '</li>' +
+                                                '<div class="clear"></div>' +
+                                            '</ul>' +
+                                            '<div id="active_cont" class="photos">' +
+                                                '<h1>Facebook Albums</h1>' +
+                                            '</div>' +
+                                        '</div>' +
+                                        '<div class="clear"></div>' +
+                                    '</div>' +
+                                '</div>' +
+                            '</div>';
+                                    
             $('#wall_cont').append(wall_html);
             selected_user = 'me';
             get_user_albums('me', 5, render_albums);
-            get_user_videos('me');
-            render_user_profile();
+            // render_user_profile();
             attach_album_handlers();
             attach_user_profile_handlers();
             if (!mobile){
@@ -4854,21 +4891,21 @@ $(document).ready(function(){
         var album_id = null;
         var album = null;
         var top = 0;
-        var album_top = 6;
+        var album_top = 7;
         var album_html = '';
         if (offset == undefined){
             var offset = 0;
         }
-        if (selected_user != 'me'){
-            $('#album_cont').html('<div id="active_cont"><h1>Active Nominations</h1></div><div id="trophy_cont"><h1>Trophy Room</h1></div>');
-        }
-        else{
-            $('#album_cont').html('<div id="trophy_cont"><h1>Trophy Room</h1></div>');
-            
-        }
+        // if (selected_user != 'me'){
+        //     $('#album_cont').html('<div id="active_cont"><h1>Active Nominations</h1></div><div id="trophy_cont"><h1>Trophy Room</h1></div>');
+        // }
+        // else{
+        //     $('#album_cont').html('<div id="trophy_cont"><h1>Trophy Room</h1></div>');
+        //     
+        // }
         // append_load($('#active_cont'), 'dark');
+        
         if (albums.length > 1){
-            $('#album_cont').append('<h1>Facebook Albums</h1>');
             for (var i = offset; i < albums.length; i++){
                 if (albums[i].album.name != 'Portrit Trophies' && albums[i].album.name != 'Portrit Photos'){
                     album_html += '<div class="photo_album" id="' + albums[i].album.id + '" onclick="void(0)"><div class="img_thumbs">';
@@ -4886,22 +4923,27 @@ $(document).ready(function(){
                     }
                     album_html += '</div><div class="album_title">' + albums[i].album.name + '</div></div>'
                 }
+                else{
+                    album_top += 1;
+                }
                 if (i >= album_top){
                     break;
                 }
             }
-            $('#album_cont').append(album_html);
+            $('#active_cont').append(album_html);
             if (i >= album_top){
-                $('#album_cont').append('<a id="load_more_fb_albums" class="sick_abs large red">Load More</a>');
+                $('#active_cont').append('<a id="load_more_fb_albums" class="sick_abs large red">Load More</a><div class="clear"></div>');
             }
         }
         else{
-            $('#album_cont').html('<h2 class="alert_title">I\'m sorry. It seems this friend has their photo\s set to private.</h2>');
+            $('#active_cont').html('<h2 class="alert_title">I\'m sorry. It seems this friend has their photo\s set to private.</h2>');
         }
         
-        if (!mobile){
-            get_user_videos(getUrlVars().user, render_video_album);
-        }
+        remove_load();
+        
+        // if (!mobile){
+        //     get_user_videos(getUrlVars().user, render_video_album);
+        // }
     }
     
     function load_more_fb_albums(album_offset){
@@ -5014,64 +5056,127 @@ $(document).ready(function(){
     function render_winning_photo_noms(data){
         // remove_load();
         if (data.winning_nom_objs.length > 0){
-            var top = 3;
+            if ($('#user_profile_trophy_cont > div').children().length == 0){
+                var cat_underscore = '';
+                // $('#album_cont').prepend('');
+                var nom_cat_map = { };
+                for (var i = 0; i < data.winning_nom_objs.length; i++){
+                    if (nom_cat_map[data.winning_nom_objs[i].nomination_category] == undefined){
+                        nom_cat_map[data.winning_nom_objs[i].nomination_category] = {
+                            'noms': [data.winning_nom_objs[i]]
+                        }
+                    }
+                    else{
+                        nom_cat_map[data.winning_nom_objs[i].nomination_category]['noms'].push(data.winning_nom_objs[i])
+                    }
+                }
+
+                for (var cat in nom_cat_map){
+                    var noms = nom_cat_map[cat]['noms'];
+                    cat_underscore = cat.replace(' ', '_').toLowerCase();
+
+                    if (noms.length < top){
+                        top = noms.length;
+                    }
+
+                    var trophy_count_html = '<div class="trophy_count nom_cat_' + cat_underscore + '" name="' + cat_underscore + '">' +
+                                                '<p>' + noms.length + ' ' + cat + '</p>' +
+                                                '<div class="trophy_img small ' + cat_underscore + '"></div>' +
+                                                '<div class="clear"></div>' +
+                                            '</div>';
+
+                    $('#user_profile_trophy_cont > div').append(trophy_count_html);
+
+                    // album_html = '<div class="trophy_album" name="' + cat + '" onclick="void(0)"><div class="img_thumbs">';
+                    // for (var i = 0; i < top; i++){
+                    //     album_html += '<img class="img_thumb img_thumb_' + i + '"  src="' + noms[i].photo.src_small + '"/>';
+                    // }
+                    // album_html += '</div><div class="trophy_img large ' + cat_underscore + '"></div><div class="trophy_count nom_cat_' + cat_underscore + '">' + noms.length + '</div></div>';
+                    // $('#trophy_cont').append(album_html);
+                }
+                // $('#trophy_cont').fadeIn();   
+            }
+        }
+        else{
+            var name = $('#title > h3').text().split(' ')[0];
+            if ($('#user_profile_trophy_cont > div').children().length == 0){
+                $('#user_profile_trophy_cont > div').append('<p>' + name + ' has not won any trophies.</p>');
+            }
+        }
+    }
+    
+    function render_nomination_count(data){
+        var active_count = 0;
+        for (var i = 0; i < data.length; i++){
+            if (!data[i].active){
+                break;
+            }
+            else{
+                active_count += 1;
+            }
+        }
+        if ($('#active_nom_count').length == 0){
+            $('.stream_nav[name="stream"]').append('<p id="active_nom_count">' + active_count + '</p>')
+        }
+    }
+    
+    function render_winning_photos(data){
+        if (data.length > 0){
+            var top = 4;
+            $('#active_cont').prepend('<div id="portrit_trophies_cont"><h1>Portrit Trophies</h1></div>');
             var cat_underscore = '';
             // $('#album_cont').prepend('');
             var nom_cat_map = { };
-            for (var i = 0; i < data.winning_nom_objs.length; i++){
-                if (nom_cat_map[data.winning_nom_objs[i].nomination_category] == undefined){
-                    nom_cat_map[data.winning_nom_objs[i].nomination_category] = {
-                        'noms': [data.winning_nom_objs[i]]
+            for (var i = 0; i < data.length; i++){
+                if (nom_cat_map[data[i].nomination_category] == undefined){
+                    nom_cat_map[data[i].nomination_category] = {
+                        'noms': [data[i]]
                     }
                 }
                 else{
-                    nom_cat_map[data.winning_nom_objs[i].nomination_category]['noms'].push(data.winning_nom_objs[i])
+                    nom_cat_map[data[i].nomination_category]['noms'].push(data[i])
                 }
             }
             
+            top = 4;
             for (var cat in nom_cat_map){
                 var noms = nom_cat_map[cat]['noms'];
                 cat_underscore = cat.replace(' ', '_').toLowerCase();
-                
+
                 if (noms.length < top){
                     top = noms.length;
                 }
-                
+
                 album_html = '<div class="trophy_album" name="' + cat + '" onclick="void(0)"><div class="img_thumbs">';
                 for (var i = 0; i < top; i++){
                     album_html += '<img class="img_thumb img_thumb_' + i + '"  src="' + noms[i].photo.src_small + '"/>';
                 }
                 album_html += '</div><div class="trophy_img large ' + cat_underscore + '"></div><div class="trophy_count nom_cat_' + cat_underscore + '">' + noms.length + '</div></div>';
-                $('#trophy_cont').append(album_html);
+                $('#portrit_trophies_cont').append(album_html);
             }
-            // $('#trophy_cont').fadeIn();
-        }
-        else{
-            var user = getUrlVars().user;
-            if (user != undefined && user != me.id && user != 'me'){
-                var first_name = friends[user].name.split(' ')[0];
-                $('#trophy_cont').append('<h2>' + first_name + ' has not won any trophies. Help ' + first_name + ' out by nominating a photo.</h2>');
-            }
-            else{
-                $('#trophy_cont').append('<h2>You have not won any trophies. Nominate some of your photos for a chance to earn a trophy.</h2>');
-            }
+            $('#portrit_trophies_cont').append('<div class="clear"></div>');
         }
     }
     
     function render_portrit_photos(data){
-        if (typeof(data.portrit_album_data.photos) !== "undefined" && data.portrit_album_data.photos.length > 0){
+        if (typeof(data.photos) !== "undefined" && data.photos.length > 0){
             var top = 6;
             var portrit_photos_html = '<div id="portrit_photo_cont"><h1>Portrit Photos</h1><div id="portrit_photos">';
-            if (data.portrit_album_data.photos.length < top){
-                top = data.portrit_album_data.photos.length;
+            if (data.photos.length < top){
+                top = data.photos.length;
             }
             for (var i = 0; i < top; i++){
                 portrit_photos_html +=  '<div class="portrit_photo">' +
-                                            '<img src="' + data.portrit_album_data.photos[i].picture + '"/>' +
+                                            '<img src="' + data.photos[i].picture + '" value="' + data.photos[i].id + '"/>' +
                                         '</div>';
             }
-            portrit_photos_html += '<a id="to_portrit_photos">View All</a></div></div>';
-            $('#trophy_cont').after(portrit_photos_html);
+            portrit_photos_html += '<a class="sick_abs large red" id="to_portrit_photos">View All</a></div></div>';
+            if ($('#portrit_trophies_cont').length != 0){
+                $('#portrit_trophies_cont').after(portrit_photos_html);
+            }
+            else{
+                $('#active_cont').prepend(portrit_photos_html);
+            }
         }
     }
     
@@ -5146,27 +5251,44 @@ $(document).ready(function(){
         }
     }
     
+    var selected_user_noms = null;
+    var selected_user_portrit_albums = null;
+    var selected_user_won_noms = null;
     function get_user_noms(){
         var id = getUrlVars().user;
         if (id == 'me' || id == undefined){
             id = me.id;
         }
         if (user_winning_noms_cache[selected_user] == undefined){
-            $('#active_cont').append('<img class="data_loading" src="http://portrit.s3.amazonaws.com/img/album-loader-dark.gif"/>');
-            $('#trophy_cont').append('<img class="data_loading" src="http://portrit.s3.amazonaws.com/img/album-loader-dark.gif"/>');
+            // $('#active_cont').append('<img class="data_loading" src="http://portrit.s3.amazonaws.com/img/ajax-loader-light.gif"/>');
             $.getJSON('/get_user_album_nom_data/', {'user': id}, function(data){
                 $('.data_loading').remove();
                 if (data){
                     user_winning_noms_cache[selected_user] = data;
                     update_user_album_nom_cache(data.winning_nom_objs);
                     update_user_active_nom_cache(data.active_nom_objs);
-                    update_user_albums(data.portrit_album_data);
+                    
+                    selected_user_noms = data.active_nom_objs;
+                    selected_user_portrit_albums = data.portrit_album_data;
+                    selected_user_won_noms = data.winning_nom_objs;
+                    
                     if (view_active == 'album' || (view_active == 'main' && default_view === 'profile')){
-                        render_active_photo_noms(data);
+                        // render_active_photo_noms(data);
+                        if ($('.stream_nav.selected').attr('name') != 'photos'){
+                            inactive_nom_found = false;
+                            render_recent_stream(data.active_nom_objs);
+                        }
+                        else{
+                            render_nomination_count(selected_user_noms);
+                            render_winning_photos(selected_user_won_noms);
+                            render_portrit_photos(selected_user_portrit_albums);
+                            update_user_albums(selected_user_portrit_albums);
+                        }
                         render_winning_photo_noms(data);
-                        render_portrit_photos(data);
+                        // render_portrit_photos(data);
                     }
                     else if (view_active == 'list'){
+                        update_user_albums(selected_user_portrit_albums);
                         if (winning_user_album_cache[selected_album_id] != undefined){
                             render_list_view_trophies(winning_user_album_cache[selected_album_id]);
                         }
@@ -5175,6 +5297,7 @@ $(document).ready(function(){
                         }
                     }
                     else if (view_active == 'gallery'){
+                        update_user_albums(selected_user_portrit_albums);
                         if (winning_user_album_cache[selected_album_id] != undefined){
                             render_list_view_trophies(winning_user_album_cache[selected_album_id]);
                         }
@@ -5182,18 +5305,33 @@ $(document).ready(function(){
                             init_list_view(true);
                             photo_gallery_view();
                         }
-                        
                     }
                 }
             });
         }
         else{
-            update_user_albums(user_winning_noms_cache[selected_user].portrit_album_data);
+            selected_user_noms = user_winning_noms_cache[selected_user].active_nom_objs;
+            selected_user_portrit_albums = user_winning_noms_cache[selected_user].portrit_album_data;
+            selected_user_won_noms = user_winning_noms_cache[selected_user].winning_nom_objs;
+            
             if (view_active == 'album' || (view_active == 'main' && default_view === 'profile')){
                 update_user_album_nom_cache(user_winning_noms_cache[selected_user].winning_nom_objs);
-                render_active_photo_noms(user_winning_noms_cache[selected_user]);
+                // render_active_photo_noms(user_winning_noms_cache[selected_user]);
+                
+                if ($('.stream_nav.selected').attr('name') != 'photos'){
+                    inactive_nom_found = false;
+                    render_recent_stream(user_winning_noms_cache[selected_user].active_nom_objs);
+                }
+                else{
+                    render_nomination_count(selected_user_noms);
+                    render_winning_photos(selected_user_won_noms);
+                    render_portrit_photos(selected_user_portrit_albums);
+                    update_user_albums(selected_user_portrit_albums);
+                }
+                
+                // render_recent_stream(user_winning_noms_cache[selected_user].active_nom_objs);
                 render_winning_photo_noms(user_winning_noms_cache[selected_user]);
-                render_portrit_photos(user_winning_noms_cache[selected_user]);
+                // render_portrit_photos(user_winning_noms_cache[selected_user]);
             }
             else if (view_active == 'list'){
                 if (winning_user_album_cache[selected_album_id] != undefined){
@@ -5256,7 +5394,6 @@ $(document).ready(function(){
         $('#profile_wrap').html('');
         $('#info_wrap').html('');
         $('#album_cont').html('');
-        $('#screen_index').remove();
         album_cont_reset();
         photo_comment_cache = { };
         $('#friend_album_cont').css({'height': '', 'min-height': ''});
@@ -5282,23 +5419,42 @@ $(document).ready(function(){
         $('#photo_cont').html('');
         
         if (friends[id] != undefined){
-            album_html = '<div id="album_wrap"><div id="album_cont"></div></div>';
-            if (!mobile || tablet){
-                $('#title').html('<h3>' + name + '</h3>');
-            }
-            else if (mobile && !tablet){
-                $('#title').html('<h3>' + name + '</h3>');
-            }
+            album_html ='<div id="album_wrap">' +
+                            '<div id="album_cont">' +
+                                '<div id="user_profile_left_cont">' +
+                                    '<h2>Profile</h2>' +
+                                    '<img id="large_profile_img" src="http://graph.facebook.com/' + id + '/picture?type=large"/>' +
+                                    '<div id="user_profile_trophy_cont">' +
+                                        '<h3>Trophies</h3>' +
+                                        '<div></div>' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div id="user_profile_right_cont">' +
+                                    '<ul>' +
+                                        '<li id="first_profile_nav" class="stream_nav selected" name="photos">' +
+                                            '<h3>Photos</h3>' +
+                                        '</li>' +
+                                        '<li class="stream_nav" name="stream">' +
+                                            '<h3>Nominations</h3>' +
+                                        '</li>' +
+                                        '<div class="clear"></div>' +
+                                    '</ul>' +
+                                    '<div id="active_cont" class="photos">' +
+                                        '<h1>Facebook Albums</h1>' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div class="clear"></div>' +
+                            '</div>' +
+                        '</div>';
+                        
+
+            $('#title').html('<h3>' + name + '</h3>').attr('value', selected_user).show();
             
-            $('#title').show();
             $('#friend_album_cont').prepend(album_html);
             $('#friend_album_cont').show();
             
-            append_load($('#album_cont'), 'dark');
-
-            //Get user albums and send call back to render albums
-            get_user_albums(id, 5, render_albums);
-            get_user_videos(id);
+            append_load($('#active_cont'), 'light');
+            get_user_albums(selected_user, 5, render_albums);
         }
         else{
             user_profile = null;
@@ -5318,8 +5474,8 @@ $(document).ready(function(){
                                 '</div>' +
                             '</div>' +
                         '</div>';
-            $('#title').html('<h3>' + name + '</h3>');
-            $('#title').show();
+                        
+            $('#title').html('<h3>' + name + '</h3>').attr('value', selected_user).show();
             $('#friend_album_cont').prepend(album_html);
             
             append_load($('#album_cont'), 'dark');
@@ -5347,14 +5503,6 @@ $(document).ready(function(){
         mouse_up = false;
         
         selected_album_id = '';
-        
-        attach_album_handlers();
-        attach_profile_handlers();
-        attach_info_handlers();
-        
-        if (getUrlVars().to_profile !== undefined){
-            $('#user_wall_view').click();
-        }
         
         if (typeof(_gaq) !== "undefined"){
             _gaq.push(['_trackEvent', 'Album_View', 'Shown', '']);
@@ -7244,18 +7392,35 @@ $(document).ready(function(){
                 var inactive_nom_html = '<div id="inactive_nom_cont">' +
                                             '<h2>Inactive Nominations</h2>' +
                                         '</div>';
-                $('#recent_left_cont').append(inactive_nom_html);
-                
-                if (i == 0 && $('.recent_nom_cont').length < 10){
-                    var active_empty_html = '<div id="noms_empty_top_cont">' +
-                        '<h1>There are no <span class="strong">Active Nominations</span></h1>' +
-                    '</div>';
-                    $('#recent_left_cont').prepend(active_empty_html);
+                if (view_active == 'main'){
+                    $('#recent_left_cont').append(inactive_nom_html);
+
+                    if (i == 0 && $('.recent_nom_cont').length < 10){
+                        var active_empty_html = '<div id="noms_empty_top_cont">' +
+                            '<h1>There are no <span class="strong">Active Nominations</span></h1>' +
+                        '</div>';
+                        $('#recent_left_cont').prepend(active_empty_html);
+                    }
+
+                    setTimeout(function(){
+                        inactive_header_pos = $('#inactive_nom_cont').offset().top;
+                    }, 500);
                 }
-                
-                setTimeout(function(){
-                    inactive_header_pos = $('#inactive_nom_cont').offset().top;
-                }, 500);
+                else if (view_active == 'album'){
+                    $('#active_cont').append(inactive_nom_html);
+
+                    if (i == 0 && $('.recent_nom_cont').length < 10){
+                        var active_empty_html = '<div id="noms_empty_top_cont">' +
+                            '<h1>' + friends[selected_user].name.split(' ')[0] + ' has no <span class="strong">Active Nominations</span></h1>' +
+                        '</div>';
+                        $('#active_cont').prepend(active_empty_html);
+                    }
+
+                    setTimeout(function(){
+                        inactive_header_pos = $('#inactive_nom_cont').offset().top;
+                    }, 500);
+                }
+
             }
             if (active_noms_cache[nom.id] == undefined && nom.active){
                 active_noms_cache[nom.id] = nom;
@@ -7420,19 +7585,44 @@ $(document).ready(function(){
                                     '</div>' +
                                 '</div>';
             
-            $('#recent_left_cont').append(recent_nom_html);
+            if (view_active == 'main' && default_view != 'profile'){
+                $('#recent_left_cont').append(recent_nom_html);
+            }
+            else{
+                $('#active_cont').append(recent_nom_html);
+            }
+            
         }
         if (!mobile && !tablet && recent_noms.length >= 10){
             var load_more_html =    '<div id="load_more_noms_cont">' +
                                         '<span id="load_more" class="sick large">Load More</span>' +
                                     '</div>';
-            $('#recent_left_cont').append(load_more_html);
+            
+            if (view_active == 'main'){
+                $('#recent_left_cont').append(load_more_html);
+            }
+            else if (view_active == 'album'){
+                $('#active_cont').append(load_more_html);
+            }
         }
         else if (recent_noms.length >= 5){
             var load_more_html =    '<div id="load_more_noms_cont">' +
                                         '<span id="load_more" class="sick large">Load More</span>' +
-                                    '</div>';                      
-            $('#recent_left_cont').append(load_more_html);
+                                    '</div>';
+            
+            if (view_active == 'main'){
+                $('#recent_left_cont').append(load_more_html);
+            }
+            else if (view_active == 'album'){
+                $('#active_cont').append(load_more_html);
+            }
+        }
+        
+        if (recent_noms.length == 0 && view_active == 'album'){
+            var active_empty_html = '<div id="noms_empty_top_cont">' +
+                '<h1>' + friends[selected_user].name.split(' ')[0] + ' has no <span class="strong">Active Nominations</span></h1>' +
+            '</div>';
+            $('#active_cont').prepend(active_empty_html);
         }
     }
     
@@ -7464,68 +7654,73 @@ $(document).ready(function(){
             top = 5;
             
         $('#top_right_cont').append('<h1>The Daily <span class="strong">Leaderboard</h1>');
-        if (top_noms.length < top){
-            top = top_noms.length;
-        }
-        for (var i = 0; i < top_noms.length; i++){
-            nom = top_noms[i];
-            nom_cat_text = nom.nomination_category;
-            nom_cat_underscore = nom.nomination_category.replace(' ', '_').toLowerCase();
-            if (active_noms_cache[nom.id] == undefined){
-                active_noms_cache[nom.id] = nom;
-                if (active_nom_cats_map[nom_cat_underscore]){
-                    active_nom_cats_map[nom_cat_underscore].push(nom.id);
-                }
-                else{
-                    active_nom_cats_map[nom_cat_underscore] = [nom.id];
-                }
+        if (top_noms.length > 0){
+            if (top_noms.length < top){
+                top = top_noms.length;
             }
-            if (i < top){
-                if (friends[nom.nominatee]){
-                    name = friends[nom.nominatee].name;
+            for (var i = 0; i < top_noms.length; i++){
+                nom = top_noms[i];
+                nom_cat_text = nom.nomination_category;
+                nom_cat_underscore = nom.nomination_category.replace(' ', '_').toLowerCase();
+                if (active_noms_cache[nom.id] == undefined){
+                    active_noms_cache[nom.id] = nom;
+                    if (active_nom_cats_map[nom_cat_underscore]){
+                        active_nom_cats_map[nom_cat_underscore].push(nom.id);
+                    }
+                    else{
+                        active_nom_cats_map[nom_cat_underscore] = [nom.id];
+                    }
                 }
-                else if (nom.nominatee == me.id){
-                    name = 'You';
-                }
-                else{
-                    name = '';
-                }
-                user_thumbnail = '<img src="https://graph.facebook.com/' + nom.nominatee + '/picture?type=square"/>';
-                photo_thumbnail = '<img src="' + nom.photo.src_small + '"/>';
+                if (i < top){
+                    if (friends[nom.nominatee]){
+                        name = friends[nom.nominatee].name;
+                    }
+                    else if (nom.nominatee == me.id){
+                        name = 'You';
+                    }
+                    else{
+                        name = '';
+                    }
+                    user_thumbnail = '<img src="https://graph.facebook.com/' + nom.nominatee + '/picture?type=square"/>';
+                    photo_thumbnail = '<img src="' + nom.photo.src_small + '"/>';
 
-                top_nom_html =  '<div class="top_nom_cont">' +
-                                    '<a href="#/user=' + nom.nominatee + '"><h2>' + name + '</h2></a>' +
-                                        '<div class="top_nom_wrap">' +
-                                        '<div class="top_nom_left_cont nom_cat_' + nom_cat_underscore + '">' +
-                                            '<a href="#/user=' + nom.nominatee + '" name="' + name + '">' +
-                                                user_thumbnail +
-                                            '</a>' +
-                                            '<p class="vote_count">' + getGetOrdinal(i + 1) + '</p>' +
-                                        '</div>' +
-                                        '<div class="top_nom_right_cont">' +
-                                            '<a href="#/nom_id=' + nom.id + '">' +
-                                                photo_thumbnail +
-                                            '</a>' +
-                                        '</div>' +
-                                        '<div class="clear"></div>' +
-                                        '<div class="top_nom_bottom_cont">' +
-                                            '<div class="top_nom_comment_cont nom_comment_' + nom.id + '">' +
-                                                '<a href="#/nom_id=' + nom.id + '">' +
-                                                    '<p>Comments: <span class="strong">' + nom.comment_count + '</span></p>' +
+                    top_nom_html =  '<div class="top_nom_cont">' +
+                                        '<a href="#/user=' + nom.nominatee + '"><h2>' + name + '</h2></a>' +
+                                            '<div class="top_nom_wrap">' +
+                                            '<div class="top_nom_left_cont nom_cat_' + nom_cat_underscore + '">' +
+                                                '<a href="#/user=' + nom.nominatee + '" name="' + name + '">' +
+                                                    user_thumbnail +
                                                 '</a>' +
+                                                '<p class="vote_count">' + getGetOrdinal(i + 1) + '</p>' +
                                             '</div>' +
-                                            '<div class="top_nom_vote_count nom_vote_' + nom.id + '">' +
+                                            '<div class="top_nom_right_cont">' +
                                                 '<a href="#/nom_id=' + nom.id + '">' +
-                                                    '<p>Votes: <span class="strong">' + nom.vote_count + '</span></p>' +
+                                                    photo_thumbnail +
                                                 '</a>' +
                                             '</div>' +
                                             '<div class="clear"></div>' +
+                                            '<div class="top_nom_bottom_cont">' +
+                                                '<div class="top_nom_comment_cont nom_comment_' + nom.id + '">' +
+                                                    '<a href="#/nom_id=' + nom.id + '">' +
+                                                        '<p>Comments: <span class="strong">' + nom.comment_count + '</span></p>' +
+                                                    '</a>' +
+                                                '</div>' +
+                                                '<div class="top_nom_vote_count nom_vote_' + nom.id + '">' +
+                                                    '<a href="#/nom_id=' + nom.id + '">' +
+                                                        '<p>Votes: <span class="strong">' + nom.vote_count + '</span></p>' +
+                                                    '</a>' +
+                                                '</div>' +
+                                                '<div class="clear"></div>' +
+                                            '</div>' +
                                         '</div>' +
-                                    '</div>' +
-                                '</div>';
+                                    '</div>';
 
-                $('#top_right_cont').append(top_nom_html);
+                    $('#top_right_cont').append(top_nom_html);
+                }
             }
+        }
+        else{
+            $('#top_right_cont').append('<h2>No current nominations.</h2>');
         }
     }
     
@@ -8143,11 +8338,22 @@ $(document).ready(function(){
                 var inactive_header = $('#inactive_nom_cont > h2');
                 var width = $(inactive_header).width();
                 var top = 0;
+                var left = 0;
+                
+                if (view_active == 'album'){
+                    scroll_pos -= $('#active_cont').offset().top;
+                    left = 0;
+                }
+                else if (view_active == 'main'){
+                    scroll_pos -= $('#recent_left_cont').offset().top;
+                    left = 15;
+                }
+                
                 if (tablet){
                     $(inactive_header).css({
-                        'position': 'fixed',
+                        'position': 'absolute',
                         'top': scroll_pos,
-                        'left': 15,
+                        'left': left,
                         'width': width,
                         'box-shadow': 'rgba(0, 0, 0, 0.496094) 0px 1px 2px 0px',
                         '-webkit-box-shadow': 'rgba(0, 0, 0, 0.496094) 0px 1px 2px 0px',
@@ -8156,9 +8362,9 @@ $(document).ready(function(){
                 }
                 else{
                     $(inactive_header).css({
-                        'position': 'fixed',
+                        'position': 'absolute',
                         'top': scroll_pos,
-                        'left': 5,
+                        'left': left,
                         'width': width,
                         'box-shadow': 'rgba(0, 0, 0, 0.496094) 0px 1px 2px 0px',
                         '-webkit-box-shadow': 'rgba(0, 0, 0, 0.496094) 0px 1px 2px 0px',
@@ -9812,36 +10018,14 @@ $(document).ready(function(){
         }
     }
     
-    function attach_mobile_alpha_handlers(){
-        $('.friend').live('click', function(){
-            selected_user = $(this).attr('value');
-            update_urls();
-        });
-    }
-    
-    function attach_alpha_handlers(){
-        view_active = 'alpha';
-        $('#friend_cont').show();
-        $('#wall_cont').show();
-        $('.no_alpha').hide();
-        $('.alpha_key').show();
-        $('.friend').die('click');
-        $('html, body').scrollTop(0);
-        $('.friend').live('click', function(e){
-            $('.friend').show();
-            scroll_to_user = $(this).attr('value');
-            window.location.hash = '/';
-            e.stopPropagation();
-            return false;
-        });
-    }
-    
     function attach_main_handlers(){
         var diff_status = false;
         
         $('.friend').live('click', function(){
-            if (default_view == 'wall'){
+            var alpha = getUrlVars().alpha_key;
+            if (alpha){
                 var user = $(this).attr('value');
+                selected_user = user;
                 window.location.href = '/#/user=' + user;
             }
             else{
@@ -9849,60 +10033,6 @@ $(document).ready(function(){
                 window.location.href = '/#/alpha_key=' + alpha_key;
             }
         });
-    }
-    
-    function attach_info_handlers(){
-        $('#show_all_mutual').live('click', function(){
-            if (mutual_friend_top < mutual_friend_data.length){
-                render_mutual_friends(mutual_friend_data, 'all');
-                $('#show_all_mutual').text('Hide');
-            }
-            else{
-                mutual_friend_top = 10;
-                if (!mobile){
-                    $('#mutual_friend_cont > a:gt(9)').fadeOut('fast', function(){$(this).remove();});
-                }
-                else{
-                    $('#mutual_friend_cont > a:gt(9)').remove();
-                }
-                
-                $('#show_all_mutual').text('Show All');
-            }
-        });
-        
-        $('.control_click').live('click', function(e){
-            var name = $(this).attr('name');
-            var friend_fid = getUrlVars().user
-            var user_fid = me.id;
-            if (name == 'heart'){
-                
-            }
-            e.stopPropagation();
-            return false;
-        });
-        
-        if (!mobile){
-            var hide_tooltip_timeout = null;
-            $('#mutual_friend_cont a').live('mouseover mouseout', function(event) {
-                if (event.type == 'mouseover') {
-                    clearTimeout(hide_tooltip_timeout);
-                    var name = $(this).attr('name');
-                    var position = $(this).position();
-                    $('#mutual_friend_tooltip').text(name).show().css({
-                        'opacity': '1.0',
-                        'left': position.left - 50,
-                        'top': position.top - 25
-                    });
-                } else {
-                    $('#mutual_friend_tooltip').css({
-                        'opacity': '0'
-                    });
-                    hide_tooltip_timeout = setTimeout(function(){
-                        $('#mutual_friend_tooltip').hide();
-                    }, 300);
-                }
-            });
-        }
     }
     
     function watch_scroll(inner){
@@ -10071,6 +10201,47 @@ $(document).ready(function(){
         });
     }
     
+    function profile_stream_view(){
+        $('#active_cont').html('').removeClass().addClass('stream');
+        $('.stream_nav').removeClass('selected');
+        $('.stream_nav[name="stream"]').addClass('selected');
+        inactive_nom_found = false;
+        get_user_noms();
+    }
+    
+    function profile_albums_view(){
+        $('#active_cont').html('').removeClass().addClass('photos');
+        $('#active_cont').append('<h1>Facebook Albums</h1>');
+        $('.stream_nav').removeClass('selected');
+        $('.stream_nav[name="photos"]').addClass('selected');
+        append_load($('#active_cont'), 'dark');
+        get_user_albums(selected_user, 5, render_albums);
+    }
+    
+    function profile_stream_click(){
+        if (typeof(_gaq) !== "undefined"){
+            _gaq.push(['_trackEvent', 'Profile Stream', 'Click', '']);
+        }
+        if (view_active == 'main'){
+            profile_stream_view();
+        }
+        else{
+            window.location.href = '/#/user=' + selected_user + '/stream';
+        }
+    }
+    
+    function profile_albums_click(){
+        if (typeof(_gaq) !== "undefined"){
+            _gaq.push(['_trackEvent', 'Profile Photos', 'Click', '']);
+        }
+        if (view_active == 'main'){
+            profile_albums_view();
+        }
+        else{
+            window.location.href = '/#/user=' + selected_user;
+        }
+    }
+    
     var clear_profile = false;
     function attach_profile_handlers(){
         $('.clear_profile').live('click', function(){
@@ -10120,51 +10291,30 @@ $(document).ready(function(){
         
         $('.vote_down').live('click', vote_down_handler)
         
-        // $('#activate_latest_photos').live('click', function(){
-        //     // $('#tab_nav > .selected').removeClass('selected');
-        //     // $(this).addClass('selected');
-        //     // $('#context_overlay_cont').removeClass().addClass('latest_photos_overlay');
-        //     // show_context_overlay(true, true);
-        //     // init_latest_photos();
-        //     
-        //     window.location.href = '/#/latest-photos'
-        //     
-        //     if (typeof(_gaq) !== "undefined"){
-        //         _gaq.push(['_trackEvent', 'Latest Photos', 'Shown', '']);
-        //     }
-        // });
-        
-        // $('#activate_recent_winners').live('click', function(){
-        //     // $('#tab_nav > .selected').removeClass('selected');
-        //     // $(this).addClass('selected');
-        //     // $('#context_overlay_cont').removeClass().addClass('latest_photos_overlay');
-        //     // show_context_overlay(true, true);
-        //     // init_recent_winners();
-        //     
-        //     window.location.href = '/#/recent-winners'
-        //     
-        //     if (typeof(_gaq) !== "undefined"){
-        //         _gaq.push(['_trackEvent', 'Recent Winners', 'Shown', '']);
-        //     }
-        // });
-        
         $('.stream_nav').live('click', function(){
             var view_name = $(this).attr('name');
             
-            $('.stream_nav').removeClass('selected');
-            $(this).addClass('selected');
-            view_active = 'main';
-            if (view_name == 'active_nominations'){
-                active_nav_click();
-            }
-            else if (view_name == 'top_nominations'){
-                top_nav_click();
-            }
-            else if (view_name == 'recent_winners'){
-                winners_nav_click();
-            }
-            else if (view_name == 'latest_photos'){
-                latest_nav_click();
+            if ($(this).hasClass('selected') == false){
+                $('.stream_nav').removeClass('selected');
+                $(this).addClass('selected');
+                if (view_name == 'stream'){
+                    profile_stream_click();
+                }
+                else if (view_name == 'photos'){
+                    profile_albums_click();
+                }
+                else if (view_name == 'active_nominations'){
+                    active_nav_click();
+                }
+                else if (view_name == 'top_nominations'){
+                    top_nav_click();
+                }
+                else if (view_name == 'recent_winners'){
+                    winners_nav_click();
+                }
+                else if (view_name == 'latest_photos'){
+                    latest_nav_click();
+                }
             }
         });
         
@@ -10661,6 +10811,11 @@ $(document).ready(function(){
             } else {
                 hide_like_tooltip(this);
             }
+        });
+        
+        $('.trophy_count').live('click', function(){
+            var trophy = $(this).attr('name');
+            window.location.href = '/#/trophy/user=' + selected_user + '/trophy=' + trophy;
         });
     }
     
@@ -11419,30 +11574,7 @@ $(document).ready(function(){
         $('#load_more_fb_albums').live('click', function(){
             $(this).text('Hide')
             $(this).attr('id', 'hide_more_fb_albums');
-            load_more_fb_albums(7);
-            
-            user_album_height_interval_count = 0;
-            clearInterval(user_album_height_interval);
-            user_album_height_interval = setInterval(function(){
-                if (user_album_height_interval_count < 20){
-                    var album_current_height = $('#album_cont').height();
-                    var current_min_height = $('#user_profile_cont').css('height');
-
-                    if (current_min_height != album_current_height || current_min_height < album_current_height){
-                        $('#user_profile_cont').css('height', album_current_height);
-                        user_album_height_interval_count += 1;
-                    }
-                    else{
-                        clearInterval(user_album_height_interval);
-                        user_album_height_interval_count += 0;
-                    }
-
-                }
-                else{
-                    clearInterval(user_album_height_interval);
-                    user_album_height_interval_count += 0;
-                }
-            }, 50);
+            load_more_fb_albums(9);
         });
         
         $('#hide_more_fb_albums').live('click', function(){
@@ -11451,7 +11583,7 @@ $(document).ready(function(){
             if (view_active == 'main'){
                 $('#user_profile_cont').css('height', 'auto');
                 $('#user_profile_cont').css('min-height', 'auto');
-                hide_more_fb_albums(5);
+                hide_more_fb_albums(7);
             }
             else{
                 hide_more_fb_albums(7);
@@ -11499,7 +11631,13 @@ $(document).ready(function(){
         
         $('.portrit_photo, #to_portrit_photos').live('click', function(){
             $('#photo_list').html('');
-            selected_photo = '';
+            var id = $('img', this).attr('value');
+            if (id){
+                selected_photo = id;
+            }
+            else{
+                selected_photo = '';
+            }
             selected_album_id = 'portrit-photos';
             update_urls();
         });
@@ -11509,7 +11647,7 @@ $(document).ready(function(){
             if (event.type == 'mouseover') {
                 $(this).children('.album_title').css('background-color', '#222');
             } else {
-                $(this).children('.album_title').css('background-color', '#444');
+                $(this).children('.album_title').css('background-color', '#333');
             } 
         });
         
@@ -11706,10 +11844,12 @@ $(document).ready(function(){
             
             $.getJSON('https://api.facebook.com/method/friends.getMutualFriends?target_uid=' + selected_user + '&source_uid=' + me.id + '&access_token=' + fb_session.access_token + '&format=json&callback=?', function(data){
                 for (var i = 0; i < data.length; i++){
-                    mutual_friends_list.push({
-                        'fid': data[i],
-                        'name': friends[data[i]].name
-                    });
+                    if (friends[data[i]]){
+                        mutual_friends_list.push({
+                            'fid': data[i],
+                            'name': friends[data[i]].name
+                        });
+                    }
                 }
                 mutual_friends_list.sort(sort_friends);
                 for (var i = 0; i < mutual_friends_list.length; i++){
@@ -11740,9 +11880,9 @@ $(document).ready(function(){
             });
             
             $('#tag_search').bind('blur', function(){
-                $('#mutual_friends_cont').css({
-                    'min-height': 0
-                });
+                // $('#mutual_friends_cont').css({
+                //     'min-height': 0
+                // });
                 if ($.trim(this.value) == ''){
                     this.value = (this.defaultValue ? this.defaultValue : '');  
                 }
@@ -12177,6 +12317,25 @@ $(document).ready(function(){
         }
         
         var display_type = 'iframe';
+        var properties = { };
+        
+        if (data[0].tagged_users.length > 0){
+            var tagged_text = '';
+            for (var i = 0; i < data[0].tagged_users.length; i++){
+                if (i+1 < data[0].tagged_users.length){
+                    tagged_text += friends[data[0].tagged_users[i]].name + ', '
+                }
+                else{
+                    tagged_text += friends[data[0].tagged_users[i]].name
+                }
+            }
+            properties['Tagged'] = {
+                'text': tagged_text,
+                'href': 'http://portrit.com/#/nom_id=' + data[0].id
+            }
+        }
+        
+        properties = JSON.stringify(properties);
         
         FB.ui({
             method: 'feed',
@@ -12186,7 +12345,8 @@ $(document).ready(function(){
             link: link,
             picture: trophy_img_src,
             message: message,
-            caption: 'Click the trophy to see ' + friend_name + '\'s nominated photo.'
+            caption: 'Click the trophy to see ' + friend_name + '\'s nominated photo.',
+            properties: properties
         },
         function(response) {
             if (response && response.post_id) {
@@ -12215,6 +12375,69 @@ $(document).ready(function(){
         $('#post_nomination').text('Post Nomination').removeClass('sick_hover_lock');
         $('#tagged_users').hide();
         $('#tagged_users > div').html('');
+    }
+    
+    function append_profile_html(view_to_activate){
+        var url_vars = getUrlVars();
+        var id = url_vars.user;
+        var name = '';
+        if (id === 'me'){
+            name = me.name;
+        }
+        else{
+            if (friends[id] == undefined){
+                $('#user_photo_view').remove();
+                FB.api('/' + id + '/', function(response){
+                    name = response.name;
+                    $('#title > h3').text(name);
+                });
+            }
+            else{
+                name = friends[id].name;
+            }
+        }
+        
+        album_html ='<div id="album_wrap">' +
+                        '<div id="album_cont">' +
+                            '<div id="user_profile_left_cont">' +
+                                '<h2>Profile</h2>' +
+                                '<img id="large_profile_img" src="http://graph.facebook.com/' + id + '/picture?type=large"/>' +
+                                '<div id="user_profile_trophy_cont">' +
+                                    '<h3>Trophies</h3>' +
+                                    '<div></div>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div id="user_profile_right_cont">' +
+                                '<ul>' +
+                                    '<li id="first_profile_nav" class="stream_nav" name="photos">' +
+                                        '<h3>Photos</h3>' +
+                                    '</li>' +
+                                    '<li class="stream_nav selected" name="stream">' +
+                                        '<h3>Nominations</h3>' +
+                                    '</li>' +
+                                    '<div class="clear"></div>' +
+                                '</ul>' +
+                                '<div id="active_cont" class="stream">' +
+                                    '' +
+                                '</div>' +
+                            '</div>' +
+                            '<div class="clear"></div>' +
+                        '</div>' +
+                    '</div>';
+                    
+        $('#title').html('<h3>' + name + '</h3>').attr('value', selected_user).show();
+        
+        $('#friend_album_cont').prepend(album_html);
+        $('#friend_album_cont').show();
+        
+        if (view_to_activate == 'photos'){
+            view_active = 'album';
+            profile_albums_view();
+        }
+        else if (view_to_activate == 'stream'){
+            view_active = 'album';
+            get_user_noms();
+        }
     }
     
     function append_wall_html(view_to_activate){
@@ -12363,6 +12586,7 @@ $(document).ready(function(){
         $('.reactivate_nom').die('click');
         $('.stream_nav').die('click');
         $('.nom_tag_cont a').die('mouseover mouseout');
+        $('.trophy_count').die('click');
 
         $('#load_more_fb_albums').die('click');
         $('#hide_more_fb_albums').die('click');
@@ -12507,15 +12731,40 @@ $(document).ready(function(){
             scroll_to_toggle = true;
         }
         
-        if (url_vars.user !== undefined && url_vars.album === undefined && url_vars.gallery === undefined && url_vars.trophy == undefined && url_vars.nom_id == undefined){
-            clear_canvas(url_vars);
+        if (url_vars.user !== undefined && url_vars.album === undefined && url_vars.gallery === undefined && url_vars.trophy == undefined && url_vars.nom_id == undefined && url_vars.stream == undefined){
             scroll_to_user = url_vars.user;
+            selected_user = scroll_to_user;
+            attach_album_handlers();
+            attach_profile_handlers();
+            attach_recent_view_handlers();
             if (scroll_to_user == me.id){
+                clear_canvas(url_vars);
                 default_view = 'profile';
                 window.location.href = '#/';
             }
             else{
-                main_photo_view();
+                if ($('#album_cont').length != 0 && $('#main_view_control').length == 0 && $('#title').attr('value') == selected_user){
+                    profile_albums_view();
+                }
+                else{
+                    clear_canvas(url_vars);
+                    main_photo_view();
+                }
+            }
+            $('html, body').scrollTop(0);
+        }
+        else if (url_vars.user !== undefined && url_vars.stream != undefined && url_vars.album === undefined && url_vars.gallery === undefined && url_vars.trophy == undefined && url_vars.nom_id == undefined){
+            scroll_to_user = url_vars.user;
+            selected_user = scroll_to_user;
+            attach_album_handlers();
+            attach_profile_handlers();
+            attach_recent_view_handlers();
+            if ($('#album_cont').length != 0){
+                profile_stream_view();
+            }
+            else{
+                clear_canvas(url_vars);
+                append_profile_html('stream');
             }
             $('html, body').scrollTop(0);
         }
@@ -12646,15 +12895,10 @@ $(document).ready(function(){
             clear_canvas(url_vars);
             info_context_delagate(url_vars.context);
         }
-        else if (url_vars.alpha !== undefined){
-            clear_canvas(url_vars);
-            attach_alpha_handlers();
-        }
         else if (url_vars.alpha_key !== undefined){
             clear_canvas(url_vars);
             attach_main_handlers();
             attach_profile_handlers();
-            attach_mobile_alpha_handlers();
             render_alpha_wall(url_vars.alpha_key);
             $('html, body').scrollTop(0);
         }
@@ -12782,7 +13026,14 @@ $(document).ready(function(){
         }
         else if (default_view === 'wall'){
             stream_view = 'recent_noms';
-            clear_canvas(url_vars);
+            if ($('#profile_cont').children().length == 0){
+                clear_canvas(url_vars);
+            }
+            else{
+                $('#profile_cont_wrap').html('<div id="scroller">' +
+                                                '<div id="profile_cont"></div>' +
+                                            '</div>');
+            }
             attach_main_handlers();
             attach_profile_handlers();
             main_view();

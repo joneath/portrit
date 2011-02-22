@@ -85,7 +85,7 @@ div#login_content div#login_right_cont{
 }
 
     div#login_content div#login_right_cont p{
-        font-size:              16px;
+        font-size:              18px;
         width:                  300px;
     }
     
@@ -183,7 +183,7 @@ div#title div#main_view_control{
     padding-bottom:         15px;
 }
 
-.large.sick, .large.sick:visited 			{ font-size: 19px; padding: 8px 14px 9px; }
+.large.sick, .large.sick:visited, .large.sick_abs 			{ font-size: 19px; padding: 8px 14px 9px; }
 
 div.autocomplete div p{
     font-size:      26px;
@@ -383,8 +383,12 @@ div#album_cont div#trophy_cont > h2, div#album_cont div#active_cont > h2{
     margin:         0px 10px;
 }
 
-div#album_cont div#trophy_cont, div#album_cont div#active_cont{
-    width:          510px;
+div#user_profile_right_cont > ul > li#show_upload{
+    display:        none;
+}
+
+#load_more_fb_albums, #hide_more_fb_albums{
+    width:          100px;
 }
 
 div#active_cont .active_nom_cont{
@@ -658,7 +662,7 @@ div#active_stream_text_cont > span{
 }
 
 div#title h3{
-    font-size:          2em;
+    font-size:          3em;
 }
 
 div#photo_cont div.photo_thumbs{
@@ -981,38 +985,58 @@ div#nom_detail_cont{
 div#user_profile_cont #user_profile{
     width:          520px;
 }
-
-    div#user_profile_cont #profile_nav_cont{
-        font-size:      18px;
-        padding:        10px;
-        top:            -55px;
-    }
-    
-        div#user_profile_cont #profile_nav_cont img#album_left_arrow{
-            left:           1px;
-            top:            18px;
-        }
-        
-        div#user_profile_cont #profile_nav_cont img#album_right_arrow{
-            top:            18px;
-            right:          1px;
-        }
-
-    #user_profile div#profile_left_cont{
-        width:          250px;
-    }
-    
-        #profile_user_info #profile_tab{
-            right:      10px;
-        }
-    
-    #user_profile div#profile_right_cont{
-        width:          255px;
-    }
     
 div#user_profile_cont #album_cont{
-    right:          -520px;
     width:          520px;
+}
+
+div#album_wrap{
+    width:          520px;
+}
+
+    div#album_cont #user_profile_left_cont{
+        width:          100px;
+        margin-top:     0px;
+    }
+    
+        #user_profile_left_cont #large_profile_img{
+            max-width:      100px;
+        }
+        
+        #user_profile_left_cont .trophy_count > p{
+            width:          80px;
+        }
+
+    div#album_cont #user_profile_right_cont{
+        width:          400px;
+    }
+    
+    div#album_cont div#active_cont .recent_nom_cont{
+        width:          400px;
+    }
+    
+        div#active_cont .recent_nom_cont .recent_nom_photo_left_cont{
+            width:      280px;
+        }
+    
+    div#active_cont .recent_nom_cont .recent_nom_comment_cont{
+        width:          380px;
+    }
+    
+    div#active_cont .recent_nom_top_cont h2{
+        text-align:     left;
+        width:          110px;
+    }
+    
+#portrit_trophies_cont{
+    width:          400px;
+}
+    
+div#active_cont .trophy_album{
+    margin:         20px;
+    margin-top:     60px;
+    display:        block;
+    float:          left;
 }
 
 #new_nomination_cont{
@@ -1050,14 +1074,6 @@ div#non_friend_wrap{
 
 div#non_friend_trophy_room_wrap{
     width:              520px;
-}
-
-div#info_wrap #profile_info_img{
-    margin-right:       10px;
-}
-
-div#info_wrap #large_profile_img{
-    width:              150px;
 }
 
 div#mutual_friend_cont{
