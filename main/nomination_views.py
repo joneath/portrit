@@ -785,42 +785,47 @@ def get_user_album_nom_data(request):
         cookie = facebook.get_user_from_cookie(
             request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
         if cookie:
-            owner = FB_User.objects.get(fid=int(cookie["uid"]))
             user = FB_User.objects.get(fid=user_id)
-            fb_user_id = [user.fid]
-            winning_nominations = Nomination.objects.select_related().filter(Q(nominatee=user) | Q(tagged_friends__fid__in=fb_user_id), won=True).distinct('id').order_by('-created_date')
-            active_nominations = Nomination.objects.select_related().filter(Q(nominatee=user) | Q(tagged_friends__fid__in=fb_user_id), won=False, active=True).distinct('id').order_by('-created_date')
+            user_profile_data = cache.get(str(user_id) + '_user_profile')
+            if user_profile_data == None:
+                fb_user_id = [user.fid]
+                winning_nominations = Nomination.objects.select_related().filter(Q(nominatee=user) | Q(tagged_friends__fid__in=fb_user_id), won=True).distinct('id').order_by('-created_date')
+                active_nominations = Nomination.objects.select_related().filter(Q(nominatee=user) | Q(tagged_friends__fid__in=fb_user_id), won=False, active=True).distinct('id').order_by('-created_date')
             
-            active_noms_count = active_nominations.all().count()
-            active_nom_target = 10
-            if active_nominations.all().count() < active_nom_target:
-                active_nom_diff = active_nom_target - active_noms_count
-                inactive_noms = Nomination.objects.select_related().filter(Q(nominatee=user) | Q(tagged_friends__fid__in=fb_user_id), won=False, active=False).distinct('id').order_by('-created_date')[:active_nom_diff]
-                active_nominations = active_nominations | inactive_noms
-                active_nominations = active_nominations[:active_nom_diff]
+                active_noms_count = active_nominations.all().count()
+                active_nom_target = 10
+                if active_nominations.all().count() < active_nom_target:
+                    active_nom_diff = active_nom_target - active_noms_count
+                    inactive_noms = Nomination.objects.select_related().filter(Q(nominatee=user) | Q(tagged_friends__fid__in=fb_user_id), won=False, active=False).distinct('id').order_by('-created_date')[:active_nom_diff]
+                    active_nominations = active_nominations | inactive_noms
+                    active_nominations = active_nominations[:active_nom_diff]
             
-            try:
-                portrit_user = user.get_portrit_user()
-                portrit_album = portrit_user.get_portrit_album()
-                portrit_album_data = {
-                    'album_name': portrit_album.name,
-                    'photos': [ ]
+                try:
+                    portrit_user = user.get_portrit_user()
+                    portrit_album = portrit_user.get_portrit_album()
+                    portrit_album_data = {
+                        'album_name': portrit_album.name,
+                        'photos': [ ]
+                    }
+                    for photo in portrit_album.photo_set.filter(active=True, pending=False):
+                        portrit_album_data['photos'].append(photo.get_portrit_photo())
+                except:
+                    portrit_album_data = { }
+                winning_nom_objs = [ ]
+                active_nom_objs = [ ]
+            
+                winning_nom_objs = serialize_noms(winning_nominations)
+                active_nom_objs = serialize_noms(active_nominations)
+            
+                data = {
+                    'winning_nom_objs': winning_nom_objs,
+                    'active_nom_objs': active_nom_objs,
+                    'portrit_album_data': portrit_album_data,
                 }
-                for photo in portrit_album.photo_set.filter(active=True, pending=False):
-                    portrit_album_data['photos'].append(photo.get_portrit_photo())
-            except:
-                portrit_album_data = { }
-            winning_nom_objs = [ ]
-            active_nom_objs = [ ]
-            
-            winning_nom_objs = serialize_noms(winning_nominations)
-            active_nom_objs = serialize_noms(active_nominations)
-            
-            data = {
-                'winning_nom_objs': winning_nom_objs,
-                'active_nom_objs': active_nom_objs,
-                'portrit_album_data': portrit_album_data,
-            }
+                
+                cache.set(str(user_id) + '_user_profile', data, 60*10)
+            else:
+                data = user_profile_data
     except:
         pass
     
