@@ -2989,9 +2989,6 @@ div#profile_cont{
                 border-bottom-right-radius:     5px;
                 -moz-border-radius-bottomleft:          5px;
                 -moz-border-radius-bottomright:         5px;
-                box-shadow:         rgba(0, 0, 0, 0.496094) 0px 5px 4px -2px;
-                -webkit-box-shadow: rgba(0, 0, 0, 0.496094) 0px 5px 4px -2px;
-                -moz-box-shadow:    0px 5px 4px -2px rgba(0, 0, 0, 0.5);
             }
             
                 .voted_cont a{
@@ -3833,18 +3830,10 @@ div#user_profile_cont{
         bottom:             10px;
         right:              10px;
     }
-
-    #portrit_photo_cont h1{
-        font-size:          24px;
-        font-weight:        bold;
-        margin-bottom:      10px;
-        margin-left:        10px;
-        text-align:         left;
-    }
     
-    #portrit_photo_cont #portrit_photos{
+/*    #portrit_photo_cont #portrit_photos{
         padding-bottom:     25px;
-    }
+    }*/
     
     #portrit_photo_cont .portrit_photo{
         cursor:             pointer;
@@ -5275,6 +5264,11 @@ div#album_cont div#active_cont{
         padding-top:            10px;
         padding-bottom:         30px;
     }
+    
+        div#album_cont div#active_cont.photos h2{
+            font-size:              20px;
+            padding:                10px 0px;
+        }
 
     div#album_cont div#active_cont .recent_nom_cont{
         margin:                 0 auto;
@@ -5600,7 +5594,7 @@ div#album_cont{
     h2.alert_title{
         font-weight:        bold;
         font-size:          1.5em;
-        padding-top:        100px;
+        padding-top:        40px;
         vertical-align:     center;
     }
 
