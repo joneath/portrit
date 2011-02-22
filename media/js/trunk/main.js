@@ -4102,12 +4102,14 @@ $(document).ready(function(){
                             '</div>';
             
             $('#wall_cont').append(wall_html);
+            inactive_nom_found = false;
             selected_user = 'me';
             get_user_albums('me', 5, render_albums);
             get_user_noms();
             // render_user_profile();
             attach_album_handlers();
             attach_user_profile_handlers();
+            attach_recent_view_handlers();
             if (!mobile){
                 $('#wall_cont').css({
                     'max-width': ''
@@ -5052,6 +5054,21 @@ $(document).ready(function(){
         }
     }
     
+    function sort_dict_into_list(list){
+        var temp_array = [ ];
+        for (var cat in list){
+            temp_array.push({
+                'cat': cat,
+                'count': list[cat].noms.length
+            });
+        }
+        temp_array.sort(function(a, b){
+            // return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+            return b.count - a.count;
+        });
+        return temp_array;
+    }
+    
     function render_winning_photo_noms(data){
         // remove_load();
         if (data.winning_nom_objs.length > 0){
@@ -5069,31 +5086,24 @@ $(document).ready(function(){
                         nom_cat_map[data.winning_nom_objs[i].nomination_category]['noms'].push(data.winning_nom_objs[i])
                     }
                 }
+                
+                var trophy_count_list = null;
+                trophy_count_list = sort_dict_into_list(nom_cat_map);
 
-                for (var cat in nom_cat_map){
-                    var noms = nom_cat_map[cat]['noms'];
-                    cat_underscore = cat.replace(' ', '_').toLowerCase();
-
-                    if (noms.length < top){
-                        top = noms.length;
-                    }
+                for (var i = 0; i < trophy_count_list.length; i++){
+                    var count = trophy_count_list[i].count;
+                    var cat = trophy_count_list[i].cat;
+                    cat_underscore = trophy_count_list[i].cat.replace(' ', '_').toLowerCase();
 
                     var trophy_count_html = '<div class="trophy_count nom_cat_' + cat_underscore + '" name="' + cat_underscore + '">' +
-                                                '<p>' + noms.length + ' ' + cat + '</p>' +
+                                                '<p>' + count + ' ' + cat + '</p>' +
                                                 '<div class="trophy_img small ' + cat_underscore + '"></div>' +
                                                 '<div class="clear"></div>' +
                                             '</div>';
 
                     $('#user_profile_trophy_cont > div').append(trophy_count_html);
 
-                    // album_html = '<div class="trophy_album" name="' + cat + '" onclick="void(0)"><div class="img_thumbs">';
-                    // for (var i = 0; i < top; i++){
-                    //     album_html += '<img class="img_thumb img_thumb_' + i + '"  src="' + noms[i].photo.src_small + '"/>';
-                    // }
-                    // album_html += '</div><div class="trophy_img large ' + cat_underscore + '"></div><div class="trophy_count nom_cat_' + cat_underscore + '">' + noms.length + '</div></div>';
-                    // $('#trophy_cont').append(album_html);
                 }
-                // $('#trophy_cont').fadeIn();   
             }
         }
         else{
@@ -7422,7 +7432,7 @@ $(document).ready(function(){
                 var inactive_nom_html = '<div id="inactive_nom_cont">' +
                                             '<h2>Inactive Nominations</h2>' +
                                         '</div>';
-                if (view_active == 'main'){
+                if (view_active == 'main' && default_view == 'wall'){
                     $('#recent_left_cont').append(inactive_nom_html);
 
                     if (i == 0 && $('.recent_nom_cont').length < 10){
@@ -7436,12 +7446,21 @@ $(document).ready(function(){
                         inactive_header_pos = $('#inactive_nom_cont').offset().top;
                     }, 500);
                 }
-                else if (view_active == 'album'){
+                else if (view_active == 'album' || (view_active == 'main' && default_view == 'profile')){
                     $('#active_cont').append(inactive_nom_html);
+                    
+                    var name = '';
+                    
+                    if (selected_user == 'me'){
+                        name = 'You have';
+                    }
+                    else{
+                        name = friends[selected_user].name.split(' ')[0] + ' has';
+                    }
 
                     if (i == 0 && $('.recent_nom_cont').length < 10){
                         var active_empty_html = '<div id="noms_empty_top_cont">' +
-                            '<h1>' + friends[selected_user].name.split(' ')[0] + ' has no <span class="strong">Active Nominations</span></h1>' +
+                            '<h1>' + name + ' no <span class="strong">Active Nominations</span></h1>' +
                         '</div>';
                         $('#active_cont').prepend(active_empty_html);
                     }

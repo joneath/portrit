@@ -797,6 +797,7 @@ def get_user_album_nom_data(request):
                 active_nom_diff = active_nom_target - active_noms_count
                 inactive_noms = Nomination.objects.select_related().filter(Q(nominatee=user) | Q(tagged_friends__fid__in=fb_user_id), won=False, active=False).distinct('id').order_by('-created_date')[:active_nom_diff]
                 active_nominations = active_nominations | inactive_noms
+                active_nominations = active_nominations[:active_nom_diff]
             
             try:
                 portrit_user = user.get_portrit_user()
