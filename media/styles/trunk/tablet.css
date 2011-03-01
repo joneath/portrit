@@ -231,6 +231,10 @@ div#tab_nav{
     top:                -1px;
 }
 
+#community_header > h2{
+    width:          320px;
+}
+
 div#album_wrap{
     width:          980px;
 }

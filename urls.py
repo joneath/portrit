@@ -54,6 +54,13 @@ urlpatterns += patterns('',
     url(r'^init_recent_stream/$', 'main.nomination_views.init_recent_stream', name='init_recent_stream'),
 )
 
+#Community URLs
+urlpatterns += patterns('',
+    url(r'^get_community/$', 'main.community_views.get_community', name='get_community'),
+    url(r'^get_more_community_photos/$', 'main.community_views.get_more_community_photos', name='get_more_community_photos'),
+)
+
+
 #Photo URLs
 urlpatterns += patterns('',
     url(r'^latest-photos/$', 'main.photo_views.latest_photos', name='latest_photos'),

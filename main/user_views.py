@@ -192,6 +192,7 @@ def change_user_permissions(request):
     
 def get_more_recent_stream(request):
     data = []
+    selected_user = request.GET.get('selected_user')
     create_time = request.GET.get('create_time')
     page_size = request.GET.get('page_size')
     create_time = datetime.fromtimestamp(float(create_time))
@@ -201,7 +202,12 @@ def get_more_recent_stream(request):
     if cookie:
         try:
             fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
-            data = get_recent_stream(fb_user, create_time, page_size)
+            if not selected_user or selected_user == '':
+                owner = None
+            else:
+                owner = FB_User.objects.get(fid=int(selected_user))
+
+            data = get_recent_stream(fb_user, create_time, page_size, owner)
         except:
             pass
     

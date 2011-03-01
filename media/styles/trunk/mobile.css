@@ -590,9 +590,13 @@ div#active_stream_text_cont > span{
     line-height:        26px;
 }
 
+div#profile_wrap > ul{
+    padding-left:       5px;
+}
+
 .stream_nav{
     font-size:          22px;
-    padding:            10px 20px;
+    padding:            5px 10px;
 }
 
 .from_username{
@@ -1027,6 +1031,20 @@ div#album_wrap{
         text-align:     left;
         width:          110px;
     }
+    
+#community_header h2{
+    display:        none;
+}
+
+#community_right_cont{
+    display:        none;
+}
+
+#community_cont #community_left_cont{
+    margin:         0 auto;
+    text-align:     center;
+    width:          520px;
+}
     
 #portrit_trophies_cont{
     width:          400px;

@@ -255,6 +255,7 @@ class Photo(models.Model):
     photo_path = models.CharField(max_length=512, null=True, blank=True)
     thumbnail_src = models.URLField(max_length=255, null=True, blank=True)
     large_src = models.URLField(max_length=255, null=True, blank=True)
+    crop_src = models.URLField(max_length=255, null=True, blank=True)
     album = models.ForeignKey(Album, null=True, blank=True)
     nominations = models.ManyToManyField(Nomination, null=True, blank=True)
     
@@ -282,6 +283,7 @@ class Photo(models.Model):
                 'fid': self.id,
                 'caption': self.caption,
                 'picture': self.thumbnail_src,
+                'crop': self.crop_src,
                 'source': self.large_src,
                 'small_height': self.small_height,
                 'small_width': self.small_width,
@@ -302,6 +304,7 @@ class Photo(models.Model):
         os.remove(self.photo_path)
         os.remove(self.photo_path + '_130.jpg')
         os.remove(self.photo_path + '_720.jpg')
+        os.remove(self.photo_path + '_crop.jpg')
         
 class Notification_Type(models.Model):
     active = models.BooleanField(default=True)
@@ -426,6 +429,8 @@ class Portrit_User(models.Model):
     notifications = models.ManyToManyField(Notification, null=True, blank=True)
     referred_friends = models.ManyToManyField(FB_User, null=True, blank=True)
     badges = models.ManyToManyField(Badge, null=True, blank=True)
+    following = models.ManyToManyField(FB_User, null=True, blank=True, related_name="portrit_user_following")
+    followers = models.ManyToManyField(FB_User, null=True, blank=True, related_name="portrit_user_followers")
     
     class Meta:
         ordering = ['-created_date']
@@ -440,6 +445,28 @@ class Portrit_User(models.Model):
             return self.portrit_user_albums.select_related().filter(active=True)[0]
         except:
             return None
+            
+    def get_followers_list(self):
+        data = [ ]
+        try:
+            data = self.followers.values_list('fid', flat=True)
+            if len(data) == 0:
+                data = [ ]
+        except:
+            pass
+            
+        return data
+        
+    def get_following_list(self):
+        data = [ ]
+        try:
+            data = self.following.values_list('fid', flat=True)
+            if len(data) == 0:
+                data = [ ]
+        except:
+            pass
+
+        return data
         
     def get_tutorial_counts(self):
         nom_count = 3 - self.given_nomination_count

@@ -787,11 +787,12 @@ def get_user_album_nom_data(request):
         if cookie:
             user = FB_User.objects.get(fid=user_id)
             user_profile_data = cache.get(str(user_id) + '_user_profile')
+            portrit_user = None
             if user_profile_data == None:
                 fb_user_id = [user.fid]
                 winning_nominations = Nomination.objects.select_related().filter(Q(nominatee=user) | Q(tagged_friends__fid__in=fb_user_id), won=True).distinct('id').order_by('-created_date')
                 active_nominations = Nomination.objects.select_related().filter(Q(nominatee=user) | Q(tagged_friends__fid__in=fb_user_id), won=False, active=True).distinct('id').order_by('-created_date')
-            
+
                 active_noms_count = active_nominations.all().count()
                 active_nom_target = 10
                 if active_nominations.all().count() < active_nom_target:
@@ -811,16 +812,25 @@ def get_user_album_nom_data(request):
                         portrit_album_data['photos'].append(photo.get_portrit_photo())
                 except:
                     portrit_album_data = { }
+                    
                 winning_nom_objs = [ ]
                 active_nom_objs = [ ]
-            
+                
                 winning_nom_objs = serialize_noms(winning_nominations)
                 active_nom_objs = serialize_noms(active_nominations)
-            
+                
+                followers = []
+                following = []
+                if portrit_user:
+                    followers = portrit_user.get_followers_list()
+                    following = portrit_user.get_following_list()
+
                 data = {
                     'winning_nom_objs': winning_nom_objs,
                     'active_nom_objs': active_nom_objs,
                     'portrit_album_data': portrit_album_data,
+                    'followers': followers,
+                    'following': following,
                 }
                 
                 cache.set(str(user_id) + '_user_profile', data, 60*10)
@@ -957,7 +967,7 @@ def init_recent_stream(request):
     data = simplejson.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
-def get_recent_stream(fb_user, created_date=None, page_size=10):
+def get_recent_stream(fb_user, created_date=None, page_size=10, ref_user=None):
     data = [ ]
     PAGE_SIZE = int(page_size)
     try:
@@ -965,11 +975,16 @@ def get_recent_stream(fb_user, created_date=None, page_size=10):
         user_recent_stream = cache.get(str(fb_user.fid) + '_recent_stream')
         if user_recent_stream == None or created_date:
             if created_date:
-                nominations = Nomination.objects.select_related().filter(
-                    Q(nominatee__in=friends) |
-                    Q(nominatee=fb_user) |
-                    Q(nominator=fb_user),
-                    created_date__lt=created_date, won=False).distinct('id').order_by('-created_date')[:PAGE_SIZE]
+                if ref_user:
+                    nominations = Nomination.objects.select_related().filter(
+                        Q(nominatee=ref_user),
+                        created_date__lt=created_date, won=False).distinct('id').order_by('-created_date')[:PAGE_SIZE]
+                else:
+                    nominations = Nomination.objects.select_related().filter(
+                        Q(nominatee__in=friends) |
+                        Q(nominatee=fb_user) |
+                        Q(nominator=fb_user),
+                        created_date__lt=created_date, won=False).distinct('id').order_by('-created_date')[:PAGE_SIZE]
             else:
                 nominations = Nomination.objects.select_related().filter(
                     Q(nominatee__in=friends) |
@@ -1027,7 +1042,7 @@ def get_recent_stream(fb_user, created_date=None, page_size=10):
     
 def get_top_stream(fb_user):
     data = [ ]
-    PAGE_SIZE = 5
+    PAGE_SIZE = 10
     top_steam_cache = cache.get(str(fb_user.fid) + '_top_current_noms')
     try:
         if top_steam_cache == None:

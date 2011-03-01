@@ -27,6 +27,39 @@ from urllib2 import URLError, HTTPError
 from poster.encode import multipart_encode
 from poster.streaminghttp import register_openers
 
+def crop_to_size(image, resize_to,image_size, requested_size):
+    from math import floor
+    width_request = requested_size[0]
+    height_request = requested_size[1]
+    width_in = image_size[0]
+    height_in = image_size[1]
+    
+    crop_x0 = 0
+    crop_y0 = 0
+    crop_x1 = 0
+    crop_y1 = 0
+    
+    if resize_to:
+        image.thumbnail(resize_to, Image.ANTIALIAS)
+        width_in = image.size[0]
+        height_in = image.size[1]
+    
+    if width_request < width_in:
+        width_diff = width_in - width_request;
+        crop_x0 = int(floor(width_diff / 2))
+        crop_x1 = crop_x0 + width_request
+    else:
+        crop_x1 = width_in
+
+    if height_request < height_in:
+        height_diff = height_in - height_request
+        crop_y0 = int(floor(height_diff / 2))
+        crop_y1 =crop_y0 + height_request
+    else:
+        crop_y1 = height_in
+    
+    return image.crop((crop_x0, crop_y0, crop_x1, crop_y1))
+    
 def upload_photo(request):
     data = False
     try:
@@ -44,6 +77,7 @@ def upload_photo(request):
             
             thumbnail_size_name = file_name + '_130.jpg'
             large_size_name = file_name + '_720.jpg'
+            crop_size_name = file_name + '_crop.jpg'
             
             image = Image.open(file_loc)
             size = 130, 130
@@ -57,19 +91,29 @@ def upload_photo(request):
             image.save(file_loc + '_720.jpg', 'JPEG', quality=90)
             large_img_size = image.size
             
+            #Create crop section
+            cropped_image = crop_to_size(image, (400,400), large_img_size, (200, 150))
+            cropped_image.save(file_loc + '_crop.jpg', 'JPEG', quality=90)
+            
             s = S3Bucket('portrit_photos', access_key=AWS_KEY, secret_key=AWS_SECRET_KEY)
             thumbnail = open(file_loc + '_130.jpg', 'rb+')
             s.put(thumbnail_size_name, thumbnail.read(), acl="public-read")
             thumbnail.close()
+            
             large_image = open(file_loc + '_720.jpg', 'rb+')
             s.put(large_size_name, large_image.read(), acl="public-read")
             large_image.close()
+            
+            cropped_image = open(file_loc + '_crop.jpg', 'rb+')
+            s.put(crop_size_name, cropped_image.read(), acl="public-read")
+            cropped_image.close()
 
             s3_url = "http://portrit_photos.s3.amazonaws.com/"
             photo = Photo(portrit_photo=True, photo_path=file_loc, thumbnail_src=(s3_url+thumbnail_size_name), 
                         large_src=(s3_url+large_size_name), fb_source_small=(s3_url+thumbnail_size_name),
-                        fb_source=(s3_url+large_size_name), small_width=thumb_img_size[0], 
-                        small_height=thumb_img_size[1], width=large_img_size[0], height=large_img_size[1], 
+                        fb_source=(s3_url+large_size_name), crop_src=(s3_url+crop_size_name),
+                        small_width=thumb_img_size[0], small_height=thumb_img_size[1], 
+                        width=large_img_size[0], height=large_img_size[1], 
                         active=True, pending=True)
             photo.save()
             
@@ -185,14 +229,14 @@ def create_portrit_photo_album(fb_user, portrit_user):
     portrit_user.save()
     
 def latest_photos(request):
-    data = False
+    data = []
     try:
         cookie = facebook.get_user_from_cookie(
             request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
         if cookie:
             fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
             friends = fb_user.friends.values_list('fid', flat=True)
-            photos = Photo.objects.filter(active=True, pending=False, portrit_photo=True, album__portrit_user_albums__fb_user__fid__in=friends).order_by('-created_date')[:48]
+            photos = Photo.objects.filter(active=True, pending=False, portrit_photo=True, album__portrit_user_albums__fb_user__fid__in=friends).order_by('-created_date')[:32]
             photo_data = [ ]
             for photo in photos:
                 try:
