@@ -11,7 +11,7 @@
     <meta property="og:image" content="http://portrit.s3.amazonaws.com/img/icon128.png"/>
     <meta property="og:site_name" content="Portrit"/>
     <meta property="og:description" content="Award the best photos. It's up to you and your Facebook friends to find whose got the best pics."/>
-	<meta property="fb:app_id" content="155664697800227">
+	<meta property="fb:app_id" content="126374870731237">
 	<meta property="fb:admins" content="1450020005,111500557">
 	<meta name="application-name" content="Portrit">
 	<link rel="shortcut icon" href="http://portrit.s3.amazonaws.com/img/favicon.ico">
@@ -58,7 +58,7 @@
     <script type="text/javascript">
     	if (window.location.hostname == 'portrit.com' || window.location.hostname == 'www.portrit.com'){
     	    window.fbAsyncInit = function() {
-                FB.init({appId: '126374870731237', status: true, cookie: true, xfbml: false});
+                FB.init({appId: '126374870731237', status: true, cookie: true, xfbml: true});
                 clearTimeout(fb_server_timeout);
                 fb_server_timeout = setTimeout(fb_down, 6000);
                 FB.getLoginStatus(handleSessionResponse);
@@ -66,7 +66,7 @@
         }
         else if (window.location.hostname == 'test.portrit.com' || window.location.hostname == 'www.test.portrit.com'){
             window.fbAsyncInit = function() {
-                FB.init({appId: '123063501058161', status: true, cookie: true, xfbml: false});
+                FB.init({appId: '123063501058161', status: true, cookie: true, xfbml: true});
                 clearTimeout(fb_server_timeout);
                 fb_server_timeout = setTimeout(fb_down, 6000);
                 FB.getLoginStatus(handleSessionResponse);
