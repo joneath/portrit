@@ -260,6 +260,7 @@ def get_user_nom(request):
     if cookie:
         fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
         nom_id = request.GET.get('nom_id')
+        nom_id = int(nom_id.replace('&ref', ''))
         nom = Nomination.objects.get(id=nom_id)
         if not nom.active:
             try:
@@ -303,7 +304,7 @@ def get_user_nom(request):
                 data = simplejson.dumps(data)
             except:
                 pass
-        
+                
     return HttpResponse(data, mimetype='application/json')
     
 def get_user_stream(fb_user):

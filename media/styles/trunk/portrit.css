@@ -163,7 +163,6 @@ div#wrapper{
 }
 
 #header{
-    background:         -moz-linear-gradient(center top , #333333, #111111) repeat scroll 0 0 transparent;
     text-align:         center;
     margin:             0px -1px;
     margin-bottom:      10px;
@@ -7155,7 +7154,7 @@ div#payment_types_cont{
     }
 
 #footer{
-    background:         -moz-linear-gradient(center top , #222, #111) repeat scroll 0 0 transparent;
+    border-top:         1px solid #1E1E1E;
     background-color:   black;
     bottom:             0px;
     height:             30px;
@@ -7164,9 +7163,8 @@ div#payment_types_cont{
     overflow-y:         hidden;
     text-align:         center;
     padding-top:        5px;
-    position:           relative;
     width:              100%;
-    z-index:            0;
+    z-index:            10000;
 }
 
     #footer a{

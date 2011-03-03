@@ -125,6 +125,7 @@ def get_recent_winners(request):
                 else:
                     data = recent_winners_cache
             else:
+                nom_id = int(nom_id.replace('&ref', ''))
                 nom = Nomination.objects.get(id=nom_id)
                 # comment_count = nom.get_comment_count()
                 votes = [ ]

@@ -4328,6 +4328,10 @@ $(document).ready(function(){
             title = '',
             tagged_user_html = '',
             nom_cat_underscore = '';
+            
+        if (nom_id){
+            nom_id = nom_id.replace('&ref', '');
+        }
         
         if (typeof(inactive) !== "undefined" && inactive == true && data[0].won == false){
             nom = data[0];
@@ -7524,16 +7528,16 @@ $(document).ready(function(){
                                         '</div>' +
                                         '<div class="clear"></div>' +
                                     '</div>' +
-                                    '<div class="recent_nom_comment_cont" id="nom_comments_' + nom.id +'">' +
-                                        '<div class="recent_nom_comment_heading" value="' + nom.id + '">' +
-                                            '<a href="#!/nom_id=' + nom.id + '/comments">' +
-                                                '<h1>Comments</h1>' +
-                                            '</a>' +
-                                            '<span class="add_new_comment sick large">New Comment</span>' +
-                                            '<div class="clear"></div>' +
-                                        '</div>' +
-                                        comment_html +
-                                    '</div>' +
+                                    // '<div class="recent_nom_comment_cont" id="nom_comments_' + nom.id +'">' +
+                                    //     '<div class="recent_nom_comment_heading" value="' + nom.id + '">' +
+                                    //         '<a href="#!/nom_id=' + nom.id + '/comments">' +
+                                    //             '<h1>Comments</h1>' +
+                                    //         '</a>' +
+                                    //         '<span class="add_new_comment sick large">New Comment</span>' +
+                                    //         '<div class="clear"></div>' +
+                                    //     '</div>' +
+                                    //     comment_html +
+                                    // '</div>' +
                                 '</div>';
             
             $('#recent_left_cont').prepend(recent_nom_html);
