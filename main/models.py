@@ -360,6 +360,7 @@ class Notification(models.Model):
     
 class FB_User(models.Model):
     fid = BigIntegerField(null=True, unique=True)
+    name = models.CharField(max_length=255, null=True, blank=True)
     created_date = models.DateField(auto_now_add=True)
     albums = models.ManyToManyField(Album, null=True, blank=True, related_name="fb_user_albums")
     friends = models.ManyToManyField("self", null=True, blank=True)

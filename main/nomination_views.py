@@ -44,7 +44,7 @@ def get_trophy_wins(request):
                         active=True,
                         nomination_category__name=cat).distinct('id').order_by('-current_vote_count', '-created_date')
             for nom in winning_noms.iterator():
-                comment_count = nom.get_comment_count()
+                # comment_count = nom.get_comment_count()
                 votes = [ ]
                 for vote in nom.votes.all().iterator():
                     votes.append({
@@ -63,8 +63,8 @@ def get_trophy_wins(request):
                     'won': nom.won,
                     'photo': nom.get_photo(),
                     'caption': nom.caption,
-                    'comments': False,
-                    'comment_count': comment_count,
+                    # 'comments': False,
+                    # 'comment_count': comment_count,
                     'vote_count': nom.current_vote_count,
                     'votes': votes,
                 })
@@ -96,7 +96,7 @@ def get_recent_winners(request):
                     friends = fb_user.friends.all()
                     winning_noms = Nomination.objects.select_related().filter(Q(nominatee__in=friends) | Q(nominatee=fb_user), won=True).order_by('-created_date')[(per_page*(page-1)):(per_page*page)]
                     for nom in winning_noms.iterator():
-                        comment_count = nom.get_comment_count()
+                        # comment_count = nom.get_comment_count()
                         votes = [ ]
                         for vote in nom.votes.all().iterator():
                             votes.append({
@@ -116,8 +116,8 @@ def get_recent_winners(request):
                             'won': nom.won,
                             'photo': nom.get_photo(),
                             'caption': nom.caption,
-                            'comments': False,
-                            'comment_count': comment_count,
+                            # 'comments': False,
+                            # 'comment_count': comment_count,
                             'vote_count': nom.current_vote_count,
                             'votes': votes,
                         })
@@ -126,7 +126,7 @@ def get_recent_winners(request):
                     data = recent_winners_cache
             else:
                 nom = Nomination.objects.get(id=nom_id)
-                comment_count = nom.get_comment_count()
+                # comment_count = nom.get_comment_count()
                 votes = [ ]
                 for vote in nom.votes.all().iterator():
                     votes.append({
@@ -145,8 +145,8 @@ def get_recent_winners(request):
                     'won': nom.won,
                     'photo': nom.get_photo(),
                     'caption': nom.caption,
-                    'comments': False,
-                    'comment_count': comment_count,
+                    # 'comments': False,
+                    # 'comment_count': comment_count,
                     'vote_count': nom.current_vote_count,
                     'votes': votes,
                 })
@@ -465,8 +465,8 @@ def nominate_photo(request):
                         pass
                         
                     nomination.votes.add(fb_user)
-                    comments = nomination.get_comments()
-                    comment_count = comments['count']
+                    # comments = nomination.get_comments()
+                    # comment_count = comments['count']
                     # comments = comments['comments']
                     photo.nominations.add(nomination)
                     fb_user.active_nominations.add(nomination)
@@ -504,8 +504,8 @@ def nominate_photo(request):
                         'won': nomination.won,
                         'created_time': time.mktime(nomination.created_date.utctimetuple()),
                         'caption': comment_text,
-                        'comments': False, #comments,
-                        'comment_count': comment_count,
+                        # 'comments': False, #comments,
+                        # 'comment_count': comment_count,
                         'photo': photo_data,
                         'vote_count': nomination.current_vote_count,
                         'votes': [{
@@ -536,7 +536,7 @@ def nominate_photo(request):
                     user_top_stream = cache.get(str(friend.fid) + '_user_top_stream')
                     if recent_nom_cache != None:
                         for nom in nom_data:
-                            nom['quick_comments'] = [ ]
+                            # nom['quick_comments'] = [ ]
                             recent_nom_cache.insert(0, nom)
                         recent_nom_cache = recent_nom_cache[:10]
                         cache.set(str(friend.fid) + '_recent_stream', recent_nom_cache, 60*5)
@@ -704,8 +704,8 @@ def reactivate_nom(request):
                     'won': nomination.won,
                     'created_time': time.mktime(nomination.created_date.utctimetuple()),
                     'caption': caption_text,
-                    'comments': False,
-                    'comment_count': 0,
+                    # 'comments': False,
+                    # 'comment_count': 0,
                     'photo': photo_data,
                     'vote_count': nomination.current_vote_count,
                     'votes': [{
@@ -740,7 +740,7 @@ def reactivate_nom(request):
                     user_top_stream = cache.get(str(friend.fid) + '_user_top_stream')
                     if recent_nom_cache != None:
                         for nom in nom_data:
-                            nom['quick_comments'] = [ ]
+                            # nom['quick_comments'] = [ ]
                             recent_nom_cache.insert(0, nom)
                         recent_nom_cache = recent_nom_cache[:10]
                         cache.set(str(friend.fid) + '_recent_stream', recent_nom_cache, 60*5)
@@ -992,11 +992,11 @@ def get_recent_stream(fb_user, created_date=None, page_size=10, ref_user=None):
                     Q(nominator=fb_user),
                     won=False).distinct('id').order_by('-created_date')[:PAGE_SIZE]
             for nom in nominations.iterator():
-                comment_count = nom.get_comment_count()
-                quick_comments = nom.get_quick_comments()
-                more_comments = False
-                if len(quick_comments) != comment_count:
-                    more_comments = True
+                # comment_count = nom.get_comment_count()
+                # quick_comments = nom.get_quick_comments()
+                # more_comments = False
+                # if len(quick_comments) != comment_count:
+                #     more_comments = True
                 votes = [ ]
                 for vote in nom.votes.all().iterator():
                     try:
@@ -1020,10 +1020,10 @@ def get_recent_stream(fb_user, created_date=None, page_size=10, ref_user=None):
                         'created_time': time.mktime(nom.created_date.utctimetuple()),
                         'photo': nom.get_photo(),
                         'caption': nom.caption,
-                        'comments': False,
-                        'quick_comments': quick_comments,
-                        'more_comments': more_comments,
-                        'comment_count': comment_count,
+                        # 'comments': False,
+                        # 'quick_comments': quick_comments,
+                        # 'more_comments': more_comments,
+                        # 'comment_count': comment_count,
                         'vote_count': nom.current_vote_count,
                         'votes': votes,
                     })
@@ -1054,7 +1054,7 @@ def get_top_stream(fb_user):
                 active=True, won=False).distinct('id').order_by('-current_vote_count')[:PAGE_SIZE]
             
             for nom in nominations.iterator():
-                comment_count = nom.get_comment_count()
+                # comment_count = nom.get_comment_count()
                 votes = [ ]
                 for vote in nom.votes.all().iterator():
                     votes.append({
@@ -1075,8 +1075,8 @@ def get_top_stream(fb_user):
                     'created_time': time.mktime(nom.created_date.utctimetuple()),
                     'photo': nom.get_photo(),
                     'caption': nom.caption,
-                    'comments': False,
-                    'comment_count': comment_count,
+                    # 'comments': False,
+                    # 'comment_count': comment_count,
                     'vote_count': nom.current_vote_count,
                     'votes': votes,
                 })
@@ -1129,7 +1129,7 @@ def get_target_friends(fb_user, current_user):
 def serialize_noms(noms):
     data = [ ]
     for nom in noms.iterator():
-        comment_count = nom.get_comment_count()
+        # comment_count = nom.get_comment_count()
         votes = [ ]
         for vote in nom.votes.all().iterator():
             votes.append({
@@ -1149,9 +1149,9 @@ def serialize_noms(noms):
             'won': nom.won,
             'photo': nom.get_photo(),
             'caption': nom.caption,
-            'comments': False,
-            'quick_comments': nom.get_quick_comments(),
-            'comment_count': comment_count,
+            # 'comments': False,
+            # 'quick_comments': nom.get_quick_comments(),
+            # 'comment_count': comment_count,
             'vote_count': nom.current_vote_count,
             'votes': votes,
         })

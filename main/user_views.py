@@ -267,7 +267,7 @@ def get_user_nom(request):
                             'noms': None,
                             'inactive': True,
                         }]
-                comment_count = nom.get_comment_count()
+                # comment_count = nom.get_comment_count()
                 votes = [ ]
                 
                 for vote in nom.votes.all().iterator():
@@ -289,8 +289,8 @@ def get_user_nom(request):
                     'time_remaining': nom.get_time_remaining(),
                     'photo': nom.get_photo(),
                     'caption': nom.caption,
-                    'comments': False,
-                    'comment_count': comment_count,
+                    # 'comments': False,
+                    # 'comment_count': comment_count,
                     'vote_count': nom.current_vote_count,
                     'votes': votes,
                 }]
@@ -330,7 +330,7 @@ def get_user_stream(fb_user):
                         Q(nominator=fb_user),
                         active=True, won=False).distinct('id').order_by('-current_vote_count', '-created_date')#[:PAGE_SIZE]
                     for nom in top_noms.iterator():
-                        comment_count = nom.get_comment_count()
+                        # comment_count = nom.get_comment_count()
                         votes = [ ]
                         for vote in nom.votes.all().iterator():
                             votes.append({
@@ -351,8 +351,8 @@ def get_user_stream(fb_user):
                             'time_remaining': nom.get_time_remaining(),
                             'photo': nom.get_photo(),
                             'caption': nom.caption,
-                            'comments': False,
-                            'comment_count': comment_count,
+                            # 'comments': False,
+                            # 'comment_count': comment_count,
                             'vote_count': nom.current_vote_count,
                             'votes': votes,
                         })

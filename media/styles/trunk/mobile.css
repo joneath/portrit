@@ -577,7 +577,7 @@ div#feedback div#feedback_cont{
     }
     
 .nom_photo_bottom_wrap .nominator_cont{
-    width:              200px;
+
 }
     
 div#active_stream_text_cont{
@@ -948,6 +948,7 @@ div#nom_detail_cont{
     }
     
         div#nom_comments_cont{
+            margin-left:    0px;
             width:          400px;
         }
         

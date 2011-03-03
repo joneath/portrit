@@ -12,37 +12,6 @@ from settings import ENV, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET
 
 import facebook, re
 
-def mobile(request):
-	device = {}
-
-	ua = request.META.get('HTTP_USER_AGENT', '').lower()
-
-	if ua.find("iphone") > 0:
-		device['iphone'] = "iphone" + re.search("iphone os (\d)", ua).groups(0)[0]
-
-	if ua.find("ipad") > 0:
-		device['ipad'] = "ipad"
-
-	if ua.find("android") > 0:
-		device['android'] = "android" + re.search("android (\d\.\d)", ua).groups(0)[0].translate(None, '.')
-
-	if ua.find("blackberry") > 0:
-		device['blackberry'] = "blackberry"
-
-	if ua.find("windows phone os 7") > 0:
-		device['winphone7'] = "winphone7"
-
-	if ua.find("iemobile") > 0:
-		device['winmo'] = "winmo"
-
-	if not device:			# either desktop, or something we don't care about.
-		device['baseline'] = "baseline"
-
-	# spits out device names for CSS targeting, to be applied to <html> or <body>.
-	device['classes'] = " ".join(v for (k,v) in device.items())
-
-	return {'device': device }
-
 def index(request, template='index.html'):    
     production_code = True
     analytics = True
@@ -50,8 +19,21 @@ def index(request, template='index.html'):
     if ENV == 'LOCAL':
         production_code = False
         analytics = None
-    
-    payload = {'analytics': analytics, 'production_code': production_code}
+        
+    title = "Portrit"
+    fb_title  = "Portrit"
+        
+    if request.GET.get('nom_id'):
+        nom_id = request.GET.get('nom_id')
+        try:
+            nom = Nomination.objects.get(id=int(nom_id))
+            title = nom.nominatee.get_name() + '\'s Photo Nominated For ' + nom.nomination_category.name
+            fb_title = title
+            print fb_title
+        except:
+            pass
+            
+    payload = {'analytics': analytics, 'production_code': production_code, 'title': title, 'fb_title': fb_title}
     return render_to_response(template, payload, context_instance=RequestContext(request))
 
 def robots(request):

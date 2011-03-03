@@ -1,15 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head id="my_head">
-	<title>Portrit</title>
+	<title>{{ title }}</title>
     <meta charset="utf-8" />
     <meta name="description" content="Award the best photos. It's up to you and your Facebook friends to find whose got the best pics." />
     <meta name="keywords" content="portrit, portrait, social, facebook, photo, vote, nominate, trophy, trophies" />
+    <meta property="og:title" content="{{ fb_title }}"/>
+    <meta property="og:type" content="article"/>
+    <meta property="og:url" content="http://portrit.com"/>
+    <meta property="og:image" content="http://portrit.s3.amazonaws.com/img/icon128.png"/>
+    <meta property="og:site_name" content="Portrit"/>
+    <meta property="og:description" content="Award the best photos. It's up to you and your Facebook friends to find whose got the best pics."/>
+	<meta property="fb:app_id" content="155664697800227">
+	<meta property="fb:admins" content="1450020005,111500557">
+	<meta name="application-name" content="Portrit">
 	<link rel="shortcut icon" href="http://portrit.s3.amazonaws.com/img/favicon.ico">
     <link rel="apple-touch-icon" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>
     <link rel="apple-touch-icon-precomposed" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>
     {% if production_code %}
-        <link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/portrit-13.css"/>
+        <link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/portrit-14.css"/>
     {% else %}
         <link rel="stylesheet" href="/site_media/styles/trunk/portrit.css"/>
     {% endif %}
@@ -18,7 +27,7 @@
         google.load("jquery", "1.5.1");
     </script>
     {% if production_code %}
-        <script type="text/javascript" src="http://portrit.s3.amazonaws.com/js/production/portrit-min-15.js"></script>
+        <script type="text/javascript" src="http://portrit.s3.amazonaws.com/js/production/portrit-min-16.js"></script>
     {% else %}
         <script type="text/javascript" src="/site_media/js/trunk/easing.1.3.js"></script>
         <script type="text/javascript" src="/site_media/js/trunk/jquery.autocomplete.js"></script>
@@ -65,7 +74,7 @@
         }
         else{
             window.fbAsyncInit = function() {
-                FB.init({appId: '155664697800227', status: true, cookie: true, xfbml: false});
+                FB.init({appId: '155664697800227', status: true, cookie: true, xfbml: true});
                 // FB.provide("UIServer.Methods",
                 //    { 'permissions.request' : { size : {width: 575, height: 300}, 
                 //                     url: 'connect/uiserver.php',
