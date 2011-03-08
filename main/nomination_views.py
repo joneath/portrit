@@ -1034,7 +1034,7 @@ def get_recent_stream(fb_user, created_date=None, page_size=10, ref_user=None):
                 cache.set(str(fb_user.fid) + '_recent_stream', data, 60*5)
         else:
             data = user_recent_stream[:PAGE_SIZE]
-        if data.count() == 0 or data[0].active == False:
+        if len(data) == 0 or data[0]['active'] == False:
             data = "empty"
     except:
         pass
@@ -1157,5 +1157,36 @@ def serialize_noms(noms):
             'votes': votes,
         })
         
+    return data
+    
+def serialize_nom(nom):
+    data = { }
+    # comment_count = nom.get_comment_count()
+    votes = [ ]
+    for vote in nom.votes.all().iterator():
+        votes.append({
+            'vote_user': vote.fid,
+            'vote_name': vote.get_name(),
+        })
+    data = {
+        'id': nom.id,
+        'active': nom.active,
+        'created_time': time.mktime(nom.created_date.utctimetuple()),
+        'nomination_category': nom.nomination_category.name,
+        'nominator': nom.nominator.fid,
+        'nominator_name': nom.nominator.get_name(),
+        'nominatee': nom.nominatee.fid,
+        'nominatee_name': nom.nominatee.get_name(),
+        'tagged_users': nom.get_tagged_users(),
+        'won': nom.won,
+        'photo': nom.get_photo(),
+        'caption': nom.caption,
+        # 'comments': False,
+        # 'quick_comments': nom.get_quick_comments(),
+        # 'comment_count': comment_count,
+        'vote_count': nom.current_vote_count,
+        'votes': votes,
+    }
+
     return data
     

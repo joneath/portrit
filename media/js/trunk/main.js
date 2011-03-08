@@ -366,20 +366,7 @@ $(document).ready(function(){
                 
             }
         }
-            
-        // FB.ui({method: "permissions.request", display: 'iframe', "perms": 'read_stream,publish_stream,user_photos,user_videos,friends_photos,friends_videos,friends_status,user_photo_video_tags,friends_photo_video_tags'} , handleSessionResponse);
-        
-
-        // FB.ui({
-        //         method: 'auth.login',
-        //         redirect_uri: 'http://portrit.com',
-        //         scope: 'read_stream,publish_stream,user_photos,user_videos,friends_photos,friends_videos,friends_status,user_photo_video_tags,friends_photo_video_tags',
-        //         display: 'iframe' },
-        //         function (response){
-        //             handleSessionResponse(response);
-        //         }
-        //     );
-        FB.login(handleSessionResponse, {perms:'read_stream,publish_stream,user_photos,user_videos,friends_photos,friends_videos,friends_status,user_photo_video_tags,friends_photo_video_tags,offline_access'});
+        FB.login(handleSessionResponse, {perms:'read_stream,publish_stream,user_photos,user_videos,friends_photos,friends_videos,friends_status,user_photo_video_tags,friends_photo_video_tags,offline_access,email'});
     }
     
     function render_public_photo(){
@@ -7875,6 +7862,42 @@ $(document).ready(function(){
                     photo_thumbnail = '<img src="' + nom.photo.src_small + '"/>';
 
                     // top_nom_html =  '<div class="top_nom_cont">' +
+                    //                     '<a href="#/user=' + nom.nominatee + '"><h2>' + name + '</h2></a>' +
+                    //                         '<div class="top_nom_wrap">' +
+                    //                         '<div class="top_nom_left_cont nom_cat_' + nom_cat_underscore + '">' +
+                    //                             '<a href="#/user=' + nom.nominatee + '" name="' + name + '">' +
+                    //                                 user_thumbnail +
+                    //                             '</a>' +
+                    //                             '<p class="vote_count">' + getGetOrdinal(i + 1) + '</p>' +
+                    //                         '</div>' +
+                    //                         '<div class="top_nom_right_cont">' +
+                    //                             '<a href="#/nom_id=' + nom.id + '">' +
+                    //                                 photo_thumbnail +
+                    //                             '</a>' +
+                    //                         '</div>' +
+                    //                         '<div class="clear"></div>' +
+                    //                         '<div class="top_nom_bottom_cont">' +
+                    //                             '<div class="top_nom_comment_cont nom_comment_' + nom.id + '">' +
+                    //                                 '<a href="#/nom_id=' + nom.id + '">' +
+                    //                                     '<p>Comments: <span class="strong">' + nom.comment_count + '</span></p>' +
+                    //                                 '</a>' +
+                    //                             '</div>' +
+                    //                             '<div class="top_nom_vote_count nom_vote_' + nom.id + '">' +
+                    //                                 '<a href="#/nom_id=' + nom.id + '">' +
+                    //                                     '<p>Votes: <span class="strong">' + nom.vote_count + '</span></p>' +
+                    //                                 '</a>' +
+                    //                             '</div>' +
+                    //                             '<div class="clear"></div>' +
+                    //                         '</div>' +
+                    //                     '</div>' +
+                    //                 '</div>';
+                    
+                    // top_nom_html =  '<div class="top_nom_wrap">' +
+                    //                     '<p class="vote_count">' + getGetOrdinal(i + 1) + '</p>' +
+                    //                     '<div class="top_nom_clip">' +
+                    //                         photo_thumbnail +
+                    //                     '</div>' +
+                    // top_nom_html =  '<div class="top_nom_cont">' +
                     //                     '<a href="#!/user=' + nom.nominatee + '"><h2>' + name + '</h2></a>' +
                     //                         '<div class="top_nom_wrap">' +
                     //                         '<div class="top_nom_left_cont nom_cat_' + nom_cat_underscore + '">' +
@@ -7918,7 +7941,7 @@ $(document).ready(function(){
                                             '<div class="top_nom_clip">' +
                                                 photo_thumbnail +
                                             '</div>' +
-                                        '</div>'
+                                        '</div>' +
                                     '</div>';
 
                     $('#current_top_noms').append(top_nom_html);
@@ -8529,7 +8552,7 @@ $(document).ready(function(){
             var nom_id = $(this).attr('value');
             window.location.href = '/#!/nom_id=' + nom_id;
         });
-        
+
         $(window).bind('scroll', function(e){
             var scroll_pos = $(window).scrollTop();
             if (inactive_nom_found == true && scroll_pos >= inactive_header_pos && recent_inactive_header_free == false && mobile == false){

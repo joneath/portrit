@@ -146,6 +146,7 @@ class Nomination(models.Model):
         photo_data['id'] = photo.id
         photo_data['fid'] = photo.fid
         photo_data['src'] = photo.fb_source
+        photo_data['source'] = photo.large_src
         photo_data['src_small'] = photo.fb_source_small
         photo_data['small_height'] = photo.small_height
         photo_data['small_width'] = photo.small_width
@@ -281,6 +282,7 @@ class Photo(models.Model):
             return {
                 'id': self.id,
                 'fid': self.id,
+                'created_time': time.mktime(self.created_date.utctimetuple()),
                 'caption': self.caption,
                 'picture': self.thumbnail_src,
                 'crop': self.crop_src,
@@ -374,7 +376,10 @@ class FB_User(models.Model):
         
     def get_name(self):
         try:
-            return self.portrit_fb_user.all()[0].name
+            if self.name:
+                return self.name
+            else:
+                return self.portrit_fb_user.all()[0].name
         except:
             return None
             
@@ -402,6 +407,15 @@ class FB_User(models.Model):
             return active_nominations
         except:
             return None
+            
+    def get_following(self):
+        friends = self.friends.all()
+        try:
+            following = self.get_portrit_user().following.all()
+            following = following | friends
+        except:
+            following = friends
+        return following
     
     def __unicode__(self):
         return u'%s' % (self.fid)
@@ -415,6 +429,7 @@ class Portrit_User(models.Model):
     access_token = models.CharField(max_length=255, null=True)
     fb_user = models.ForeignKey(FB_User, related_name="portrit_fb_user")
     name = models.CharField(max_length=255, null=True, blank=True)
+    email = models.EmailField(max_length=100, null=True, blank=True)
     portrit_album_fid = BigIntegerField(blank=True, null=True, unique=True)
     portrit_photos_album_fid = BigIntegerField(blank=True, null=True, unique=True)
     portrit_user_albums = models.ManyToManyField(Album, blank=True, null=True, related_name="portrit_user_albums")

@@ -4715,6 +4715,7 @@ div#latest_photos{
             margin:                 5px;
             position:               relative;
             height:                 80px;
+
         }
         
             .top_nom_wrap > a > img{
@@ -4790,8 +4791,6 @@ div#latest_photos{
                 text-align:             center;
                 line-height:            40px;
             }
-        
-            
     
 /*        .top_nom_cont > a > h2{
             color:              white;

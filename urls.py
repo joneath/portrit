@@ -54,12 +54,24 @@ urlpatterns += patterns('',
     url(r'^init_recent_stream/$', 'main.nomination_views.init_recent_stream', name='init_recent_stream'),
 )
 
+#API URLs
+urlpatterns += patterns('',
+    url(r'^api/get_recent_stream/$', 'main.api_views.get_recent_stream'),
+    url(r'^api/get_top_stream/$', 'main.api_views.get_top_stream'),
+    url(r'^api/get_winners_stream/$', 'main.api_views.get_winners_stream'),
+    url(r'^api/get_follow_count/$', 'main.api_views.get_follow_count'),
+    url(r'^api/get_user_photos/$', 'main.api_views.get_user_photos'),
+    url(r'^api/get_follow_data/$', 'main.api_views.get_follow_data'),
+    url(r'^api/get_noms_in_cat/$', 'main.api_views.get_noms_in_cat'),
+    url(r'^api/get_user_wins_trophy_cat/$', 'main.api_views.get_user_wins_trophy_cat'),
+    url(r'^api/get_user_trophies/$', 'main.api_views.get_user_trophies'),
+)
+
 #Community URLs
 urlpatterns += patterns('',
     url(r'^get_community/$', 'main.community_views.get_community', name='get_community'),
     url(r'^get_more_community_photos/$', 'main.community_views.get_more_community_photos', name='get_more_community_photos'),
 )
-
 
 #Photo URLs
 urlpatterns += patterns('',

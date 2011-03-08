@@ -61,23 +61,6 @@ def login_fb_user(request):
         elif user.access_token != cookie["access_token"]:
             user.access_token = cookie["access_token"]
             user.save()
-            # fb_user = FB_User.objects.get(fid=str(profile["id"]))
-            # node_data = {
-            #     'method': 'update_user_friends',
-            #     'payload': {
-            #         'fid': fb_user.fid,
-            #     }
-            # }
-            # 
-            # node_data = json.dumps(node_data)
-            # try:
-            #     sock = socket.socket(
-            #         socket.AF_INET, socket.SOCK_STREAM)
-            #     sock.connect((NODE_HOST, NODE_SOCKET))
-            #     sock.send(node_data)
-            #     sock.close()
-            # except:
-            #     pass
             graph = facebook.GraphAPI(cookie["access_token"])
             portrit = Portrit_FB(graph, fb_user, cookie["access_token"])
             portrit.load_user_friends(True)
