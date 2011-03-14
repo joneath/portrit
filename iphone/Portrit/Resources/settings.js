@@ -1,11 +1,12 @@
 var RUNTIME = "local",
-    SERVER_URL = '';
+    SERVER_URL = '',
+    VERSION = '1.0.0';
     
 if (RUNTIME == 'production'){
     SERVER_URL = 'http://portrit.com';
 }
 else{
-    SERVER_URL = 'http://192.168.1.101:8080';
+    SERVER_URL = 'http://192.168.1.126:8080';
 }
 
 function get_nom_cat_color(nom_cat){
@@ -34,9 +35,15 @@ function get_nom_cat_color(nom_cat){
         return '#FAC86E';
     }
     if (nom_cat == 'awesome'){
-        return '#3399ff';
+        return '#39F';
     }
     if (nom_cat == 'yummy'){
         return '#cc3366';
     }
+}
+
+function getOrdinal(n) {
+   var s=["th","st","nd","rd"],
+       v=n%100;
+   return n+(s[(v-20)%10]||s[v]||s[0]);
 }

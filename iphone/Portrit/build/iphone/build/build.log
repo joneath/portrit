@@ -5,7 +5,7 @@ reporting an issue to help us understand your environment, build settings
 and aid in debugging. Please attach this log to any issue that you report.
 ================================================================================
 
-Starting build at 03/08/11 12:34
+Starting build at 03/14/11 16:42
 
 Build details:
 
@@ -17,7 +17,7 @@ Build details:
 Script arguments:
    /Library/Application Support/Titanium/mobilesdk/osx/1.6.0/iphone/builder.py
    simulator
-   "4.2"
+   "4.3"
    "/Users/joneath/Workspace/portrit/iphone/Portrit"
    com.portrit
    "Portrit"

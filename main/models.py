@@ -238,6 +238,17 @@ class Album(models.Model):
 
     def __unicode__(self):
         return u'%s_%s' % (self.fid, self.name)
+        
+class GPS_Data(models.Model):
+    created_date = models.DateTimeField(auto_now_add=True)
+    longitude = models.FloatField(null=True, blank=True)
+    latitude = models.FloatField(null=True, blank=True)
+    altitude = models.FloatField(null=True, blank=True)
+    heading = models.FloatField(null=True, blank=True)
+    accuracy = models.FloatField(null=True, blank=True)
+    speed = models.FloatField(null=True, blank=True)
+    altitudeAccuracy = models.FloatField(null=True, blank=True)
+    
 
 class Photo(models.Model):    
     active = models.BooleanField(default=True)
@@ -257,6 +268,7 @@ class Photo(models.Model):
     thumbnail_src = models.URLField(max_length=255, null=True, blank=True)
     large_src = models.URLField(max_length=255, null=True, blank=True)
     crop_src = models.URLField(max_length=255, null=True, blank=True)
+    gps_data = models.ForeignKey(GPS_Data, null=True, blank=True)
     album = models.ForeignKey(Album, null=True, blank=True)
     nominations = models.ManyToManyField(Nomination, null=True, blank=True)
     
@@ -425,6 +437,7 @@ class Portrit_User(models.Model):
     ask_permission = models.BooleanField(default=True)
     allow_portrit_album = models.BooleanField(default=True)
     allow_notifications = models.BooleanField(default=True)
+    allow_gps_data = models.BooleanField(default=True)
     created_date = models.DateField(auto_now_add=True)
     access_token = models.CharField(max_length=255, null=True)
     fb_user = models.ForeignKey(FB_User, related_name="portrit_fb_user")

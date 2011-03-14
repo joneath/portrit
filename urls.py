@@ -59,12 +59,40 @@ urlpatterns += patterns('',
     url(r'^api/get_recent_stream/$', 'main.api_views.get_recent_stream'),
     url(r'^api/get_top_stream/$', 'main.api_views.get_top_stream'),
     url(r'^api/get_winners_stream/$', 'main.api_views.get_winners_stream'),
-    url(r'^api/get_follow_count/$', 'main.api_views.get_follow_count'),
     url(r'^api/get_user_photos/$', 'main.api_views.get_user_photos'),
-    url(r'^api/get_follow_data/$', 'main.api_views.get_follow_data'),
     url(r'^api/get_noms_in_cat/$', 'main.api_views.get_noms_in_cat'),
     url(r'^api/get_user_wins_trophy_cat/$', 'main.api_views.get_user_wins_trophy_cat'),
     url(r'^api/get_user_trophies/$', 'main.api_views.get_user_trophies'),
+    
+    #Follow
+    url(r'^api/get_follow_count/$', 'main.api_views.get_follow_count'),
+    url(r'^api/get_my_follow_data/$', 'main.api_views.get_my_follow_data'),
+    url(r'^api/get_follow_data/$', 'main.api_views.get_follow_data'),
+    url(r'^api/follow_unfollow_user/$', 'main.api_views.follow_unfollow_user'),
+    
+    #Community
+    url(r'^api/get_community_photos/$', 'main.api_views.get_community_photos'),
+    url(r'^api/get_community_nominations/$', 'main.api_views.get_community_nominations'),
+    url(r'^api/get_community_top_stream/$', 'main.api_views.get_community_top_stream'),
+    
+    #Notifications
+    url(r'^api/get_active_notifications/$', 'main.api_views.get_active_notifications'),
+    url(r'^api/notification_read/$', 'main.api_views.notification_read'),
+    
+    #Comments
+    url(r'^api/get_comments/$', 'main.api_views.get_comments'),
+    url(r'^api/new_comment/$', 'main.api_views.new_comment'),
+    
+    #Search
+    url(r'^api/search/$', 'main.api_views.search'),
+    url(r'^api/search_by_names/$', 'main.api_views.search_by_names'),
+    url(r'^api/search_cool_kids/$', 'main.api_views.search_cool_kids'),
+)
+
+#iPhone Views
+urlpatterns += patterns('',
+    url(r'^init_app/$', 'main.iphone_views.init_app'),
+    
 )
 
 #Community URLs

@@ -7,6 +7,7 @@ var me = JSON.parse(Ti.App.Properties.getString("me")),
     active_noms_cache = [ ],
     top_noms_cache = [ ],
     winners_noms_cache = [ ],
+    notification_count = 0,
     newest_nom = '',
     oldest_nom = '',
     selected_tab = 'active';
@@ -21,7 +22,7 @@ var portrit_header_view = Titanium.UI.createView({
     
 var header_tab_selection = Titanium.UI.createView({
         height: 35,
-        left: 0,
+        left: 105,
         top: 40,
         width: 110,
         backgroundImage: '../images/selected_nav_bar.png',
@@ -30,7 +31,7 @@ var header_tab_selection = Titanium.UI.createView({
         
 var portrit_header_active = Titanium.UI.createView({
         height: 35,
-        left: 0,
+        left: 105,
         top: 40,
         width: 105,
         backgroundImage: '../images/stream_nav_bar_unselected.png'
@@ -42,11 +43,17 @@ var portrit_header_active_label = Titanium.UI.createLabel({
         textAlign: 'center',
         font:{fontSize:16, fontWeight:'bold'},
         height: 35,
-        left: 0,
+        left: 105,
         top: 40,
         width: 105,
         zIndex: 2
     });
+    
+var fadeIn = Titanium.UI.createAnimation({
+    curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
+    opacity: 1.0,
+    duration: 200
+});
 
 portrit_header_active.addEventListener('click', function(){
     if (selected_tab != 'active'){
@@ -69,7 +76,7 @@ portrit_header_active.addEventListener('click', function(){
     
 var portrit_header_top = Titanium.UI.createView({
         height: 35,
-        left: 105,
+        left: 0,
         top: 40,
         width: 105,
         backgroundImage: '../images/stream_nav_bar_unselected.png'
@@ -81,7 +88,7 @@ var portrit_header_top_label = Titanium.UI.createLabel({
         textAlign: 'center',
         font:{fontSize:16, fontWeight:'bold'},
         height: 35,
-        left: 105,
+        left: 0,
         top: 40,
         width: 105,
         zIndex: 2
@@ -92,7 +99,7 @@ portrit_header_top.addEventListener('click', function(){
         selected_tab = 'top';
     	
     	var header_active_tab_matrix = Ti.UI.create2DMatrix();
-        header_active_tab_matrix = header_active_tab_matrix.translate(105,0);
+        header_active_tab_matrix = header_active_tab_matrix.translate(-105,0);
         
         var header_active_tab_animation = Titanium.UI.createAnimation();
         header_active_tab_animation.transform = header_active_tab_matrix;
@@ -133,7 +140,7 @@ portrit_header_winners.addEventListener('click', function(){
         selected_tab = 'winners';
     	
     	var header_active_tab_matrix = Ti.UI.create2DMatrix();
-        header_active_tab_matrix = header_active_tab_matrix.translate(210,0);
+        header_active_tab_matrix = header_active_tab_matrix.translate(105,0);
         
         var header_active_tab_animation = Titanium.UI.createAnimation();
         header_active_tab_animation.transform = header_active_tab_matrix;
@@ -216,6 +223,7 @@ var tv = Ti.UI.createTableView({
             minRowHeight:50, 
             backgroundColor: '#000',
             // allowsSelection: false,
+            bottom: -60,
             separatorStyle: 0,
             headerView: portrit_header_view,
             footerView: load_more_view,
@@ -230,14 +238,15 @@ function render_active_list_view(data){
             noms_loaded[data[i].id] = data[i];
             render_nom(data[i], false);
         }
-        setTimeout(function(){
-            load_more_view.show();
-        }, 300);
+        if (data.length == 10){
+            setTimeout(function(){
+                load_more_view.show();
+            }, 300);
+        }
     }
     else{
-        
+        load_more_button.hide();
     }
-
     tv.setData(list_view_data);
 }
 
@@ -284,9 +293,222 @@ function add_detail_window(e){
 	setTimeout(function(){
 	    Ti.App.fireEvent('pass_detail', {
             nom_id: e.source.nom_id,
+            photo: e.source.photo,
             won: false
         });
 	}, 200);
+}
+
+function add_comment_to_nom(e){
+    var nom_id = e.source.nom_id;
+    var comments = e.source.comments;
+    var action_cont = e.source.action_cont;
+    var comments_cont = null;
+    var comment_cont = e.source.comment_cont;
+    var comment_button = e.source;
+    
+    var t = Titanium.UI.create2DMatrix();
+	t = t.scale(.45);
+    
+    var comment_window = Titanium.UI.createWindow({
+		backgroundColor:'#333',
+		height:245,
+		opacity: 0,
+		width:320,
+		top: 0,
+		transform:t
+	});
+	
+	var t1 = Titanium.UI.create2DMatrix();
+	t1 = t1.scale(1);
+	var fadeIn = Titanium.UI.createAnimation({
+        curve: Ti.UI.ANIMATION_CURVE_EASE_OUT_IN,
+        opacity: 1,
+        transform: t1,
+        duration: 350
+    });
+    
+    var t2 = Titanium.UI.create2DMatrix();
+	t2 = t2.scale(.45);
+    var fadeOut = Titanium.UI.createAnimation({
+        curve: Ti.UI.ANIMATION_CURVE_EASE_OUT_IN,
+        opacity: 0,
+        transform: t2,
+        duration: 350
+    });
+    
+    var post_button = Titanium.UI.createButton({
+	    backgroundImage: '../images/comment_post_button.png',
+		title:'Post',
+		font: {fontSize: 16, fontWeight: 'bold'},
+		height:32,
+		width:96,
+		top: 195,
+		left: 175
+	});
+	comment_window.add(post_button);
+
+	// create a button to close window
+	var cancel_button = Titanium.UI.createButton({
+	    backgroundImage: '../images/comment_cancel_button.png',
+		title:'Cancel',
+		font: {fontSize: 16, fontWeight: 'bold'},
+		height:32,
+		width:96,
+		top: 195,
+		left: 49
+	});
+	cancel_button.addEventListener('click', function(){
+	    comment_textarea.blur();
+		comment_window.close(fadeOut);
+	});
+	comment_window.add(cancel_button);
+	
+	var comment_textarea = Titanium.UI.createTextArea({
+	    color: '#333',
+	    width: 300,
+	    height: 170,
+	    font: {fontSize: 22, fontWeight: 'bold'},
+	    top: 10,
+	    borderRadius: 3,
+	    suppressReturn: false
+	});
+    comment_window.add(comment_textarea);
+
+	comment_window.open(fadeIn);
+	
+	post_button.nom_id = nom_id;
+	post_button.addEventListener('click', function(e){
+        var comment_body = comment_textarea.value;
+        var nom_id = e.source.nom_id;
+        
+        if (comment_body != ''){
+            var xhr = Titanium.Network.createHTTPClient();
+
+            xhr.onload = function(){
+                // var data = JSON.parse(this.responseData);
+            };
+
+            var url = SERVER_URL + '/api/new_comment/';
+
+            xhr.open('POST', url);
+
+            // send the data
+            xhr.send({'user': me.fid, 'body': comment_body, 'nom_id': nom_id});
+            
+            var now = new Date().getTime() / 1000;
+            if (comments && comments.length > 0){
+                comments.splice(0, 0, {
+                    'comment': comment_body,
+                    'owner_id': me.fid,
+                    'owner_name': me.name,
+                    'create_datetime': now
+                });
+            }
+            else{
+                comments = [{
+                    'comment': comment_body,
+                    'owner_id': me.fid,
+                    'owner_name': me.name,
+                    'create_datetime': now
+                }];
+            }
+            action_cont.height = action_cont.height;
+            action_cont.remove(comment_cont);
+            comments_cont = Titanium.UI.createView({
+                    height: 'auto',
+                    top: 0,
+                    width: 320,
+                    layout: 'vertical'
+                });
+            render_comments(comments_cont, comments);
+            action_cont.add(comments_cont);
+            action_cont.height = 'auto';
+            comment_button.comment_cont = comments_cont;
+            comment_button.comments = comments;
+        }
+        
+	    comment_textarea.blur();
+		comment_window.close(fadeOut);
+	});
+	
+	setTimeout(function(){
+	    comment_textarea.focus();
+	}, 75);	
+}
+
+function open_options(e){
+    var photo_id = e.source.photo_id;
+    
+    var optionsDialogOpts = {
+    	options:['Flag photo', 'Cancel'],
+    	destructive:0,
+    	cancel:1,
+    	title:'Photo options'
+    };
+
+    var dialog = Titanium.UI.createOptionDialog(optionsDialogOpts);
+    
+    dialog.addEventListener('click',function(e){
+        
+	});
+	dialog.show();
+}
+
+function render_comments(cont, comments){
+    var comment_cont = null,
+        commentor = null,
+        commentor_cont = null,
+        comment_time = null,
+        comment = null;
+        
+    for (var i = 0; i < comments.length; i++){
+        comment_cont = Titanium.UI.createView({
+            height: 'auto',
+            right: 10,
+            top: 0,
+            left: 0,
+            width: 320
+        });
+        
+        commentor_cont = Titanium.UI.createView({
+            height: 'auto',
+            top: 0,
+            left: 0,
+            width: 'auto'
+        });
+        
+        commentor = Titanium.UI.createLabel({
+    	    text: comments[i].owner_name,
+            color: '#333',
+            top: 2,
+            bottom: 2,
+            left: 10,
+            width: 'auto',
+            height: 'auto',
+            font:{fontSize:12, fontWeight: 'bold'}
+        });
+        commentor.user = comments[i].owner_id;
+        commentor.name = comments[i].owner_name;
+        commentor.addEventListener('click', add_profile_window);
+        
+        commentor_cont.add(commentor);
+        
+        comment = Titanium.UI.createLabel({
+    	    text: '  - ' + comments[i].comment,
+            color: '#666',
+            top: 2,
+            left: commentor.width + 10,
+            bottom: 2,
+            width: 'auto',
+            height: 'auto',
+            font:{fontSize:12}
+        });
+        
+        comment_cont.add(commentor_cont);
+        comment_cont.add(comment);
+        cont.add(comment_cont);
+    }
 }
 
 function render_nom(nom, top, row_count){
@@ -310,6 +532,11 @@ function render_nom(nom, top, row_count){
         nom_detail_button = null,
         caption = null,
         nomination_cat_label = null,
+        photo_action_cont = null,
+        photo_action_row = null,
+        add_comment = null,
+        comments_cont = null,
+        photo_options = null,
         post_time = null,
         nom_header = null,
         main_image = null,
@@ -333,6 +560,7 @@ function render_nom(nom, top, row_count){
         nominatee_profile_img_url = 'https://graph.facebook.com/' + nom.nominatee + '/picture?type=square';
         nominatee_profile_img = Ti.UI.createImageView({
     		image: nominatee_profile_img_url,
+    		defaultImage: '../images/photo_loader.png',
     		left: 0,
     		top: 0,
     		height: 35,
@@ -401,38 +629,65 @@ function render_nom(nom, top, row_count){
         });
 
         nominator_profile_img_url = 'https://graph.facebook.com/' + nom.nominator + '/picture?type=square';
+        
+        var max_height = 320;
         if (Ti.Platform.displayCaps.density == 'high') {
-            photo_width = Ti.Platform.displayCaps.platformWidth;
-            if (nom.photo.height){
-                photo_height = photo_width * (nom.photo.height / nom.photo.width);
+            if (nom.photo.width > Ti.Platform.displayCaps.platformWidth){
+                photo_width = Ti.Platform.displayCaps.platformWidth;
             }
             else{
-                photo_height = 320;
+                photo_width = nom.photo.width;
+            }
+
+            if (nom.photo.height && nom.photo.height > max_height){
+                if (nom.photo.height > nom.photo.width){
+                    photo_height = max_height;
+                    photo_width = photo_height * (nom.photo.width / nom.photo.height);
+                }
+                else{
+                    photo_height = photo_width * (nom.photo.height / nom.photo.width);
+                }
+            }
+            else{
+                photo_height = max_height;
             }
             highres = true;
         }
         else{
-            photo_height = 320;
-            photo_width = 320;
+            if (photo_width < 320){
+                photo_width = nom.photo.width;
+            }
+            else{
+                photo_width = 320
+            }
+
+            if (nom.photo.height && nom.photo.height > max_height){
+                photo_width = max_height * (nom.photo.width / nom.photo.height);
+                photo_height = photo_width * (nom.photo.height / nom.photo.width);
+            }
+            else{
+                photo_height = max_height;
+            }
             highres = false;
         }
 
         main_image = Ti.UI.createImageView({
     		image: nom.photo.src,
-    		left: 0,
-    		bottom: 10,
+    		defaultImage: '../images/photo_loader.png',
+    		top: 0,
     		width: photo_width,
     		height: photo_height,
     		hires: highres
     	});
     	
     	main_image.nom_id = nom.id;
+    	main_image.photo = nom.photo;
     	main_image.addEventListener('click', add_detail_window);
 
     	nominator_footer = Titanium.UI.createView({
     	    height:35,
             left: 0,
-            top: photo_height - 34,
+            top: photo_height - 35,
             width: 320,
             opacity: 0.8,
             backgroundColor: '#000',
@@ -442,6 +697,7 @@ function render_nom(nom, top, row_count){
     	nominator_profile_img_url = 'https://graph.facebook.com/' + nom.nominator + '/picture?type=square';
         nominator_profile_img = Ti.UI.createImageView({
     		image: nominator_profile_img_url,
+    		defaultImage: '../images/photo_loader.png',
     		left: 0,
     		top: 0,
     		hires: true,
@@ -454,52 +710,37 @@ function render_nom(nom, top, row_count){
     	nominator_profile_img.addEventListener('click', add_profile_window);
     	
     	nominator_footer.add(nominator_profile_img);
-    	
-    	nom_detail_button = Ti.UI.createButton({
-    	    backgroundImage: '../images/plus_icon.png',
-        	title:"  Detail",
-        	width: 78,
-        	height: 34,
-        	right: 0
+
+        nominator_name_cont = Titanium.UI.createView({
+    	    height: 'auto',
+            width: 'auto',
+            left: 40,
+            zIndex: 1,
+            layout: 'vertical'
         });
-        nom_detail_button.nom_id = nom.id;
-    	nom_detail_button.addEventListener('click', add_detail_window);
         
-        nominator_footer.add(nom_detail_button);
+        nominated_by = Titanium.UI.createLabel({
+    	    text: 'Nominated by ',
+            color: '#fff',
+            left: 0,
+            width: 'auto',
+            height: 'auto',
+            font:{fontSize:12}
+        });
+        
+        nominator_name = Titanium.UI.createLabel({
+    	    text: nom.nominator_name,
+            color: '#fff',
+            left: 0,
+            top: -3,
+            width: 'auto',
+            height: 'auto',
+            font:{fontSize:12, fontWeight: 'bold'}
+        });
+        nominator_name_cont.add(nominated_by);
+        nominator_name_cont.add(nominator_name);
 
-        if (nom.caption){
-            nominator_name = Titanium.UI.createLabel({
-        	    text: 'Nominated by ' + nom.nominator_name,
-                color: '#fff',
-                left: 40,
-                bottom: 15,
-                width: 200,
-                font:{fontSize:12}
-            });
-
-            nominator_footer.add(nominator_name);
-
-            caption = Titanium.UI.createLabel({
-        	    text: 'Caption: ' + nom.caption,
-                color: '#fff',
-                left: 40,
-                top: 10,
-                width: 200,
-                font:{fontSize:12}
-            });
-            nominator_footer.add(caption);
-        }
-        else{
-            nominator_name = Titanium.UI.createLabel({
-        	    text: 'Nominated by ' + nom.nominator_name,
-                color: '#fff',
-                left: 40,
-                width: 200,
-                font:{fontSize:12}
-            });
-
-            nominator_footer.add(nominator_name);
-        }
+        nominator_footer.add(nominator_name_cont);
         
         nominator_name.user = nom.nominator;
         nominator_name.name = nom.nominator_name;
@@ -539,15 +780,89 @@ function render_nom(nom, top, row_count){
             borderRadius: 5,
             opacity: 0.8,
             right: 5,
-            bottom: 50,
+            top: photo_height - 70,
             height: 'auto',
             width: 'auto',
             zIndex: 1
         });
         
-        // nominated_for_cont.add(nominated_for);
-        // nominated_for_cont.add(nomination_cat_label);
         nominated_for_cont.add(post_time);
+        
+        photo_action_cont = Titanium.UI.createView({
+            backgroundColor: '#fff',
+            top: photo_height,
+            width: 320,
+            height: 'auto',
+            bottom: 10,
+            layout: 'vertical'
+        });
+        
+        photo_action_row = Titanium.UI.createView({
+            backgroundColor: '#ddd',
+            top: 0,
+            width: 320,
+            height: 'auto'
+        });
+        
+        comments_cont = Titanium.UI.createView({
+                height: 'auto',
+                top: 0,
+                width: 320,
+                layout: 'vertical'
+            });
+        
+        add_comment = Ti.UI.createButton({
+            backgroundImage: '../images/stream_action_button.png',
+        	title:"Comment",
+        	width: 90,
+        	height: 25,
+            left: 5,
+            top: 5,
+            bottom: 5,
+            font: {fontSize: 12, fontWeight: 'bold'}
+        });
+        add_comment.nom_id = nom.id;
+        add_comment.comment_cont = comments_cont;
+        add_comment.comments = nom.quick_comments;
+        add_comment.action_cont = photo_action_cont;
+        add_comment.addEventListener('click', add_comment_to_nom);
+        
+        nom_detail_button = Ti.UI.createButton({
+    	    backgroundImage: '../images/stream_action_button.png',
+        	title:"Detail",
+        	width: 90,
+        	height: 25,
+            left: 100,
+            top: 5,
+            bottom: 5,
+            font: {fontSize: 12, fontWeight: 'bold'}
+        });
+        nom_detail_button.nom_id = nom.id;
+        nom_detail_button.photo = nom.photo;
+    	nom_detail_button.addEventListener('click', add_detail_window);
+        
+        photo_options = Ti.UI.createButton({
+        	backgroundImage: '../images/stream_option_button.png',
+        	width: 25,
+        	height: 25,
+            right: 5,
+            top: 5,
+            bottom: 5
+        });
+        photo_options.nom_id = nom.id;
+        photo_options.photo_id = nom.photo.id;
+        photo_options.addEventListener('click', open_options);
+        
+        photo_action_row.add(add_comment);
+        photo_action_row.add(nom_detail_button);
+        photo_action_row.add(photo_options);
+        
+        photo_action_cont.add(photo_action_row);
+        photo_action_cont.add(comments_cont);
+        
+        row.add(photo_action_cont);
+        
+        render_comments(comments_cont, nom.quick_comments);
         
     	row.add(main_image);
     	row.add(nominated_for_cont);
@@ -591,92 +906,86 @@ function update_cache(cache, data, append){
 
 function activate_winners_stream(){
     list_view_data = [ ];
-    var xhr = Titanium.Network.createHTTPClient();
+    if (winners_noms_cache.length == 0){
+        var xhr = Titanium.Network.createHTTPClient();
 
-    xhr.onload = function()
-    {
-        var data = JSON.parse(this.responseData);
-        if (winners_noms_cache.length > 0){
-            update_cache(winners_noms_cache, data, false);
-            render_active_list_update(winners_noms_cache);
-        }
-        else{
-            winners_noms_cache = data;
-            render_active_list_view(winners_noms_cache);
-        }
-    };
-    
-    var url = '';
-    
-    if (winners_noms_cache.length > 0){
-        render_active_list_view(winners_noms_cache);
-        url = SERVER_URL + '/api/get_winners_stream/?fb_user=' + me.fid + '&new_date=' + newest_nom;
-        load_more_view.show();
+        xhr.onload = function()
+        {
+            var data = JSON.parse(this.responseData);
+            if (winners_noms_cache.length > 0){
+                update_cache(winners_noms_cache, data, false);
+                render_active_list_update(winners_noms_cache);
+            }
+            else{
+                winners_noms_cache = data;
+                render_active_list_view(winners_noms_cache);
+            }
+        };
+
+        var url = '';
+
+        url = SERVER_URL + '/api/get_winners_stream/?fb_user=' + me.fid;
+
+        xhr.open('GET', url);
+
+        // send the data
+        xhr.send();
     }
     else{
-        url = SERVER_URL + '/api/get_winners_stream/?fb_user=' + me.fid;
+        render_active_list_update(winners_noms_cache);
     }
-    
-    xhr.open('GET', url);
-
-    // send the data
-    xhr.send();
 }
 
 function activate_top_stream(){
     list_view_data = [ ];
-    var xhr = Titanium.Network.createHTTPClient();
+    
+    if (top_noms_cache.length == 0){
+        var xhr = Titanium.Network.createHTTPClient();
 
-    xhr.onload = function()
-    {
-        var data = JSON.parse(this.responseData);
-        // if (top_noms_cache.length > 0){
-        //     update_cache(top_noms_cache, data, false);
-        //     render_active_list_update(top_noms_cache);
-        // }
-        // else{
+        xhr.onload = function()
+        {
+            var data = JSON.parse(this.responseData);
             top_noms_cache = data;
             render_active_list_view(top_noms_cache);
-            load_more_view.show();
-        // }
-    };
-    
-    var url = '';
-    
-    // if (top_noms_cache.length > 0){
-    //     render_active_list_view(top_noms_cache);
-    //     url = SERVER_URL + '/api/get_top_stream/?fb_user=' + me.fid + '&new_date=' + newest_nom;
-    // }
-    // else{
-    url = SERVER_URL + '/api/get_top_stream/?fb_user=' + me.fid;
-    // }
-    
-    xhr.open('GET', url);
+        };
 
-    // send the data
-    xhr.send();
+        var url = '';
+
+        url = SERVER_URL + '/api/get_top_stream/?fb_user=' + me.fid;
+
+        xhr.open('GET', url);
+
+        // send the data
+        xhr.send();   
+    }
+    else{
+        render_active_list_view(top_noms_cache);
+    }
 }
 
 function activate_active_view(){
     list_view_data = [ ];
     render_active_list_view(active_noms_cache);
     
-    var xhr = Titanium.Network.createHTTPClient();
+    if (active_noms_cache.length == 0){
+        var xhr = Titanium.Network.createHTTPClient();
 
-    xhr.onload = function()
-    {
-        var data = JSON.parse(this.responseData);
-        update_cache(active_noms_cache, data, false);
+        xhr.onload = function()
+        {
+            var data = JSON.parse(this.responseData);
+            update_cache(active_noms_cache, data, false);
+            render_active_list_update(active_noms_cache);
+        };
+
+        var url = SERVER_URL + '/api/get_recent_stream/?fb_user=' + me.fid;
+        xhr.open('GET', url);
+
+        // send the data
+        xhr.send();
+    }
+    else{
         render_active_list_update(active_noms_cache);
-    };
-    
-    var url = SERVER_URL + '/api/get_recent_stream/?fb_user=' + me.fid + '&new_date=' + newest_nom;
-    xhr.open('GET', url);
-
-    // send the data
-    xhr.send();
-    
-    load_more_view.show();
+    }
 }
 
 function init_active_view(){
@@ -687,11 +996,17 @@ function init_active_view(){
 
     xhr.onload = function()
     {
-    	active_noms_cache = JSON.parse(this.responseData);
+    	var data = JSON.parse(this.responseData);
+    	notification_count = data.notification_count;
+    	if (notification_count > 0){
+    	    var tabGroup = win.tabGroup;
+    	    tabGroup.tabs[3].badge = notification_count;
+    	}
+    	active_noms_cache = data.noms;
         render_active_list_view(active_noms_cache);
     };
     
-    var url = SERVER_URL + '/api/get_recent_stream/?fb_user=' + me.fid + '&page_size=10';
+    var url = SERVER_URL + '/init_app/?fb_user=' + me.fid + '&page_size=10';
     xhr.open('GET', url);
 
     // send the data
@@ -705,24 +1020,22 @@ function init_active_view(){
     });
     
     var arrow = Ti.UI.createView({
-    	backgroundImage:"../images/whiteArrow.png",
-    	width:23,
-    	height:60,
+    	backgroundImage:"../images/pull_arrow.png",
+    	width: 33,
+    	height: 41,
     	bottom:10,
     	left:20
     });
 
     var statusLabel = Ti.UI.createLabel({
-    	text:"Pull to reload",
+    	text:"Pull to update",
     	left:55,
     	width:200,
     	bottom:30,
     	height:"auto",
-    	color:"#ffffff",
+    	color:"#999",
     	textAlign:"center",
-    	font:{fontSize:13,fontWeight:"bold"},
-    	shadowColor:"#999",
-    	shadowOffset:{x:0,y:1}
+    	font:{fontSize:13,fontWeight:"bold"}
     });
 
     var lastUpdatedLabel = Ti.UI.createLabel({
@@ -733,9 +1046,7 @@ function init_active_view(){
     	height:"auto",
     	color:"#ffffff",
     	textAlign:"center",
-    	font:{fontSize:12},
-    	shadowColor:"#999",
-    	shadowOffset:{x:0,y:1}
+    	font:{fontSize:12}
     });
     var actInd = Titanium.UI.createActivityIndicator({
     	left:20,
@@ -788,7 +1099,7 @@ function init_active_view(){
     	tv.setContentInsets({top:0},{animated:true});
     	reloading = false;
     	lastUpdatedLabel.text = "Last Updated: "+formatDate();
-    	statusLabel.text = "Pull down to refresh...";
+    	statusLabel.text = "Pull down to update...";
     	actInd.hide();
     	arrow.show();
     }
@@ -806,14 +1117,14 @@ function init_active_view(){
     		t = t.rotate(-180);
     		pulling = true;
     		arrow.animate({transform:t,duration:180});
-    		statusLabel.text = "Release to refresh...";
+    		statusLabel.text = "Release to update...";
     	}
     	else if (pulling && offset > -65.0 && offset < 0)
     	{
     		pulling = false;
     		var t = Ti.UI.create2DMatrix();
     		arrow.animate({transform:t,duration:180});
-    		statusLabel.text = "Pull down to refresh...";
+    		statusLabel.text = "Pull down to update...";
     	}
     });
 

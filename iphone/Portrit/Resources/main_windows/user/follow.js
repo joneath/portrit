@@ -37,15 +37,93 @@ window_nav_bar.add(back_buttom);
 win.add(window_nav_bar);
 
 function go_to_profile(e){
-    var w = Ti.UI.createWindow({backgroundColor:"#333", url:'profile.js'});
-	Titanium.UI.currentTab.open(w,{animated:true});
-	
-	setTimeout(function(){
-	    Ti.App.fireEvent('pass_user', {
-            user: e.rowData.user_fid,
-            name: e.rowData.username
-        });
-	}, 200);
+    if (e.source.button == undefined){
+        var w = Ti.UI.createWindow({backgroundColor:"#333", url:'profile.js'});
+    	Titanium.UI.currentTab.open(w,{animated:true});
+
+    	setTimeout(function(){
+    	    Ti.App.fireEvent('pass_user', {
+                user: e.rowData.user_fid,
+                name: e.rowData.username
+            });
+    	}, 200);
+    }
+}
+
+function follow_event(e){
+    var method = e.source.method,
+        parent = e.source.parent_row,
+        user_fid = e.source.user_fid;
+        
+    if (method == 'follow'){
+        parent.remove(e.source);
+        var xhr = Titanium.Network.createHTTPClient();
+
+        xhr.onload = function()
+        {   
+            var data = JSON.parse(this.responseData);
+            
+            follow_button = Ti.UI.createButton({
+                backgroundImage: '../../images/unfollow_button.png',
+            	title:"Following",
+            	font: {fontSize: 12, fontWeight: 'bold'},
+            	width:76,
+            	height:24,
+            	right: 3,
+            	zIndex: 2
+            });
+            
+            follow_button.method = 'unfollow';
+            follow_button.parent_row = parent;
+            follow_button.button = true;
+            follow_button.user_fid = user_fid;
+            
+            follow_button.addEventListener('click', follow_event);
+
+            parent.add(follow_button);
+        };
+
+        var url = SERVER_URL + '/api/follow_unfollow_user/';
+        xhr.open('POST', url);
+
+        // send the data
+        xhr.send({'source': me.fid, 'target': user_fid, method: 'follow'});
+    }
+    else{
+        parent.remove(e.source);
+        
+        var xhr = Titanium.Network.createHTTPClient();
+
+        xhr.onload = function()
+        {   
+            var data = JSON.parse(this.responseData);
+            
+            follow_button = Ti.UI.createButton({
+                backgroundImage: '../../images/follow_button.png',
+            	title:"Follow",
+            	font: {fontSize: 12, fontWeight: 'bold'},
+            	width:76,
+            	height:24,
+            	right: 3,
+            	zIndex: 2
+            });
+            
+            follow_button.method = 'follow';
+            follow_button.parent_row = parent;
+            follow_button.button = true;
+            follow_button.user_fid = user_fid;
+            
+            follow_button.addEventListener('click', follow_event);
+
+            parent.add(follow_button);
+        };
+
+        var url = SERVER_URL + '/api/follow_unfollow_user/';
+        xhr.open('POST', url);
+
+        // send the data
+        xhr.send({'source': me.fid, 'target': user_fid, method: 'unfollow'});
+    }
 }
 
 function render_follow_table_view(data){
@@ -61,6 +139,7 @@ function render_follow_table_view(data){
         
         profile_image = Ti.UI.createImageView({
     		image: 'https://graph.facebook.com/' + data[i].fid + '/picture?type=square',
+    		defaultImage: '../../images/photo_loader.png',
     		left: 5,
     		width: 35,
     		height: 35,
@@ -76,13 +155,34 @@ function render_follow_table_view(data){
         
         if (data[i].follow){
             follow_button = Ti.UI.createButton({
+                backgroundImage: '../../images/follow_button.png',
             	title:"Follow",
-            	width:100,
-            	height:40,
-            	right: 0
+            	font: {fontSize: 12, fontWeight: 'bold'},
+            	width:76,
+            	height:24,
+            	right: 3,
+            	zIndex: 2
             });
+            follow_button.method = 'follow';
             row.add(follow_button);
         }
+        else{
+            follow_button = Ti.UI.createButton({
+                backgroundImage: '../../images/unfollow_button.png',
+            	title:"Following",
+            	font: {fontSize: 12, fontWeight: 'bold'},
+            	width:76,
+            	height:24,
+            	right: 3,
+            	zIndex: 2
+            });
+            follow_button.method = 'unfollow';
+            row.add(follow_button);
+        }
+        follow_button.button = true;
+        follow_button.parent_row = row;
+        follow_button.user_fid = data[i].fid;
+        follow_button.addEventListener('click', follow_event);
         
         row.user_fid = data[i].fid;
         row.username = data[i].name;
@@ -99,7 +199,7 @@ function render_follow_table_view(data){
 function init_follow_view(){
     tv = Ti.UI.createTableView({
             minRowHeight:50, 
-            backgroundColor: '#fff',
+            backgroundColor: '#eee',
             separatorStyle: 1,
             top: 40,
             style: Titanium.UI.iPhone.TableViewStyle.PLAIN
@@ -111,10 +211,13 @@ function init_follow_view(){
     
     xhr.onload = function()
     {   
-        render_follow_table_view(JSON.parse(this.responseData));
+        var data = JSON.parse(this.responseData);
+        if (data.data.length > 0){
+            render_follow_table_view(data.data);
+        }
     };
     
-    var url = SERVER_URL + '/api/get_follow_data/?source=' + me.fid + '&target=' + user + '&method=' + method;
+    var url = SERVER_URL + '/api/get_follow_data/?source=' + me.fid + '&target=' + user + '&method=' + method + '&all=True';
     xhr.open('GET', url);
     
     // send the data
