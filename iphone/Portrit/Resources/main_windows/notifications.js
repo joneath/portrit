@@ -23,7 +23,7 @@ var header_label = Titanium.UI.createLabel({
         text: 'Updates',
         color: '#fff',
         textAlign: 'center',
-        font:{fontSize:28}
+        font:{fontSize:22, fontWeight: 'bold'}
     });
     
 window_nav_bar.add(header_label);

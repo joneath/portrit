@@ -60,9 +60,13 @@ urlpatterns += patterns('',
     url(r'^api/get_top_stream/$', 'main.api_views.get_top_stream'),
     url(r'^api/get_winners_stream/$', 'main.api_views.get_winners_stream'),
     url(r'^api/get_user_photos/$', 'main.api_views.get_user_photos'),
+    url(r'^api/get_user_stream_photos/$', 'main.api_views.get_user_stream_photos'),
     url(r'^api/get_noms_in_cat/$', 'main.api_views.get_noms_in_cat'),
     url(r'^api/get_user_wins_trophy_cat/$', 'main.api_views.get_user_wins_trophy_cat'),
     url(r'^api/get_user_trophies/$', 'main.api_views.get_user_trophies'),
+    
+    #Nominations
+    url(r'^api/nominate_photo/$', 'main.api_views.nominate_photo'),
     
     #Follow
     url(r'^api/get_follow_count/$', 'main.api_views.get_follow_count'),

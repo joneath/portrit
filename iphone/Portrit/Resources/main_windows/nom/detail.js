@@ -299,6 +299,7 @@ function add_comment_to_nom(e){
             photo_action_cont.height = photo_action_cont.height;
             photo_action_cont.remove(comments_cont);
             comments_cont = Titanium.UI.createView({
+                    backgroundColor: '#222',
                     height: 'auto',
                     top: 0,
                     width: 320,
@@ -327,11 +328,10 @@ function render_comments(cont, comments){
         
     for (var i = 0; i < comments.length; i++){
         comment_cont = Titanium.UI.createView({
+            backgroundColor: '#fff',
             height: 'auto',
-            right: 10,
-            top: 0,
-            left: 0,
-            width: 320
+            width: 320,
+            zIndex: 1
         });
         
         commentor_cont = Titanium.UI.createView({
@@ -371,6 +371,18 @@ function render_comments(cont, comments){
         comment_cont.add(commentor_cont);
         comment_cont.add(comment);
         cont.add(comment_cont);
+    }
+    if (comments.length > 0){
+        cont.bottom = 10;
+        photo_action_bottom_round = Titanium.UI.createView({
+                backgroundColor: '#fff',
+                borderRadius: 5,
+                height: 10,
+                bottom: -5,
+                width: 320,
+                zIndex: -1
+            });
+    	comment_cont.add(photo_action_bottom_round);
     }
 }
 
@@ -676,6 +688,16 @@ function render_nom_detail(noms){
     		height: 40,
     		top: 55
     	});
+        // vote_arrow = Ti.UI.createImageView({
+        //  image: '../../images/',
+        //  defaultImage: '../../images/photo_loader.png',
+        //  left: 5,
+        //  top: 5,
+        //  width: 30,
+        //  height: 30,
+        //  hires: highres
+        // });
+    	
     	detail_right_cont.add(vote_up);
     	detail_right_cont.add(vote_down);
     	
@@ -742,7 +764,7 @@ function render_nom_detail(noms){
     section.add(detail_row);
     
     photo_action_cont = Ti.UI.createTableViewRow({
-        backgroundColor: '#fff',
+        backgroundColor: '#222',
         height: 'auto',
         width: 320,
         selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE,
@@ -757,6 +779,7 @@ function render_nom_detail(noms){
     });
     
     comments_cont = Titanium.UI.createView({
+            backgroundColor: '#222',
             height: 'auto',
             top: 0,
             width: 320,

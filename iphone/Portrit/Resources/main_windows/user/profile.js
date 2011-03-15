@@ -32,7 +32,7 @@ back_buttom = Titanium.UI.createButton({
     width: 68,
     height: 32,
     left: 0,
-    title: 'Stream',
+    title: 'Back',
     font: {fontSize: 11, fontWeight: 'bold'},
     backgroundImage: '../../images/back.png'
 });
@@ -85,25 +85,9 @@ function add_nominate_window(e){
     // var w = Ti.UI.createWindow({backgroundColor:"#222", url:'../nom/nominate.js'});
     // w.open({modal:true});
     
-    var w = Titanium.UI.createWindow({
-		backgroundColor:'#000',
-		title:'Nominate Photo',
-		barImage:'../../images/iphone_header_blank.png',
-		url:'../nom/nominate.js'
-	});
-	var b = Titanium.UI.createButton({
-		title:'Cancel',
-		font: {fontSize: 12, fontWeight: 'bold'},
-		width: 58,
-    	height: 32,
-		backgroundImage: '../../images/square_button.png',
-		style:Titanium.UI.iPhone.SystemButtonStyle.PLAIN
-	});
-	w.setRightNavButton(b);
-	b.addEventListener('click',function(){
-		w.close();
-	});
-	w.open({modal:true});
+    var w = Ti.UI.createWindow({backgroundColor:"#000", url:'../nom/nominate.js'});
+    w.hideTabBar();
+	Titanium.UI.currentTab.open(w,{animated:true});
 
 	setTimeout(function(){
 	    Ti.App.fireEvent('pass_photo_data', {
@@ -111,7 +95,7 @@ function add_nominate_window(e){
             name: name,
             photo: e.source.photo
         });
-	}, 200);
+	}, 100);
 }
 
 function render_user_photos(data, append){
@@ -521,10 +505,12 @@ function add_comment_to_nom(e){
             action_cont.height = action_cont.height;
             action_cont.remove(comment_cont);
             comments_cont = Titanium.UI.createView({
+                    backgroundColor: '#fff',
                     height: 'auto',
                     top: 0,
                     width: 320,
-                    layout: 'vertical'
+                    layout: 'vertical',
+                    zIndex: 1
                 });
             render_comments(comments_cont, comments);
             action_cont.add(comments_cont);
@@ -569,11 +555,10 @@ function render_comments(cont, comments){
         
     for (var i = 0; i < comments.length; i++){
         comment_cont = Titanium.UI.createView({
+            backgroundColor: '#fff',
             height: 'auto',
-            right: 10,
-            top: 0,
-            left: 0,
-            width: 320
+            width: 320,
+            zIndex: 1
         });
         
         commentor_cont = Titanium.UI.createView({
@@ -613,6 +598,17 @@ function render_comments(cont, comments){
         comment_cont.add(commentor_cont);
         comment_cont.add(comment);
         cont.add(comment_cont);
+    }
+    if (comments.length > 0){
+        photo_action_bottom_round = Titanium.UI.createView({
+                backgroundColor: '#fff',
+                borderRadius: 5,
+                height: 10,
+                bottom: -5,
+                width: 320,
+                zIndex: -1
+            });
+    	comment_cont.add(photo_action_bottom_round);
     }
 }
 
@@ -819,7 +815,7 @@ function render_active_view(data){
         nominator_name.addEventListener('click', add_profile_window);
         
         photo_action_cont = Titanium.UI.createView({
-            backgroundColor: '#fff',
+            backgroundColor: '#000',
             top: photo_height,
             width: 320,
             height: 'auto',
@@ -1262,3 +1258,8 @@ Ti.App.addEventListener('pass_user', function(eventData) {
     
     init_profile_view();
 });
+
+Ti.App.addEventListener('close_user_profile_page', function(eventData) {
+    win.close();
+});
+

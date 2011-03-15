@@ -42,6 +42,39 @@ function get_nom_cat_color(nom_cat){
     }
 }
 
+function nom_cat_to_text(nom_cat){
+    if (nom_cat == 'artsy'){
+        return 'Artsy';
+    }
+    if (nom_cat == 'wtf'){
+        return 'WTF';
+    }
+    if (nom_cat == 'creepy'){
+        return 'Creepy';
+    }
+    if (nom_cat == 'hot'){
+        return 'Hot';
+    }
+    if (nom_cat == 'fail'){
+        return 'Fail';
+    }
+    if (nom_cat == 'party_animal'){
+        return 'Party Animal';
+    }
+    if (nom_cat == 'cute'){
+        return 'cute';
+    }
+    if (nom_cat == 'lol'){
+        return 'LOL';
+    }
+    if (nom_cat == 'awesome'){
+        return 'Awesome';
+    }
+    if (nom_cat == 'yummy'){
+        return 'Yummy';
+    }
+}
+
 function getOrdinal(n) {
    var s=["th","st","nd","rd"],
        v=n%100;

@@ -249,6 +249,11 @@ class GPS_Data(models.Model):
     speed = models.FloatField(null=True, blank=True)
     altitudeAccuracy = models.FloatField(null=True, blank=True)
     
+class Photo_Flag(models.Model):
+    active = models.BooleanField(default=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+    flagger = models.ForeignKey('Portrit_User', null=True, blank=True)
+    
 
 class Photo(models.Model):    
     active = models.BooleanField(default=True)
@@ -270,6 +275,7 @@ class Photo(models.Model):
     crop_src = models.URLField(max_length=255, null=True, blank=True)
     gps_data = models.ForeignKey(GPS_Data, null=True, blank=True)
     album = models.ForeignKey(Album, null=True, blank=True)
+    flags = models.ManyToManyField(Photo_Flag, null=True, blank=True)
     nominations = models.ManyToManyField(Nomination, null=True, blank=True)
     
     class Meta:

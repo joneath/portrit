@@ -157,7 +157,7 @@ var portrit_label = Titanium.UI.createLabel({
         top: 0,
         width: 320,
         height: 40,
-        font:{fontSize:28}
+        font:{fontSize:22, fontWeight: 'bold'}
     });
 
 

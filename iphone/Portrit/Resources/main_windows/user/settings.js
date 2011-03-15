@@ -3,6 +3,7 @@ Ti.include('../../includes.js');
 
 var me = JSON.parse(Ti.App.Properties.getString("me")),
     win = Ti.UI.currentWindow,
+    tabGroup = win.tabGroup,
     tv = null,
     user = null,
     window_nav_bar = null,
@@ -36,7 +37,7 @@ var header_label = Titanium.UI.createLabel({
         text: 'Options',
         color: '#fff',
         textAlign: 'center',
-        font:{fontSize:28}
+        font:{fontSize:22, fontWeight: 'bold'}
     });
 window_nav_bar.add(header_label);
 win.add(window_nav_bar);
@@ -169,8 +170,10 @@ function init_options(){
         'style':'wide'
     });
     Titanium.Facebook.addEventListener('logout', function(e) {
+        // tabGroup.close();
         var win = Ti.UI.createWindow({backgroundColor:"#000", url:'../../portrit.js'});
         win.open();
+        // tabGroup.open();
     });
     
     var row = Ti.UI.createTableViewRow({

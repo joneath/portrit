@@ -44,7 +44,7 @@ var header_label = Titanium.UI.createLabel({
         text: 'Sharing Options',
         color: '#fff',
         textAlign: 'center',
-        font:{fontSize:24}
+        font:{fontSize:22, fontWeight: 'bold'}
     });
 window_nav_bar.add(header_label);
 win.add(window_nav_bar);
