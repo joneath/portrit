@@ -30,8 +30,85 @@ window_nav_bar.add(header_label);
 win.add(window_nav_bar);
 win.hideNavBar({animated:false});
 
-function row_click(e){
+var fadeTo = Titanium.UI.createAnimation({
+    curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
+    opacity: 0.5,
+    duration: 200
+});
+
+var fadeIn = Titanium.UI.createAnimation({
+    curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
+    opacity: 1.0,
+    duration: 200
+});
+
+var fadeOut = Titanium.UI.createAnimation({
+    curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
+    opacity: 0,
+    duration: 200
+});
+
+function add_detail_window(e){
+    var w = Ti.UI.createWindow({backgroundColor:"#222", url:'nom/detail.js'});
+	Titanium.UI.currentTab.open(w,{animated:true});
+	
+	setTimeout(function(){
+	    Ti.App.fireEvent('pass_detail', {
+            nom_id: e.rowData.nom_id,
+            photo: e.rowData.photo,
+            won: false
+        });
+	}, 200);
+}
+
+function add_detail_trophy_window(e){
+    var w = Ti.UI.createWindow({backgroundColor:"#333", url:'../nom/detail.js'});
+	Titanium.UI.currentTab.open(w,{animated:true});
+	
+	setTimeout(function(){
+	    Ti.App.fireEvent('pass_detail', {
+            nom_id: e.rowData.nom_id,
+            photo: e.rowData.photo,
+            nom_cat: e.rowData.nom_cat,
+            user: e.rowData.user,
+            won: true
+        });
+	}, 200);
+}
+
+function add_profile_window(e){
+    if (typeof(e.source.button) == 'undefined'){
+        var w = Ti.UI.createWindow({backgroundColor:"#222", url:'user/profile.js'});
+    	Titanium.UI.currentTab.open(w,{animated:true});
+
+    	setTimeout(function(){
+    	    Ti.App.fireEvent('pass_user', {
+                user: e.source.user,
+                name: e.source.name
+            });
+    	}, 200);
+    }
+}
+
+function post_follow_permission(e){
+    var xhr = Titanium.Network.createHTTPClient();
+
+    xhr.onload = function(){   
+        var data = JSON.parse(this.responseData);
+        if (data){
+            // e.source.row.opacity = 1;
+            // e.source.row.animate(fadeOut);
+            // setTimeout(function(){
+                tv.deleteRow(e.source.row);
+            // }, 200);
+        }
+    };
     
+    var url = SERVER_URL + '/api/follow_permission_submit/';
+    xhr.open('POST', url);
+
+    // send the data
+    xhr.send({'notification_id': e.source.notification_id, 'value': e.index, 'access_token': me.access_token});
 }
 
 function render_notifications(data){
@@ -59,6 +136,10 @@ function render_notifications(data){
         if (data[i].notification_type == 'tagged_nom'){
             label_text = data[i].source_name + ' tagged you in a photo.';
             left_image = '../images/notification_tag.png';
+            
+            row.nom_id = data[i].nomination;
+            row.photo = data[i].photo;
+        	row.addEventListener('click', add_detail_window);
         }
         else if (data[i].notification_type == 'nom_won'){
             if (data[i].destination_id == me.fid){
@@ -69,14 +150,64 @@ function render_notifications(data){
             }
             label_text = target_name + ' nomination won';
             left_image = '../images/notification_trophy.png';
+            
+            row.nom_id = data[i].nomination;
+            row.photo = data[i].photo;
+            row.nom_cat = data[i].nomination_category;
+            row.user = data[i].destination_id;
+            
+        	row.addEventListener('click', add_detail_trophy_window);
         }
         else if (data[i].notification_type == 'new_nom'){
             label_text = data[i].source_name + ' nominated your photo.';
             left_image = '../images/notification_nomination.png';
+            
+            row.nom_id = data[i].nomination;
+            row.photo = data[i].photo;
+        	row.addEventListener('click', add_detail_window);
         }
         else if (data[i].notification_type == 'new_comment'){
-            label_text = data[i].source_name + ' commented on your photo.';
+            if (data[i].destination_id == me.fid){
+                target_name = 'your';
+            }
+            else if (data[i].destination_id == data[i].source_id){
+                target_name = 'their';
+            }
+            else{
+                target_name = data[i].destination_name + '\'s';
+            }
+            label_text = data[i].source_name + ' commented on ' + target_name + ' photo.';
             left_image = '../images/notification_comments.png';
+            
+            row.nom_id = data[i].nomination;
+            row.photo = data[i].photo;
+        	row.addEventListener('click', add_detail_window);
+        }
+        else if (data[i].notification_type == 'new_follow'){
+            if (data[i].pending){
+                var pending_button_bar = Titanium.UI.createButtonBar({
+                	labels:['Deny', 'Accept'],
+                	backgroundColor:'#336699',
+                    right: 10,
+                	style:Titanium.UI.iPhone.SystemButtonStyle.BAR,
+                	height:25,
+                	width:100
+                });
+                pending_button_bar.button = true;
+                pending_button_bar.notification_id = data[i].notification_id;
+                pending_button_bar.row = row;
+                pending_button_bar.addEventListener('click', post_follow_permission);
+                row.add(pending_button_bar);
+                label_text = data[i].source_name + ' would like to follow you';
+            }
+            else{
+                label_text = data[i].source_name + ' has begun to follow you';
+            }
+            left_image = '../images/notification_comments.png';
+            
+            row.user = data[i].source_id;
+            row.name = data[i].source_name;
+        	row.addEventListener('click', add_profile_window);
         }
         row.leftImage = left_image;
         
@@ -109,25 +240,44 @@ function render_notifications(data){
                 height: 'auto',
                 font:{fontSize:13}
             });
+
         
-        nom_cat_underscore = data[i].nomination_category.replace(' ', '_').toLowerCase();
-        nom_cat_color = get_nom_cat_color(nom_cat_underscore);
-        nomination_category_bar = Titanium.UI.createView({
-            backgroundColor: nom_cat_color,
-            height: 40,
-            width: 10,
-            right: 0,
-        });
-        row.selectedBackgroundColor = nom_cat_color;
+        if (data[i].notification_type != 'new_follow'){
+            nom_cat_underscore = data[i].nomination_category.replace(' ', '_').toLowerCase();
+            nom_cat_color = get_nom_cat_color(nom_cat_underscore);
+            nomination_category_bar = Titanium.UI.createView({
+                backgroundColor: nom_cat_color,
+                height: 40,
+                width: 10,
+                right: 0,
+            });
+            row.selectedBackgroundColor = nom_cat_color;
+            
+            notification_label.nom_id = data[i].nomination;
+            notification_label.photo = data[i].photo;
+            notification_label.nom_cat = data[i].nomination_category;
+            notification_label.user = data[i].destination_id;
+            
+            row.add(time_view);
+        }
+        else{
+            nomination_category_bar = Titanium.UI.createView({
+                backgroundColor: '#fff',
+                height: 40,
+                width: 10,
+                right: 0,
+            });
+            notification_label.user = data[i].source_id;
+            notification_label.name = data[i].source_name;
+            notification_label.right = 120;
+        }
         
         row.notification = data[i];
         row.index = i;
         
         row.add(nomination_category_bar);
         row.add(notification_label);
-        row.add(time_view);
         
-        row.addEventListener('click', row_click);
         
         list_view_data.push(row);
     }
@@ -138,7 +288,6 @@ function update_notifications(data){
     for (var i = 0; i < data.length; i++){
         notification_cache.splice(0, 0, data[i]);
     }
-    
     return notification_cache;
 }
 
@@ -158,6 +307,7 @@ function clear_notifications(e){
     
     notification_count = 0;
     notification_cache = [ ];
+    tv.editable = false;
     tv.setData([notifications_empty_row]);
     clear_button.hide();
 }
@@ -184,6 +334,7 @@ function row_delete(e){
     if (notification_count <= 0){
         notification_count = 0;
         notification_cache = [ ];
+        tv.editable = false;
         tv.setData([notifications_empty_row]);
         clear_button.hide();
     }
@@ -237,7 +388,7 @@ function load_notifications(){
                 height:'auto'
         });
         var notifications_empty_label = Ti.UI.createLabel({
-        	text:"You Have no Updates",
+        	text:"You Have No Updates",
         	height:"auto",
         	color:"#white",
         	textAlign:"center",
@@ -256,11 +407,12 @@ function load_notifications(){
         }
         else{
             notifications_empty_row.show();
+            tv.editable = false;
             tv.setData([notifications_empty_row]);
         }
     };
     
-    var url = SERVER_URL + '/api/get_active_notifications/?fb_user=' + me.fid
+    var url = SERVER_URL + '/api/get_active_notifications/?access_token=' + me.access_token;
     xhr.open('GET', url);
 
     // send the data
@@ -330,6 +482,7 @@ function load_notifications(){
         	    notification_count += data.length;
         	    clear_button.show();
         	    list_view_data = [ ];
+        	    tv.editable = true;
                 update_notifications(data);
                 newest_notification = notification_cache[0].create_time;
                 render_notifications(notification_cache);
@@ -339,10 +492,10 @@ function load_notifications(){
         
         var url = '';
         if (notification_cache.length > 0){
-            url = SERVER_URL + '/api/get_active_notifications/?fb_user=' + me.fid + '&new_date=' + newest_notification;
+            url = SERVER_URL + '/api/get_active_notifications/?access_token=' + me.access_token + '&new_date=' + newest_notification;
         }
         else{
-            url = SERVER_URL + '/api/get_active_notifications/?fb_user=' + me.fid;
+            url = SERVER_URL + '/api/get_active_notifications/?access_token=' + me.access_token;
         }
         
         xhr.open('GET', url);

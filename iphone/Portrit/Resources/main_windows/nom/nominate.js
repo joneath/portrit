@@ -129,32 +129,75 @@ function trophy_selected(e){
 }
 
 function post_nom(e){	
-	var w = Ti.UI.createWindow({backgroundColor:"#eee", url:'share.js'});
-	Titanium.UI.currentTab.open(w,{animated:true});
-	
 	var nominations = '';
+    var selected_nom_count = 0;
 	for (cat in selected_noms){
 	    if (cat){
 	        nominations += nom_cat_to_text(cat) + ',';
+	        selected_nom_count += 1;
 	    }
 	}
 	
-	var tagged_users = '';
-	for (user in tagged_friends){
-	    if (user){
-	        tagged_users += user + ',';
-	    }
+	if (selected_nom_count > 0){
+	    var w = Ti.UI.createWindow({backgroundColor:"#eee", url:'share.js'});
+    	Titanium.UI.currentTab.open(w,{animated:true});
+    	
+	    var tagged_users = '';
+    	for (user in tagged_friends){
+    	    if (user){
+    	        tagged_users += user + ',';
+    	    }
+    	}
+
+    	setTimeout(function(){
+    	    Ti.App.fireEvent('pass_nom_data', {
+                user: passed_user,
+                name: name,
+                photo: photo,
+                nominations: nominations,
+                tagged_users: tagged_users
+            });
+    	}, 100);
 	}
-	
-	setTimeout(function(){
-	    Ti.App.fireEvent('pass_nom_data', {
-            user: passed_user,
-            name: name,
-            photo: photo,
-            nominations: nominations,
-            tagged_users: tagged_users
+	else{
+	    var nominations_empty_message_background = Titanium.UI.createView({
+    	    backgroundColor: '#000',
+            opacity: .8,
+            borderRadius: 5,
+            height: '100%',
+            width: '100%',
+            zIndex: -1
         });
-	}, 100);
+        
+	    var nominations_empty_message_cont = Titanium.UI.createView({
+            height: 'auto',
+            width: 'auto',
+            top: 150,
+            zIndex: 10
+        });
+        nominations_empty_message_cont.add(nominations_empty_message_background);
+        
+	    var nominations_empty_message = Titanium.UI.createLabel({
+    	    text: 'Please select at least one trophy.',
+            color: '#fff',
+            left: 10,
+            right: 10,
+            top: 10,
+            bottom: 10,
+            size: {width: 'auto', height: 'auto'},
+            font:{fontSize:16, fontWeight: 'bold'}
+        });
+        nominations_empty_message_cont.add(nominations_empty_message);
+        win.add(nominations_empty_message_cont);
+        
+        var fadeOutSlow = Titanium.UI.createAnimation({
+            curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
+            opacity: 0,
+            delay: 2000,
+            duration: 1000
+        });
+        nominations_empty_message_cont.animate(fadeOutSlow);
+	}
 }
 
 var tagged_friends_count = 0;
@@ -251,6 +294,7 @@ function render_following_list(data, append){
         }
         else{
             row.tagged = true;
+            row.hasCheck = true;
             row.backgroundColor = '#dedede';
         }
         row.addEventListener('click', tag_follower);
@@ -479,7 +523,7 @@ function init_nominate_view(){
     });
     
     var nom_cat_underscore = '';
-    var nom_cat_list = ['Hot', 'Party Animal', 'WTF', 'Artsy', 'Cute', 'Awesome', 'Creepy', 'Yummy', 'LOL', 'Fail']
+    var nom_cat_list = ['Fail','Party Animal','LOL','Awesome','Hot','WTF','Artsy','Cute','Yummy','Creepy']
     for (var i = 0; i < nom_cat_list.length; i++){
         nom_cat_underscore = nom_cat_list[i].replace(' ', '_').toLowerCase();
         trophy_cont = Titanium.UI.createView({

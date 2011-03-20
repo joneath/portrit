@@ -18,6 +18,7 @@ import json, socket, urllib, urllib2
 from portrit_fb import Portrit_FB
 from notification_views import get_active_notifications
 from nomination_views import get_recent_stream, serialize_noms
+from import_friends import import_fb_friends
 
 from datetime import datetime
 import facebook, time
@@ -41,9 +42,14 @@ def login_fb_user(request):
         if not user:
             graph = facebook.GraphAPI(cookie["access_token"])
             profile = graph.get_object("me")
+            email = None
+            try:
+                email = profile['email']
+            except:
+                pass
             fb_user, created = FB_User.objects.get_or_create(fid=str(profile["id"]))
             user = Portrit_User(fb_user=fb_user, name=profile['name'],
-                        access_token=cookie["access_token"])
+                        access_token=cookie["access_token"], email=email)
             user.ask_permission = False
             user.save()
             
@@ -60,11 +66,25 @@ def login_fb_user(request):
             
         elif user.access_token != cookie["access_token"]:
             user.access_token = cookie["access_token"]
+            if not user.email:
+                graph = facebook.GraphAPI(cookie["access_token"])
+                profile = graph.get_object("me")
+                email = None
+                try:
+                    email = profile['email']
+                    user.email = email
+                except:
+                    pass
             user.save()
             graph = facebook.GraphAPI(cookie["access_token"])
             portrit = Portrit_FB(graph, fb_user, cookie["access_token"])
             portrit.load_user_friends(True)
-            
+        
+        # if not user.fb_friends_imported:
+        #     import_fb_friends(user)
+        #     user.fb_friends_imported = True
+        #     user.save()
+        
         data = get_user_data(user)
         data['first'] = first
         data['allow_portrit_album'] = user.allow_portrit_album

@@ -1,4 +1,5 @@
 from main.models import Portrit_User, FB_User, Album, Photo, Nomination, Nomination_Category
+from import_friends import import_fb_friends
 
 import facebook
 import urllib, urllib2
@@ -23,6 +24,7 @@ class Portrit_FB(object):
         return data
     
     def load_user_friends(self, update=False):
+        portrit_user = self.fb_user.get_portrit_user()
         friends = self.graph.get_connections("me", "friends")
         friend_ids = [ ]
         friend_id_map = { }
@@ -38,3 +40,5 @@ class Portrit_FB(object):
                 self.fb_user.friends.add(new_fb_user)
             else:
                 pass
+        print "friends list updated, adding follow records"
+        import_fb_friends(portrit_user, update)

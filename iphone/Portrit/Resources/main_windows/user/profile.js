@@ -14,6 +14,7 @@ var me = JSON.parse(Ti.App.Properties.getString("me")),
     profile_header = null,
     follow_cont = null,
     profile_nav_cont = null,
+    following_user = false,
     list_view_data = [ ],
     trophy_data = [ ],
     active_data = [ ],
@@ -44,6 +45,35 @@ back_buttom.addEventListener('click', function(){
 window_nav_bar.add(back_buttom);
 
 win.add(window_nav_bar);
+
+window_activity = Titanium.UI.createActivityIndicator({
+    message: 'Loading...',
+    color: '#fff',
+    height:50,
+    width:10
+});
+window_activity.show()
+
+window_activity_background = Titanium.UI.createView({
+    backgroundColor: '#000',
+    borderRadius: 5,
+    opacity: 0.8,
+    height: '100%',
+    width: '100%',
+    zIndex: -1
+});
+
+window_activity_cont = Titanium.UI.createView({
+    height: 'auto',
+    top: 150,
+    width: 120,
+    height: 120,
+    zIndex: 20
+});
+window_activity_cont.hide();
+window_activity_cont.add(window_activity_background);
+window_activity_cont.add(window_activity);
+win.add(window_activity_cont);
 
 function render_active_count(count){
     var active_count = Titanium.UI.createLabel({
@@ -167,11 +197,10 @@ function render_user_photos(data, append){
         main_image = Ti.UI.createImageView({
     		image: data[i].source,
     		defaultImage: '../../images/photo_loader.png',
-    		bottom: 10,
-    		top: 1,
     		width: photo_width,
     		height: photo_height,
-    		hires: highres
+    		hires: highres,
+    		bottom: 20,
     	});
     	
     	nominate_photo = Titanium.UI.createButton({
@@ -181,6 +210,7 @@ function render_user_photos(data, append){
             font: {fontSize: 20, fontWeight: 'bold'},
             textAlign: 'center',
             right: 0,
+            bottom: 20,
             height: 40,
             width: 115,
             zIndex: 1
@@ -188,25 +218,7 @@ function render_user_photos(data, append){
         nominate_photo.photo = data[i];
         nominate_photo.addEventListener('click', add_nominate_window);
         
-        photo_header = Titanium.UI.createView({
-            height: 30,
-            bottom: 15,
-            right: 0,
-            zIndex: 2
-        });
-        photo_header.add(nominate_photo);
-        row.add(photo_header);
-        
-        post_time_cont = Titanium.UI.createView({
-            backgroundColor: '#000',
-            borderRadius: 5,
-            opacity: 0.8,
-            left: 5,
-            bottom: 15,
-            height: 30,
-            width: 'auto',
-            zIndex: 1
-        });
+        row.add(nominate_photo);
     	
         time = new Date(data[i].created_time * 1000);
         time_diff = now - time;
@@ -214,19 +226,37 @@ function render_user_photos(data, append){
         post_time = Titanium.UI.createLabel({
     	    text: secondsToHms(time_diff),
             color: '#fff',
+            opacity: 0.8,
             left: 5,
             top: 5,
             right: 5,
             bottom: 5,
             size: {width: 'auto', height: 'auto'},
-            font:{fontSize: 14}
+            font:{fontSize:12}
         });
         
+        post_time_background = Titanium.UI.createView({
+            backgroundColor: '#000',
+            borderRadius: 5,
+            opacity: 0.8,
+            height: '100%',
+            width: '100%',
+            zIndex: -1
+        });
+        
+        post_time_cont = Titanium.UI.createView({
+            left: 10,
+            top: 10,
+            height: 'auto',
+            width: 'auto',
+            zIndex: 1
+        });
+        
+        post_time_cont.add(post_time_background);
         post_time_cont.add(post_time);
+        
+        row.add(main_image);
         row.add(post_time_cont);
-    	
-    	row.add(main_image);
-
         section.add(row);
         section.created_time = data[i].created_time;
         
@@ -278,16 +308,6 @@ function render_trophies(data){
                 font:{fontSize:16, fontWeight: 'bold'}
             });
             
-        //         trophy_image = Ti.UI.createImageView({
-        //  image: '../../images/trophies/medium/' + cat_name_underscore + '.png',
-        //  defaultImage: '../../images/photo_loader.png',
-        //             bottom: 0,
-        //             right: 5,
-        //  width: 25,
-        //  height: 50,
-        //  hires: true
-        // });
-        //         trophy_header.add(trophy_image);
         trophy_header.add(trophy_label);
         
         section = Titanium.UI.createTableViewSection({
@@ -316,7 +336,7 @@ function render_trophies(data){
             }
 
             photo_cont = Ti.UI.createImageView({
-        		image: data[i].noms[j].photo.src_small,
+        		image: data[i].noms[j].photo.src,
         		defaultImage: '../../images/photo_loader.png',
                 top: 5,
                 bottom: 5,
@@ -352,7 +372,7 @@ function init_trophies_view(){
             render_trophies(data);
         };
 
-        var url = SERVER_URL + '/api/get_user_trophies/?fb_user=' + user;
+        var url = SERVER_URL + '/api/get_user_trophies/?access_token=' + me.access_token + '&target=' + user;
         xhr.open('GET', url);
 
         // send the data
@@ -400,7 +420,7 @@ function add_comment_to_nom(e){
 	t = t.scale(.45);
     
     var comment_window = Titanium.UI.createWindow({
-		backgroundColor:'#333',
+		backgroundColor:'#ddd',
 		height:245,
 		opacity: 0,
 		width:320,
@@ -483,7 +503,7 @@ function add_comment_to_nom(e){
             xhr.open('POST', url);
 
             // send the data
-            xhr.send({'user': me.fid, 'body': comment_body, 'nom_id': nom_id});
+            xhr.send({'access_token': me.access_token, 'body': comment_body, 'nom_id': nom_id});
             
             var now = new Date().getTime() / 1000;
             if (comments && comments.length > 0){
@@ -541,9 +561,148 @@ function open_options(e){
     var dialog = Titanium.UI.createOptionDialog(optionsDialogOpts);
     
     dialog.addEventListener('click',function(e){
-        
+        if (e.index == 0){
+            var xhr = Titanium.Network.createHTTPClient();
+
+            xhr.onload = function()
+            {
+                var data = JSON.parse(this.responseData);
+                if (data == true){
+                    var flag_cont_background = Titanium.UI.createView({
+                	    backgroundColor: '#000',
+                        opacity: .8,
+                        borderRadius: 5,
+                        height: '100%',
+                        width: '100%',
+                        zIndex: -1
+                    });
+
+            	    var flag_cont = Titanium.UI.createView({
+                        height: 'auto',
+                        width: 'auto',
+                        top: 200,
+                        zIndex: 10
+                    });
+                    flag_cont.add(flag_cont_background);
+
+            	    var flag_message = Titanium.UI.createLabel({
+                	    text: 'Thank you for the feedback! We wil check this photo out.',
+                	    textAlign: 'center',
+                        color: '#fff',
+                        left: 10,
+                        right: 10,
+                        top: 10,
+                        bottom: 10,
+                        size: {width: 'auto', height: 'auto'},
+                        font:{fontSize:16, fontWeight: 'bold'}
+                    });
+                    flag_cont.add(flag_message);
+                    win.add(flag_cont);
+
+                    var fadeOutSlow = Titanium.UI.createAnimation({
+                        curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
+                        opacity: 0,
+                        delay: 3000,
+                        duration: 1000
+                    });
+                    flag_cont.animate(fadeOutSlow);
+                    
+                    setTimeout(function(){
+                        win.remove(flag_cont);
+                    }, 4000);
+                }
+            };
+
+            var url = '';
+
+            url = SERVER_URL + '/api/flag/photo'
+
+            xhr.open('POST', url);
+
+            // send the data
+            xhr.send({'access_token': me.access_token,
+                        'photo_id': photo_id});
+        }
 	});
 	dialog.show();
+}
+
+function follow_event(e){
+    var method = e.source.method,
+        parent = e.source.parent_cont,
+        user_fid = e.source.user_fid;
+    
+    if (method == 'follow'){
+        parent.remove(e.source);
+        var xhr = Titanium.Network.createHTTPClient();
+
+        xhr.onload = function()
+        {   
+            var data = JSON.parse(this.responseData);
+            
+            follow_button = Titanium.UI.createButton({
+                width: 88,
+                height: 25,
+                left: 6,
+                bottom: 0,
+                title: 'Following',
+                font: {fontSize: 12, fontWeight: 'bold'},
+                backgroundImage: '../../images/profile_unfollow.png',
+                zIndex: 2
+            });
+            
+            follow_button.method = 'unfollow';
+            follow_button.parent_cont = parent;
+            follow_button.button = true;
+            follow_button.user_fid = user_fid;
+            
+            follow_button.addEventListener('click', follow_event);
+
+            parent.add(follow_button);
+        };
+
+        var url = SERVER_URL + '/api/follow_unfollow_user/';
+        xhr.open('POST', url);
+
+        // send the data
+        xhr.send({'access_token': me.access_token, 'target': user_fid, method: 'follow'});
+    }
+    else{
+        parent.remove(e.source);
+        
+        var xhr = Titanium.Network.createHTTPClient();
+
+        xhr.onload = function()
+        {   
+            var data = JSON.parse(this.responseData);
+            
+            follow_button = Titanium.UI.createButton({
+                width: 88,
+                height: 25,
+                left: 6,
+                bottom: 0,
+                title: 'Follow',
+                font: {fontSize: 12, fontWeight: 'bold'},
+                backgroundImage: '../../images/profile_follow.png',
+                zIndex: 2
+            });
+            
+            follow_button.method = 'follow';
+            follow_button.parent_cont = parent;
+            follow_button.button = true;
+            follow_button.user_fid = user_fid;
+            
+            follow_button.addEventListener('click', follow_event);
+
+            parent.add(follow_button);
+        };
+
+        var url = SERVER_URL + '/api/follow_unfollow_user/';
+        xhr.open('POST', url);
+
+        // send the data
+        xhr.send({'access_token': me.access_token, 'target': user_fid, method: 'unfollow'});
+    }
 }
 
 function render_comments(cont, comments){
@@ -568,8 +727,16 @@ function render_comments(cont, comments){
             width: 'auto'
         });
         
+        var commentor_name_text = '';
+    	if (comments[i].owner_id == me.fid){
+    	    commentor_name_text = 'You';
+    	}
+    	else{
+    	    commentor_name_text = comments[i].owner_name;
+    	}
+        
         commentor = Titanium.UI.createLabel({
-    	    text: comments[i].owner_name,
+    	    text: commentor_name_text,
             color: '#333',
             top: 2,
             bottom: 2,
@@ -727,7 +894,7 @@ function render_active_view(data){
             borderRadius: 5,
             opacity: 0.8,
             right: 5,
-            top: photo_height - 70,
+            bottom: 40,
             height: 'auto',
             width: 'auto',
             zIndex: 1
@@ -752,7 +919,7 @@ function render_active_view(data){
     	nominator_footer = Titanium.UI.createView({
     	    height:35,
             left: 0,
-            top: photo_height - 34,
+            bottom: 0,
             width: 320,
             opacity: 0.8,
             backgroundColor: '#000',
@@ -814,9 +981,19 @@ function render_active_view(data){
         nominator_name.name = data[i].nominator_name;
         nominator_name.addEventListener('click', add_profile_window);
         
+        row.add(nominator_footer);
+        row.add(post_time_cont);
+    	row.add(main_image);
+    	section.add(row);
+        
+        row = Ti.UI.createTableViewRow({
+                height:'auto',
+                selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+        });
+        
         photo_action_cont = Titanium.UI.createView({
             backgroundColor: '#000',
-            top: photo_height,
+            top: 0,
             width: 320,
             height: 'auto',
             bottom: 10,
@@ -887,12 +1064,9 @@ function render_active_view(data){
         photo_action_cont.add(photo_action_row);
         photo_action_cont.add(comments_cont);
         
-        render_comments(comments_cont, data[i].quick_comments);
-        
         row.add(photo_action_cont);
-        row.add(nominator_footer);
-        row.add(post_time_cont);
-    	row.add(main_image);
+        
+        render_comments(comments_cont, data[i].quick_comments);
 
         section.add(row);
         section.created_time = data[i].created_time;
@@ -913,6 +1087,10 @@ function activate_photos_view(){
         trophies_nav.backgroundImage = '../../images/profile_button_unselected.png';
         active_nav.backgroundImage = '../../images/profile_button_unselected.png';
         
+        
+        if (list_view_data.length >= 10){
+            load_more_view.show();
+        }
         tv.setData(list_view_data);
     }
 }
@@ -924,8 +1102,8 @@ function activate_trophies_view(){
         trophies_nav.backgroundImage = '../../images/profile_button_selected.png';
         active_nav.backgroundImage = '../../images/profile_button_unselected.png';
         
+        load_more_view.hide();
         tv.setData([]);
-        
         init_trophies_view();
     }
 }
@@ -937,13 +1115,14 @@ function activate_active_view(){
         trophies_nav.backgroundImage = '../../images/profile_button_unselected.png';
         active_nav.backgroundImage = '../../images/profile_button_selected.png';
         
+        load_more_view.hide();
         tv.setData([]);
-        
         init_active_view();
     }
 }
 
-function add_follow_window(method){
+function add_follow_window(e){
+    var method = e.source.method;
     var w = Ti.UI.createWindow({backgroundColor:"#333", url:'follow.js'});
 	Titanium.UI.currentTab.open(w,{animated:true});
 
@@ -955,6 +1134,10 @@ function add_follow_window(method){
         });
 	}, 200);
 }
+
+var get_user_profile_count = 0;
+var get_profile_data = 0;
+var init_count = 0;
 
 function init_profile_view(){
     var user_image = null;
@@ -977,7 +1160,7 @@ function init_profile_view(){
     
     profile_header.add(name_label);
     
-    var load_more_view = Ti.UI.createView({
+    load_more_view = Ti.UI.createView({
             height: 50,
             width: 'auto',
             backgroundColor:'#000'
@@ -999,7 +1182,6 @@ function init_profile_view(){
             backgroundColor: '#000',
             separatorStyle: 0,
             top: 40,
-            bottom: -50,
             headerView: profile_header,
             footerView: load_more_view,
             style: Titanium.UI.iPhone.TableViewStyle.PLAIN
@@ -1011,30 +1193,33 @@ function init_profile_view(){
     
     win.add(tv);
     
-    var xhr = Titanium.Network.createHTTPClient();
+    if (get_user_profile_count == 0){
+        var xhr = Titanium.Network.createHTTPClient();
 
-    xhr.onload = function()
-    {   
-        user_image = Ti.UI.createImageView({
-            image: this.location,
-            defaultImage: '../../images/photo_loader.png',
-            left: 10,
-            top: 10,
-            hires: true,
-            height: 80,
-            width: 80
-        });
-        
-        cropImage(user_image,100,100,10,10);
-        
-        profile_header.add(user_image);
-    };
-    
-    var url = 'https://graph.facebook.com/' + user + '/picture?type=large';
-    xhr.open('GET', url);
+        xhr.onload = function()
+        {   
+            user_image = Ti.UI.createImageView({
+                image: this.location,
+                defaultImage: '../../images/photo_loader.png',
+                left: 10,
+                top: 10,
+                hires: true,
+                height: 80,
+                width: 80
+            });
 
-    // send the data
-    xhr.send();
+            cropImage(user_image,100,100,10,10);
+
+            profile_header.add(user_image);
+        };
+
+        var url = 'https://graph.facebook.com/' + user + '/picture?type=large';
+        xhr.open('GET', url);
+
+        // send the data
+        xhr.send();
+        get_user_profile_count += 1;
+    }
     
     follow_cont = Titanium.UI.createView({
         backgroundColor: '#fff',
@@ -1064,9 +1249,9 @@ function init_profile_view(){
     
     followers_label.add(followers_right_triangle);
     
-    followers_label.addEventListener('click', function(){
-        add_follow_window('followers');
-    });
+    followers_label.method = 'followers'
+    followers_label.removeEventListener('click', add_follow_window);
+    followers_label.addEventListener('click', add_follow_window);
     
     var following_label = Titanium.UI.createLabel({
         text: 'Following',
@@ -1087,9 +1272,9 @@ function init_profile_view(){
     
     following_label.add(following_right_triangle);
     
-    following_label.addEventListener('click', function(){
-        add_follow_window('following');
-    });
+    following_label.method = 'following'
+    following_label.removeEventListener('click', add_follow_window);
+    following_label.addEventListener('click', add_follow_window);
     
     var right_follow_border = Titanium.UI.createView({
         backgroundColor: '#dedede',
@@ -1103,35 +1288,6 @@ function init_profile_view(){
     follow_cont.add(right_follow_border);
     
     profile_header.add(follow_cont);
-    
-    var follow_count_request = Titanium.Network.createHTTPClient();
-
-    follow_count_request.onload = function()
-    {   
-        var data = JSON.parse(this.responseData);
-        var follow_count = Titanium.UI.createLabel({
-            text: data.followers,
-            color: '#333',
-            left: 80,
-            font: {fontSize: 18, fontWeight: 'bold'}
-        });
-        
-        var following_count = Titanium.UI.createLabel({
-            text: data.following,
-            color: '#333',
-            left: 184,
-            font: {fontSize: 18, fontWeight: 'bold'}
-        });
-        
-        follow_cont.add(follow_count);
-        follow_cont.add(following_count);
-    };
-    
-    var url = SERVER_URL + '/api/get_follow_count/?fb_user=' + user;
-    follow_count_request.open('GET', url);
-
-    // send the data
-    follow_count_request.send();
 
     profile_nav_cont = Titanium.UI.createView({
         width: 210,
@@ -1162,7 +1318,7 @@ function init_profile_view(){
         backgroundImage: '../../images/profile_button_unselected.png',
         width: 64,
         height: 25,
-        left: 70,
+        left: 73,
         bottom: 0
     });
     var trophies_nav_label = Titanium.UI.createLabel({
@@ -1180,7 +1336,7 @@ function init_profile_view(){
         backgroundImage: '../../images/profile_button_unselected.png',
         width: 64,
         height: 25,
-        left: 140,
+        left: 146,
         bottom: 0
     });
     var active_nav_label = Titanium.UI.createLabel({
@@ -1200,46 +1356,105 @@ function init_profile_view(){
     
     profile_header.add(profile_nav_cont);
     
-    var user_photo_request = Titanium.Network.createHTTPClient();
+    if (get_profile_data == 0){
+        window_activity_cont.show();
+        var user_profile_request = Titanium.Network.createHTTPClient();
+        user_profile_request.onload = function()
+        {   
+            var data = JSON.parse(this.responseData);
+            active_noms_cache = data.active_noms;
 
-    user_photo_request.onload = function()
-    {   
-        var data = JSON.parse(this.responseData);
-        active_noms_cache = data.active_noms;
-        
-        if (data.photos.length > 0){
-            render_user_photos(data.photos, false);
-        }
-        else{
-            var empty_label = Titanium.UI.createLabel({
-                text: name.split(' ')[0] + ' has not taken any photos.',
-                color: '#fff',
-                textAlign: 'center',
-                font: {fontSize: 18}
-            });
-            var row = Ti.UI.createTableViewRow({
-                    height:'auto',
-                    selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
-            });
-            row.add(empty_label);
+            if (data.photos.length > 0){
+                render_user_photos(data.photos, false);
+                if (data.photos.length == 10){
+                    newest_photo = data.photos[0].created_time;
+                    oldest_photo = data.photos[data.photos.length - 1].created_time;
+                    load_more_view.show();
+                }
+            }
+            else{
+                var empty_label = Titanium.UI.createLabel({
+                    text: name.split(' ')[0] + ' has not taken any photos.',
+                    color: '#fff',
+                    textAlign: 'center',
+                    font: {fontSize: 18}
+                });
+                var row = Ti.UI.createTableViewRow({
+                        height:'auto',
+                        selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+                });
+                row.add(empty_label);
+
+                list_view_data = [row];
+                tv.setData(list_view_data);
+            }
             
-            list_view_data = [row];
-            tv.setData(list_view_data);
-        }
+            if (user != me.fid){
+                //Follow user button
+                var follow_user_text = '';
+                var follow_user_button = '';
+                if (data.follow){
+                    follow_user_text = 'following';
+                    follow_user_button = '../../images/profile_unfollow.png';
+                }
+                else{
+                    follow_user_text = 'follow';
+                    follow_user_button = '../../images/profile_follow.png';
+                }
 
-        if (active_noms_cache.length > 0){
-            render_active_count(active_noms_cache.length);
-        }
-        if (data.trophy_count > 0){
-            render_trophy_count(data.trophy_count);
-        }
-    };
+                follow_button = Titanium.UI.createButton({
+                    width: 88,
+                    height: 25,
+                    left: 6,
+                    bottom: 0,
+                    title: follow_user_text,
+                    font: {fontSize: 12, fontWeight: 'bold'},
+                    backgroundImage: follow_user_button,
+                    zIndex: 2
+                });
+
+                follow_button.method = 'unfollow';
+                follow_button.parent_cont = profile_header;
+                follow_button.button = true;
+                follow_button.user_fid = user;
+                follow_button.addEventListener('click', follow_event);
+                profile_header.add(follow_button);
+            }
+
+            //Set follow counts
+            var follow_data = data.follow_counts;
+            var follow_count = Titanium.UI.createLabel({
+                text: follow_data.followers,
+                color: '#333',
+                left: 80,
+                font: {fontSize: 18, fontWeight: 'bold'}
+            });
+
+            var following_count = Titanium.UI.createLabel({
+                text: follow_data.following,
+                color: '#333',
+                left: 184,
+                font: {fontSize: 18, fontWeight: 'bold'}
+            });
+
+            follow_cont.add(follow_count);
+            follow_cont.add(following_count);
+
+            if (active_noms_cache.length > 0){
+                render_active_count(active_noms_cache.length);
+            }
+            if (data.trophy_count > 0){
+                render_trophy_count(data.trophy_count);
+            }
+            
+            window_activity_cont.hide();
+        };
+        var url = SERVER_URL + '/api/get_user_profile/?fb_user=' + user + '&source=' + me.fid + '&access_token=' + me.access_token;
+        user_profile_request.open('GET', url);
+        user_profile_request.send();   
+    }
     
-    var url = SERVER_URL + '/api/get_user_photos/?fb_user=' + user;
-    user_photo_request.open('GET', url);
-
-    // send the data
-    user_photo_request.send();
+    init_count += 1;
     
     // Titanium.Facebook.requestWithGraphPath(String(user), {}, 'GET', function(e) {
     //     if (e.success) {
@@ -1253,10 +1468,12 @@ function init_profile_view(){
 }
 
 Ti.App.addEventListener('pass_user', function(eventData) {
-    user = String(eventData.user);
-    name = String(eventData.name);
-    
-    init_profile_view();
+    if (init_count == 0){
+        user = String(eventData.user);
+        name = String(eventData.name);
+
+        init_profile_view();
+    }
 });
 
 Ti.App.addEventListener('close_user_profile_page', function(eventData) {

@@ -32,7 +32,7 @@ window_nav_bar = Titanium.UI.createView({
 back_buttom = Titanium.UI.createButton({
     width: 68,
     height: 32,
-    left: 5,
+    left: 0,
     title: 'Back',
     font: {fontSize: 11, fontWeight: 'bold'},
     backgroundImage: '../../images/back.png'
@@ -41,8 +41,19 @@ back_buttom = Titanium.UI.createButton({
 back_buttom.addEventListener('click', function(){
     win.close();
 });
-
 window_nav_bar.add(back_buttom);
+
+var post_nom = Ti.UI.createButton({
+    backgroundImage: '../../images/square_button.png',
+    color: '#99CB6E',
+	title:"Done",
+	width: 58,
+	height: 32,
+    right: 5,
+    font: {fontSize: 12, fontWeight: 'bold'}
+});
+post_nom.addEventListener('click', submit_nom);
+window_nav_bar.add(post_nom);
 
 var header_label = Titanium.UI.createLabel({
         text: 'Share',
@@ -79,10 +90,6 @@ function submit_nom(e){
     xhr.onload = function()
     {   
         var data = JSON.parse(this.responseData);
-        // var w = Ti.UI.createWindow({backgroundColor:"#000", url:'../active.js'});
-        // var slide_it_left = Titanium.UI.createAnimation();
-        //     slide_it_left.opacity = 0;
-        //     slide_it_left.duration = 150;
         win.close();
         tabGroup.close();
         tabGroup.opacity = 0;
@@ -116,7 +123,7 @@ function submit_nom(e){
     xhr.open('POST', url);
     
     var send_data = {
-        'fb_user': me.fid,
+        'access_token': me.access_token,
         'photo_id': photo.id,
         'owner': user,
         'nominations': nominations,
@@ -262,27 +269,7 @@ tv = Ti.UI.createTableView({
 tv.addEventListener('click', function(e){
 
 });
-
 win.add(tv);
-
-var post_nom_border = Titanium.UI.createView({
-    backgroundColor: '#dedede',
-    bottom: 38,
-    height: 2,
-    width: 320
-});
-win.add(post_nom_border);
-
-var post_nom = Ti.UI.createButton({
-    backgroundImage: '../../images/submit_large.png',
-	title:"Done",
-	width: 320,
-	height: 38,
-    bottom: 0,
-    font: {fontSize: 20, fontWeight: 'bold'}
-});
-post_nom.addEventListener('click', submit_nom);
-win.add(post_nom);
 
 init_share_nom();
 

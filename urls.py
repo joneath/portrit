@@ -59,20 +59,30 @@ urlpatterns += patterns('',
     url(r'^api/get_recent_stream/$', 'main.api_views.get_recent_stream'),
     url(r'^api/get_top_stream/$', 'main.api_views.get_top_stream'),
     url(r'^api/get_winners_stream/$', 'main.api_views.get_winners_stream'),
-    url(r'^api/get_user_photos/$', 'main.api_views.get_user_photos'),
+    url(r'^api/get_user_profile/$', 'main.api_views.get_user_profile'),
     url(r'^api/get_user_stream_photos/$', 'main.api_views.get_user_stream_photos'),
     url(r'^api/get_noms_in_cat/$', 'main.api_views.get_noms_in_cat'),
+    
     url(r'^api/get_user_wins_trophy_cat/$', 'main.api_views.get_user_wins_trophy_cat'),
+    url(r'^api/get_all_wins_trophy_cat/$', 'main.api_views.get_all_wins_trophy_cat'),
+    
     url(r'^api/get_user_trophies/$', 'main.api_views.get_user_trophies'),
+    
+    #User
+    url(r'^api/login/$', 'main.api_views.sign_in_create'),
+    url(r'^api/check_username_availability/$', 'main.api_views.check_username_availability'),
+    url(r'^api/add_username/$', 'main.api_views.add_username'),
     
     #Nominations
     url(r'^api/nominate_photo/$', 'main.api_views.nominate_photo'),
+    url(r'^api/vote_on_nomination/$', 'main.api_views.vote_on_nomination'),
     
     #Follow
     url(r'^api/get_follow_count/$', 'main.api_views.get_follow_count'),
     url(r'^api/get_my_follow_data/$', 'main.api_views.get_my_follow_data'),
     url(r'^api/get_follow_data/$', 'main.api_views.get_follow_data'),
     url(r'^api/follow_unfollow_user/$', 'main.api_views.follow_unfollow_user'),
+    url(r'^api/follow_permission_submit/$', 'main.api_views.follow_permission_submit'),
     
     #Community
     url(r'^api/get_community_photos/$', 'main.api_views.get_community_photos'),
@@ -91,6 +101,13 @@ urlpatterns += patterns('',
     url(r'^api/search/$', 'main.api_views.search'),
     url(r'^api/search_by_names/$', 'main.api_views.search_by_names'),
     url(r'^api/search_cool_kids/$', 'main.api_views.search_cool_kids'),
+    
+    #Flag
+    url(r'^api/flag/photo$', 'main.api_views.flag_photo'),
+    
+    #Settings
+    url(r'^api/get_user_settings/$', 'main.api_views.get_user_settings'),
+    url(r'^api/change_user_settings/$', 'main.api_views.change_user_settings'),
 )
 
 #iPhone Views

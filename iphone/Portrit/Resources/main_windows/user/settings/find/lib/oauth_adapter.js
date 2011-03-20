@@ -224,7 +224,7 @@ var OAuthAdapter = function(pConsumerSecret, pConsumerKey, pSignatureMethod)
 	        Ti.API.debug('destroyAuthorizeUI:webView.removeEventListener');
             webView.removeEventListener('load', authorizeUICallback);
 	        Ti.API.debug('destroyAuthorizeUI:window.close()');
-            window.hide();
+            window.close();
 			// 	        Ti.API.debug('destroyAuthorizeUI:window.remove(view)');
 			// window.remove(view);
 			// 	        Ti.API.debug('destroyAuthorizeUI:view.remove(webView)');
@@ -279,8 +279,8 @@ var OAuthAdapter = function(pConsumerSecret, pConsumerKey, pSignatureMethod)
         receivePinCallback = pReceivePinCallback;
 
         window = Ti.UI.createWindow({
-            modal: true,
-            fullscreen: true
+            // modal: true,
+            // fullscreen: true
         });
         var transform = Ti.UI.create2DMatrix().scale(0);
         view = Ti.UI.createView({
@@ -294,17 +294,14 @@ var OAuthAdapter = function(pConsumerSecret, pConsumerKey, pSignatureMethod)
             zIndex: -1,
             transform: transform
         });
-        closeLabel = Ti.UI.createLabel({
-            textAlign: 'right',
-            font: {
-                fontWeight: 'bold',
-                fontSize: '12pt'
-            },
-            text: '(X)',
+        closeLabel = Ti.UI.createImageView({
+            image: 'lib/close_button.png',
             top: 10,
             right: 12,
-            height: 14,
-            zIndex: 1
+            width: 28,
+            height: 28,
+            hires: true,
+            zIndex: 2
         });
 
         webView = Ti.UI.createWebView({

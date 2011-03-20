@@ -160,7 +160,10 @@ class Nomination(models.Model):
         tagged_users = [ ]
         try:
             for user in self.tagged_friends.all():
-                tagged_users.append(user.fid)
+                tagged_users.append({
+                    'user': user.fid,
+                    'name': user.get_name(),
+                })
         except:
             pass
             
@@ -253,10 +256,10 @@ class Photo_Flag(models.Model):
     active = models.BooleanField(default=True)
     created_date = models.DateTimeField(auto_now_add=True)
     flagger = models.ForeignKey('Portrit_User', null=True, blank=True)
-    
 
 class Photo(models.Model):    
     active = models.BooleanField(default=True)
+    validated = models.BooleanField(default=False)
     pending = models.BooleanField(default=False)
     public = models.BooleanField(default=False)
     created_date = models.DateTimeField(auto_now_add=True)
@@ -274,6 +277,7 @@ class Photo(models.Model):
     large_src = models.URLField(max_length=255, null=True, blank=True)
     crop_src = models.URLField(max_length=255, null=True, blank=True)
     gps_data = models.ForeignKey(GPS_Data, null=True, blank=True)
+    owner = models.ForeignKey('Portrit_User', null=True, blank=True)
     album = models.ForeignKey(Album, null=True, blank=True)
     flags = models.ManyToManyField(Photo_Flag, null=True, blank=True)
     nominations = models.ManyToManyField(Nomination, null=True, blank=True)
@@ -342,6 +346,7 @@ class Notification_Type(models.Model):
 class Notification(models.Model):
     active = models.BooleanField(default=True)
     read = models.BooleanField(default=False)
+    pending = models.BooleanField(default=False)
     created_date = models.DateTimeField(auto_now_add=True)
     notification_type = models.ForeignKey(Notification_Type, null=True, blank=True)
     source = models.ForeignKey('FB_User', null=True, blank=True, related_name="notification_source")
@@ -379,7 +384,11 @@ class Notification(models.Model):
         return u'%s to %s - %s' % (self.source, self.destination, self.notification_type.name)
     
 class FB_User(models.Model):
+    active = models.BooleanField(default=True)
+    pending = models.BooleanField(default=False)
+    
     fid = BigIntegerField(null=True, unique=True)
+    access_token = models.CharField(max_length=255, null=True)
     name = models.CharField(max_length=255, null=True, blank=True)
     created_date = models.DateField(auto_now_add=True)
     albums = models.ManyToManyField(Album, null=True, blank=True, related_name="fb_user_albums")
@@ -394,10 +403,7 @@ class FB_User(models.Model):
         
     def get_name(self):
         try:
-            if self.name:
-                return self.name
-            else:
-                return self.portrit_fb_user.all()[0].name
+            return self.portrit_fb_user.all()[0].name
         except:
             return None
             
@@ -406,6 +412,29 @@ class FB_User(models.Model):
             return self.portrit_fb_user.all()[0]
         except:
             return None
+            
+    def get_following(self):
+        # user_following = cache.get(str(self.fid) + '_following')
+        # if not user_following:
+        try:
+            user_following = self.portrit_fb_user.all()[0].following.filter(user_following__pending=False, user_following__active=True).distinct('id')
+        except:
+            user_following = [ ]
+                
+            # cache.set(str(self.fid) + '_following', user_following, 60*30)
+        
+        return user_following
+        
+    def get_followers(self):
+        # user_followers = cache.get(str(self.fid) + '_followers')
+        # if not user_followers:
+        try:
+            user_followers = self.portrit_fb_user.all()[0].followers.filter(user_followers__pending=False, user_followers__active=True).distinct('id')
+        except:
+            user_followers = [ ]
+            # cache.set(str(self.fid) + '_followers', user_followers, 60*30)
+        
+        return user_followers
             
     def get_portrit_user_access_token(self):
         try:
@@ -426,32 +455,45 @@ class FB_User(models.Model):
         except:
             return None
             
-    def get_following(self):
-        friends = self.friends.all()
-        try:
-            following = self.get_portrit_user().following.all()
-            following = following | friends
-        except:
-            following = friends
-        return following
+    # def get_following(self):
+    #     friends = self.friends.all()
+    #     try:
+    #         following = self.get_portrit_user().following.all()
+    #         following = following | friends
+    #     except:
+    #         following = friends
+    #     return following
     
     def __unicode__(self):
         return u'%s' % (self.fid)
 
 class Portrit_User(models.Model):
     active = models.BooleanField(default=True)
+    pending = models.BooleanField(default=False)
+    
+    #Permissions
     ask_permission = models.BooleanField(default=True)
     allow_portrit_album = models.BooleanField(default=True)
     allow_notifications = models.BooleanField(default=True)
+    allow_follows = models.BooleanField(default=True)
     allow_gps_data = models.BooleanField(default=True)
+    
+    fb_friends_imported = models.BooleanField(default=False)
+    
     created_date = models.DateField(auto_now_add=True)
     access_token = models.CharField(max_length=255, null=True)
+    api_access_token = models.CharField(max_length=255, null=True)
+    nickname = models.CharField(max_length=255, null=True)
+    
     fb_user = models.ForeignKey(FB_User, related_name="portrit_fb_user")
+    
     name = models.CharField(max_length=255, null=True, blank=True)
     email = models.EmailField(max_length=100, null=True, blank=True)
     portrit_album_fid = BigIntegerField(blank=True, null=True, unique=True)
     portrit_photos_album_fid = BigIntegerField(blank=True, null=True, unique=True)
     portrit_user_albums = models.ManyToManyField(Album, blank=True, null=True, related_name="portrit_user_albums")
+    
+    # TUT/Analytics
     tutorial_completed = models.BooleanField(default=False)
     given_nomination_count = models.IntegerField(default=0)
     recieved_nomination_count = models.IntegerField(default=0)
@@ -460,12 +502,13 @@ class Portrit_User(models.Model):
     invite_count = models.IntegerField(default=0)
     vote_count = models.IntegerField(default=0)
     comment_count = models.IntegerField(default=0)
-    user = models.ForeignKey(User, null=True, blank=True)
+    
     notifications = models.ManyToManyField(Notification, null=True, blank=True)
     referred_friends = models.ManyToManyField(FB_User, null=True, blank=True)
     badges = models.ManyToManyField(Badge, null=True, blank=True)
-    following = models.ManyToManyField(FB_User, null=True, blank=True, related_name="portrit_user_following")
-    followers = models.ManyToManyField(FB_User, null=True, blank=True, related_name="portrit_user_followers")
+    
+    following = models.ManyToManyField(FB_User, through='User_Following', null=True, blank=True, related_name="portrit_user_following")
+    followers = models.ManyToManyField(FB_User, through='User_Followers', null=True, blank=True, related_name="portrit_user_followers")
     
     class Meta:
         ordering = ['-created_date']
@@ -481,10 +524,38 @@ class Portrit_User(models.Model):
         except:
             return None
             
+    def get_settings(self):
+        try:
+            return {
+                'gps': self.allow_gps_data,
+                'follows': self.allow_follows,
+                'post_wins': self.allow_portrit_album,
+            }
+        except:
+            return { }
+            
+    def get_following(self):
+        return self.fb_user.get_following()
+        
+    def get_followers(self):
+        return self.fb_user.get_followers()
+            
+    def get_follow_counts(self):
+        try:
+            return {
+                'following': self.get_following().count(),
+                'followers': self.get_followers().count()
+            }
+        except:
+            return {
+                'following': 0,
+                'followers': 0
+            }
+            
     def get_followers_list(self):
         data = [ ]
         try:
-            data = self.followers.values_list('fid', flat=True)
+            data = self.get_followers().values_list('fid', flat=True)
             if len(data) == 0:
                 data = [ ]
         except:
@@ -495,7 +566,7 @@ class Portrit_User(models.Model):
     def get_following_list(self):
         data = [ ]
         try:
-            data = self.following.values_list('fid', flat=True)
+            data = self.get_following().values_list('fid', flat=True)
             if len(data) == 0:
                 data = [ ]
         except:
@@ -518,3 +589,17 @@ class Portrit_User(models.Model):
                 'vote_count': vote_count,
                 'comment_count': comment_count,
             }
+            
+class User_Following(models.Model):
+    portrit_user = models.ForeignKey(Portrit_User)
+    fb_user = models.ForeignKey(FB_User)
+    active = models.BooleanField(default=True)
+    pending = models.BooleanField(default=False)
+    
+class User_Followers(models.Model):
+    portrit_user = models.ForeignKey(Portrit_User)
+    fb_user = models.ForeignKey(FB_User)
+    active = models.BooleanField(default=True)
+    pending = models.BooleanField(default=False)
+    
+    pending_notification = models.ForeignKey(Notification, null=True, blank=True)

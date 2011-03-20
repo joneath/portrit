@@ -15,6 +15,18 @@ var oAuthAdapter = new OAuthAdapter(
         'rWxNvv8pOSB0t9kgT59xVc2IUQXH1l8ESpfOst5sggw',
         'RrYAd721jXeCJsp9QqtFw',
         'HMAC-SHA1');
+        
+var fadeIn = Titanium.UI.createAnimation({
+    curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
+    opacity: 1.0,
+    duration: 200
+});
+
+var fadeOut = Titanium.UI.createAnimation({
+    curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
+    opacity: 0,
+    duration: 200
+});
 
 oAuthAdapter.loadAccessToken('twitter');
     
@@ -41,10 +53,10 @@ window_nav_bar.add(back);
 var follow_all_button = Ti.UI.createButton({
 	title:"Follow All",
 	font: {fontSize: 12, fontWeight: 'bold'},
-	backgroundImage: '../../../../images/square_button.png',
-	width: 58,
+	backgroundImage: '../../../../images/large_square_button.png',
+	width: 80,
 	height: 32,
-    right: 0,
+    right: 5,
 });
 follow_all_button.addEventListener('click', function(){
     win.close();
@@ -104,7 +116,7 @@ function follow_event(e){
         xhr.open('POST', url);
 
         // send the data
-        xhr.send({'source': me.fid, 'target': user_fid, method: 'follow'});
+        xhr.send({'access_token': me.access_token, 'target': user_fid, method: 'follow'});
     }
     else{
         parent.remove(e.source);
@@ -139,7 +151,7 @@ function follow_event(e){
         xhr.open('POST', url);
 
         // send the data
-        xhr.send({'source': me.fid, 'target': user_fid, method: 'unfollow'});
+        xhr.send({'access_token': me.access_token, 'target': user_fid, method: 'unfollow'});
     }
 }
 
@@ -214,6 +226,35 @@ function render_follow_table_view(data){
     tv.setData(list_view_data);
 }
 
+window_activity = Titanium.UI.createActivityIndicator({
+    message: 'Loading...',
+    color: '#fff',
+    height:50,
+    width:10
+});
+window_activity.show()
+
+window_activity_background = Titanium.UI.createView({
+    backgroundColor: '#000',
+    borderRadius: 5,
+    opacity: 0.8,
+    height: '100%',
+    width: '100%',
+    zIndex: -1
+});
+
+window_activity_cont = Titanium.UI.createView({
+    height: 'auto',
+    top: 150,
+    width: 120,
+    height: 120,
+    zIndex: 20
+});
+window_activity_cont.hide();
+window_activity_cont.add(window_activity_background);
+window_activity_cont.add(window_activity);
+win.add(window_activity_cont);
+
 function search_by_names(names){
     var xhr = Titanium.Network.createHTTPClient();
 
@@ -221,6 +262,7 @@ function search_by_names(names){
     {   
         var data = JSON.parse(this.responseData);
         render_follow_table_view(data);
+        window_activity_cont.animate(fadeOut);
     };
     
     var url = SERVER_URL + '/api/search_by_names/';
@@ -229,9 +271,10 @@ function search_by_names(names){
     // send the data
     xhr.send({'names': names, 'source': me.fid});
 }
-    
+
 function init_follow_friends(){
     if (find_type == 'twitter'){
+        window_activity_cont.show();
         if (oAuthAdapter.isAuthorized() == false) {
             // this function will be called as soon as the application is authorized
             var receivePin = function() {
@@ -239,7 +282,7 @@ function init_follow_friends(){
                 oAuthAdapter.getAccessToken('http://twitter.com/oauth/access_token');
                 // save the access token
                 oAuthAdapter.saveAccessToken('twitter');
-                
+
                 var data = oAuthAdapter.send('http://api.twitter.com/1/statuses/friends.json', [], 'GET', function(){
                     var data = JSON.parse(this.responseData);
                     var names = '';
@@ -249,9 +292,9 @@ function init_follow_friends(){
                     search_by_names(names);
                 });
             };
-            
+
             var request_token = oAuthAdapter.getRequestToken('https://api.twitter.com/oauth/request_token', 'oob');
-            
+
             // show the authorization UI and call back the receive PIN function
             oAuthAdapter.showAuthorizeUI('https://twitter.com/oauth/authorize?' + request_token, receivePin);
         }
@@ -267,12 +310,11 @@ function init_follow_friends(){
         }
     }
     else if (find_type == 'contacts'){
-        alert('here')
+
     }
-    
+
     var data = [ ];
     var section = Titanium.UI.createTableViewSection({ });
-
 }
     
 tv = Ti.UI.createTableView({
@@ -288,9 +330,13 @@ tv.addEventListener('click', function(e){
 
 win.add(tv);
 
+var init_request_count = 0;
 Ti.App.addEventListener('find_type', function(eventData) {
-    find_type = String(eventData.find_type);
-    
-    init_follow_friends();
+    if (init_request_count == 0){
+        init_request_count += 1;
+        find_type = String(eventData.find_type);
+
+        init_follow_friends();
+    }
 });
 

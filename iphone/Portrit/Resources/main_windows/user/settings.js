@@ -9,6 +9,7 @@ var me = JSON.parse(Ti.App.Properties.getString("me")),
     window_nav_bar = null,
     back_buttom = null,
     button_label = null,
+    user_settings_data = null,
     name = '';
     
 window_nav_bar = Titanium.UI.createView({
@@ -166,6 +167,19 @@ function init_options(){
     });
     section.add(row);
     
+    var row = Ti.UI.createTableViewRow({
+            hasChild: true,
+            title: 'Privacy',
+            color: '#333',
+            font:{fontSize: 18, fontWeight: 'bold'},
+            backgroundColor: '#fff'
+    });
+    row.addEventListener('click', function(){
+        var win = Ti.UI.createWindow({backgroundColor:"#eee", url:'settings/privacy.js', title: 'Privacy'});
+        Titanium.UI.currentTab.open(win,{animated:true});
+    });
+    section.add(row);
+    
     var logout = Titanium.Facebook.createLoginButton({
         'style':'wide'
     });
@@ -287,6 +301,23 @@ function init_options(){
     options_data.push(section);
     
     tv.setData(options_data);
+    
+    //Load user settings data
+    var xhr = Titanium.Network.createHTTPClient();
+
+    xhr.onload = function()
+    {
+    	data = JSON.parse(this.responseData);
+    	user_settings_data = data;
+    	Ti.App.Properties.setString("user_settings", JSON.stringify(user_settings_data));
+    };
+    
+    var url = SERVER_URL + '/api/get_user_settings/?access_token=' + me.access_token;
+    
+    xhr.open('GET', url);
+
+    // send the data
+    xhr.send();
 }
 
 tv = Ti.UI.createTableView({

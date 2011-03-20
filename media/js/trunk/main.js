@@ -4011,20 +4011,23 @@ $(document).ready(function(){
                 var wall_html = '<div id="profile_wrap">' +
                                     '<ul>' +
                                         '<li>' +
-                                            '<h1 id="active_stream_view" class="stream_nav selected" name="active_nominations">Active</h1>' +
+                                            '<h1 id="active_stream_view" class="stream_nav selected" name="active_nominations">Stream</h1>' +
                                         '</li>' +
-                                        '<li>' +
-                                            '<h1 id="top_noms" class="stream_nav" name="top_nominations">Top</h1>' +
-                                        '</li>' +
+                                        // '<li>' +
+                                        //     '<h1 id="top_noms" class="stream_nav" name="top_nominations">Top</h1>' +
+                                        // '</li>' +
                                         '<li>' +
                                             '<h1 id="activate_community" class="stream_nav" name="community">Community</h1>' +
                                         '</li>' +
                                         '<li>' +
-                                            '<h1 id="activate_recent_winners" class="stream_nav" name="recent_winners">Winners</h1>' +
+                                            '<h1 id="activate_profile" class="stream_nav" name="profile">Profile</h1>' +
                                         '</li>' +
-                                        '<li>' +
-                                            '<h1 id="activate_latest_photos" class="stream_nav" name="latest_photos">Latest</h1>' +
-                                        '</li>' +
+                                        // '<li>' +
+                                        //     '<h1 id="activate_recent_winners" class="stream_nav" name="recent_winners">Winners</h1>' +
+                                        // '</li>' +
+                                        // '<li>' +
+                                        //     '<h1 id="activate_latest_photos" class="stream_nav" name="latest_photos">Latest</h1>' +
+                                        // '</li>' +
                                         photo_upload_html +
                                         '<div class="clear"></div>' +
                                     '</ul>' +
@@ -7515,16 +7518,16 @@ $(document).ready(function(){
                                         '</div>' +
                                         '<div class="clear"></div>' +
                                     '</div>' +
-                                    // '<div class="recent_nom_comment_cont" id="nom_comments_' + nom.id +'">' +
-                                    //     '<div class="recent_nom_comment_heading" value="' + nom.id + '">' +
-                                    //         '<a href="#!/nom_id=' + nom.id + '/comments">' +
-                                    //             '<h1>Comments</h1>' +
-                                    //         '</a>' +
-                                    //         '<span class="add_new_comment sick large">New Comment</span>' +
-                                    //         '<div class="clear"></div>' +
-                                    //     '</div>' +
-                                    //     comment_html +
-                                    // '</div>' +
+                                    '<div class="recent_nom_comment_cont" id="nom_comments_' + nom.id +'">' +
+                                        '<div class="recent_nom_comment_heading" value="' + nom.id + '">' +
+                                            '<a href="#!/nom_id=' + nom.id + '/comments">' +
+                                                '<h1>Comments</h1>' +
+                                            '</a>' +
+                                            '<span class="add_new_comment sick large">New Comment</span>' +
+                                            '<div class="clear"></div>' +
+                                        '</div>' +
+                                        comment_html +
+                                    '</div>' +
                                 '</div>';
             
             $('#recent_left_cont').prepend(recent_nom_html);

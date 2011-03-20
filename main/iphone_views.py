@@ -11,7 +11,7 @@ from django.db.models import Q, Count
 from django.core.cache import cache
 
 from main.models import Portrit_User, FB_User, Album, Photo, Nomination, Nomination_Category, Comment, \
-                        Notification, Notification_Type
+                        Notification, Notification_Type, User_Following, User_Followers
 from settings import ENV, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, NODE_SOCKET, NODE_HOST
 
 from portrit_fb import Portrit_FB
@@ -19,37 +19,43 @@ from nomination_views import serialize_noms, serialize_nom
 from datetime import datetime
 from itertools import chain
 import facebook, json, socket, time
+from api_views import check_access_token, get_user_from_access_token
 
+@check_access_token
 def init_app(request):
     data = [ ]
     PAGE_SIZE = 10
-    fb_user = request.GET.get('fb_user')
+    access_token = request.GET.get('access_token')
     
     try:
-        fb_user = FB_User.objects.get(fid=int(fb_user))
-        user = fb_user.get_portrit_user()
-        friends = fb_user.friends.all()
-        user_recent_stream = cache.get(str(fb_user.fid) + '_iphone_recent_stream')
+        portrit_user = get_user_from_access_token(access_token)
+        user = portrit_user.fb_user
+        friends = user.get_following()
+
+        user_recent_stream = cache.get(str(user.fid) + '_recent_stream')
         if user_recent_stream == None:
             nominations = Nomination.objects.select_related().filter(
                 Q(nominatee__in=friends) |
-                Q(nominatee=fb_user) |
-                Q(nominator=fb_user),
+                Q(nominatee=user) |
+                Q(nominator=user),
                 won=False, active=True).distinct('id').order_by('-created_date')[:PAGE_SIZE]
-                
-            notification_count = user.notifications.select_related().filter(active=True, read=False).order_by('-created_date').count()
             
+            notification_count = portrit_user.notifications.select_related().filter(active=True, read=False).order_by('-created_date').count()
+        
             data = {
                 'noms': serialize_noms(nominations),
                 'notification_count': notification_count,
             }
-            
-            cache.set(str(fb_user.fid) + '_iphone_recent_stream', data, 60*5)
+        
+            cache.set(str(user.fid) + '_recent_stream', data['noms'], 60*5)
         else:
-            data = user_recent_stream
-            
-    except:
-        pass
+            notification_count = portrit_user.notifications.select_related().filter(active=True, read=False).order_by('-created_date').count()
+            data = {
+                'noms': user_recent_stream,
+                'notification_count': notification_count,
+            }            
+    except Exception, err:
+        print err
     
     data = simplejson.dumps(data)
     return HttpResponse(data, mimetype='application/json')

@@ -235,12 +235,18 @@ def latest_photos(request):
             request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
         if cookie:
             fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
-            friends = fb_user.friends.values_list('fid', flat=True)
-            photos = Photo.objects.filter(active=True, pending=False, portrit_photo=True, album__portrit_user_albums__fb_user__fid__in=friends).order_by('-created_date')[:32]
+            friends = fb_user.get_following()
+            photos = Photo.objects.filter(Q(album__portrit_user_albums__fb_user__in=friends) |
+                                            Q(album__portrit_user_albums__fb_user=fb_user),
+                                            Q(nominations__active=False) |
+                                            Q(nominations__isnull=True),
+                                            active=True, 
+                                            pending=False, 
+                                            portrit_photo=True).distinct('id').order_by('-created_date')[:32]     
+
             photo_data = [ ]
             for photo in photos:
                 try:
-                    temp = photo.get_portrit_photo()
                     portrit_user = photo.get_portrit_user()
                     photo_data.append({
                         'user_fid': portrit_user.fb_user.fid,
