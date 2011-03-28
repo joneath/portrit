@@ -4,9 +4,18 @@ var RUNTIME = "local",
     
 if (RUNTIME == 'production'){
     SERVER_URL = 'http://portrit.com';
+    NODE_SERVER = '';
+    NODE_PORT = 8082;
+}
+else if (RUNTIME == 'test'){
+    SERVER_URL = 'http://test.portrit.com';
+    NODE_SERVER = '';
+    NODE_PORT = 8082;
 }
 else{
-    SERVER_URL = 'http://192.168.1.126:8080';
+    SERVER_URL = 'http://192.168.0.197:8080';
+    NODE_SERVER = 'localhost';
+    NODE_PORT = 8082;
 }
 
 function get_nom_cat_color(nom_cat){

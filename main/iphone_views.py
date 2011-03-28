@@ -32,28 +32,18 @@ def init_app(request):
         user = portrit_user.fb_user
         friends = user.get_following()
 
-        user_recent_stream = cache.get(str(user.fid) + '_recent_stream')
-        if user_recent_stream == None:
-            nominations = Nomination.objects.select_related().filter(
-                Q(nominatee__in=friends) |
-                Q(nominatee=user) |
-                Q(nominator=user),
-                won=False, active=True).distinct('id').order_by('-created_date')[:PAGE_SIZE]
-            
-            notification_count = portrit_user.notifications.select_related().filter(active=True, read=False).order_by('-created_date').count()
+        nominations = Nomination.objects.select_related().filter(
+            Q(nominatee__in=friends) |
+            Q(nominatee=user) |
+            Q(nominator=user),
+            won=False, active=True).distinct('id').order_by('-created_date')[:PAGE_SIZE]
         
-            data = {
-                'noms': serialize_noms(nominations),
-                'notification_count': notification_count,
-            }
-        
-            cache.set(str(user.fid) + '_recent_stream', data['noms'], 60*5)
-        else:
-            notification_count = portrit_user.notifications.select_related().filter(active=True, read=False).order_by('-created_date').count()
-            data = {
-                'noms': user_recent_stream,
-                'notification_count': notification_count,
-            }            
+        notification_count = portrit_user.notifications.select_related().filter(active=True, read=False).order_by('-created_date').count()
+        data = {
+            'noms': serialize_noms(nominations),
+            'notification_count': notification_count,
+        }
+                   
     except Exception, err:
         print err
     

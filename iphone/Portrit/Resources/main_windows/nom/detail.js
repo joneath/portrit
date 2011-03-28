@@ -631,11 +631,19 @@ function render_nom_detail(noms){
     var nom_cat_color = get_nom_cat_color(nom_cat_underscore);
     
     detail_header = Titanium.UI.createView({
-        backgroundColor: nom_cat_color,
         height: 35,
         top: 40,
         width: 320
     });
+    
+    detail_header_background = Titanium.UI.createView({
+        backgroundColor: nom_cat_color,
+        opacity: 0.9,
+        height: '100%',
+        width: '100%',
+        zIndex: -1
+    });
+    detail_header.add(detail_header_background);
     
     var nominatee_profile_img_url = 'https://graph.facebook.com/' + selected_nom.nominatee + '/picture?type=square';
     detail_header_profile_image = Ti.UI.createImageView({
@@ -856,9 +864,10 @@ function render_nom_detail(noms){
     
     votes_label = Titanium.UI.createLabel({
 	    text: 'Votes',
+	    textAlign: 'center',
         color: '#fff',
-        left: 10,
-        right: 10,
+        shadowColor: '#444',
+        shadowOffset: {x: 1, y: 1},
         top: 10,
         font:{fontSize: 22, fontWeight: 'bold'},
         size: {width: 'auto', height: 'auto'}
@@ -868,11 +877,12 @@ function render_nom_detail(noms){
     
     vote_count = Titanium.UI.createLabel({
 	    text: selected_nom.vote_count,
+	    textAlign: 'center',
         color: '#fff',
-        left: 10,
-        right: 10,
+        shadowColor: '#444',
+        shadowOffset: {x: 1, y: 1},
         top: 40,
-        font:{fontSize: 36, fontWeight: 'bold'},
+        font:{fontSize: 40, fontWeight: 'bold'},
         size: {width: 'auto', height: 'auto'}
     });
     vote_count.votes = selected_nom.votes;
@@ -1047,7 +1057,7 @@ function render_nom_detail(noms){
     
     for (var i = 0; i < noms.length; i++){
         photo_thumb = Ti.UI.createImageView({
-    		image: noms[i].photo.src_small,
+    		image: noms[i].photo.crop,
     		defaultImage: '../../images/photo_loader.png',
     		borderColor: '#fff',
             backgroundColor: '#000',
@@ -1104,7 +1114,7 @@ function render_nom_detail(noms){
         }
     	
     	detail_img = Ti.UI.createImageView({
-    		image: noms[i].photo.src,
+    		image: noms[i].photo.source,
     		defaultImage: '../../images/photo_loader.png',
     		width: photo_width,
     		height: photo_height,
@@ -1165,8 +1175,8 @@ function render_nom_detail(noms){
                 post_time_cont = Titanium.UI.createView({
                     right: 5,
                     bottom: 5,
-                    height: 'auto',
-                    width: 'auto',
+                    height: 40,
+                    width: 70,
                     zIndex: 1
                 });
                 post_time_cont.add(post_time_background);

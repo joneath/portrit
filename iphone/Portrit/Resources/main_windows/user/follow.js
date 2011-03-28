@@ -90,8 +90,18 @@ function follow_event(e){
         parent = e.source.parent_row,
         user_fid = e.source.user_fid;
         
+    parent.remove(e.source);
+    
+    var actInd = Titanium.UI.createActivityIndicator({
+        height: 50,
+        width: 10,
+        right: 38,
+        style: Titanium.UI.iPhone.ActivityIndicatorStyle.DARK
+    });
+    actInd.show();
+    parent.add(actInd);
+        
     if (method == 'follow'){
-        parent.remove(e.source);
         var xhr = Titanium.Network.createHTTPClient();
 
         xhr.onload = function()
@@ -114,7 +124,7 @@ function follow_event(e){
             follow_button.user_fid = user_fid;
             
             follow_button.addEventListener('click', follow_event);
-
+            parent.remove(actInd);
             parent.add(follow_button);
         };
 
@@ -125,8 +135,6 @@ function follow_event(e){
         xhr.send({'access_token': me.access_token, 'target': user_fid, method: 'follow'});
     }
     else{
-        parent.remove(e.source);
-        
         var xhr = Titanium.Network.createHTTPClient();
 
         xhr.onload = function()
@@ -149,7 +157,7 @@ function follow_event(e){
             follow_button.user_fid = user_fid;
             
             follow_button.addEventListener('click', follow_event);
-
+            parent.remove(actInd);
             parent.add(follow_button);
         };
 
@@ -159,6 +167,12 @@ function follow_event(e){
         // send the data
         xhr.send({'access_token': me.access_token, 'target': user_fid, method: 'unfollow'});
     }
+    
+    setTimeout(function(){
+	    Ti.App.fireEvent('update_follow_counts', {
+
+        });
+	}, 200);
 }
 
 function render_follow_table_view(data){

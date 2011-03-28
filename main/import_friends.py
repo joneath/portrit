@@ -28,7 +28,7 @@ def import_fb_friends(portrit_user, update=False):
                 pending = True
             
         following_rec, created = User_Following.objects.get_or_create(portrit_user=source_portrit_user, fb_user=target, pending=pending)
-        if target_portrit_user:
+        if not target_portrit_user:
             following_rec.active = False
             following_rec.save()
         elif not created:

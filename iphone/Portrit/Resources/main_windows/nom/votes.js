@@ -56,11 +56,55 @@ function add_profile_window(e){
 	}, 200);
 }
 
+var get_profile_image = function(user, name){
+    var user = user;
+    var name = name;
+    var user_profile_image = null;
+    return {
+        get_high_crop: function(cont){
+            user_profile_image = Ti.UI.createImageView({
+        		image: '../../images/photo_loader.png',
+        		borderColor: '#444',
+        		borderWidth: 3,
+        		borderRadius: 3,
+        		hires: true,
+        		height: 80,
+        		width: 80
+        	});
+
+        	var xhr = Titanium.Network.createHTTPClient();
+            xhr.onload = function(){
+                cont.remove(user_profile_image);
+                user_profile_image = Ti.UI.createImageView({
+                    image: this.location,
+                    defaultImage: '../../images/photo_loader.png',
+                    borderColor: '#444',
+            		borderWidth: 3,
+            		borderRadius: 3,
+                    hires: true,
+                    height: 80,
+                    width: 80
+                });
+                user_profile_image.name = name;
+                user_profile_image.user = user;
+                
+                cropImage(user_profile_image,150,150,20,20);
+                cont.add(user_profile_image);
+            };
+            var url = 'https://graph.facebook.com/' + user + '/picture?type=large';
+            xhr.open('GET', url);
+            xhr.send();
+
+            return user_profile_image;
+        }
+    };
+};
+
 function init_votes(){
     var votes_count = 0;
     var votes_data = [ ];
     for (var i = 0; i < votes.length; i++){
-        if (i % 4 == 0){
+        if (i % 3 == 0){
             var row = Ti.UI.createTableViewRow({
                     height:'auto',
                     selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
@@ -70,24 +114,15 @@ function init_votes(){
         }
         
         var user_cont = Ti.UI.createView({
-        	width: 80,
-        	height: 80,
-        	left: (votes_count * 80)
+        	width: 100,
+        	height: 120,
+        	left: (votes_count * 100) + 10
         });
         user_cont.user = votes[i].vote_user;
         user_cont.name = votes[i].vote_name;
         user_cont.addEventListener('click', add_profile_window);
         
-        var user_profile_image = Ti.UI.createImageView({
-    		image: 'https://graph.facebook.com/' + votes[i].vote_user + '/picture?type=square',
-    		borderColor: '#999',
-    		borderWidth: 3,
-    		borderRadius: 3,
-    		defaultImage: '../../images/photo_loader.png',
-    		hires: true,
-    		height: 40,
-    		width: 40
-    	});
+        var user_profile_image = get_profile_image(votes[i].vote_user, votes[i].vote_name).get_high_crop(user_cont);
     	user_profile_image.user = votes[i].vote_user;
         user_profile_image.name = votes[i].vote_name;
     	user_cont.add(user_profile_image);
@@ -103,7 +138,7 @@ function init_votes(){
             color: '#333',
             height: 'auto',
             width: 'auto',
-            top: 60,
+            top: 105,
             font:{fontSize:12, fontWeight: 'bold'}
         });
         user_name.user = votes[i].vote_user;

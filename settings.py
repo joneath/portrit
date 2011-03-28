@@ -43,6 +43,9 @@ if ENV == "LOCAL":
     BITLY_LOGIN = 'portrit'
     BITLY_APIKEY = 'R_554a2c395f085d017040066581d65325'
     
+    TWITTER_CONSUMER_KEY = 'RrYAd721jXeCJsp9QqtFw'
+    TWITTER_CONSUMER_SECRET = 'rWxNvv8pOSB0t9kgT59xVc2IUQXH1l8ESpfOst5sggw'
+    
 elif ENV == "TEST":
     DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
     DATABASE_NAME = 'portrit'             # Or path to database file if using sqlite3.
@@ -123,7 +126,7 @@ else:
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'America/Los Angeles'
+TIME_ZONE = ''
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html

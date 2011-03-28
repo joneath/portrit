@@ -2,7 +2,7 @@ Ti.include('../settings.js');
 Ti.include('../includes.js');
 
 var me = JSON.parse(Ti.App.Properties.getString("me")),
-    win = Ti.UI.currentWindow;
+    win = Ti.UI.currentWindow,
     list_view_data = [ ],
     noms_loaded = { },
     active_noms_cache = [ ],
@@ -369,6 +369,18 @@ function add_detail_trophy_window(e){
 	}, 200);
 }
 
+function show_tags(e){
+    var w = Ti.UI.createWindow({backgroundColor:"#ddd", url:'nom/tags.js'});
+	Titanium.UI.currentTab.open(w,{animated:true});
+	
+	setTimeout(function(){
+	    Ti.App.fireEvent('pass_tags', {
+            tags: e.source.tags
+        });
+	}, 100);
+	return false;
+}
+
 function add_comment_to_nom(e){
     var nom_id = e.source.nom_id;
     var comments = e.source.comments;
@@ -710,12 +722,17 @@ function render_nom(nom, top, row_count){
 
         nom_header = Titanium.UI.createView({
             height:35,
-            left: 0,
-            top: 0,
             width: 320,
-            opacity: 0.9,
-            backgroundColor: nom_cat_color
         });
+        
+        nom_header_background = Titanium.UI.createView({
+            height: '100%',
+            width: '100%',
+            opacity: 0.9,
+            backgroundColor: nom_cat_color,
+            zIndex: -1
+        });
+        nom_header.add(nom_header_background);
 
         nominatee_profile_img_url = 'https://graph.facebook.com/' + nom.nominatee + '/picture?type=square';
         nominatee_profile_img = Ti.UI.createImageView({
@@ -840,7 +857,7 @@ function render_nom(nom, top, row_count){
         }
 
         main_image = Ti.UI.createImageView({
-    		image: nom.photo.src,
+    		image: nom.photo.source,
     		defaultImage: '../images/photo_loader.png',
     		width: photo_width,
     		height: photo_height,
@@ -937,6 +954,37 @@ function render_nom(nom, top, row_count){
         nominator_name.name = nom.nominator_name;
         nominator_name.addEventListener('click', add_profile_window);
         
+        if (nom.tagged_users.length > 0){
+            tagged_cont = Titanium.UI.createView({
+                height: 30,
+                width: 'auto',
+                right: 3,
+            });
+            tagged_label = Titanium.UI.createLabel({
+        	    text: nom.tagged_users.length + ' Tagged',
+        	    textAlign: 'left',
+                color: '#fff',
+                left: 8,
+                right: 35,
+                font:{fontSize: 13, fontWeight: 'bold'},
+                size: {width: 'auto', height: 'auto'}
+            });
+            tagged_label.tags = nom.tagged_users;
+            tagged_cont.add(tagged_label);
+
+            disclosure = Titanium.UI.createButton({
+                style:Titanium.UI.iPhone.SystemButton.DISCLOSURE,
+            	right: 0
+            });
+            disclosure.tags = nom.tagged_users;
+            tagged_cont.add(disclosure);
+
+            tagged_cont.tags = nom.tagged_users;
+            tagged_cont.addEventListener('click', show_tags);
+            
+            nominator_footer.add(tagged_cont);
+        }
+        
         row.add(nominator_footer);
         
         time = new Date(nom.created_time * 1000);
@@ -945,7 +993,6 @@ function render_nom(nom, top, row_count){
         post_time = Titanium.UI.createLabel({
     	    text: secondsToHms(time_diff),
             color: '#fff',
-            opacity: 0.8,
             left: 5,
             top: 5,
             right: 5,
@@ -1109,13 +1156,18 @@ function activate_winners_stream(){
         xhr.onload = function()
         {
             var data = JSON.parse(this.responseData);
-            if (winners_noms_cache.length > 0){
-                update_cache(winners_noms_cache, data, false);
-                render_active_list_update(winners_noms_cache);
+            if (data.length > 0){
+                if (winners_noms_cache.length > 0){
+                    update_cache(winners_noms_cache, data, false);
+                    render_active_list_update(winners_noms_cache);
+                }
+                else{
+                    winners_noms_cache = data;
+                    render_active_list_view(winners_noms_cache);
+                }
             }
             else{
-                winners_noms_cache = data;
-                render_active_list_view(winners_noms_cache);
+                
             }
             window_activity_cont.hide();
         };

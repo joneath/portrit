@@ -758,12 +758,7 @@ Ti.App.addEventListener('pass_photo_data', function(eventData) {
     
     var source = '';
     
-    if (photo.source){
-        source = photo.source;
-    }
-    else{
-        source = photo.src;
-    }
+    source = photo.source;
     main_image.height = photo_height;
     main_image.width = photo_width;
     main_image.image = source;

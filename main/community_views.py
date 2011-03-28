@@ -40,7 +40,7 @@ def get_community(request):
                         photo_data.append({
                             'user_fid': portrit_user.fb_user.fid,
                             'name': portrit_user.name,
-                            'username': portrit_user.nickname,
+                            'username': portrit_user.username,
                             'photo': photo_obj,
                             'album_id': photo.album.id,
                             'create_datetime': time.mktime(photo.created_date.utctimetuple()),

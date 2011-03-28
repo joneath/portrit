@@ -325,6 +325,18 @@ function add_detail_window(e){
 	}, 200);
 }
 
+function show_tags(e){
+    var w = Ti.UI.createWindow({backgroundColor:"#ddd", url:'nom/tags.js'});
+	Titanium.UI.currentTab.open(w,{animated:true});
+	
+	setTimeout(function(){
+	    Ti.App.fireEvent('pass_tags', {
+            tags: e.source.tags
+        });
+	}, 100);
+	return false;
+}
+
 function add_comment_to_nom(e){
     var nom_id = e.source.nom_id;
     var comments = e.source.comments;
@@ -579,11 +591,17 @@ function render_top(data){
         cat_color = get_nom_cat_color(cat_name_underscore);
         
         trophy_header = Titanium.UI.createView({
-                backgroundColor: cat_color,
                 height: 30,
-                top: 0,
                 width: 320
             });
+            
+        trophy_header_background = Titanium.UI.createView({
+                backgroundColor: cat_color,
+                opacity: 0.9,
+                height: '100%',
+                width: '100%'
+            });
+        trophy_header.add(trophy_header_background);
             
         trophy_label = Titanium.UI.createLabel({
         	    text: data[i].cat_name,
@@ -622,10 +640,9 @@ function render_top(data){
             }
 
             photo_cont = Ti.UI.createImageView({
-        		image: data[i].noms[j].photo.src,
+        		image: data[i].noms[j].photo.source,
         		defaultImage: '../images/photo_loader.png',
                 top: 5,
-                bottom: 5,
         		left: (photo_in_row_count * 105) + 5,
         		width: 100,
         		height: 75,
@@ -804,7 +821,7 @@ function render_nom(nom, top, row_count){
             }
 
             main_image = Ti.UI.createImageView({
-        		image: nom.photo.src,
+        		image: nom.photo.source,
         		defaultImage: '../images/photo_loader.png',
         		top: 0,
         		width: photo_width,
@@ -884,6 +901,37 @@ function render_nom(nom, top, row_count){
             nominator_name.user = nom.nominator;
             nominator_name.name = nom.nominator_name;
             nominator_name.addEventListener('click', add_profile_window);
+            
+            if (nom.tagged_users.length > 0){
+                tagged_cont = Titanium.UI.createView({
+                    height: 30,
+                    width: 'auto',
+                    right: 3,
+                });
+                tagged_label = Titanium.UI.createLabel({
+            	    text: nom.tagged_users.length + ' Tagged',
+            	    textAlign: 'left',
+                    color: '#fff',
+                    left: 8,
+                    right: 35,
+                    font:{fontSize: 13, fontWeight: 'bold'},
+                    size: {width: 'auto', height: 'auto'}
+                });
+                tagged_label.tags = nom.tagged_users;
+                tagged_cont.add(tagged_label);
+
+                disclosure = Titanium.UI.createButton({
+                    style:Titanium.UI.iPhone.SystemButton.DISCLOSURE,
+                	right: 0
+                });
+                disclosure.tags = nom.tagged_users;
+                tagged_cont.add(disclosure);
+
+                tagged_cont.tags = nom.tagged_users;
+                tagged_cont.addEventListener('click', show_tags);
+
+                nominator_footer.add(tagged_cont);
+            }
 
             row.add(nominator_footer);
 
@@ -893,7 +941,6 @@ function render_nom(nom, top, row_count){
             post_time = Titanium.UI.createLabel({
         	    text: secondsToHms(time_diff),
                 color: '#fff',
-                opacity: 0.8,
                 left: 5,
                 top: 5,
                 right: 5,
@@ -1021,6 +1068,7 @@ function render_nom(nom, top, row_count){
 
 function render_active_list_view(data){
     if (data.length > 0){
+        list_view_data = [ ];
         top_empty_label.hide();
         active_empty_label.hide();
         newest_nom = data[0].created_time;
@@ -1159,8 +1207,8 @@ function activate_top_stream(){
         xhr.send(); 
     }
     else{
+        trophy_data = [ ];
         render_top(top_cache);
-        // render_active_list_view(top_cache);
     }
 }
 
@@ -1287,7 +1335,8 @@ function init_community_view(){
                 }
                 else if (selected_tab == 'active'){
                     list_view_data = [ ];
-                    render_active_list_view(data);
+                    active_cache = data;
+                    render_active_list_view(active_cache);
                 }
             }
             endReloading();

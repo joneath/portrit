@@ -74,6 +74,40 @@ var Portrit = function(){
     //     tcp_server.listen(8081, '10.117.57.137');
     // }
     
+    // var iphone_tcp_server = net.createServer(function (stream) {
+    //     var data_stream = '';
+    //     stream.setEncoding('ascii');
+    //     stream.on('connect', function () {
+    //         console.log('socket connected');
+    //     });
+    //     stream.on('data', function (data) {
+    //         data_stream += data;
+    //         stream.end('test');
+    //         try{
+    //             var event_user = parseInt(data_stream);
+    //             nomination_emitter.removeAllListeners(event_user);
+    //             var nom_callback = function(notification_id, data){
+    //                 console.log('iphone event sent');
+    //                 if (typeof(notification_id) !== "undefined"){
+    //                     data.payload.notification_id = notification_id;
+    //                 }
+    //                 stream.end(JSON.stringify(data));
+    //             }
+    //             nomination_emitter.addListener(event_user, nom_callback);
+    //         }
+    //         catch (err){
+    //             
+    //         }
+    //         console.log(data_stream + ' recieved');
+    //     });
+    //     stream.on('end', function (){
+    //         console.log('data recieved');
+    //         console.log(data_stream);
+    // 
+    //     });
+    // });
+    // iphone_tcp_server.listen(8082, 'localhost');
+    
     
     // var websock_server = ws.createServer({
     //     websock_server: http
@@ -129,9 +163,7 @@ var Portrit = function(){
                     response.end(JSON.stringify([]));
                 }, 25000);
 
-                // console.log(nomination_emitter.listeners(event_user));
                 nomination_emitter.addListener(event_user, nom_callback);
-                // console.log('long poll attached');
             }
             else{
                 var proxy_request = proxy.request(request.method, request.url, request.headers);
@@ -200,7 +232,7 @@ var Portrit = function(){
     });
     
     if (dev){
-        request_server.listen(8080, '192.168.1.126');
+        request_server.listen(8080, '192.168.0.197');
     }
     else{
         request_server.listen(8080, '10.117.57.137');

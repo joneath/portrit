@@ -20,14 +20,14 @@ from portrit_fb import Portrit_FB
 from itertools import chain
 from datetime import datetime
 from simples3 import S3Bucket
-import facebook, json, socket, time, os, Image, urllib, urllib2
+import facebook, json, socket, time, os, Image, urllib, urllib2, uuid
 
 from urllib import FancyURLopener
 from urllib2 import URLError, HTTPError
 from poster.encode import multipart_encode
 from poster.streaminghttp import register_openers
 
-def crop_to_size(image, resize_to,image_size, requested_size):
+def crop_to_size(image, resize_to, image_size, requested_size):
     from math import floor
     width_request = requested_size[0]
     height_request = requested_size[1]
@@ -68,7 +68,8 @@ def upload_photo(request):
         if cookie:
             fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
             file = request.FILES['file']
-            file_name = str(datetime.now()).replace('-', '_').replace('.', '').replace(':', '').replace(' ', '').replace('.jpg', '').replace('.png', '').replace('.jpeg', '').replace('.gif', '')
+            file_name = str(uuid.uuid4())
+            
             file_loc = MEDIA_ROOT + '/photos/' + file_name
             destination = open(file_loc, 'wb+')
             for chunk in file.chunks():
@@ -78,6 +79,7 @@ def upload_photo(request):
             thumbnail_size_name = file_name + '_130.jpg'
             large_size_name = file_name + '_720.jpg'
             crop_size_name = file_name + '_crop.jpg'
+            crop_small_size_name = file_name + '_crop_small.jpg'
             
             image = Image.open(file_loc)
             size = 130, 130
@@ -95,6 +97,10 @@ def upload_photo(request):
             cropped_image = crop_to_size(image, (400,400), large_img_size, (200, 150))
             cropped_image.save(file_loc + '_crop.jpg', 'JPEG', quality=90)
             
+            #Create small crop
+            small_cropped_image = crop_to_size(image, (300,300), large_img_size, (100, 100))
+            small_cropped_image.save(file_loc + '_crop_small.jpg', 'JPEG', quality=90)
+            
             s = S3Bucket('portrit_photos', access_key=AWS_KEY, secret_key=AWS_SECRET_KEY)
             thumbnail = open(file_loc + '_130.jpg', 'rb+')
             s.put(thumbnail_size_name, thumbnail.read(), acl="public-read")
@@ -107,19 +113,30 @@ def upload_photo(request):
             cropped_image = open(file_loc + '_crop.jpg', 'rb+')
             s.put(crop_size_name, cropped_image.read(), acl="public-read")
             cropped_image.close()
+            
+            small_cropped_image = open(file_loc + '_crop_small.jpg', 'rb+')
+            s.put(crop_small_size_name, small_cropped_image.read(), acl="public-read")
+            small_cropped_image.close()
 
             s3_url = "http://portrit_photos.s3.amazonaws.com/"
-            photo = Photo(portrit_photo=True, photo_path=file_loc, thumbnail_src=(s3_url+thumbnail_size_name), 
-                        large_src=(s3_url+large_size_name), fb_source_small=(s3_url+thumbnail_size_name),
-                        fb_source=(s3_url+large_size_name), crop_src=(s3_url+crop_size_name),
-                        small_width=thumb_img_size[0], small_height=thumb_img_size[1], 
-                        width=large_img_size[0], height=large_img_size[1], 
+            photo = Photo(portrit_photo=True, 
+                        photo_path=file_loc, 
+                        thumbnail_src=(s3_url+thumbnail_size_name), 
+                        large_src=(s3_url+large_size_name), 
+                        fb_source_small=(s3_url+thumbnail_size_name),
+                        fb_source=(s3_url+large_size_name), 
+                        crop_src=(s3_url+crop_size_name),
+                        crop_small_src=(s3_url+crop_small_size_name),
+                        small_width=thumb_img_size[0], 
+                        small_height=thumb_img_size[1], 
+                        width=large_img_size[0], 
+                        height=large_img_size[1], 
                         active=True, pending=True)
             photo.save()
             
             data = {'id': photo.id, 'thumb': photo.thumbnail_src, 'name': file.name}
-    except:
-        pass
+    except Exception, err:
+        print err
     data = json.dumps(data)
     return HttpResponse(data, mimetype='text/html')
     
@@ -133,6 +150,7 @@ def mark_photos_live(request):
             post_to_facebook = request.POST.get('post_to_facebook')
             fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
             portrit_user = fb_user.get_portrit_user()
+            
             if portrit_user.portrit_user_albums.all().count() == 0:
                 album = Album(name='Portrit Photos')
                 album.save()
@@ -141,10 +159,14 @@ def mark_photos_live(request):
             portrit_album = portrit_user.get_portrit_album()
             photo_id_list = request.POST.get('photo_ids')
             photo_id_temp_list = photo_id_list.split(',')
+            print photo_id_temp_list
             photo_id_list = [ ]
             for id in photo_id_temp_list:
-                if id != '':
-                    photo_id_list.append(int(id))
+                try:
+                    if id != '':
+                        photo_id_list.append(int(id))
+                except Exception, err:
+                    print err
             
             if public_perm == 'true':
                 public_perm = True
@@ -156,22 +178,22 @@ def mark_photos_live(request):
                 for photo in photos:
                     try:
                         post_photo_to_facebook(fb_user.fid, portrit_user.access_token, portrit_user.portrit_photos_album_fid, photo)
-                    except:
-                        pass
+                    except Exception, err:
+                        print err
                     try:
                         photo.delete_local_copy()
-                    except:
-                        pass
+                    except Exception, err:
+                        print err
             else:
                 for photo in photos:
                     try:
                         photo.delete_local_copy()
-                    except:
-                        pass
+                    except Exception, err:
+                        print err
             
             data = True
-    except:
-        pass
+    except Exception, err:
+        print err
     data = json.dumps(data)
     return HttpResponse(data, mimetype='text/html')
     

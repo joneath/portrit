@@ -124,8 +124,7 @@ function render_notifications(data){
         now = new Date(),
         time_label = null,
         time_view = null,
-        time_diff = null,
-        ;
+        time_diff = null;
     
     for (var i = 0; i < data.length; i++){
         row = Ti.UI.createTableViewRow({
@@ -198,12 +197,12 @@ function render_notifications(data){
                 pending_button_bar.row = row;
                 pending_button_bar.addEventListener('click', post_follow_permission);
                 row.add(pending_button_bar);
-                label_text = data[i].source_name + ' would like to follow you';
+                label_text = data[i].source_name + ' would like to follow you.';
             }
             else{
-                label_text = data[i].source_name + ' has begun to follow you';
+                label_text = data[i].source_name + ' has begun to follow you.';
             }
-            left_image = '../images/notification_comments.png';
+            left_image = '../images/following_asset.png';
             
             row.user = data[i].source_id;
             row.name = data[i].source_name;
@@ -228,18 +227,25 @@ function render_notifications(data){
                 bottom: 0,
                 size: {width: 'auto', height: 'auto'}
             });
-        time_view.add(time_label)
+        time_view.add(time_label);
+        
+        notification_label_cont = Titanium.UI.createView({
+                top: 0,
+                size: {width: 300, height: 'auto'}
+            });
         
         notification_label = Titanium.UI.createLabel({
                 text: label_text,
                 color: '#222',
                 textAlign: 'left',
-                left: 40,
+                left: 25,
                 right: 15,
                 top: 5, 
                 height: 'auto',
                 font:{fontSize:13}
             });
+            
+        notification_label_cont.add(notification_label);
 
         
         if (data[i].notification_type != 'new_follow'){
@@ -269,15 +275,19 @@ function render_notifications(data){
             });
             notification_label.user = data[i].source_id;
             notification_label.name = data[i].source_name;
-            notification_label.right = 120;
+            if (data[i].pending){
+                notification_label.right = 120;
+            }
+            else{
+                row.add(time_view);
+            }
         }
         
         row.notification = data[i];
         row.index = i;
         
         row.add(nomination_category_bar);
-        row.add(notification_label);
-        
+        row.add(notification_label_cont);
         
         list_view_data.push(row);
     }
@@ -303,7 +313,7 @@ function clear_notifications(e){
     xhr.open('POST', url);
 
     // send the data
-    xhr.send({'clear': true, 'user': me.fid});
+    xhr.send({'clear': true, 'access_token': me.access_token});
     
     notification_count = 0;
     notification_cache = [ ];
@@ -328,7 +338,7 @@ function row_delete(e){
     xhr.open('POST', url);
 
     // send the data
-    xhr.send({'notification_id': notification_id, 'kill': true});
+    xhr.send({'notification_id': notification_id, 'kill': true, 'access_token': me.access_token});
     
     notification_count -= 1;
     if (notification_count <= 0){

@@ -22,6 +22,8 @@ def index(request, template='index.html'):
         
     title = "Portrit"
     fb_title  = "Portrit"
+    
+    print request.get_full_path()
         
     if request.GET.get('nom_id'):
         nom_id = request.GET.get('nom_id')

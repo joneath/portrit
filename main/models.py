@@ -145,7 +145,8 @@ class Nomination(models.Model):
         photo = self.photo_set.filter(active=True)[0]
         photo_data['id'] = photo.id
         photo_data['fid'] = photo.fid
-        photo_data['src'] = photo.fb_source
+        photo_data['crop'] = photo.crop_src
+        photo_data['crop_small'] = photo.crop_small_src
         photo_data['source'] = photo.large_src
         photo_data['src_small'] = photo.fb_source_small
         photo_data['small_height'] = photo.small_height
@@ -163,6 +164,7 @@ class Nomination(models.Model):
                 tagged_users.append({
                     'user': user.fid,
                     'name': user.get_name(),
+                    'username': user.get_portrit_user().username,
                 })
         except:
             pass
@@ -218,11 +220,46 @@ class Nomination(models.Model):
     def update_current_vote_count(self):
         self.current_vote_count = self.up_votes - self.down_votes
         
+    def serialize_nom(self):
+        votes = [ ]
+        for vote in self.votes.all().iterator():
+            votes.append({
+                'vote_user': vote.fid,
+                'vote_name': vote.get_name(),
+            })
+        data = {
+            'id': self.id,
+            'active': self.active,
+            'created_time': time.mktime(self.created_date.utctimetuple()),
+            'nomination_category': self.nomination_category.name,
+            'nominator': self.nominator.fid,
+            'nominator_name': self.nominator.get_name(),
+            'nominatee': self.nominatee.fid,
+            'nominatee_name': self.nominatee.get_name(),
+            'tagged_users': self.get_tagged_users(),
+            'won': self.won,
+            'photo': self.get_photo(),
+            'caption': self.caption,
+            'comments': False,
+            'quick_comments': self.get_quick_comments(),
+            'comment_count': self.get_comment_count(),
+            'vote_count': self.current_vote_count,
+            'votes': votes,
+        }
+        
+        return data
+        
     def save(self):
         if self.won == True:
             self.nominatee.winning_noms.add(self)
         
         super(Nomination, self).save()
+        
+        try:
+            serialized_nom = self.serialize_nom()
+            nom_cache = cache.set(str(self.id) + '_nom', serialized_nom)
+        except:
+            pass
     
     def __unicode__(self):
         try:
@@ -241,6 +278,12 @@ class Album(models.Model):
 
     def __unicode__(self):
         return u'%s_%s' % (self.fid, self.name)
+        
+    def get_photo_count():
+        try:
+            return self.photo_set.filter(active=True, pending=False).count()
+        except:
+            return 0
         
 class GPS_Data(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
@@ -276,6 +319,7 @@ class Photo(models.Model):
     thumbnail_src = models.URLField(max_length=255, null=True, blank=True)
     large_src = models.URLField(max_length=255, null=True, blank=True)
     crop_src = models.URLField(max_length=255, null=True, blank=True)
+    crop_small_src = models.URLField(max_length=255, null=True, blank=True)
     gps_data = models.ForeignKey(GPS_Data, null=True, blank=True)
     owner = models.ForeignKey('Portrit_User', null=True, blank=True)
     album = models.ForeignKey(Album, null=True, blank=True)
@@ -407,6 +451,12 @@ class FB_User(models.Model):
         except:
             return None
             
+    def get_username(self):
+        try:
+            return self.portrit_fb_user.all()[0].username
+        except:
+            return None
+            
     def get_portrit_user(self):
         try:
             return self.portrit_fb_user.all()[0]
@@ -424,6 +474,27 @@ class FB_User(models.Model):
             # cache.set(str(self.fid) + '_following', user_following, 60*30)
         
         return user_following
+        
+    def get_following_data(self):
+        follow_data = [ ]
+        following = self.get_following()
+        for user in following.iterator():
+            user_data = cache.get(str(self.fid))
+            if not user_data:
+                try:
+                    portrit_user = user.get_portrit_user()
+                    user_data = {
+                        'fid': user.fid,
+                        'name': portrit_user.name,
+                        'username': portrit_user.get_username(),
+                    }
+                    follow_data.append(user_data)
+                    cache.set(str(self.fid), user_data)
+                except:
+                    pass
+            else:
+                follow_data.append(user_data)
+        return follow_data
         
     def get_followers(self):
         # user_followers = cache.get(str(self.fid) + '_followers')
@@ -483,7 +554,7 @@ class Portrit_User(models.Model):
     created_date = models.DateField(auto_now_add=True)
     access_token = models.CharField(max_length=255, null=True)
     api_access_token = models.CharField(max_length=255, null=True)
-    nickname = models.CharField(max_length=255, null=True)
+    username = models.CharField(max_length=255, null=True)
     
     fb_user = models.ForeignKey(FB_User, related_name="portrit_fb_user")
     
@@ -517,6 +588,19 @@ class Portrit_User(models.Model):
     
     def __unicode__(self):
         return u'%s' % (self.fb_user.fid)
+        
+    def get_username(self):
+        if self.username:
+            return self.username
+        else:
+            return self.fb_user.fid
+        
+    def get_user(self):
+        data = {
+            'fid': self.fb_user.fid,
+            'name': self.fb_user.name,
+            'username': self.get_username(),
+        }
         
     def get_portrit_album(self):
         try:

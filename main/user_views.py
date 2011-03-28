@@ -13,82 +13,103 @@ from main.models import Portrit_User, FB_User, Album, Photo, Nomination, Nominat
                         Notification, Notification_Type
 from settings import ENV, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, NODE_SOCKET, NODE_HOST
 
-import json, socket, urllib, urllib2
+import json, socket, urllib, urllib2, facebook, time, datetime, httplib, oauth
 
 from portrit_fb import Portrit_FB
 from notification_views import get_active_notifications
 from nomination_views import get_recent_stream, serialize_noms
 from import_friends import import_fb_friends
 
-from datetime import datetime
-import facebook, time
+def check_username(user):
+    username = user.name.replace(' ', '-')
+    username_found = False
+    count = 0
+    count_max = 20
+    while not username_found:
+        if count < count_max:
+            username = username.replace(' ', '-')
+            if count > 0:
+                username += '-' + str(count)
+            try: 
+                existing_user = Portrit_User.objects.get(username__iexact=username)
+            except:
+                user.username = username
+                user.save()
+                username_found = True
+            count += 1
+        else:
+            username_found = True 
 
 def login_fb_user(request):
     data = False
     cookie = facebook.get_user_from_cookie(
         request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
     if cookie:
-        user = None
-        data = True
-        first = False
-        permission_request = True
         try:
-            fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
-            user = fb_user.get_portrit_user()
-            if not user.ask_permission:
-                permission_request = False
-        except:
-            pass
-        if not user:
-            graph = facebook.GraphAPI(cookie["access_token"])
-            profile = graph.get_object("me")
-            email = None
+            user = None
+            data = True
+            first = False
+            permission_request = True
             try:
-                email = profile['email']
+                fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
+                user = fb_user.get_portrit_user()
+                if not user.ask_permission:
+                    permission_request = False
             except:
                 pass
-            fb_user, created = FB_User.objects.get_or_create(fid=str(profile["id"]))
-            user = Portrit_User(fb_user=fb_user, name=profile['name'],
-                        access_token=cookie["access_token"], email=email)
-            user.ask_permission = False
-            user.save()
-            
-            for winning_nom in fb_user.winning_noms.all():
-                notification_type = Notification_Type.objects.get(name="nom_won")
-                notification = Notification(source=winning_nom.nominatee, nomination=winning_nom, notification_type=notification_type)
-                notification.save()
-                user.notifications.add(notification)
-            
-            first = True
-            
-            portrit = Portrit_FB(graph, fb_user, cookie["access_token"])
-            portrit.load_user_friends()
-            
-        elif user.access_token != cookie["access_token"]:
-            user.access_token = cookie["access_token"]
-            if not user.email:
+            if not user:
                 graph = facebook.GraphAPI(cookie["access_token"])
                 profile = graph.get_object("me")
                 email = None
                 try:
                     email = profile['email']
-                    user.email = email
                 except:
                     pass
-            user.save()
-            graph = facebook.GraphAPI(cookie["access_token"])
-            portrit = Portrit_FB(graph, fb_user, cookie["access_token"])
-            portrit.load_user_friends(True)
+                fb_user, created = FB_User.objects.get_or_create(fid=str(profile["id"]))
+                user = Portrit_User(fb_user=fb_user, name=profile['name'],
+                            access_token=cookie["access_token"], email=email)
+                user.ask_permission = False
+                user.save()
+            
+                for winning_nom in fb_user.winning_noms.all():
+                    notification_type = Notification_Type.objects.get(name="nom_won")
+                    notification = Notification(source=winning_nom.nominatee, nomination=winning_nom, notification_type=notification_type)
+                    notification.save()
+                    user.notifications.add(notification)
+            
+                first = True
+            
+                portrit = Portrit_FB(graph, fb_user, cookie["access_token"])
+                portrit.load_user_friends()
+            
+            elif user.access_token != cookie["access_token"]:
+                user.access_token = cookie["access_token"]
+                if not user.email:
+                    graph = facebook.GraphAPI(cookie["access_token"])
+                    profile = graph.get_object("me")
+                    email = None
+                    try:
+                        email = profile['email']
+                        user.email = email
+                    except:
+                        pass
+                user.save()
+                graph = facebook.GraphAPI(cookie["access_token"])
+                portrit = Portrit_FB(graph, fb_user, cookie["access_token"])
+                portrit.load_user_friends(True)
         
-        # if not user.fb_friends_imported:
-        #     import_fb_friends(user)
-        #     user.fb_friends_imported = True
-        #     user.save()
-        
-        data = get_user_data(user)
-        data['first'] = first
-        data['allow_portrit_album'] = user.allow_portrit_album
-        data['permission_request'] = permission_request
+            if not user.username:
+                check_username(user)
+            
+            data = get_user_data(user)
+            data['following'] = user.fb_user.get_following_data()
+            data['username'] = user.get_username()
+            data['first'] = first
+            data['allow_portrit_album'] = user.allow_portrit_album
+            data['allow_public_follows'] = user.allow_follows
+            data['permission_request'] = permission_request
+        except Exception, err:
+            print err
     
     data = simplejson.dumps(data) 
     return HttpResponse(data, mimetype='application/json')
@@ -198,7 +219,7 @@ def get_more_recent_stream(request):
     selected_user = request.GET.get('selected_user')
     create_time = request.GET.get('create_time')
     page_size = request.GET.get('page_size')
-    create_time = datetime.fromtimestamp(float(create_time))
+    create_time = datetime.datetime.fromtimestamp(float(create_time))
     # print create_time
     cookie = facebook.get_user_from_cookie(
         request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
@@ -224,20 +245,12 @@ def get_user_data(user):
             notifications = get_active_notifications(user)
         except:
             notifications = [ ]
-        # stream = get_user_stream(user.fb_user)
         tut_counts = False
         if not user.tutorial_completed:
             tut_counts = user.get_tutorial_counts()
         
-        portrit_friends_objs = user.fb_user.friends.filter(portrit_fb_user__isnull=False).order_by('created_date')
-        portrit_friends = [ ]
-        for friend in portrit_friends_objs.iterator():
-            portrit_friends.append({'id': friend.fid, 'name': friend.get_name()})
-        
         data = {
             'notifications': notifications,
-            # 'stream': stream,
-            'portrit_friends': portrit_friends,
             'allow_notifications': user.allow_notifications,
             'tut_counts': tut_counts,
         }
@@ -409,6 +422,12 @@ def get_user_trophies(request):
             data = user_trophies
     except:
         pass
+    
+    data = simplejson.dumps(data)
+    return HttpResponse(data, mimetype='application/json')
+    
+def convert_twitter_bridge(reqeust):
+    data = False
     
     data = simplejson.dumps(data)
     return HttpResponse(data, mimetype='application/json')

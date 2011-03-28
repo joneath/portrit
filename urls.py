@@ -37,6 +37,8 @@ urlpatterns += patterns('',
     url(r'^get_top_feed/$', 'main.user_views.get_top_feed', name='get_top_feed'),
     url(r'^get_more_recent_stream/$', 'main.user_views.get_more_recent_stream', name='get_more_recent_stream'),
     url(r'^skip_tut/$', 'main.user_views.skip_tut', name='skip_tut'),
+    
+    url(r'^convert_twitter_bridge/$', 'main.user_views.convert_twitter_bridge', name='convert_twitter_bridge'),   
 )
 
 #Nomination Views
@@ -51,7 +53,7 @@ urlpatterns += patterns('',
     url(r'^get_nom_votes/$', 'main.nomination_views.get_nom_votes', name='get_nom_votes'),
     url(r'^new_comment/$', 'main.nomination_views.new_comment', name='new_comment'),
     url(r'^get_recent_winners/$', 'main.nomination_views.get_recent_winners', name='get_recent_winners'),
-    url(r'^init_recent_stream/$', 'main.nomination_views.init_recent_stream', name='init_recent_stream'),
+    url(r'^init_stream/$', 'main.nomination_views.init_stream', name='init_stream'),
 )
 
 #API URLs
@@ -81,12 +83,14 @@ urlpatterns += patterns('',
     url(r'^api/get_follow_count/$', 'main.api_views.get_follow_count'),
     url(r'^api/get_my_follow_data/$', 'main.api_views.get_my_follow_data'),
     url(r'^api/get_follow_data/$', 'main.api_views.get_follow_data'),
+    url(r'^api/get_follow_data_detailed/$', 'main.api_views.get_follow_data_detailed'),
     url(r'^api/follow_unfollow_user/$', 'main.api_views.follow_unfollow_user'),
     url(r'^api/follow_permission_submit/$', 'main.api_views.follow_permission_submit'),
     
     #Community
     url(r'^api/get_community_photos/$', 'main.api_views.get_community_photos'),
     url(r'^api/get_community_nominations/$', 'main.api_views.get_community_nominations'),
+    url(r'^api/get_community_top_nominations_cat/$', 'main.api_views.get_community_top_nominations_cat'),
     url(r'^api/get_community_top_stream/$', 'main.api_views.get_community_top_stream'),
     
     #Notifications

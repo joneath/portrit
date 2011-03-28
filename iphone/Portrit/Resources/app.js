@@ -1,4 +1,5 @@
 Ti.include('settings.js');
+Ti.include('includes.js');
 
 // this sets the background color of the master UIView (when there are no windows/tab groups on it)
 Titanium.UI.setBackgroundColor('#000');
@@ -77,6 +78,7 @@ win2.add(label2);
 
 var win3 = Titanium.UI.createWindow({  
     title:'Share',
+    url: 'main_windows/share.js',
     backgroundColor:'#000'
 });
 var tab3 = Titanium.UI.createTab({ 
@@ -160,6 +162,31 @@ function load_portrit(animate){
         tabGroup.open();
     }
     
+    // var node_sock = Titanium.Network.createTCPSocket({
+    //                 hostName: NODE_SERVER,
+    //                 port: NODE_PORT,
+    //                 mode: Titanium.Network.READ_WRITE_MODE
+    //         });
+    // 
+    // node_sock.connect();
+    // 
+    // node_sock.addEventListener('read', function(e){
+    //     alert(toString(e.data));
+    // });
+    // 
+    // node_sock.addEventListener('readError', function(e){
+    //     alert ('read error on websocket');
+    // });
+    // 
+    // node_sock.addEventListener('writeError', function(e){
+    //     alert ('read error on websocket');
+    // });
+    // 
+    // setTimeout(function(){
+    //     var data = me.fid;
+    //     node_sock.write(data);
+    // }, 500);
+        
     // Node.js updates
     // var xhr = Titanium.Network.createHTTPClient();
     // var url = SERVER_URL + '/watch_update/?user=' + me.fid;
@@ -358,6 +385,85 @@ function init_new_user(){
     create_account_win.open(window_slide_in);
 }
 
+function render_photos(data){
+    var top = 12;
+    var photo_in_row = 0;
+    var photo_data = [ ];
+    var top_offset = 5;
+    
+    if (data.length < top){
+        top = data.length;
+    }
+    
+    for (var i = 0; i < top; i++){
+        if (i % 3 == 0 && i > 0){
+            top_offset = 100;
+            photo_in_row = 0;
+            top_offset = 0;
+            row = Ti.UI.createTableViewRow({
+                    height:'auto',
+                    selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+            });
+            photo_data.push(row);
+        }
+        else if (i == 0){
+            var row = Ti.UI.createTableViewRow({
+                    height:'auto',
+                    selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+            });
+            photo_data.push(row);
+        }
+        
+        var image_thumb = Ti.UI.createImageView({
+    		image: data[i].photo.crop,
+    		defaultImage: 'images/photo_loader.png',
+    		left: (photo_in_row * 105) + 5,
+    		bottom: 5,
+    		top: top_offset,
+    		width: 100,
+    		height: 75,
+    		hires: true
+    	});
+        row.add(image_thumb);
+        photo_in_row += 1;
+    }
+    photo_cont.setData(photo_data);
+}
+
+function trophy_selected(e){
+    var scroll_pos = (e.source.index * 76) - 117;
+    if (scroll_pos < 0){
+        scroll_pos = 0;
+    }
+    else if (scroll_pos + 320 > scroll_width){
+        scroll_pos = scroll_width - 320;
+    }
+    trophy_scroll_view.scrollTo(scroll_pos, 0);
+    
+    for (var i = 0; i < trophy_thumbs.length; i++){
+        if (i != e.source.index){
+    	    trophy_thumbs[i].opacity = 0.5;
+    	}
+    	else{
+    	    trophy_thumbs[i].opacity = 1.0;
+    	}
+    }
+    
+    var xhr = Titanium.Network.createHTTPClient();
+    xhr.onload = function(){
+        var data = JSON.parse(this.responseData);
+        photo_ind.hide();
+        
+        render_photos(data);
+    };
+
+    var selected_cat = e.source.nom_cat;
+    var url = SERVER_URL + '/api/get_community_top_nominations_cat/?cat=' + selected_cat;
+    xhr.open('GET', url);
+    xhr.send();
+}
+
+var trophy_thumbs = [ ];
 if (!Titanium.Facebook.loggedIn){
     landing_win = Titanium.UI.createWindow({
         backgroundImage: 'images/background.png',
@@ -367,33 +473,138 @@ if (!Titanium.Facebook.loggedIn){
     
     fb_button = Titanium.Facebook.createLoginButton({
         'style':'wide',
-        bottom: 50
+        bottom: 10
+    });
+    fb_button_cont = Titanium.UI.createView({
+        backgroundImage: 'images/fb_login_back.png',
+        height: 50,
+        bottom: 0,
+        width: 320,
+    });
+    fb_button_cont.add(fb_button);
+    landing_win.add(fb_button_cont);
+    
+    var logo = Titanium.UI.createView({
+        backgroundImage: 'images/iphone_header.png',
+        height: 40,
+        width: 320,
+        top: 0
+    });
+	landing_win.add(logo);
+	
+	var scroll_width = (76 * 10);
+    trophy_scroll_view = Titanium.UI.createScrollView({
+    	contentWidth: scroll_width,
+    	contentHeight: 130,
+        bottom: 50,
+    	height: 130,
+    	width: 320,
+    	backgroundImage: 'images/trophy_box.png',
+    	showVerticalScrollIndicator:false,
+    	showHorizontalScrollIndicator:true
     });
     
-    landing_win.add(fb_button);
-    
-    var blurb_text = Titanium.UI.createLabel({
-            text: 'TEST TEXT', 
-            color: '#fff',
-            textAlign: 'center',
-            font:{fontSize:16},
-            width: 200,
-            zIndex: 2,
-            top: 50
+    var nom_cat_underscore = '';
+    var nom_cat_list = ['Fail','Party Animal','LOL','Awesome','Hot','WTF','Artsy','Cute','Yummy','Creepy'];
+    var random_trophy_index = createRandomNumber(0, nom_cat_list.length - 1);
+    for (var i = 0; i < nom_cat_list.length; i++){
+        nom_cat_underscore = nom_cat_list[i].replace(' ', '_').toLowerCase();
+        trophy_cont = Titanium.UI.createView({
+            height: 130,
+            width: 76,
+            left: (76 * i),
+            top: 0
         });
         
-    landing_win.add(blurb_text);
+        trophy_label = Titanium.UI.createLabel({
+    	    text: nom_cat_list[i],
+            color: '#fff',
+            bottom: 8,
+            size: {width: 'auto', height: 'auto'},
+            font:{fontSize:12, fontWeight: 'bold'}
+        });
+        trophy_cont.add(trophy_label);
+        
+        trophy = Ti.UI.createImageView({
+    		image: 'images/trophies/large/' + nom_cat_underscore + '.png',
+    		defaultImage: 'images/photo_loader.png',
+    		width: 50,
+    		height: 100,
+    		top: 0,
+    		hires: true
+    	});
+        trophy_label.nom_cat = nom_cat_list[i];
+    	trophy_label.index = i;
+    	trophy.nom_cat = nom_cat_list[i];
+    	trophy.index = i;
+    	trophy_cont.nom_cat = nom_cat_list[i];
+    	trophy_cont.index = i;
+    	trophy_thumbs.push(trophy_cont);
+    	trophy_cont.addEventListener('click', trophy_selected);
+    	
+    	trophy_cont.add(trophy);
+    	
+    	trophy_scroll_view.add(trophy_cont);
+    	
+    	if (i != random_trophy_index){
+    	    trophy_cont.opacity = 0.5;
+    	}
+	}
+	landing_win.add(trophy_scroll_view);
+	
+	var scroll_pos = (random_trophy_index * 76) - 117;
+    if (scroll_pos < 0){
+        scroll_pos = 0;
+    }
+    else if (scroll_pos + 320 > scroll_width){
+        scroll_pos = scroll_width - 320;
+    }
+	trophy_scroll_view.scrollTo(scroll_pos, 0);
+	
+	photo_cont = Ti.UI.createTableView({ 
+        backgroundColor: '#000',
+        allowsSelection: false,
+        separatorStyle: 0,
+        height: 240,
+        top: 40,
+        width: 320,
+        style: Titanium.UI.iPhone.TableViewStyle.PLAIN
+    });
+    landing_win.add(photo_cont);
     
-    var logo = Ti.UI.createImageView({
-		image: 'images/logo.png',
-		left: 'auto',
-		top: 80,
-		height: 89,
-		width: 200
-	});
-	landing_win.add(logo);
+    var drop_shadow = Titanium.UI.createView({
+        backgroundImage: 'images/upper_drop_shadow.png',
+        height: 2,
+        width: 320,
+        top: 278,
+        zIndex: 10
+    });
+    landing_win.add(drop_shadow);
     
     landing_win.open();
+    
+    photo_ind = Titanium.UI.createActivityIndicator({
+        height:50,
+        width:10,
+        color: '#fff',
+        style: Titanium.UI.iPhone.ActivityIndicatorStyle.BIG,
+        bottom: 200
+    });
+    landing_win.add(photo_ind);
+    
+    photo_ind.show();
+    var xhr = Titanium.Network.createHTTPClient();
+    xhr.onload = function(){
+        var data = JSON.parse(this.responseData);
+        photo_ind.hide();
+        render_photos(data);
+    };
+
+    var selected_cat = nom_cat_list[random_trophy_index];
+    var url = SERVER_URL + '/api/get_community_top_nominations_cat/?cat=' + selected_cat;
+    xhr.open('GET', url);
+    xhr.send();
+    
     
     // setTimeout(function(){
     //     init_new_user();
@@ -423,8 +634,7 @@ if (!Titanium.Facebook.loggedIn){
             landing_win.add(actInd);
             
             var xhr = Titanium.Network.createHTTPClient();
-            xhr.onload = function()
-            {
+            xhr.onload = function(){
                 actInd.hide();
                 var data = JSON.parse(this.responseData);
                 if (data.auth == 'valid' && data['new'] == true){

@@ -32,5 +32,5 @@ window_nav_bar.add(back);
 
 win.add(window_nav_bar);
     
-var webview = Titanium.UI.createWebView({url:'http://portrit.com/#/context=terms', top: 40});
+var webview = Titanium.UI.createWebView({url: SERVER_URL + '/#/context=terms', top: 40});
 win.add(webview);

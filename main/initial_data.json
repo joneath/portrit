@@ -1,0 +1,108 @@
+[
+  {
+    "model": "main.Nomination_Category",
+    "pk": 1,
+    "fields": {
+      "name": "Hot"
+    }
+  },
+  {
+    "model": "main.Nomination_Category",
+    "pk": 2,
+    "fields": {
+      "name": "LOL"
+    }
+  },
+  {
+    "model": "main.Nomination_Category",
+    "pk": 3,
+    "fields": {
+      "name": "Artsy"
+    }
+  },
+  {
+    "model": "main.Nomination_Category",
+    "pk": 4,
+    "fields": {
+      "name": "Fail"
+    }
+  },
+  {
+    "model": "main.Nomination_Category",
+    "pk": 5,
+    "fields": {
+      "name": "Party Animal"
+    }
+  },
+  {
+    "model": "main.Nomination_Category",
+    "pk": 6,
+    "fields": {
+      "name": "Cute"
+    }
+  },
+  {
+    "model": "main.Nomination_Category",
+    "pk": 7,
+    "fields": {
+      "name": "WTF"
+    }
+  },
+  {
+    "model": "main.Nomination_Category",
+    "pk": 8,
+    "fields": {
+      "name": "Creepy"
+    }
+  },
+  {
+    "model": "main.Nomination_Category",
+    "pk": 9,
+    "fields": {
+      "name": "Awesome"
+    }
+  },
+  {
+    "model": "main.Nomination_Category",
+    "pk": 10,
+    "fields": {
+      "name": "Yummy"
+    }
+  },
+
+  {
+    "model": "main.Notification_Type",
+    "pk": 1,
+    "fields": {
+      "name": "tagged_nom"
+    }
+  },
+  {
+    "model": "main.Notification_Type",
+    "pk": 2,
+    "fields": {
+      "name": "new_follow"
+    }
+  },
+  {
+    "model": "main.Notification_Type",
+    "pk": 3,
+    "fields": {
+      "name": "nom_won"
+    }
+  },
+  {
+    "model": "main.Notification_Type",
+    "pk": 4,
+    "fields": {
+      "name": "new_comment"
+    }
+  },
+  {
+    "model": "main.Notification_Type",
+    "pk": 5,
+    "fields": {
+      "name": "new_nom"
+    }
+  }
+]
