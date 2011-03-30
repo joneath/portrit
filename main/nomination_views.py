@@ -10,8 +10,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q, Count
 from django.core.cache import cache
 
-from main.models import Portrit_User, FB_User, Album, Photo, Nomination, Nomination_Category, Comment, \
-                        Notification, Notification_Type
+# from main.models import Portrit_User, FB_User, Album, Photo, Nomination, Nomination_Category, Comment, \
+#                         Notification, Notification_Type
+
+from main.documents import *
+
 from settings import ENV, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, NODE_SOCKET, NODE_HOST
 
 from portrit_fb import Portrit_FB
@@ -860,7 +863,7 @@ def init_stream(request):
         cookie = facebook.get_user_from_cookie(
             request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
         if cookie:
-            owner = FB_User.objects.get(fid=int(cookie["uid"]))
+            owner = Portrit_User.objects.get(fb_user__fid=int(cookie["uid"]))
             top_stream = get_top_stream(owner)
             top_users = get_top_users(owner)
             data = {
@@ -902,38 +905,39 @@ def get_recent_stream(fb_user, created_date=None, page_size=10, ref_user=None):
     
     return data
     
-def get_top_stream(fb_user):
+def get_top_stream(user):
     data = [ ]
     PAGE_SIZE = 10
     try:
-        following = fb_user.get_following()
-        nominations = Nomination.objects.select_related().filter(
+        following = user.get_following()
+        nominations = Nomination.objects.filter(
             Q(nominatee__in=following) |
-            Q(nominatee=fb_user) |
-            Q(nominator=fb_user) |
-            Q(tagged_friends__in=following),
-            active=True, won=False).distinct('id').order_by('-current_vote_count', '-created_date')[:PAGE_SIZE]
-        
+            Q(nominatee=user) |
+            Q(nominator=user) |
+            Q(tagged_users__in=following),
+            active=True, won=False).order_by('-current_vote_count', '-created_date')[:PAGE_SIZE]
         data = serialize_noms(nominations)
     except Exception, err:
         print err
         
     return data
     
-def get_top_users(fb_user):
+def get_top_users(user):
     data = [ ]
     try:
-        user_top_cache = cache.get(str(fb_user.fid) + '_top_users')
+        user_top_cache = cache.get(str(user.id) + '_top_users')
         if user_top_cache == None:
-            friends = fb_user.get_following().select_related().filter(Q(id=fb_user.id) | Q(id__in=friends)).annotate(num_wins=Count('winning_noms')).filter(num_wins__gt=0).order_by('-num_wins')[:10]
+            following = user.get_following()
+            friends = Portrit_User.objects.filter(Q(id=user.id) | Q(id__in=following), winning_nomination_count__gt=0, active=True, pending=False).order_by('winning_nomination_count')[:10]
+            #friends = fb_user.get_following().select_related().filter(Q(id=fb_user.id) | Q(id__in=friends)).annotate(num_wins=Count('winning_noms')).filter(num_wins__gt=0).order_by('-num_wins')[:10]
             for friend in friends:
                 data.append({
-                    'fid': friend.fid,
-                    'name': friend.get_name(),
-                    'noms_won': friend.winning_noms.all().count(),
-                    'top_nom_cat': friend.winning_noms.all().annotate(noms_cat_count=Count('nomination_category')).order_by('-noms_cat_count')[0].nomination_category.name,
+                    'fid': friend.fb_user.fid,
+                    'name': friend.name,
+                    'noms_won': friend.winning_nomination_count,
+                    #'top_nom_cat': friend.winning_noms.all().annotate(noms_cat_count=Count('nomination_category')).order_by('-noms_cat_count')[0].nomination_category.name,
                 })
-            cache.set(str(fb_user.fid) + '_top_users', data)
+            cache.set(str(user.id) + '_top_users', data)
         else:
             data = user_top_cache
     except:
@@ -957,36 +961,11 @@ def get_target_friends(fb_user, current_user):
 def serialize_noms(noms):
     data = [ ]
     try:
-        for nom in noms.iterator():
+        for nom in noms:
             try:
                 nom_cache = cache.get(str(nom.id) + '_nom')
                 if not nom_cache:
-                    votes = [ ]
-                    for vote in nom.votes.all().iterator():
-                        votes.append({
-                            'vote_user': vote.fid,
-                            'vote_name': vote.get_name(),
-                        })
-                    nom_data = {
-                        'id': nom.id,
-                        'active': nom.active,
-                        'created_time': time.mktime(nom.created_date.utctimetuple()),
-                        'nomination_category': nom.nomination_category.name,
-                        'nominator': nom.nominator.fid,
-                        'nominator_name': nom.nominator.get_name(),
-                        'nominatee': nom.nominatee.fid,
-                        'nominatee_name': nom.nominatee.get_name(),
-                        'tagged_users': nom.get_tagged_users(),
-                        'won': nom.won,
-                        'photo': nom.get_photo(),
-                        'caption': nom.caption,
-                        'comments': False,
-                        'quick_comments': nom.get_quick_comments(),
-                        'comment_count': nom.get_comment_count(),
-                        'vote_count': nom.current_vote_count,
-                        'votes': votes,
-                    }
-                    cache.set(str(nom.id) + '_nom', nom_data)
+                    nom_data = nom.serialize_nom()
                 else:
                     nom_data = nom_cache
                 data.append(nom_data)
@@ -1002,33 +981,7 @@ def serialize_nom(nom):
     try:
         nom_cache = cache.get(str(nom.id) + '_nom')
         if not nom_cache:
-            votes = [ ]
-            for vote in nom.votes.all().iterator():
-                votes.append({
-                    'vote_user': vote.fid,
-                    'vote_name': vote.get_name(),
-                })
-            data = {
-                'id': nom.id,
-                'active': nom.active,
-                'created_time': time.mktime(nom.created_date.utctimetuple()),
-                'nomination_category': nom.nomination_category.name,
-                'nominator': nom.nominator.fid,
-                'nominator_name': nom.nominator.get_name(),
-                'nominator_username': nom.nominator.get_username(),
-                'nominatee': nom.nominatee.fid,
-                'nominatee_name': nom.nominatee.get_name(),
-                'nominatee_username': nom.nominatee.get_username(),
-                'tagged_users': nom.get_tagged_users(),
-                'won': nom.won,
-                'photo': nom.get_photo(),
-                'caption': nom.caption,
-                'comments': False,
-                'quick_comments': nom.get_quick_comments(),
-                'comment_count': nom.get_comment_count(),
-                'vote_count': nom.current_vote_count,
-                'votes': votes,
-            }
+            data = nom.serialize_nom()
             cache.set(str(nom.id) + '_nom', data)
         else:
             data = nom_cache

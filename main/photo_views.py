@@ -10,8 +10,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.core.cache import cache
 
-from main.models import Portrit_User, FB_User, Album, Photo, Nomination, Nomination_Category, Comment, \
-                        Notification, Notification_Type
+# from main.models import Portrit_User, FB_User, Album, Photo, Nomination, Nomination_Category, Comment, \
+#                         Notification, Notification_Type
+
+from main.documents import *
+                        
 from settings import ENV, MEDIA_ROOT, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, NODE_SOCKET, AWS_KEY, AWS_SECRET_KEY, MEDIA_ROOT, \
                         BITLY_LOGIN, BITLY_APIKEY
 
@@ -66,7 +69,7 @@ def upload_photo(request):
         cookie = facebook.get_user_from_cookie(
             request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
         if cookie:
-            fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
+            user = Portrit_User.objects.get(fb_user__fid=int(cookie["uid"]))
             file = request.FILES['file']
             file_name = str(uuid.uuid4())
             
@@ -119,22 +122,19 @@ def upload_photo(request):
             small_cropped_image.close()
 
             s3_url = "http://portrit_photos.s3.amazonaws.com/"
-            photo = Photo(portrit_photo=True, 
-                        photo_path=file_loc, 
-                        thumbnail_src=(s3_url+thumbnail_size_name), 
-                        large_src=(s3_url+large_size_name), 
-                        fb_source_small=(s3_url+thumbnail_size_name),
-                        fb_source=(s3_url+large_size_name), 
-                        crop_src=(s3_url+crop_size_name),
-                        crop_small_src=(s3_url+crop_small_size_name),
-                        small_width=thumb_img_size[0], 
-                        small_height=thumb_img_size[1], 
-                        width=large_img_size[0], 
-                        height=large_img_size[1], 
-                        active=True, pending=True)
+            photo = Photo(path=file_loc, 
+                        thumbnail=(s3_url+thumbnail_size_name), 
+                        large=(s3_url+large_size_name), 
+                        crop=(s3_url+crop_size_name),
+                        crop_small=(s3_url+crop_small_size_name),
+                        width=large_img_size[0],
+                        height=large_img_size[1],
+                        owner=user,
+                        active=True, 
+                        pending=True)
             photo.save()
             
-            data = {'id': photo.id, 'thumb': photo.thumbnail_src, 'name': file.name}
+            data = {'id': str(photo.id), 'thumb': photo.thumbnail, 'name': file.name}
     except Exception, err:
         print err
     data = json.dumps(data)
@@ -148,36 +148,30 @@ def mark_photos_live(request):
         if cookie:
             public_perm = request.POST.get('public_perm')
             post_to_facebook = request.POST.get('post_to_facebook')
-            fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
-            portrit_user = fb_user.get_portrit_user()
             
-            if portrit_user.portrit_user_albums.all().count() == 0:
-                album = Album(name='Portrit Photos')
-                album.save()
-                portrit_user.portrit_user_albums.add(album)
+            user = Portrit_User.objects.get(fb_user__fid=int(cookie["uid"]))
                 
-            portrit_album = portrit_user.get_portrit_album()
             photo_id_list = request.POST.get('photo_ids')
             photo_id_temp_list = photo_id_list.split(',')
-            print photo_id_temp_list
             photo_id_list = [ ]
             for id in photo_id_temp_list:
                 try:
                     if id != '':
-                        photo_id_list.append(int(id))
+                        photo_id_list.append(id)
                 except Exception, err:
                     print err
             
             if public_perm == 'true':
                 public_perm = True
-            photos = Photo.objects.filter(id__in=photo_id_list).update(pending=False, album=portrit_album, public=True)
+                
+            photos = Photo.objects.filter(id__in=photo_id_list).update(set__pending=False, set__public=public_perm)
             photos = Photo.objects.filter(id__in=photo_id_list)
             if post_to_facebook == 'true':
-                if not portrit_user.portrit_photos_album_fid:
-                    create_portrit_photo_album(fb_user, portrit_user)
+                if not portrit_user.portrit_fb_album_fid:
+                    create_portrit_photo_album(user)
                 for photo in photos:
                     try:
-                        post_photo_to_facebook(fb_user.fid, portrit_user.access_token, portrit_user.portrit_photos_album_fid, photo)
+                        post_photo_to_facebook(user, user.fb_user.access_token, user.portrit_fb_album_fid, photo)
                     except Exception, err:
                         print err
                     try:
@@ -197,12 +191,12 @@ def mark_photos_live(request):
     data = json.dumps(data)
     return HttpResponse(data, mimetype='text/html')
     
-def post_photo_to_facebook(user_fid, access_token, portrit_photos_album_fid, photo):
+def post_photo_to_facebook(user, access_token, portrit_photos_album_fid, photo):
     now = datetime.now()
     name = str(photo.id) + '_' + str(now.strftime("%Y%m%dT%H%M%S")) + '.jpg'
-    path = photo.photo_path + '_720.jpg'
+    path = photo.path + '_720.jpg'
     
-    message = 'http://portrit.com/#/user=' + str(user_fid) + '/album=portrit-photos/gallery/photo=' + str(photo.id)
+    message = 'http://portrit.com/!#/' + user.username + '/photos/' + str(photo.id) + '/'
     
     bitly_params = {
         'login': BITLY_LOGIN,
@@ -237,9 +231,9 @@ def post_photo_to_facebook(user_fid, access_token, portrit_photos_album_fid, pho
     except:
         pass
         
-def create_portrit_photo_album(fb_user, portrit_user):
+def create_portrit_photo_album(user):
     url = 'https://graph.facebook.com/me/albums'
-    values = {'access_token' : portrit_user.access_token,
+    values = {'access_token' : user.fb_user.access_token,
               'name' : 'Portrit Photos',
               }
     data = urllib.urlencode(values)
@@ -247,40 +241,5 @@ def create_portrit_photo_album(fb_user, portrit_user):
     response = urllib2.urlopen(req)
     data = response.read()
     data = simplejson.loads(data)
-    portrit_user.portrit_photos_album_fid = data['id']
-    portrit_user.save()
-    
-def latest_photos(request):
-    data = []
-    try:
-        cookie = facebook.get_user_from_cookie(
-            request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
-        if cookie:
-            fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
-            friends = fb_user.get_following()
-            photos = Photo.objects.filter(Q(album__portrit_user_albums__fb_user__in=friends) |
-                                            Q(album__portrit_user_albums__fb_user=fb_user),
-                                            Q(nominations__active=False) |
-                                            Q(nominations__isnull=True),
-                                            active=True, 
-                                            pending=False, 
-                                            portrit_photo=True).distinct('id').order_by('-created_date')[:32]     
-
-            photo_data = [ ]
-            for photo in photos:
-                try:
-                    portrit_user = photo.get_portrit_user()
-                    photo_data.append({
-                        'user_fid': portrit_user.fb_user.fid,
-                        'name': portrit_user.name,
-                        'photo': photo.get_portrit_photo(),
-                        'album_id': photo.album.id,
-                    })
-                except:
-                    pass
-            data = photo_data
-    except:
-        pass
-    data = json.dumps(data)
-    return HttpResponse(data, mimetype='text/html')
-    
+    user.portrit_fb_album_fid = data['id']
+    user.save()

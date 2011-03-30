@@ -1,0 +1,444 @@
+from mongoengine import *
+import datetime, time
+
+from django.contrib.sites.models import Site
+from django.core.cache import cache
+ 
+CACHE_EXPIRES = 5 * 60 # 10 minutes
+    
+class Comment(Document):
+    active = BooleanField(default=True)
+    created_date = DateTimeField(default=datetime.datetime.now)
+    comment = StringField(required=True)
+    owner = ReferenceField('Portrit_User')
+    nomination = ReferenceField('Nomination')
+    
+    meta = {
+        'ordering': ['-created_date'],
+        'indexes': ['nomination']
+    }
+    
+class Nomination_Category(Document):
+    active = BooleanField(default=True)
+    order = IntField(default=0)
+    title = StringField(max_length=200, required=True, unique=True)
+    
+    meta = {
+        'ordering': ['-order']
+    }
+    
+class Nomination(Document):
+    active = BooleanField(default=True)
+    removed = BooleanField(default=False)
+    created_date = DateTimeField(default=datetime.datetime.now)
+    won = BooleanField(default=False)
+    
+    nomination_category = StringField()
+    caption = StringField(max_length=140)
+    # comments = ListField(ReferenceField(Comment))
+    
+    photo = ReferenceField('Photo')
+    public = BooleanField(default=False)
+    
+    tagged_users = ListField(ReferenceField('Portrit_User'))
+    nominator = ReferenceField('Portrit_User')
+    nominatee = ReferenceField('Portrit_User')
+    
+    #Votes
+    current_vote_count = IntField(default=1)
+    votes = ListField(ReferenceField('Portrit_User'))
+    up_voters = ListField(ReferenceField('Portrit_User'))
+    down_voters = ListField(ReferenceField('Portrit_User'))
+    
+    meta = {
+        'ordering': ['-created_date'],
+        'indexes': ['tagged_users', 
+                    'votes',
+                    'up_voters',
+                    'down_voters']
+    }
+    
+    def get_tagged_users(self):
+        tagged_users = [ ]
+        try:
+            for user in self.tagged_users():
+                tagged_users.append({
+                    'user': user.fb_user.fid,
+                    'name': user.name,
+                    'username': user.username,
+                })
+        except:
+            pass
+            
+        return tagged_users
+        
+    def get_comments(self):
+        comment_cache = cache.get(str(self.id) + '_comments')
+        if not comment_cache:
+            comment_list = [ ]
+            comments = Comment.objects.filter(nomination=self, active=True)
+            for comment in comments:
+                comment_list.append({
+                    'comment': comment.comment,
+                    'owner_id': comment.owner.fb_user.fid,
+                    'owner_name': comment.owner.name,
+                    'create_datetime': time.mktime(comment.created_date.utctimetuple()),
+                })
+            cache.set(str(self.id) + '_comments', comment_list)
+            return comment_list
+        else:
+            return comment_cache
+        
+    def get_quick_comments(self):
+        try:
+            comment_list = [ ]
+            comments = Comment.objects.filter(nomination=self, active=True)
+            comment_count = len(comments)
+            split = 3
+
+            if comment_count > 3:
+                split = 2
+
+            for comment in comments[:split]:
+                comment_list.append({
+                    'comment': comment.comment,
+                    'owner_id': comment.owner.fb_user.fid,
+                    'owner_name': comment.owner.name,
+                    'create_datetime': time.mktime(comment.created_date.utctimetuple()),
+                })
+            return comment_list
+        except:
+            return []
+            
+    def get_comment_count(self):
+        try:
+            return len(Comment.objects.filter(nomination__id=self.id, active=True))
+        except:
+            return 0
+    
+    def serialize_nom(self):
+        try:
+            votes = [ ]
+            for vote in self.votes:
+                votes.append({
+                    'vote_user': vote.fb_user.fid,
+                    'vote_name': vote.name,
+                })
+            
+            data = {
+                'id': str(self.id),
+                'active': self.active,
+                'created_time': time.mktime(self.created_date.utctimetuple()),
+                'nomination_category': self.nomination_category,
+                'nominator': self.nominator.fb_user.fid,
+                'nominator_name': self.nominator.name,
+                'nominatee': self.nominatee.fb_user.fid,
+                'nominatee_name': self.nominatee.name,
+                'tagged_users': self.get_tagged_users(),
+                'won': self.won,
+                'photo': self.photo.get_photo(),
+                'caption': self.caption,
+                'comments': False,
+                'quick_comments': self.get_quick_comments(),
+                'comment_count': self.get_comment_count(),
+                'vote_count': self.current_vote_count,
+                'votes': votes,
+            }
+        
+            cache.set(str(self.id) + '_nom', data)
+            return data
+        except:
+            return { }
+        
+    def save(self, *args, **kwargs):
+        super(Nomination, self).save(*args, **kwargs)
+        self.serialize_nom()
+    
+class Photo_Flag(EmbeddedDocument):
+    active = BooleanField(default=True)
+    created_date = DateTimeField(default=datetime.datetime.now)
+    flagger = ReferenceField('Portrit_User')
+    
+    meta = {
+        'ordering': ['-created_date'],
+        'indexes': ['flagger']
+    }
+    
+class Photo(Document):
+    active = BooleanField(default=True)
+    validated = BooleanField(default=False)
+    pending = BooleanField(default=False)
+    public = BooleanField(default=False)
+    created_date = DateTimeField(default=datetime.datetime.now)
+    
+    path = StringField()
+    thumbnail = StringField()
+    large = StringField()
+    crop = StringField()
+    crop_small = StringField()
+    
+    height = IntField()
+    width = IntField()
+    
+    nominations = ListField(ReferenceField('Nomination'))
+    flags = ListField(EmbeddedDocumentField(Photo_Flag))
+    owner = ReferenceField('Portrit_User')
+    
+    meta = {
+        'ordering': ['-created_date'],
+        'indexes': ['owner']
+    }
+    
+    def get_photo(self):
+        try:
+            return {
+                'id': str(self.id),
+                'created_time': time.mktime(self.created_date.utctimetuple()),
+                'thumbnail': self.thumbnail,
+                'crop': self.crop,
+                'crop_small': self.crop_small,
+                'source': self.large,
+                'height': self.height,
+                'width': self.width
+            }
+        except:
+            return None
+    
+    def delete_local_copy(self):
+        import os
+        os.remove(self.path)
+        os.remove(self.path + '_130.jpg')
+        os.remove(self.path + '_720.jpg')
+        os.remove(self.path + '_crop.jpg')
+        os.remove(self.path + '_crop_small.jpg')
+    
+class FB_User(EmbeddedDocument):
+    active = BooleanField(default=True)
+    pending = BooleanField(default=False)
+    created_date = DateTimeField(default=datetime.datetime.now)
+    
+    fid = IntField()
+    access_token = StringField()
+    mobile_access_token = StringField()
+    
+    meta = {
+        'ordering': ['-created_date'],
+        'indexes': ['fid',
+                    'access_token',
+                    'mobile_access_token']
+    }
+    
+class Twitter_User(EmbeddedDocument):
+    active = BooleanField(default=True)
+    pending = BooleanField(default=False)
+    created_date = DateTimeField(default=datetime.datetime.now)
+
+    access_token = StringField()
+    
+    meta = {
+        'ordering': ['-created_date'],
+        'indexes': ['access_token']
+    }
+    
+class Portrit_User(Document):
+    active = BooleanField(default=True)
+    pending = BooleanField(default=False)
+    created_date = DateTimeField(default=datetime.datetime.now)
+    
+    #Permissions
+    allow_winning_fb_album = BooleanField(default=False)
+    allow_follows = BooleanField(default=True)
+    allow_gps = BooleanField(default=True)
+    email_on_follow = BooleanField(default=False)
+    email_on_nomination = BooleanField(default=False)
+    email_on_win = BooleanField(default=False)
+    
+    username = StringField(max_length=60)
+    name = StringField(max_length=160)
+    email = StringField(max_length=255)
+    tutorial_completed = BooleanField(default=False)
+    
+    cool = BooleanField(default=False)
+    
+    portrit_fb_album_fid = IntField(default=0)
+    
+    #Analytics
+    given_nomination_count = IntField(default=0)
+    recieved_nomination_count = IntField(default=0)
+    selfish_nomination_count = IntField(default=0)
+    winning_nomination_count = IntField(default=0)
+    invite_count = IntField(default=0)
+    vote_count = IntField(default=0)
+    comment_count = IntField(default=0)
+    
+    winning_noms = ListField(ReferenceField(Nomination))
+    
+    fb_user = EmbeddedDocumentField(FB_User)
+    twitter_user = EmbeddedDocumentField(Twitter_User)
+    
+    following = ListField(ReferenceField('Follow'))
+    followers = ListField(ReferenceField('Follow'))
+    
+    meta = {
+        'ordering': ['-created_date'],
+        'indexes': ['username',
+                    'name',
+                    'following',
+                    'followers']
+    }
+    
+    def check_follow(self, target):
+        following = filter(lambda follow: follow.user == target, self.following)
+        if following:
+            return True
+        else:
+            return False
+    
+    def get_following(self):
+        try:
+            following = filter(lambda follow: follow.pending == False and follow.active == True, self.following)
+            following_list = [ ]
+            for follow in following:
+                following_list.append(follow.user)
+        
+            return following_list
+        except:
+            return []
+        
+    def get_followers(self):
+        try:
+            followers = filter(lambda follow: follow.pending == False and follow.active == True, self.followers)
+            followers_list = [ ]
+            for follow in followers:
+                followers_list.append(follow.user)
+            
+            return followers_list
+        except:
+            return []
+            
+    def get_following_data(self):        
+        follow_data = [ ]
+        following = self.get_following()
+        for user in following:
+            user_data = cache.get(str(user.id))
+            if not user_data:
+                try:
+                    user_data = {
+                        'fid': user.fb_user.fid,
+                        'name': user.name,
+                        'username': user.username,
+                    }
+                    follow_data.append(user_data)
+                    cache.set(str(self.id), user_data)
+                except:
+                    pass
+            else:
+                follow_data.append(user_data)
+        return follow_data
+    
+    def get_user(self):
+        data = {
+            'fid': self.fb_user.fid,
+            'name': self.name,
+            'username': self.username,
+        }
+    
+    def get_settings(self):
+        try:
+            return {
+                'gps': self.allow_gps_data,
+                'follows': self.allow_follows,
+                'post_wins': self.allow_winning_fb_album,
+                'email_on_follow': self.email_on_follow,
+                'email_on_nomination': self.email_on_nomination,
+                'email_on_win': self.email_on_win,
+            }
+        except:
+            return { }
+    
+    def get_follow_counts(self):
+        try:
+            return {
+                'following': self.following.count(),
+                'followers': self.followers.count()
+            }
+        except:
+            return {
+                'following': 0,
+                'followers': 0
+            }
+            
+    def get_tutorial_counts(self):
+        nom_count = 3 - self.given_nomination_count
+        vote_count = 3 - self.vote_count
+        comment_count = 3 - self.comment_count
+
+        if nom_count <= 0 and vote_count <= 0 and comment_count <= 0:
+            self.tutorial_completed = True
+            self.save()
+            return False
+        else:        
+            return {
+                'nom_count': nom_count,
+                'vote_count': vote_count,
+                'comment_count': comment_count,
+            }
+    
+    def get_active_nominations(self):
+        try:
+            active_nominations = self.active_nominations(active=True).order_by('current_vote_count', '-created_date')
+        except:
+            return [ ]
+    
+class Follow(Document):
+    active = BooleanField(default=True)
+    pending = BooleanField(default=False)
+    created_date = DateTimeField(default=datetime.datetime.now)
+    
+    user = ReferenceField(Portrit_User)
+    pending_notification = ReferenceField('Notification')
+    
+class Notification_Type(Document):
+    active = BooleanField(default=True)
+    created_date = DateTimeField(default=datetime.datetime.now)
+    name = StringField(unique=True)
+
+    meta = {
+        'ordering': ['-created_date'],
+        'indexes': ['name']
+    }
+
+class Notification(Document):
+    active = BooleanField(default=True)
+    read = BooleanField(default=False)
+    pending = BooleanField(default=False)
+    created_date = DateTimeField(default=datetime.datetime.now)
+
+    notification_type = ReferenceField(Notification_Type)
+
+    source = ReferenceField(Portrit_User)
+    destination = ReferenceField(Portrit_User)
+    owner = ReferenceField(Portrit_User)
+
+    nomination = ReferenceField(Nomination)
+
+    meta = {
+        'ordering': ['-created_date'],
+        'indexes': ['notification_type',
+                    'source',
+                    'destination',
+                    'nomination']
+    }
+    
+    def get_nomination_id(self):
+        try:
+            return str(self.nomination.id)
+        except:
+            return None
+        
+    def get_nomination_category(self):
+        try:
+            return self.nomination.nomination_category
+        except:
+            return None
+        

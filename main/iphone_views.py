@@ -10,8 +10,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q, Count
 from django.core.cache import cache
 
-from main.models import Portrit_User, FB_User, Album, Photo, Nomination, Nomination_Category, Comment, \
-                        Notification, Notification_Type, User_Following, User_Followers
+# from main.models import Portrit_User, FB_User, Album, Photo, Nomination, Nomination_Category, Comment, \
+#                         Notification, Notification_Type, User_Following, User_Followers
+
+from main.documents import *
+
 from settings import ENV, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, NODE_SOCKET, NODE_HOST
 
 from portrit_fb import Portrit_FB
@@ -28,17 +31,17 @@ def init_app(request):
     access_token = request.GET.get('access_token')
     
     try:
-        portrit_user = get_user_from_access_token(access_token)
-        user = portrit_user.fb_user
+        user = get_user_from_access_token(access_token)
         friends = user.get_following()
 
-        nominations = Nomination.objects.select_related().filter(
+        nominations = Nomination.objects.filter(
             Q(nominatee__in=friends) |
+            Q(tagged_users__in=friends) |
             Q(nominatee=user) |
             Q(nominator=user),
-            won=False, active=True).distinct('id').order_by('-created_date')[:PAGE_SIZE]
+            won=False, active=True)[:PAGE_SIZE]
         
-        notification_count = portrit_user.notifications.select_related().filter(active=True, read=False).order_by('-created_date').count()
+        notification_count = len(Notification.objects.filter(owner=user, read=False, active=True))
         data = {
             'noms': serialize_noms(nominations),
             'notification_count': notification_count,

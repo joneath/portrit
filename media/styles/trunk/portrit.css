@@ -154,12 +154,12 @@ div#wrapper{
     background-position:center 0px;
     min-height:         100%;
     height:             auto !important;
-    margin:             0 auto -35px;
+    margin:             0 auto -36px;
     overflow-x:         hidden;
 }
 
 #push{
-    height:             35px;
+    height:             36px;
 }
 
 #header{
@@ -1205,6 +1205,20 @@ div#friend_cont{
 
 }
 
+.check{
+    height:             38px;
+    width:              38px;
+    background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+    background-position:    -609px -696px;
+}
+
+.cross{
+    height:             38px;
+    width:              38px;
+    background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+    background-position:    -649px -697px;
+}
+
 div#title{
     
 }
@@ -1232,7 +1246,7 @@ div#initial_tut_cont{
         margin-top:         5px;
         position:           relative;
         text-align:         left;
-        width:              900px;
+        width:              700px;
         box-shadow:     rgba(0, 0, 0, 0.496094) 0px 0px 8px 3px;
         -webkit-box-shadow:     rgba(0, 0, 0, 0.496094) 0px 0px 8px 3px;
         -moz-box-shadow:        0px 0px 8px 3px rgba(0, 0, 0, 0.5);
@@ -1241,19 +1255,20 @@ div#initial_tut_cont{
     }
     
         div#initial_tut_top_wrap{
-            background-color:   #eeeeee;
+            background-color:   #fff;
             margin-bottom:      10px;
-            padding:            40px 40px 0px;
-            border-top-right-radius:    5px;
-            border-top-left-radius:     5px;
-            -moz-border-radius-topright:        5px;
-            -moz-border-radius-topleft:         5px;
+            padding:            20px 20px 0px;
+            border-top-right-radius:    10px;
+            border-top-left-radius:     10px;
+            -moz-border-radius-topright:        10px;
+            -moz-border-radius-topleft:         10px;
         }
         
             div#initial_tut_top_wrap > h1{
+                color:              #777;
                 font-size:          30px;
+                font-weight:        bold;
                 margin-bottom:      20px;
-                text-shadow: rgba(0, 0, 0, 0.246094) 0px -1px 1px;
             }
             
             div#initial_tut_top_wrap .tut_point{
@@ -1268,49 +1283,60 @@ div#initial_tut_cont{
                     font-size:          28px;
                     font-weight:        bold;
                     padding:            8px 18px;
-                    border-radius:  5px;
-                    -moz-border-radius:     5px;
+                    border-radius:      5px;
+                    -moz-border-radius: 5px;
                     text-shadow: rgba(0, 0, 0, 0.246094) 0px -1px 1px;
                 }
                 
-                div#initial_tut_top_wrap .tut_point h3{
-                    font-size:              18px;
-                    font-weight:            bold;
+                div#initial_tut_top_wrap .tut_point > div{
                     margin-left:            100px;
-                    margin-bottom:          5px;
-                    text-align:             left;
-                }
-                
-                div#initial_tut_top_wrap .tut_point > img{
-                    margin-left:            100px;
-                    margin-top:             10px;
-                    margin-bottom:          -10px;
-                }
-                
-                div#initial_tut_top_wrap .tut_point ul{
-                    list-style:             none;
-                    margin-left:            50px;
-                    text-align:             center;
-                }
-                
-                div#initial_tut_top_wrap .tut_point li{
-                    display:                inline-block;
-                    margin:                 0px 5px;
-                    margin-top:             5px;
                     position:               relative;
                 }
                 
-                div#initial_tut_top_wrap .tut_point > p{
-                    font-size:              18px;
-                    margin-left:            100px;
-                    text-align:             left;
-                }
+                    div#initial_tut_top_wrap .tut_point > div .cross{
+                        top:                    5px;
+                        right:                  30px;
+                        position:               absolute;
+                        z-index:                1;
+                    }
+                    
+                    div#initial_tut_top_wrap .tut_point > div .check{
+                        top:                    5px;
+                        right:                  30px;
+                        position:               absolute;
+                        z-index:                1;
+                    }
+                
+                    div#initial_tut_top_wrap .tut_point > div h3{
+                        color:                  #777;
+                        font-size:              28px;
+                        margin-bottom:          10px;
+                        text-align:             left;
+                    }
+                
+                    div#initial_tut_top_wrap .tut_point > div > p{
+                        font-size:              18px;
+                        text-align:             left;
+                    }
+                
+                    div#initial_tut_top_wrap .tut_point > div > input{
+                        width:                  500px;
+                        float:                  left;
+                        padding:                10px;
+                        font-size:              22px;
+                        color:                  #999;
+                        position:               relative;
+                        top:                    -3px;
+                        border:                 3px solid #AAA;
+                        border-radius:          5px;
+                        -moz-border-radius:     5px;
+                    }
                 
             div#initial_tut_top_wrap #allow_notifications_cont, div#initial_tut_top_wrap #allow_portrit_album_cont{
                 margin-left:            100px;
                 padding-bottom:         5px;
                 position:               relative;
-                width:                  650px;
+                width:                  520px;
                 z-index:                2;
             }
             
@@ -1338,63 +1364,27 @@ div#initial_tut_cont{
             
                 div#initial_tut_top_wrap label{
                     float:                  left;
-                    font-size:              20px;
+                    font-size:              18px;
+                    width:                  400px;
                 }
             
         div#initial_tut_bottom_wrap{
-            background-color:   #333;
+            border-top:         1px solid #bebebe;
             color:              white;
-            height:             300px;
-            border-bottom-right-radius:    5px;
-            border-bottom-left-radius:     5px;
-            -moz-border-radius-bottomright:        5px;
-            -moz-border-radius-bottomleft:         5px;
+            height:             100px;
         }
         
             div#initial_tut_bottom_wrap #tut_go_cont{
                 margin:             0px auto;
-                padding-top:        80px;
-                position:           relative;
-                right:              150px;
+                padding-top:        20px;
                 text-align:         center;
                 width:              200px;
             }
-            
-                #tut_go_cont h2{
-                    font-size:          26px;
-                    margin-bottom:      40px;
-                    text-shadow: rgba(0, 0, 0, 0.246094) 0px -1px 1px;
-                }
                 
                 #tut_go_cont span{
                     font-size:          22px;
                     padding:            15px 70px 19px;
                 }
-        
-        div#initial_tut_wrap #trophy_landing_strip{
-            background-color:   black;
-            height:             800px;
-            opacity:            0.5;
-            position:           absolute;
-            right:              64px;
-            top:                90px;
-            width:              93px;
-            z-index:            0;
-        }
-        
-        div#initial_tut_wrap #box_img{
-            position:           absolute;
-            right:              30px;
-            top:                0px;
-            z-index:            1;
-        }
-        
-        div#initial_tut_wrap #landfill_img{
-            position:           absolute;
-            right:              0px;
-            bottom:             -40px;
-            z-index:            1;
-        }
         
 .trophy_img{
     margin:         0 auto;

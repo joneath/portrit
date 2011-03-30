@@ -1,6 +1,8 @@
 import os
 import os.path
 
+from mongoengine import connect
+
 DEBUG = True
 ENV = "LOCAL"
 TEMPLATE_DEBUG = DEBUG
@@ -12,9 +14,9 @@ ADMINS = (
 MANAGERS = ADMINS
 
 if ENV == "LOCAL":
-    DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-    DATABASE_NAME = 'portrit'             # Or path to database file if using sqlite3.
-    DATABASE_USER = 'root'             # Not used with sqlite3.
+    DATABASE_ENGINE = ''           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+    DATABASE_NAME = ''             # Or path to database file if using sqlite3.
+    DATABASE_USER = ''             # Not used with sqlite3.
     DATABASE_PASSWORD = ''         # Not used with sqlite3.
     DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
     DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
@@ -45,6 +47,11 @@ if ENV == "LOCAL":
     
     TWITTER_CONSUMER_KEY = 'RrYAd721jXeCJsp9QqtFw'
     TWITTER_CONSUMER_SECRET = 'rWxNvv8pOSB0t9kgT59xVc2IUQXH1l8ESpfOst5sggw'
+    
+    try:
+        connect('portrit')
+    except:
+        print "Could not connect to Mongo"
     
 elif ENV == "TEST":
     DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
@@ -82,6 +89,11 @@ elif ENV == "TEST":
     BITLY_LOGIN = 'portrit'
     BITLY_APIKEY = 'R_554a2c395f085d017040066581d65325'
     
+    try:
+        connect('portrit', host='', port=27017)
+    except:
+        print "Could not connect to Mongo"
+    
 else:
     DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
     DATABASE_NAME = 'portrit'             # Or path to database file if using sqlite3.
@@ -118,6 +130,11 @@ else:
     
     BITLY_LOGIN = 'portrit'
     BITLY_APIKEY = 'R_554a2c395f085d017040066581d65325'
+    
+    try:
+        connect('portrit', host='', port=27017)
+    except:
+        print "Could not connect to Mongo"
     
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -184,5 +201,5 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.admin',
     'main',
-    'south',
+    # 'south',
 )

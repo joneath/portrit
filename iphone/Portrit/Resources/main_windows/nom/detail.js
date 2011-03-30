@@ -477,11 +477,11 @@ function render_comments(cont, comments){
         });
         
         var commentor_name_text = '';
-    	if (comments[i].comments.owner_id == me.fid){
+    	if (comments[i].owner_id == me.fid){
     	    commentor_name_text = 'You';
     	}
     	else{
-    	    commentor_name_text = comments[i].comments.owner_name;
+    	    commentor_name_text = comments[i].owner_name;
     	}
         
         commentor = Titanium.UI.createLabel({
@@ -494,14 +494,14 @@ function render_comments(cont, comments){
             height: 'auto',
             font:{fontSize:12, fontWeight: 'bold'}
         });
-        commentor.user = comments[i].comments.owner_id;
-        commentor.name = comments[i].comments.owner_name;
+        commentor.user = comments[i].owner_id;
+        commentor.name = comments[i].owner_name;
         commentor.addEventListener('click', add_profile_window);
         
         commentor_cont.add(commentor);
         
         comment = Titanium.UI.createLabel({
-    	    text: '  - ' + comments[i].comments.comment,
+    	    text: '  - ' + comments[i].comment,
             color: '#666',
             top: 2,
             left: commentor.width + 10,

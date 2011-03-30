@@ -9,8 +9,11 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.core.cache import cache
 
-from main.models import Portrit_User, FB_User, Album, Photo, Nomination, Nomination_Category, Comment, \
-                        Notification, Notification_Type
+# from main.models import Portrit_User, FB_User, Album, Photo, Nomination, Nomination_Category, Comment, \
+#                         Notification, Notification_Type
+
+from main.documents import *
+
 from settings import ENV, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, NODE_SOCKET, NODE_HOST
 
 import json, socket, urllib, urllib2, facebook, time, datetime, httplib, oauth
@@ -51,10 +54,7 @@ def login_fb_user(request):
             first = False
             permission_request = True
             try:
-                fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
-                user = fb_user.get_portrit_user()
-                if not user.ask_permission:
-                    permission_request = False
+                user = Portrit_User.objects.get(fb_user__fid=int(cookie["uid"]))
             except:
                 pass
             if not user:
@@ -65,25 +65,20 @@ def login_fb_user(request):
                     email = profile['email']
                 except:
                     pass
-                fb_user, created = FB_User.objects.get_or_create(fid=str(profile["id"]))
-                user = Portrit_User(fb_user=fb_user, name=profile['name'],
-                            access_token=cookie["access_token"], email=email)
-                user.ask_permission = False
+
+                fb_user = FB_User(fid=str(profile["id"]), access_token=cookie["access_token"])
+                user, created = Portrit_User.objects.get_or_create(fb_user=fb_user)
+                
+                user.name = name=profile['name']
+                user.email = email=email
                 user.save()
             
-                for winning_nom in fb_user.winning_noms.all():
-                    notification_type = Notification_Type.objects.get(name="nom_won")
-                    notification = Notification(source=winning_nom.nominatee, nomination=winning_nom, notification_type=notification_type)
-                    notification.save()
-                    user.notifications.add(notification)
-            
                 first = True
-            
-                portrit = Portrit_FB(graph, fb_user, cookie["access_token"])
+                portrit = Portrit_FB(graph, user, cookie["access_token"])
                 portrit.load_user_friends()
             
-            elif user.access_token != cookie["access_token"]:
-                user.access_token = cookie["access_token"]
+            elif user.fb_user.access_token != cookie["access_token"]:
+                user.fb_user.access_token = cookie["access_token"]
                 if not user.email:
                     graph = facebook.GraphAPI(cookie["access_token"])
                     profile = graph.get_object("me")
@@ -95,50 +90,23 @@ def login_fb_user(request):
                         pass
                 user.save()
                 graph = facebook.GraphAPI(cookie["access_token"])
-                portrit = Portrit_FB(graph, fb_user, cookie["access_token"])
+                portrit = Portrit_FB(graph, user, cookie["access_token"])
                 portrit.load_user_friends(True)
         
             if not user.username:
                 check_username(user)
             
             data = get_user_data(user)
-            data['following'] = user.fb_user.get_following_data()
-            data['username'] = user.get_username()
+            data['following'] = user.get_following_data()
+            data['username'] = user.username
             data['first'] = first
-            data['allow_portrit_album'] = user.allow_portrit_album
+            data['allow_winning_fb_album'] = user.allow_winning_fb_album
             data['allow_public_follows'] = user.allow_follows
-            data['permission_request'] = permission_request
         except Exception, err:
             print err
     
     data = simplejson.dumps(data) 
     return HttpResponse(data, mimetype='application/json')
-    
-def perm_request(request):
-    data = False
-    cookie = facebook.get_user_from_cookie(
-        request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
-    if cookie:
-        action = request.POST.get('action')
-        fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
-        portrit_user = fb_user.get_portrit_user()
-        if action == 'true':
-            portrit_user.allow_portrit_album = True
-            if portrit_user.portrit_album_fid == None:
-                create_portrit_album(fb_user, portrit_user)
-                
-            from portrit.to_facebook_trophy_album import to_facebook_trophy_album
-            for nom in fb_user.winning_noms.all():
-                to_facebook_trophy_album(portrit_user.access_token, nom.get_photo()['src'], portrit_user.portrit_album_fid, nom)
-        else:
-            portrit_user.allow_portrit_album = False
-        
-        portrit_user.ask_permission = False
-        portrit_user.save()
-    
-    data = simplejson.dumps(data) 
-    return HttpResponse(data, mimetype='application/json')
-    
     
 def create_portrit_album(fb_user, portrit_user):
     url = 'https://graph.facebook.com/me/albums'
@@ -178,8 +146,7 @@ def skip_tut(request):
     cookie = facebook.get_user_from_cookie(
         request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
     if cookie:
-        fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
-        user = fb_user.portrit_fb_user.all()[0]
+        user = Portrit_User.objects.get(fb_user__fid=int(cookie["uid"]))
         user.tutorial_completed = True
         user.save()
         data = True
@@ -194,8 +161,7 @@ def change_user_permissions(request):
     if cookie:
         permission = request.POST.get('permission')
         check = request.POST.get('check')
-        fb_user = FB_User.objects.get(fid=int(cookie["uid"]))
-        user = fb_user.portrit_fb_user.all()[0]
+        user = Portrit_User.objects.get(fb_user__fid=int(cookie["uid"]))
         
         if permission == 'fb_auto_post':
             if check == 'true':
@@ -204,9 +170,9 @@ def change_user_permissions(request):
                 user.allow_notifications = False
         elif permission == 'portrit_album':
             if check == 'true':
-                user.allow_portrit_album = True
+                user.allow_winning_fb_album = True
             else:
-                user.allow_portrit_album = False
+                user.allow_winning_fb_album = False
             
         user.save()
         data = True
@@ -251,7 +217,6 @@ def get_user_data(user):
         
         data = {
             'notifications': notifications,
-            'allow_notifications': user.allow_notifications,
             'tut_counts': tut_counts,
         }
     except:

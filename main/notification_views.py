@@ -9,8 +9,11 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 
-from main.models import Portrit_User, FB_User, Album, Photo, Nomination, Nomination_Category, Comment, \
-                        Notification, Notification_Type
+# from main.models import Portrit_User, FB_User, Album, Photo, Nomination, Nomination_Category, Comment, \
+#                         Notification, Notification_Type
+
+from main.documents import *
+
 from settings import ENV, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, NODE_SOCKET, NODE_HOST
 
 from portrit_fb import Portrit_FB
@@ -56,27 +59,27 @@ def notification_read(request):
     return HttpResponse(data, mimetype='application/json')
     
 def get_active_notifications(user):
-    all_notifications = user.notifications.select_related().filter(active=True, read=False).order_by('-created_date')
-    if all_notifications.count() < 5:
-        # rem_count = 5 - all_notifications.count()
-        read_notifications = user.notifications.select_related().filter(active=True, read=True)
-        
-        all_notifications = all_notifications | read_notifications
-        all_notifications = all_notifications.distinct('id').order_by('read', '-created_date')[:5]
+    try:
+        all_notifications = Notification.objects(owner=user, active=True, read=False).order_by('-created_date')
+        if len(all_notifications) < 5:
+            all_notifications = Notification.objects(owner=user, active=True).order_by('-created_date')[:5]
     
-    data = [ ]
-    for notification in all_notifications:
-        data.append({
-            'notification_type': notification.notification_type.name,
-            'create_time': time.mktime(notification.created_date.utctimetuple()),
-            'read': notification.read,
-            'source_id': notification.get_source_fid(),
-            'source_name': notification.get_source_name(),
-            'destination_id': notification.get_dest_fid(),
-            'destination_name': notification.get_dest_name(),
-            'nomination': notification.nomination.id,
-            'notification_id': notification.id,
-            'nomination_category': notification.nomination.nomination_category.name,
-        })
+        data = [ ]
+        for notification in all_notifications:
+            data.append({
+                'notification_type': notification.notification_type.name,
+                'create_time': time.mktime(notification.created_date.utctimetuple()),
+                'read': notification.read,
+                'source_id': notification.source.fb_user.fid,
+                'source_name': notification.source.name,
+                'destination_id': notification.destination.fb_user.fid,
+                'destination_name': notification.destination.name,
+                'nomination': notification.get_nomination_id(),
+                'notification_id': str(notification.id),
+                'nomination_category': notification.get_nomination_category(),
+            })
         
-    return data
+        return data
+    except Exception, err:
+        print err
+        return [ ]
