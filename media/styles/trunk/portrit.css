@@ -36,6 +36,7 @@ body{
     font-family:        Arial, Helvetica, sans-serif;
     width:              100%;
     min-width:          900px;
+    overflow-y:         scroll;
 }
 
 .cleft{
@@ -163,6 +164,7 @@ div#wrapper{
 }
 
 #header{
+    border:             1px solid #1e1e1e;
     text-align:         center;
     margin:             0px -1px;
     margin-bottom:      10px;
@@ -353,6 +355,7 @@ div#login_cont{
                 }
             
                 #landing_photo_cont > div > div{
+                    background-color:   #dedede;
                     float:          left;
                     margin:         2px;
                     width:          100px;
@@ -1588,12 +1591,26 @@ div#nom_detail_cont{
     position:           relative;
 }
 
+    div#nom_detail_cont .title{
+        font-size:              28px;
+        margin-left:            15px;
+    }
+    
+        div#nom_detail_cont .title a{
+            color:                  #333;
+        }
+        
+        div#nom_detail_cont .title a:hover{
+            color:                  #8e8e8e;
+            text-decoration:        underline;
+        }
+
     #nom_detail_cont .prev_photo{
         cursor:                 pointer;
         opacity:                1.0;
         position:               absolute;
         left:                   5px;
-        top:                    20px;
+        top:                    15px;
         z-index:                100;
     }
     
@@ -1609,7 +1626,7 @@ div#nom_detail_cont{
         opacity:                1.0;
         position:               absolute;
         right:                  5px;
-        top:                    20px;
+        top:                    15px;
         z-index:                100;
     }
     
@@ -1622,7 +1639,7 @@ div#nom_detail_cont{
 
     div#nom_cat_stream{
         background-color:   #333;
-        min-height:         150px;
+        min-height:         130px;
         overflow:           hidden;
         top:                -5px;
         position:           relative;
@@ -1632,7 +1649,7 @@ div#nom_detail_cont{
             border:             5px solid white;
             cursor:             pointer;
             height:             100px;
-            margin-top:         15px;
+            margin-top:         10px;
             position:           absolute;
         }
         
@@ -1656,6 +1673,10 @@ div#nom_detail_cont{
             margin-top:             10px;
             position:               relative;
             width:                  700px;
+            border-top-left-radius:         10px;
+            border-top-right-radius:        10px;
+            -moz-border-radius-topleft:     10px;
+            -moz-border-radius-topright:    10px;
         }
         
             div#main_nom_cont_left .nom_tag_cont{
@@ -1690,6 +1711,7 @@ div#nom_detail_cont{
                 position:           relative;
                 width:              700px;
                 vertical-align:     middle;
+                text-align:         center;
             }
         
                 div#main_nom_cont_left_wrap #main_nom_photo{
@@ -1816,8 +1838,8 @@ div#nom_detail_cont{
                     font-weight:            bold;
                     min-width:              50px;
                     position:               relative;
-                    right:                  70px;
-                    top:                    -110px;
+                    right:                  55px;
+                    top:                    -122px;
                 }
                 
                 div#main_nom_cont_right_wrap div#trophy_cont{
@@ -1862,6 +1884,7 @@ div#nom_detail_cont{
                         }
                 
                     div#nomination_text_cont{
+                        color:              white;
                         margin-right:       5px;
                         margin-left:        5px;
                         margin-top:         25px;
@@ -1931,8 +1954,7 @@ div#nom_detail_cont{
     
         div#nom_comments_cont{
             float:              left;
-            margin-left:        20px;
-            width:              690px;
+            width:              710px;
         }
         
             div#nom_comments_cont #loader{
@@ -1940,14 +1962,16 @@ div#nom_detail_cont{
             }
         
             div#comment_heading_cont{
+                background-color:       #eee;
                 border-bottom:          1px solid #DEDEDE;
                 padding-top:            10px;
                 padding-bottom:         5px;
+                padding-left:           20px;
                 text-align:             left;
             }
             
             div#comment_heading_cont h2{
-                color:                  #6E6E6E;
+                color:                  #444;
                 float:                  left;
                 font-size:              20px;
                 margin-top:             9px;
@@ -1958,7 +1982,7 @@ div#nom_detail_cont{
             }
             
             div#nom_comments_cont .comment{
-
+                margin-left:            20px;
             }
             
                 .comment .comment_time{
@@ -1975,11 +1999,11 @@ div#nom_detail_cont{
         }
         
             #voted_heading{
+                background-color:       #eee;
                 border-bottom:          1px solid #DEDEDE;
-                color:                  #6E6E6E;
+                color:                  #444;
                 font-size:              20px;
-                margin-left:            15px;
-                margin-right:           5px;
+                padding-left:           15px;
                 padding-top:            19px;
                 padding-bottom:         5px;
                 text-align:             left;
@@ -2235,11 +2259,10 @@ div#profile_cont_wrap{
 div#new_comment_cont{
     display:                none;
     background-color:       #ffffff;
-    height:                 150px;
+    height:                 100px;
     margin:                 0 auto;
-	margin-bottom:			5px;
+	margin-bottom:			15px;
 	margin-top:             5px;
-	margin-left:            20px;
     width:                  690px;
 }
 
@@ -2255,10 +2278,10 @@ div#new_comment_cont{
         background-color:       #333;
         height:                 46px;
         position:               relative;
-		border-top-right-radius:    5px;
-        border-top-left-radius:  5px;
-        -moz-border-radius-topright:        5px;
-        -moz-border-radius-topleft:      5px;
+		border-top-right-radius:        5px;
+        border-top-left-radius:         5px;
+        -moz-border-radius-topright:    5px;
+        -moz-border-radius-topleft:     5px;
     }
 
     div.comment_top_head a.cancel_new_comment{
@@ -2281,7 +2304,7 @@ div#new_comment_cont{
         padding:                10px;
         position:               relative;
         width:                  668px;
-        height:                 84px;
+        height:                 40px;
         z-index:                20001;
     }
     
@@ -3967,8 +3990,15 @@ div#context_overlay{
                             margin-top:         13px;
                         }
                         
+                        #photo_upload_permission_cont ul p{
+                            float:              left;
+                            width:              275px;
+                            font-size:          13px;
+                        }
+                        
                         #photo_upload_permission_cont ul div.switch{
                             float:              right;
+                            margin-top:         10px;
                         }
                    
         .switch_on{
@@ -6361,6 +6391,10 @@ div#photo_cont{
                 display:                inline-block;
             }
             
+            .post_username:hover{
+                color:                  #8e8e8e;
+            }
+            
             .from_username {
                 font-size:              14px;
                 font-weight:            bold;
@@ -7298,6 +7332,10 @@ div#payment_types_cont{
             position:               relative;
             text-align:             left;
         }
+        
+            .notification_popup_cont.new_follow{
+                background-color:       red;
+            }
         
             .color_transition{
                 -webkit-transition:     background 5s ease-out;

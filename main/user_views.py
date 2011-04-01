@@ -95,22 +95,23 @@ def login_fb_user(request):
         
             if not user.username:
                 check_username(user)
-            
             data = get_user_data(user)
             data['following'] = user.get_following_data()
+            
             data['username'] = user.username
             data['first'] = first
             data['allow_winning_fb_album'] = user.allow_winning_fb_album
             data['allow_public_follows'] = user.allow_follows
+            
         except Exception, err:
             print err
-    
+
     data = simplejson.dumps(data) 
     return HttpResponse(data, mimetype='application/json')
     
-def create_portrit_album(fb_user, portrit_user):
+def create_portrit_album(portrit_user):
     url = 'https://graph.facebook.com/me/albums'
-    values = {'access_token' : portrit_user.access_token,
+    values = {'access_token' : portrit_user.fb_user.get_access_token(),
               'name' : 'Portrit Trophies',
               }
     data = urllib.urlencode(values)
@@ -118,7 +119,7 @@ def create_portrit_album(fb_user, portrit_user):
     response = urllib2.urlopen(req)
     data = response.read()
     data = simplejson.loads(data)
-    portrit_user.portrit_album_fid = data['id']
+    portrit_user.portrit_fb_album_fid = data['id']
     portrit_user.save()
     
 def update_user_friends(request):

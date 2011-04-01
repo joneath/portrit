@@ -78,6 +78,7 @@ urlpatterns += patterns('',
     #Nominations
     url(r'^api/nominate_photo/$', 'main.api_views.nominate_photo'),
     url(r'^api/vote_on_nomination/$', 'main.api_views.vote_on_nomination'),
+    url(r'^api/get_nom_detail/$', 'main.api_views.get_nom_detail'),
     
     #Follow
     url(r'^api/get_follow_count/$', 'main.api_views.get_follow_count'),

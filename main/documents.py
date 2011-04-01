@@ -11,7 +11,7 @@ class Comment(Document):
     created_date = DateTimeField(default=datetime.datetime.now)
     comment = StringField(required=True)
     owner = ReferenceField('Portrit_User')
-    nomination = ReferenceField('Nomination')
+    nomination = StringField()
     
     meta = {
         'ordering': ['-created_date'],
@@ -61,7 +61,7 @@ class Nomination(Document):
     def get_tagged_users(self):
         tagged_users = [ ]
         try:
-            for user in self.tagged_users():
+            for user in self.tagged_users:
                 tagged_users.append({
                     'user': user.fb_user.fid,
                     'name': user.name,
@@ -72,16 +72,28 @@ class Nomination(Document):
             
         return tagged_users
         
+    def get_commentors(self):
+        try:
+            commentors = [ ]
+            comments = Comment.objects.filter(nomination=str(self.id))
+            for comment in comments:
+                commentors.append(comment.owner)
+                
+            return commentors
+        except:
+            return [ ]
+        
     def get_comments(self):
         comment_cache = cache.get(str(self.id) + '_comments')
         if not comment_cache:
             comment_list = [ ]
-            comments = Comment.objects.filter(nomination=self, active=True)
+            comments = Comment.objects.filter(nomination=str(self.id), active=True)
             for comment in comments:
                 comment_list.append({
                     'comment': comment.comment,
                     'owner_id': comment.owner.fb_user.fid,
                     'owner_name': comment.owner.name,
+                    'owner_username': comment.owner.username,
                     'create_datetime': time.mktime(comment.created_date.utctimetuple()),
                 })
             cache.set(str(self.id) + '_comments', comment_list)
@@ -92,7 +104,7 @@ class Nomination(Document):
     def get_quick_comments(self):
         try:
             comment_list = [ ]
-            comments = Comment.objects.filter(nomination=self, active=True)
+            comments = Comment.objects.filter(nomination=str(self.id), active=True)
             comment_count = len(comments)
             split = 3
 
@@ -104,6 +116,7 @@ class Nomination(Document):
                     'comment': comment.comment,
                     'owner_id': comment.owner.fb_user.fid,
                     'owner_name': comment.owner.name,
+                    'owner_username': comment.owner.username,
                     'create_datetime': time.mktime(comment.created_date.utctimetuple()),
                 })
             return comment_list
@@ -123,6 +136,7 @@ class Nomination(Document):
                 votes.append({
                     'vote_user': vote.fb_user.fid,
                     'vote_name': vote.name,
+                    'vote_username': vote.username,
                 })
             
             data = {
@@ -132,8 +146,10 @@ class Nomination(Document):
                 'nomination_category': self.nomination_category,
                 'nominator': self.nominator.fb_user.fid,
                 'nominator_name': self.nominator.name,
+                'nominator_username': self.nominator.username,
                 'nominatee': self.nominatee.fb_user.fid,
                 'nominatee_name': self.nominatee.name,
+                'nominatee_username': self.nominatee.username,
                 'tagged_users': self.get_tagged_users(),
                 'won': self.won,
                 'photo': self.photo.get_photo(),
@@ -168,6 +184,7 @@ class Photo(Document):
     active = BooleanField(default=True)
     validated = BooleanField(default=False)
     pending = BooleanField(default=False)
+    trophy = BooleanField(default=False)
     public = BooleanField(default=False)
     created_date = DateTimeField(default=datetime.datetime.now)
     
@@ -227,6 +244,14 @@ class FB_User(EmbeddedDocument):
                     'access_token',
                     'mobile_access_token']
     }
+    
+    def get_access_token(self):
+        if self.access_token:
+            return self.access_token
+        elif self.mobile_access_token:
+            return self.mobile_access_token
+        else:
+            return None
     
 class Twitter_User(EmbeddedDocument):
     active = BooleanField(default=True)
@@ -346,14 +371,15 @@ class Portrit_User(Document):
     def get_settings(self):
         try:
             return {
-                'gps': self.allow_gps_data,
+                'gps': self.allow_gps,
                 'follows': self.allow_follows,
                 'post_wins': self.allow_winning_fb_album,
                 'email_on_follow': self.email_on_follow,
                 'email_on_nomination': self.email_on_nomination,
                 'email_on_win': self.email_on_win,
             }
-        except:
+        except Exception, err:
+            print err
             return { }
     
     def get_follow_counts(self):
@@ -397,6 +423,11 @@ class Follow(Document):
     
     user = ReferenceField(Portrit_User)
     pending_notification = ReferenceField('Notification')
+    
+    meta = {
+        'indexes': ['user',
+                    'pending_notification']
+    }
     
 class Notification_Type(Document):
     active = BooleanField(default=True)

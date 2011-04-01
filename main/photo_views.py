@@ -147,7 +147,6 @@ def mark_photos_live(request):
             request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
         if cookie:
             public_perm = request.POST.get('public_perm')
-            post_to_facebook = request.POST.get('post_to_facebook')
             
             user = Portrit_User.objects.get(fb_user__fid=int(cookie["uid"]))
                 
@@ -166,24 +165,11 @@ def mark_photos_live(request):
                 
             photos = Photo.objects.filter(id__in=photo_id_list).update(set__pending=False, set__public=public_perm)
             photos = Photo.objects.filter(id__in=photo_id_list)
-            if post_to_facebook == 'true':
-                if not portrit_user.portrit_fb_album_fid:
-                    create_portrit_photo_album(user)
-                for photo in photos:
-                    try:
-                        post_photo_to_facebook(user, user.fb_user.access_token, user.portrit_fb_album_fid, photo)
-                    except Exception, err:
-                        print err
-                    try:
-                        photo.delete_local_copy()
-                    except Exception, err:
-                        print err
-            else:
-                for photo in photos:
-                    try:
-                        photo.delete_local_copy()
-                    except Exception, err:
-                        print err
+            for photo in photos:
+                try:
+                    photo.delete_local_copy()
+                except Exception, err:
+                    print err
             
             data = True
     except Exception, err:

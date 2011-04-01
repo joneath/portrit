@@ -33,11 +33,12 @@ class Portrit_FB(object):
         
         friends = Portrit_User.objects.filter(fb_user__fid__in=friend_ids)
         following = self.user.get_following()
+        
+        new_follower_notification = Notification_Type.objects.get(name='new_follow')
 
         for friend in friends:
             target_portrit_user = friend
             if target_portrit_user not in following:
-                print "creating follow records"
                 #Create user follower record
                 following_rec = Follow(user=target_portrit_user)
                 following_rec.save()
@@ -52,29 +53,16 @@ class Portrit_FB(object):
                 target_portrit_user.followers.append(following_rec)
                 target_portrit_user.save()
                 
-                print "created records"
+                #Create Notification for friend
+                try:
+                    print "creating notification"
+                    notification = Notification(notification_type=new_follower_notification,
+                                                source=self.user,
+                                                destination=target_portrit_user,
+                                                owner=target_portrit_user)
+                    notification.save()
+                    print "notification saved"
+                except:
+                    pass
                 
-            # 
-            # if target_portrit_user:
-            #     following_followers_rec, created = User_Followers.objects.get_or_create(portrit_user=source_portrit_user, fb_user=target, pending=pending)
-            #     if not created:
-            #         following_rec.active = True
-            #         following_rec.save()
-            # 
-            # if target_portrit_user:
-            #     follower_rec, created = User_Followers.objects.get_or_create(portrit_user=target_portrit_user, fb_user=source, pending=pending)
-            #     if not created:
-            #         follower_rec.active = True
-            #         follower_rec.save()
-
-        print "import completed"
-            
-        #     if not (fid in friend_query):
-        #         new_fb_user, created = FB_User.objects.get_or_create(fid=fid)
-        #         new_fb_user.name = friend_id_map[fid]
-        #         new_fb_user.save()
-        #         self.fb_user.friends.add(new_fb_user)
-        #     else:
-        #         pass
-        # print "friends list updated, adding follow records"
-        # import_fb_friends(portrit_user, update)
+                print "created records"

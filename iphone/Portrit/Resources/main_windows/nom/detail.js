@@ -102,6 +102,8 @@ function update_nom_detail(index){
     
     
     var max_height = 320;
+    var photo_width = 0;
+	var photo_height = 0;
     if (Ti.Platform.displayCaps.density == 'high') {
         if (selected_nom.photo.width > Ti.Platform.displayCaps.platformWidth){
             photo_width = Ti.Platform.displayCaps.platformWidth;
@@ -421,21 +423,19 @@ function add_comment_to_nom(e){
             
             var now = new Date().getTime() / 1000;
             if (current_comments && current_comments.length > 0){
-                current_comments.splice(0, 0, { 'comments': {
+                current_comments.splice(0, 0, {
                         'comment': comment_body,
                         'owner_id': me.fid,
                         'owner_name': me.name,
                         'create_datetime': now
-                    }
                 });
             }
             else{
-                current_comments = [{'comments': {
+                current_comments = [{
                         'comment': comment_body,
                         'owner_id': me.fid,
                         'owner_name': me.name,
                         'create_datetime': now
-                    }
                 }];
             }
             remove_comments();
@@ -1009,7 +1009,8 @@ function render_nom_detail(noms){
     comments_row = Ti.UI.createTableViewRow({
             height: 'auto',
             width: 320,
-            layout: 'vertical'
+            layout: 'vertical',
+            selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
         });
         
     // comments_cont = Titanium.UI.createView({
@@ -1073,6 +1074,8 @@ function render_nom_detail(noms){
     	
     	var max_height = 320;
     	var highres = true;
+    	var photo_width = 0;
+    	var photo_height = 0;
         if (Ti.Platform.displayCaps.density == 'high') {
             if (noms[i].photo.width > Ti.Platform.displayCaps.platformWidth){
                 photo_width = Ti.Platform.displayCaps.platformWidth;

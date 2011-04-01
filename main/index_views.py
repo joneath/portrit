@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 
-from main.models import Portrit_User, FB_User, Album, Photo, Nomination, Nomination_Category
+from main.documents import *
 from settings import ENV, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET
 
 import facebook, re
@@ -28,10 +28,9 @@ def index(request, template='index.html'):
     if request.GET.get('nom_id'):
         nom_id = request.GET.get('nom_id')
         try:
-            nom = Nomination.objects.get(id=int(nom_id))
-            title = nom.nominatee.get_name() + '\'s Photo Nominated For ' + nom.nomination_category.name
+            nom = Nomination.objects.get(id=str(nom_id))
+            title = nom.nominatee.username + '\'s Photo Nominated For ' + nom.nomination_category
             fb_title = title
-            print fb_title
         except:
             pass
             
