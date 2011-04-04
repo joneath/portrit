@@ -21,6 +21,7 @@ def index(request, template='index.html'):
         production_code = False
         analytics = None
     elif ENV == 'TEST':
+        production_code = False
         test_code = True
         analytics = None
         
