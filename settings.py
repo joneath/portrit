@@ -63,6 +63,7 @@ elif ENV == "TEST":
     
     BASE_URL = "http://test.portrit.com"
     MEDIA_URL = 'http://d3uzvcq9wwvnca.cloudfront.net/'
+    MEDIA_ROOT = '/var/www/portrit/media'
     
     EMAIL_HOST = 'smtp.webfaction.com'
     EMAIL_PORT = '25'
