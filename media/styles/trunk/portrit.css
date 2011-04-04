@@ -1314,6 +1314,7 @@ div.autocomplete{
     
 div#loader{
     text-align:         center;
+    padding-top:        30px;
 }
 
 div#cont{

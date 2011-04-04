@@ -4224,7 +4224,6 @@ $(document).ready(function(){
     }
     
     function init_stream_view(view_to_activate){
-        append_load($('#scroller'), 'light');
         var page_size = 10;
         if (mobile || tablet){
             page_size = 5;
