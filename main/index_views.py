@@ -14,10 +14,14 @@ import facebook, re
 
 def index(request, template='index.html'):    
     production_code = True
+    test_code = False
     analytics = True
 
     if ENV == 'LOCAL':
         production_code = False
+        analytics = None
+    elif ENV == 'TEST':
+        test_code = True
         analytics = None
         
     title = "Portrit"
@@ -32,7 +36,7 @@ def index(request, template='index.html'):
         except:
             pass
             
-    payload = {'analytics': analytics, 'production_code': production_code, 'title': title, 'fb_title': fb_title}
+    payload = {'analytics': analytics, 'production_code': production_code, 'test_code': test_code, 'title': title, 'fb_title': fb_title}
     return render_to_response(template, payload, context_instance=RequestContext(request))
 
 def robots(request):

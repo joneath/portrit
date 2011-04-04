@@ -74,9 +74,9 @@ elif ENV == "TEST":
     FACEBOOK_APP_SECRET = "25f31ff59105385308be7fed55fa1b5e"
     
     NODE_SOCKET = 8081
-    NODE_HOST = "10.117.57.137"
+    NODE_HOST = "127.0.0.1"
     
-    CACHE_BACKEND = 'memcached://10.202.90.88:11211/?timeout=86400'
+    CACHE_BACKEND = 'memcached://127.0.0.1:11211/?timeout=86400'
     
     ADMINS = (
         # ('Your Name', 'your_email@domain.com'),
