@@ -65,10 +65,11 @@ elif ENV == "TEST":
     MEDIA_URL = 'http://d3uzvcq9wwvnca.cloudfront.net/'
     MEDIA_ROOT = '/var/www/portrit/media'
     
-    EMAIL_HOST = 'smtp.webfaction.com'
-    EMAIL_PORT = '25'
-    EMAIL_HOST_USER = 'joneath_portrit'
-    EMAIL_HOST_PASSWORD = 'HGMirNOGzJC4K8uzgqMc5'
+    EMAIL_USE_TLS = True
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = '587'
+    EMAIL_HOST_USER = 'portritinc@gmail.com'
+    EMAIL_HOST_PASSWORD = 'portritblao'
     SERVER_EMAIL = "no-reply@portrit.com"
     
     FACEBOOK_APP_ID = "123063501058161"
@@ -107,10 +108,11 @@ else:
     MEDIA_URL = 'http://d3uzvcq9wwvnca.cloudfront.net/'
     MEDIA_ROOT = '/var/www/portrit/media'
     
-    EMAIL_HOST = 'smtp.webfaction.com'
-    EMAIL_PORT = '25'
-    EMAIL_HOST_USER = 'joneath_portrit'
-    EMAIL_HOST_PASSWORD = 'HGMirNOGzJC4K8uzgqMc5'
+    EMAIL_USE_TLS = True
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = '587'
+    EMAIL_HOST_USER = 'portritinc@gmail.com'
+    EMAIL_HOST_PASSWORD = 'portritblao'
     SERVER_EMAIL = "no-reply@portrit.com"
     
     FACEBOOK_APP_ID = "126374870731237"
