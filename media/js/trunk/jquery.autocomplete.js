@@ -118,8 +118,8 @@
     fixPosition: function() {
       var offset = this.el.offset();
       if (!mobile){
-          var position_off = this.el.parent().position().top + this.el.height() + 63;
-          var left_diff = offset.left - 10;
+          var position_off = this.el.parent().position().top + this.el.height() + 87;
+          var left_diff = offset.left - 14;
       }
       else{
           var position_off = this.el.parent().position().top + this.el.height() + 60;

@@ -13,7 +13,7 @@ var me = JSON.parse(Ti.App.Properties.getString("me")),
     oldest_nom = null,
     newest_photo = '',
     oldest_nom = '',
-    selected_tab = 'photos';
+    selected_tab = 'active';
     
 window_activity = Titanium.UI.createActivityIndicator({
     message: 'Loading...',
@@ -54,7 +54,7 @@ var portrit_header_view = Titanium.UI.createView({
     
 var header_tab_selection = Titanium.UI.createView({
         height: 35,
-        left: 0,
+        left: 105,
         top: 40,
         width: 110,
         backgroundImage: '../images/selected_nav_bar.png',
@@ -86,7 +86,7 @@ portrit_header_active.addEventListener('click', function(){
         selected_tab = 'photos';
         
         var header_active_tab_matrix = Ti.UI.create2DMatrix();
-        header_active_tab_matrix = header_active_tab_matrix.translate(0,0);
+        header_active_tab_matrix = header_active_tab_matrix.translate(-105,0);
         
         var header_active_tab_animation = Titanium.UI.createAnimation();
         header_active_tab_animation.transform = header_active_tab_matrix;
@@ -128,7 +128,7 @@ portrit_header_top.addEventListener('click', function(){
         selected_tab = 'active';
     	
     	var header_active_tab_matrix = Ti.UI.create2DMatrix();
-        header_active_tab_matrix = header_active_tab_matrix.translate(105,0);
+        header_active_tab_matrix = header_active_tab_matrix.translate(0,0);
         
         var header_active_tab_animation = Titanium.UI.createAnimation();
         header_active_tab_animation.transform = header_active_tab_matrix;
@@ -169,7 +169,7 @@ portrit_header_winners.addEventListener('click', function(){
         selected_tab = 'top';
     	
     	var header_active_tab_matrix = Ti.UI.create2DMatrix();
-        header_active_tab_matrix = header_active_tab_matrix.translate(210,0);
+        header_active_tab_matrix = header_active_tab_matrix.translate(105,0);
         
         var header_active_tab_animation = Titanium.UI.createAnimation();
         header_active_tab_animation.transform = header_active_tab_matrix;
@@ -249,7 +249,6 @@ load_more_view.add(load_more_button);
 load_more_view.hide();
 
 var tv = Ti.UI.createTableView({
-            minRowHeight:50, 
             backgroundColor: '#000',
             // allowsSelection: false,
             separatorStyle: 0,
@@ -291,6 +290,7 @@ function render_community_photos(data){
     	});
     	photo.user = data[i].user_fid;
     	photo.name = data[i].name;
+    	photo.username = data[i].username;
     	photo.addEventListener('click', add_profile_window);
     	
     	row.add(photo);
@@ -307,9 +307,10 @@ function add_profile_window(e){
 	setTimeout(function(){
 	    Ti.App.fireEvent('pass_user', {
             user: e.source.user,
-            name: e.source.name
+            name: e.source.name,
+            username: e.source.username
         });
-	}, 200);
+	}, 100);
 }
 
 function add_detail_window(e){
@@ -322,7 +323,7 @@ function add_detail_window(e){
             photo: e.source.photo,
             won: false
         });
-	}, 200);
+	}, 100);
 }
 
 function show_tags(e){
@@ -535,6 +536,7 @@ function render_comments(cont, comments){
         });
         commentor.user = comments[i].owner_id;
         commentor.name = comments[i].owner_name;
+        commentor.username = comments[i].owner_username;
         commentor.addEventListener('click', add_profile_window);
         
         commentor_cont.add(commentor);
@@ -651,6 +653,7 @@ function render_top(data){
         	
         	photo_cont.user = data[i].noms[j].nominatee;
             photo_cont.name = data[i].noms[j].nominatee_name;
+            photo_cont.username = data[i].noms[j].nominatee_username;
             photo_cont.nom_cat = data[i].noms[j].nomination_category;
             
         	photo_cont.addEventListener('click', add_profile_window);
@@ -697,13 +700,11 @@ function render_nom(nom, top, row_count){
             nom_cat_underscore = nom.nomination_category.replace(' ', '_').toLowerCase();
             nom_cat_color = get_nom_cat_color(nom_cat_underscore);
 
-            nom_header = Titanium.UI.createView({
-                height:35,
-                left: 0,
-                top: 0,
-                width: 320,
-                opacity: 0.9,
-                backgroundColor: nom_cat_color
+            nom_header = Ti.UI.createTableViewRow({
+                    height: 30,
+                    backgroundColor: nom_cat_color,
+                    width: 320,
+                    selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
             });
 
             nominatee_profile_img_url = 'https://graph.facebook.com/' + nom.nominatee + '/picture?type=square';
@@ -712,15 +713,15 @@ function render_nom(nom, top, row_count){
         		defaultImage: '../images/photo_loader.png',
         		left: 0,
         		top: 0,
-        		height: 35,
-        		width: 35,
+        		height: 30,
+        		width: 30,
         		hires: true,
         		zIndex: 1
         	});
         	nom_header.add(nominatee_profile_img);
 
         	nominatee_name = Titanium.UI.createLabel({
-        	    text: nom.nominatee_name,
+        	    text: nom.nominatee_username,
                 textAlign: 'left',
                 color: '#fff',
                 left: 5,
@@ -737,9 +738,9 @@ function render_nom(nom, top, row_count){
                 color: '#fff',
                 left: 0,
                 top: 5,
-                right: 5,
+                right: 15,
                 bottom: 5,
-                textAlign: "right",
+                textAlign: 'right',
                 size: {width: '100%', height: 'auto'},
                 font:{fontSize: 20, fontWeight:'bold'}
             });
@@ -748,7 +749,7 @@ function render_nom(nom, top, row_count){
                 backgroundColor: '#222',
                 borderRadius: 5,
                 height: 20,
-                left: 40,
+                left: 35,
                 width: 'auto',
                 zIndex: 1
             });
@@ -760,70 +761,48 @@ function render_nom(nom, top, row_count){
 
             nominatee_profile_img.user = nom.nominatee;
             nominatee_profile_img.name = nom.nominatee_name;
+            nominatee_profile_img.username = nom.nominatee_username;
             nominatee_profile_img.addEventListener('click', add_profile_window);
 
         	nominatee_name.user = nom.nominatee;
         	nominatee_name.name = nom.nominatee_name;
+        	nominatee_name.username = nom.nominatee_username;
         	nominatee_name.addEventListener('click', add_profile_window);
 
             //Add Header to row
             section = Titanium.UI.createTableViewSection({
-                headerView: nom_header
+
             });
+            section.add(nom_header);
 
             row = Ti.UI.createTableViewRow({
                     height:'auto',
                     backgroundColor:'#000',
                     selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
             });
+            
+            nomination_wrap = Titanium.UI.createView({
+                height: 75,
+                bottom: 5,
+                width: 320,
+                zIndex: 1
+            });
+            row.add(nomination_wrap);
 
             nominator_profile_img_url = 'https://graph.facebook.com/' + nom.nominator + '/picture?type=square';
 
-            var max_height = 320;
-            if (Ti.Platform.displayCaps.density == 'high') {
-                if (nom.photo.width > Ti.Platform.displayCaps.platformWidth){
-                    photo_width = Ti.Platform.displayCaps.platformWidth;
-                }
-                else{
-                    photo_width = nom.photo.width;
-                }
-
-                if (nom.photo.height && nom.photo.height > max_height){
-                    if (nom.photo.height > nom.photo.width){
-                        photo_height = max_height;
-                        photo_width = photo_height * (nom.photo.width / nom.photo.height);
-                    }
-                    else{
-                        photo_height = photo_width * (nom.photo.height / nom.photo.width);
-                    }
-                }
-                else{
-                    photo_height = max_height;
-                }
+            photo_width = 100;
+            photo_height = 75;
+            
+            if (nom.photo.width > Ti.Platform.displayCaps.platformWidth){
                 highres = true;
-            }
-            else{
-                if (photo_width < 320){
-                    photo_width = nom.photo.width;
-                }
-                else{
-                    photo_width = 320
-                }
-
-                if (nom.photo.height && nom.photo.height > max_height){
-                    photo_width = max_height * (nom.photo.width / nom.photo.height);
-                    photo_height = photo_width * (nom.photo.height / nom.photo.width);
-                }
-                else{
-                    photo_height = max_height;
-                }
-                highres = false;
             }
 
             main_image = Ti.UI.createImageView({
-        		image: nom.photo.source,
+        		image: nom.photo.crop,
         		defaultImage: '../images/photo_loader.png',
         		top: 0,
+        		left: 0,
         		width: photo_width,
         		height: photo_height,
         		hires: highres
@@ -832,115 +811,89 @@ function render_nom(nom, top, row_count){
         	main_image.nom_id = nom.id;
         	main_image.photo = nom.photo;
         	main_image.addEventListener('click', add_detail_window);
-        	row.add(main_image);
-
-        	nominator_footer = Titanium.UI.createView({
-        	    height:35,
-                bottom: 0,
-                width: 320,
+        	nomination_wrap.add(main_image);
+        	
+        	caption_cont = Titanium.UI.createView({
+        	    backgroundColor: '#eee',
+                height: 45,
+                top: 0,
+                left: 100,
+                width: 220,
                 zIndex: 1
             });
-
-            nominator_footer_background = Titanium.UI.createView({
-        	    height:'100%',
-                width: '100%',
-                opacity: 0.8,
-                backgroundColor: '#000',
-                zIndex: -1
-            });
-
-        	nominator_profile_img_url = 'https://graph.facebook.com/' + nom.nominator + '/picture?type=square';
-            nominator_profile_img = Ti.UI.createImageView({
-        		image: nominator_profile_img_url,
-        		defaultImage: '../images/photo_loader.png',
-        		left: 0,
-        		top: 0,
-        		hires: true,
-        		height: 35,
-        		width: 35
-        	});
-
-        	nominator_profile_img.user = nom.nominator;
-        	nominator_profile_img.name = nom.nominator_name;
-        	nominator_profile_img.addEventListener('click', add_profile_window);
-
-        	nominator_footer.add(nominator_profile_img);
-
-            nominator_name_cont = Titanium.UI.createView({
-        	    height: 'auto',
-                width: 'auto',
-                left: 40,
-                zIndex: 1,
-                layout: 'vertical'
-            });
-
-            nominated_by = Titanium.UI.createLabel({
-        	    text: 'Nominated by ',
-                color: '#fff',
-                left: 0,
-                width: 'auto',
-                height: 'auto',
-                font:{fontSize:12}
-            });
-
-            nominator_name = Titanium.UI.createLabel({
-        	    text: nom.nominator_name,
-                color: '#fff',
-                left: 0,
-                top: -3,
-                width: 'auto',
-                height: 'auto',
-                font:{fontSize:12, fontWeight: 'bold'}
-            });
-            nominator_name_cont.add(nominated_by);
-            nominator_name_cont.add(nominator_name);
-
-            nominator_footer.add(nominator_footer_background);
-            nominator_footer.add(nominator_name_cont);
-
-            nominator_name.user = nom.nominator;
-            nominator_name.name = nom.nominator_name;
-            nominator_name.addEventListener('click', add_profile_window);
             
-            if (nom.tagged_users.length > 0){
-                tagged_cont = Titanium.UI.createView({
-                    height: 30,
-                    width: 'auto',
-                    right: 3,
-                });
-                tagged_label = Titanium.UI.createLabel({
-            	    text: nom.tagged_users.length + ' Tagged',
-            	    textAlign: 'left',
-                    color: '#fff',
-                    left: 8,
-                    right: 35,
-                    font:{fontSize: 13, fontWeight: 'bold'},
-                    size: {width: 'auto', height: 'auto'}
-                });
-                tagged_label.tags = nom.tagged_users;
-                tagged_cont.add(tagged_label);
-
-                disclosure = Titanium.UI.createButton({
-                    style:Titanium.UI.iPhone.SystemButton.DISCLOSURE,
-                	right: 0
-                });
-                disclosure.tags = nom.tagged_users;
-                tagged_cont.add(disclosure);
-
-                tagged_cont.tags = nom.tagged_users;
-                tagged_cont.addEventListener('click', show_tags);
-
-                nominator_footer.add(tagged_cont);
+            caption_text = 'No caption provided.';
+            if (nom.caption){
+                caption_text = nom.caption;
             }
-
-            row.add(nominator_footer);
-
+            
+            caption_text_label = Titanium.UI.createLabel({
+                text: caption_text,
+                color: '#333',
+                width: 'auto',
+                height: 'auto',
+                font:{fontSize:14, fontWeight: 'bold'},
+                minimumFontSize: 10
+            });
+            caption_cont.add(caption_text_label);
+            nomination_wrap.add(caption_cont);
+            
+            bottom_cont = Titanium.UI.createView({
+        	    backgroundColor: '#eee',
+                height: 30,
+                top: 45,
+                left: 100,
+                width: 220,
+                zIndex: 1
+            });
+            nomination_wrap.add(bottom_cont);
+            
+            // comments_cont = Titanium.UI.createView({
+            //              backgroundColor: '#dedede',
+            //     height: 30,
+            //     top: 0,
+            //     left: 0,
+            //     width: 95,
+            //     zIndex: 1
+            // });
+            // bottom_cont.add(comments_cont);
+            // 
+            // comments_label = Titanium.UI.createLabel({
+            //     text: 'Comments',
+            //     color: '#333',
+            //     width: 'auto',
+            //     height: 'auto',
+            //     left: 3,
+            //     font:{fontSize:12, fontWeight: 'bold'}
+            // });
+            // comments_cont.add(comments_label);
+            // 
+            // comments_count_label = Titanium.UI.createLabel({
+            //     text: nom.comment_count,
+            //     color: '#333',
+            //     width: 'auto',
+            //     height: 'auto',
+            //     right: 3,
+            //     font:{fontSize:12, fontWeight: 'bold'}
+            // });
+            // comments_cont.add(comments_count_label);
+            
+            post_time_cont = Titanium.UI.createView({
+                backgroundColor: '#bebebe',
+                left: 0,
+                top: 0,
+                height: 30,
+                width: 95,
+                zIndex: 1
+            });
+            bottom_cont.add(post_time_cont);
+            
             time = new Date(nom.created_time * 1000);
             time_diff = now - time;
             time_diff /= 1000;
             post_time = Titanium.UI.createLabel({
         	    text: secondsToHms(time_diff),
-                color: '#fff',
+                color: '#333',
                 left: 5,
                 top: 5,
                 right: 5,
@@ -948,107 +901,62 @@ function render_nom(nom, top, row_count){
                 size: {width: 'auto', height: 'auto'},
                 font:{fontSize:12}
             });
-
-            post_time_background = Titanium.UI.createView({
-                backgroundColor: '#000',
-                borderRadius: 5,
-                opacity: 0.8,
-                height: '100%',
-                width: '100%',
-                zIndex: -1
-            });
-
-            post_time_cont = Titanium.UI.createView({
-                right: 5,
-                bottom: 40,
-                height: 'auto',
-                width: 'auto',
+            post_time_cont.add(post_time);
+            
+            votes_cont = Titanium.UI.createView({
+        	    backgroundColor: '#aeaeae',
+                height: 30,
+                top: 0,
+                left: 95,
+                width: 95,
                 zIndex: 1
             });
+            bottom_cont.add(votes_cont);
             
-            post_time_cont.add(post_time_background);
-            post_time_cont.add(post_time);
-            row.add(post_time_cont);
-            section.add(row);
-
-            row = Ti.UI.createTableViewRow({
-                    height:'auto',
-                    selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
-            });
-
-            photo_action_cont = Titanium.UI.createView({
-                backgroundColor: '#000',
-                width: 320,
+            votes_label = Titanium.UI.createLabel({
+                text: 'Votes',
+                color: '#333',
+                width: 'auto',
                 height: 'auto',
-                bottom: 10,
-                layout: 'vertical'
-            });
-
-            photo_action_row = Titanium.UI.createView({
-                backgroundColor: '#ddd',
-                top: 0,
-                width: 320,
-                height: 'auto'
-            });
-
-            comments_cont = Titanium.UI.createView({
-                    height: 'auto',
-                    top: 0,
-                    width: 320,
-                    layout: 'vertical'
-                });
-
-            add_comment = Ti.UI.createButton({
-                backgroundImage: '../images/stream_action_button.png',
-            	title:"Comment",
-            	width: 90,
-            	height: 25,
                 left: 5,
-                top: 5,
-                bottom: 5,
-                font: {fontSize: 12, fontWeight: 'bold'}
+                font:{fontSize:12, fontWeight: 'bold'}
             });
-            add_comment.nom_id = nom.id;
-            add_comment.comment_cont = comments_cont;
-            add_comment.comments = nom.quick_comments;
-            add_comment.action_cont = photo_action_cont;
-            add_comment.addEventListener('click', add_comment_to_nom);
-
-            nom_detail_button = Ti.UI.createButton({
-        	    backgroundImage: '../images/stream_action_button.png',
-            	title:"Detail",
-            	width: 90,
-            	height: 25,
-                left: 100,
-                top: 5,
-                bottom: 5,
-                font: {fontSize: 12, fontWeight: 'bold'}
+            votes_cont.add(votes_label);
+            
+            votes_count_label = Titanium.UI.createLabel({
+                text: nom.vote_count,
+                color: '#333',
+                width: 'auto',
+                height: 'auto',
+                right: 5,
+                font:{fontSize:12, fontWeight: 'bold'}
             });
-            nom_detail_button.nom_id = nom.id;
-            nom_detail_button.photo = nom.photo;
-        	nom_detail_button.addEventListener('click', add_detail_window);
+            votes_cont.add(votes_count_label);
 
             photo_options = Ti.UI.createButton({
             	backgroundImage: '../images/stream_option_button.png',
             	width: 25,
             	height: 25,
-                right: 5,
+                right: 1,
                 top: 5,
+                left: 190,
                 bottom: 5
             });
             photo_options.nom_id = nom.id;
             photo_options.photo_id = nom.photo.id;
             photo_options.addEventListener('click', open_options);
+            
+            bottom_cont.add(photo_options);
 
-            photo_action_row.add(add_comment);
-            photo_action_row.add(nom_detail_button);
-            photo_action_row.add(photo_options);
-
-            photo_action_cont.add(photo_action_row);
-            photo_action_cont.add(comments_cont);
-
-            row.add(photo_action_cont);        
-            render_comments(comments_cont, nom.quick_comments);
+            // photo_action_row.add(add_comment);
+            // photo_action_row.add(nom_detail_button);
+            // photo_action_row.add(photo_options);
+            // 
+            // photo_action_cont.add(photo_action_row);
+            // photo_action_cont.add(comments_cont);
+            // 
+            // row.add(photo_action_cont);        
+            // render_comments(comments_cont, nom.quick_comments);
 
             section.add(row);
             section.created_time = nom.created_time;
@@ -1245,9 +1153,14 @@ function init_community_view(){
         var data = JSON.parse(this.responseData);
         
         if (data.length > 0){
-            photos_cache = data;
-            newest_photo = data[0].create_datetime;
-            render_community_photos(data);
+            active_cache = data;
+            if (active_cache.length > 0){
+                render_active_list_view(active_cache);
+            }
+            else{
+                tv.setData([empty_row]);
+                active_empty_label.show();
+            }
             if (data.length == 10){
                 load_more_view.show();
             }
@@ -1257,7 +1170,7 @@ function init_community_view(){
         }
         window_activity_cont.hide();
     };
-    var url = SERVER_URL + '/api/get_community_photos/';
+    var url = SERVER_URL + '/api/get_community_nominations/';
     xhr.open('GET', url);
     xhr.send();
 
@@ -1323,8 +1236,7 @@ function init_community_view(){
             
             if (data.length > 0){
                 if (selected_tab == 'photos'){
-                    newest_photo = data[0].create_datetime;
-                    update_photo_cache(data);
+                    photos_cache = data;
                     list_view_data = [ ];
                     render_community_photos(photos_cache);
                 }
@@ -1344,7 +1256,7 @@ function init_community_view(){
 
         var url = '';
         if (selected_tab == 'photos'){
-            url = SERVER_URL + '/api/get_community_photos/?new_date=' + newest_photo;
+            url = SERVER_URL + '/api/get_community_photos/';
         }
         else if (selected_tab == 'top'){
             url = SERVER_URL + '/api/get_community_top_stream/';

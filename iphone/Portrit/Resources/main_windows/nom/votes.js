@@ -51,12 +51,13 @@ function add_profile_window(e){
 	setTimeout(function(){
 	    Ti.App.fireEvent('pass_user', {
             user: e.source.user,
-            name: e.source.name
+            name: e.source.name,
+            username: e.source.username
         });
-	}, 200);
+	}, 100);
 }
 
-var get_profile_image = function(user, name){
+var get_profile_image = function(user, name, username){
     var user = user;
     var name = name;
     var user_profile_image = null;
@@ -87,6 +88,7 @@ var get_profile_image = function(user, name){
                 });
                 user_profile_image.name = name;
                 user_profile_image.user = user;
+                user_profile_image.username = username;
                 
                 cropImage(user_profile_image,150,150,20,20);
                 cont.add(user_profile_image);
@@ -120,14 +122,16 @@ function init_votes(){
         });
         user_cont.user = votes[i].vote_user;
         user_cont.name = votes[i].vote_name;
+        user_cont.username = votes[i].vote_username;
         user_cont.addEventListener('click', add_profile_window);
         
-        var user_profile_image = get_profile_image(votes[i].vote_user, votes[i].vote_name).get_high_crop(user_cont);
+        var user_profile_image = get_profile_image(votes[i].vote_user, votes[i].vote_name, votes[i].vote_username).get_high_crop(user_cont);
     	user_profile_image.user = votes[i].vote_user;
         user_profile_image.name = votes[i].vote_name;
+        user_profile_image.username = votes[i].vote_username;
     	user_cont.add(user_profile_image);
     	
-    	var voter_name = votes[i].vote_name.split(' ')[0];
+    	var voter_name = votes[i].vote_username.split(' ')[0];
     	
     	if (votes[i].vote_user == me.fid){
     	    voter_name = 'You';
@@ -143,6 +147,7 @@ function init_votes(){
         });
         user_name.user = votes[i].vote_user;
         user_name.name = votes[i].vote_name;
+        user_name.username = votes[i].vote_username;
         user_cont.add(user_name);
         
         row.add(user_cont);

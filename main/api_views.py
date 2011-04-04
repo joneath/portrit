@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q, Count
+from django.db.models import Q
 from django.core.cache import cache
 
 # from main.models import Portrit_User, FB_User, Album, Photo, Nomination, Nomination_Category, Comment, \
@@ -21,7 +21,7 @@ from portrit_fb import Portrit_FB
 from nomination_views import get_target_friends, serialize_noms, serialize_nom, get_target_friends
 from datetime import datetime
 from itertools import chain
-import facebook, json, socket, time
+import facebook, json, socket, time, math
 
 def check_access_token(function=None):
     def _dec(view_func):
@@ -146,16 +146,20 @@ def add_username(request):
     
     try:
         user = get_user_from_access_token(access_token)
-        print user
-        user.username = username
-        print user.username
-        print post_wins_to_fb
-        if post_wins_to_fb == '1':
-            user.allow_winning_fb_album = True
-        else:
-            user.allow_winning_fb_album = False
-        user.save()
-        data = True
+        try: 
+            Portrit_User.objects.get(username__iexact=username)
+            data = False
+        except:
+            print user
+            user.username = username
+            print user.username
+            print post_wins_to_fb
+            if post_wins_to_fb == '1':
+                user.allow_winning_fb_album = True
+            else:
+                user.allow_winning_fb_album = False
+            user.save()
+            data = True
     except Exception, err:
         print err
     
@@ -166,8 +170,8 @@ def add_username(request):
 def get_recent_stream(request):
     data = [ ]
     access_token = request.GET.get('access_token')
-    created_date = request.GET.get('create_date')
-    new_date = request.GET.get('new_date')
+    dir = request.GET.get('dir')
+    id = request.GET.get('id')
     page_size = request.GET.get('page_size')
     
     if not page_size:
@@ -178,26 +182,32 @@ def get_recent_stream(request):
         portrit_user = get_user_from_access_token(access_token)
         user = portrit_user.fb_user
         friends = portrit_user.get_following()
-        if created_date:
-            created_date = datetime.fromtimestamp(float(created_date))
+        
+        if dir == 'new':
+            nomination = Nomination.objects.get(id=id)
             nominations = Nomination.objects.filter(
                 Q(nominatee__in=friends) |
                 Q(nominatee=portrit_user) |
                 Q(nominator=portrit_user),
-                created_date__lt=created_date, won=False, active=True).order_by('-created_date')[:PAGE_SIZE]
-        elif new_date:
-            new_date = datetime.fromtimestamp(float(new_date))
+                created_date__gt=nomination.created_date, 
+                won=False, 
+                active=True).order_by('-created_date')[:PAGE_SIZE]
+        elif dir == 'old':
+            nomination = Nomination.objects.get(id=id)
             nominations = Nomination.objects.filter(
                 Q(nominatee__in=friends) |
                 Q(nominatee=portrit_user) |
                 Q(nominator=portrit_user),
-                created_date__gt=new_date, won=False, active=True).order_by('-created_date')[:PAGE_SIZE]
+                created_date__lt=nomination.created_date, 
+                won=False, 
+                active=True).order_by('-created_date')[:PAGE_SIZE]
         else:
             nominations = Nomination.objects.filter(
                 Q(nominatee__in=friends) |
                 Q(nominatee=portrit_user) |
                 Q(nominator=portrit_user),
-                won=False, active=True).order_by('-created_date')[:PAGE_SIZE]
+                won=False, 
+                active=True).order_by('-created_date')[:PAGE_SIZE]
         
         data = serialize_noms(nominations)
 
@@ -340,18 +350,29 @@ def get_nom_detail(request):
         data = [serialize_nom(nomination)]
         
     elif nav_selected == 'community_top':
-        data = Nomination.objects.filter(
-            nomination_category=nomination.nomination_category, 
-            active=True,
-            public=True,
-            won=False).order_by('-current_vote_count', '-created_date')[PAGE_SIZE * (page - 1): PAGE_SIZE * page]
+        if nomination:
+            data = Nomination.objects.filter(
+                nomination_category=nomination.nomination_category, 
+                active=True,
+                public=True,
+                won=False).order_by('-current_vote_count', '-created_date')[PAGE_SIZE * (page - 1): PAGE_SIZE * page]
+        else:
+            print "here"
+            print cat
+            data = Nomination.objects.filter(
+                nomination_category=cat, 
+                active=True,
+                public=True,
+                won=False).order_by('-current_vote_count', '-created_date')[PAGE_SIZE * (page - 1): PAGE_SIZE * page]
         
         data = serialize_noms(data)
         
     elif nav_selected == 'profile_trophies':
+        cat = cat.replace('-', ' ');
         data = Nomination.objects.filter(
-            Q(tagged_users__in=[nomination.nominatee]) |
-            Q(nominatee=nomination.nominatee),
+            Q(tagged_users__in=[source]) |
+            Q(nominatee=source),
+            nomination_category=cat,
             won=True).order_by('-current_vote_count', '-created_date')[PAGE_SIZE * (page - 1): PAGE_SIZE * page]
             
         data = serialize_noms(data)
@@ -360,7 +381,6 @@ def get_nom_detail(request):
         data = Nomination.objects.filter(
             Q(tagged_users__in=[source]) |
             Q(nominatee=source),
-            # nomination_category=nomination.nomination_category, 
             active=True, 
             won=False).order_by('-current_vote_count', '-created_date')[PAGE_SIZE * (page - 1): PAGE_SIZE * page]
             
@@ -643,52 +663,49 @@ def vote_on_nomination(request):
     direction = request.POST.get('direction')
     nomination_id = request.POST.get('nomination_id')
     access_token = request.POST.get('access_token')
-    
-    portrit_user = get_user_from_access_token(access_token)
-    voter = portrit_user.fb_user
-    owner = FB_User.objects.get(fid=int(voter))
+    voter = get_user_from_access_token(access_token)
     nomination = Nomination.objects.get(id=nomination_id)
     
-    if nomination.votes.filter(fid=owner.fid).count() == 0 and nomination.active:
+    if not voter in nomination.votes and nomination.active:
         if direction == 'up':
-            nomination.up_votes += 1
-            nomination.update_current_vote_count()
-            nomination.save()
+            nomination.current_vote_count += 1
+            nomination.up_voters.append(voter)
         elif direction == 'down':
-            nomination.down_votes += 1
-            nomination.update_current_vote_count()
-            nomination.save()
+            nomination.current_vote_count -= 1
+            nomination.down_voters.append(voter)
 
-        nomination.votes.add(owner)
+        nomination.votes.append(voter)
+        nomination.save()
 
-        nominatee = FB_User.objects.get(fid=str(nomination.nominatee))
         try:
-            owner_portrit_user = Portrit_User.objects.get(fb_user=owner)
-            owner_portrit_user.vote_count += 1
-            owner_portrit_user.save()
+            voter.vote_count += 1
+            voter.save()
         except Exception, err:
             print err
 
-        portrit_user = owner.portrit_fb_user.all()[0]
-        target_friends = get_target_friends(nominatee, owner)
+        target_friends = nomination.nominatee.get_following()
+        for vote in nomination.votes:
+            target_friends.append(vote)
+            
         friends = { }
         for friend in target_friends:
             try:
-                friend = FB_User.objects.get(fid=friend)
-                friends[friend.fid] = {'fid': friend.fid,
-                                'allow_notifications': friend.get_portrit_user_notification_permission()}
+                friends[friend.fb_user.fid] = {'fid': friend.fb_user.fid}
             except:
                 friends = { }
-
+        
         node_data = {
             'method': 'vote',
             'payload': {
-                'nom_id': nomination.id,
-                'nominatee': nomination.nominatee.fid,
-                'nomination_category': nomination.nomination_category.name,
+                'nom_id': str(nomination.id),
+                'nominatee': nomination.nominatee.fb_user.fid,
+                'nominatee_name': nomination.nominatee.name,
+                'nominatee_username': nomination.nominatee.username,
+                'nomination_category': nomination.nomination_category,
                 'vote_count': nomination.current_vote_count,
-                'vote_user': owner.fid,
-                'vote_name': portrit_user.name,
+                'vote_user': voter.fb_user.fid,
+                'vote_name': voter.name,
+                'vote_username': voter.username,
                 'friends': friends,
             }
         }
@@ -704,7 +721,9 @@ def vote_on_nomination(request):
             print err
 
         data = {'vote_count': nomination.current_vote_count,
-                'nominatee': nomination.nominatee.fid,}
+                'nominatee': nomination.nominatee.fb_user.fid,
+                'nominatee_name': nomination.nominatee.name,
+                'nominatee_username': nomination.nominatee.username}
 
     data = simplejson.dumps(data)
     return HttpResponse(data, mimetype='application/json')
@@ -1057,7 +1076,11 @@ def get_follow_data_detailed(request):
                 trophy_count = 0
                 active_count = 0
                 try:
-                    photo_count = len(Photo.objects.filter(active=True, pending=False, owner=user))
+                    photo_count = len(Photo.objects.filter(owner=user,
+                                                    nominations__size=0,
+                                                    trophy=False,
+                                                    active=True, 
+                                                    pending=False))
                     trophy_count = len(Nomination.objects.filter(Q(nominatee=user) | Q(tagged_users__in=[user]), won=True))
                     active_count = len(Nomination.objects.filter(Q(nominatee=user) | Q(tagged_users__in=[user]), active=True, won=False))
                 except:
@@ -1111,6 +1134,7 @@ def get_follow_data_detailed(request):
                     data['data'].append({
                         'fid': user.fb_user.fid,
                         'name': user.name,
+                        'username': user.username,
                         'photo_count': photo_count,
                         'trophy_count': trophy_count,
                         'active_count': active_count,
@@ -1120,6 +1144,7 @@ def get_follow_data_detailed(request):
                     data['data'].append({
                         'fid': user.fb_user.fid,
                         'name': user.name,
+                        'username': user.username,
                         'photo_count': photo_count,
                         'trophy_count': trophy_count,
                         'active_count': active_count,
@@ -1151,14 +1176,11 @@ def get_user_profile(request):
         'settings': None
     }
     access_token = request.GET.get('access_token')
-    user = request.GET.get('fb_user')
     username = request.GET.get('username')
-    source = request.GET.get('source')
-    create_date = request.GET.get('create_date')
-    new_date = request.GET.get('new_date')
+    dir = request.GET.get('dir')
+    pid = request.GET.get('pid')
     page_size = request.GET.get('page_size')
     method = request.GET.get('method')
-    photo_id = request.GET.get('photo_id')
     
     if not page_size:
         page_size = 10
@@ -1166,15 +1188,7 @@ def get_user_profile(request):
         page_size = int(page_size)
     
     try:
-        if source:
-            portrit_user = Portrit_User.objects.get(fb_user__fid=int(user))
-            user = portrit_user.fb_user
-            
-            source_portrit_user = get_user_from_access_token(access_token)
-            source = source_portrit_user.fb_user
-            data['follow'] = source_portrit_user.check_follow(portrit_user)
-            # source_portrit_user.following.filter(fid=user.fid, user_following__active=True).exists()
-        elif username:
+        if username:
             portrit_user = Portrit_User.objects.get(username=username)
             user = portrit_user.fb_user
             
@@ -1191,17 +1205,19 @@ def get_user_profile(request):
         data['user']['username'] = portrit_user.username
 
         if method == 'active':
-            user_active_noms = Nomination.objects.filter(active=True, won=False, nominatee=portrit_user).order_by('-created_date')
+            user_active_noms = Nomination.objects.filter(Q(nominatee=portrit_user) | Q(tagged_users__in=[portrit_user]), active=True, won=False)
             data['active_noms'] = serialize_noms(user_active_noms)
         elif not method:
-            data['active_noms_count'] = len(Nomination.objects.filter(active=True, won=False, nominatee=portrit_user))
+            data['active_noms_count'] = len(Nomination.objects.filter(Q(nominatee=portrit_user) | Q(tagged_users__in=[portrit_user]), active=True, won=False))
 
         if not method or method == 'trophies':
             user_trophy_count = cache.get(str(user.fid) + '_trophy_count')
             if not user_trophy_count:
-                trophy_count = len(Nomination.objects.filter(Q(tagged_users__in=[portrit_user]) | 
-                                                            Q(nominatee=portrit_user), 
-                                                            won=True).order_by('-created_date'))
+                trophy_count = portrit_user.winning_nomination_count
+                # 
+                # len(Nomination.objects.filter(Q(tagged_users__in=[portrit_user]) | 
+                #                                             Q(nominatee=portrit_user), 
+                #                                             won=True).order_by('-created_date'))
                 data['trophy_count'] = trophy_count
                 cache.set(str(user.fid) + '_trophy_count', trophy_count)
             else:
@@ -1209,31 +1225,54 @@ def get_user_profile(request):
                 
         if not method or method == 'photos':
             try:
-                if not create_date and not new_date:
-                    if photo_id:
-                        photo = Photo.objects.get(id=photo_id)
-                        photos_before = portrit_user.get_portrit_album().photo_set.filter(created_date__lt=photo.created_date, active=True, pending=False).exclude(nominations__in=exclude_noms).distinct('id').order_by('-created_date')[:page_size]
-                        photos_after = portrit_user.get_portrit_album().photo_set.filter(created_date__gt=photo.created_date, active=True, pending=False).exclude(nominations__in=exclude_noms).distinct('id').order_by('-created_date')[:page_size]
-                        photos = photos_before | photos_after
-                    else:
-                        photos = Photo.objects.filter(owner=portrit_user,
-                                                        nominations__size=0,
-                                                        active=True, 
-                                                        pending=False)
-                elif new_date:
-                    new_date = datetime.fromtimestamp(float(new_date))
+                if not dir and pid:
+                    selected_photo = Photo.objects.get(id=pid)
+                    page_size_half = int(math.floor(page_size / 2))
+                    photos_before = Photo.objects.filter(owner=portrit_user,
+                                                    nominations__size=0,
+                                                    created_date__gt=selected_photo.created_date,
+                                                    trophy=False,
+                                                    active=True, 
+                                                    pending=False)[:page_size_half]
+                                                    
+                    photos_after = Photo.objects.filter(owner=portrit_user,
+                                                    nominations__size=0,
+                                                    created_date__lt=selected_photo.created_date,
+                                                    trophy=False,
+                                                    active=True, 
+                                                    pending=False)[:page_size_half]
+                                                    
+                    photos = [ ]
+                    for photo in photos_before:
+                        photos.append(photo)
+                        
+                    photos.append(selected_photo)
+                    
+                    for photo in photos_after:
+                        photos.append(photo)
+                        
+                elif dir == 'new':
+                    photo = Photo.objects.get(id=pid)
                     photos = Photo.objects.filter(owner=portrit_user,
                                                     nominations__size=0,
-                                                    created_date__gt=new_date,
+                                                    created_date__gt=photo.created_date,
+                                                    trophy=False,
                                                     active=True, 
-                                                    pending=False)
+                                                    pending=False)[:page_size]
+                elif dir == 'old':
+                    photo = Photo.objects.get(id=pid)
+                    photos = Photo.objects.filter(owner=portrit_user,
+                                                    nominations__size=0,
+                                                    created_date__lt=photo.created_date,
+                                                    trophy=False,
+                                                    active=True, 
+                                                    pending=False)[:page_size]
                 else:
-                    create_date = datetime.fromtimestamp(float(create_date))
                     photos = Photo.objects.filter(owner=portrit_user,
                                                     nominations__size=0,
-                                                    created_date__lt=new_date,
+                                                    trophy=False,
                                                     active=True, 
-                                                    pending=False)
+                                                    pending=False)[:page_size]
                                                     
                 for photo in photos:
                     data['photos'].append(photo.get_photo())
@@ -1264,7 +1303,7 @@ def get_user_profile(request):
 def get_user_stream_photos(request):
     data = [ ]
     access_token = request.GET.get('access_token')
-    create_date = request.GET.get('create_date')
+    pid = request.GET.get('pid')
     page_size = request.GET.get('page_size')
 
     if not page_size:
@@ -1278,7 +1317,7 @@ def get_user_stream_photos(request):
         source_following_list = [ ]
         
         try:
-            if not create_date:
+            if not pid:
                 photos = Photo.objects.filter(Q(nominations__active=False) &
                                                 Q(nominations__won=False) &
                                                 Q(nominations__removed=False) |
@@ -1288,16 +1327,17 @@ def get_user_stream_photos(request):
                                                     active=True, 
                                                     pending=False).order_by('-created_date')[:page_size]
             else:
-                create_date = datetime.fromtimestamp(float(create_date))
+                photo = Photo.objects.get(id=pid)
                 photos = Photo.objects.filter(Q(nominations__active=False) &
                                                 Q(nominations__won=False) &
                                                 Q(nominations__removed=False) |
                                                 Q(nominations__size=0)).filter(
                                                     Q(owner__in=source_following) | 
                                                     Q(owner=portrit_user),
-                                                    created_date__lt=create_date,
+                                                    created_date__lt=photo.created_date,
                                                     active=True, 
                                                     pending=False).order_by('-created_date')[:page_size]
+                    
         except Exception, err:
             photos = [ ]
             print err
@@ -1348,14 +1388,11 @@ def get_user_trophies(request):
     access_token = request.GET.get('access_token')
     target = request.GET.get('target')
     try:
-        portrit_user = get_user_from_access_token(access_token)
+        target_portrit_user = get_user_from_access_token(access_token)
         if target:
             target_portrit_user = Portrit_User.objects.get(fb_user__fid=int(target))
-            fb_user = target_portrit_user.fb_user
-        else:
-            target_portrit_user = portrit_user
-            fb_user = portrit_user.fb_user
-        user_trophies = cache.get(str(fb_user.fid) + '_user_trophies')
+            
+        user_trophies = cache.get(str(target_portrit_user.id) + '_user_trophies')
         if user_trophies == None:
             cats = Nomination_Category.objects.all()
             for cat in cats:
@@ -1366,13 +1403,16 @@ def get_user_trophies(request):
                                                         
                 if len(winning_noms) > 0:
                     nom_cat_data = {
-                        'cat_name': nom.nomination_category,
-                        'count': len(winning_noms),
+                        'cat_name': cat.title,
+                        'nom_count': len(winning_noms),
                         'noms': serialize_noms(winning_noms),
                     }
                     data.append(nom_cat_data)
-
-            cache.set(str(fb_user.fid) + '_user_trophies', data)
+            
+            if len(data) > 0:
+                from operator import itemgetter 
+                data = sorted(data, key=itemgetter('nom_count'), reverse=True)
+            cache.set(str(target_portrit_user.id) + '_user_trophies', data)
         else:
             data = user_trophies
     except Exception, err:
@@ -1402,16 +1442,27 @@ def get_more_user_trophies(request):
 def get_community_photos(request):
     data = []
     PAGE_SIZE = 21
-    new_date = request.GET.get('new_date')
+    dir = request.GET.get('dir')
+    pid = request.GET.get('pid')
     
     try:
-        if new_date:
-            new_date = datetime.fromtimestamp(float(new_date))
+        if dir == 'new':
+            photo = Photo.objects.get(id=pid)
             photos = Photo.objects.filter((Q(nominations__active=False) &
                                             Q(nominations__won=False) &
                                             Q(nominations__removed=False)) |
                                             Q(nominations__size=0),
-                                            created_date__gt=new_date,
+                                            created_date__gt=photo.created_date,
+                                            active=True, 
+                                            pending=False,
+                                            public=True).order_by('-created_date')[:PAGE_SIZE]
+        elif dir == 'old':
+            photo = Photo.objects.get(id=pid)
+            photos = Photo.objects.filter((Q(nominations__active=False) &
+                                            Q(nominations__won=False) &
+                                            Q(nominations__removed=False)) |
+                                            Q(nominations__size=0),
+                                            created_date__lt=photo.created_date,
                                             active=True, 
                                             pending=False,
                                             public=True).order_by('-created_date')[:PAGE_SIZE]
@@ -1447,19 +1498,19 @@ def get_community_photos(request):
 def get_community_nominations(request):
     data = []
     PAGE_SIZE = 10
-    new_date = request.GET.get('new_date')
-    old_date = request.GET.get('create_date')
+    id = request.GET.get('id')
+    dir = request.GET.get('dir')
     
-    if new_date:
-        new_date = datetime.fromtimestamp(float(new_date))
-        nominations = Nomination.objects.filter(created_date__gt=new_date, 
+    if dir == 'new':
+        nomination = Nomination.objects.get(id=id)
+        nominations = Nomination.objects.filter(created_date__gt=nomination.created_date, 
                                                 active=True, 
                                                 won=False, 
                                                 public=True).order_by('-created_date')[:PAGE_SIZE]
         data = serialize_noms(nominations)
-    elif old_date:
-        old_date = datetime.fromtimestamp(float(old_date))
-        nominations = Nomination.objects.filter(created_date__lt=old_date, 
+    elif dir == 'old':
+        nomination = Nomination.objects.get(id=id)
+        nominations = Nomination.objects.filter(created_date__lt=nomination.created_date, 
                                                 active=True, 
                                                 won=False, 
                                                 public=True).order_by('-created_date')[:PAGE_SIZE]
@@ -1516,8 +1567,9 @@ def get_community_top_stream(request):
                         'nom_count': len(top_noms),
                     })
             
-            from operator import itemgetter 
-            data = sorted(data, key=itemgetter('nom_count'), reverse=True)
+            if len(data) > 0:
+                from operator import itemgetter 
+                data = sorted(data, key=itemgetter('nom_count'), reverse=True)
             cache.set('community_top_steam', data, 60*5)
         else:
             data = community_top_steam_cache
@@ -1539,9 +1591,12 @@ def get_active_notifications(request):
         
         if new_date:
             new_date = datetime.fromtimestamp(float(new_date))
-            all_notifications = Notification.objects.filter(Q(pending=True) | Q(active=True), created_date__gt=new_date, read=False).order_by('-created_date')
+            all_notifications = Notification.objects.filter(owner=portrit_user,
+                                                            active=True, 
+                                                            created_date__gt=new_date).order_by('-created_date')
         else:
-            all_notifications = Notification.objects.filter(Q(pending=True) | Q(active=True), read=False).order_by('-created_date')
+            all_notifications = Notification.objects.filter(owner=portrit_user,
+                                                            active=True).order_by('-created_date')
             
         data = [ ]
         for notification in all_notifications:
@@ -1776,12 +1831,14 @@ def search(request):
                 data.append({
                     'fid': user.fb_user.fid,
                     'name': user.name,
+                    'username': user.username,
                     'follow': False
                 })
             else:
                 data.append({
                     'fid': user.fb_user.fid,
                     'name': user.name,
+                    'username': user.username,
                     'follow': True
                 })
                 
@@ -1790,6 +1847,46 @@ def search(request):
     except Exception, err:
         print err
     
+    data = simplejson.dumps(data) 
+    return HttpResponse(data, mimetype='application/json')
+    
+def combined_search(request):
+    data = [ ]
+    q = request.GET.get('query')
+    access_token = request.GET.get('access_token')
+    SEARCH_LIMIT = 10
+
+    try:
+        if access_token:
+            source = get_user_from_access_token(access_token)
+            source_following = source.get_following()
+        else:
+            source_following = [ ]
+
+        users = Portrit_User.objects.filter(Q(username__icontains=q) | Q(name__icontains=q))[:SEARCH_LIMIT]
+        for user in users:
+            if user in source_following:
+                data.append({
+                    'fid': user.fb_user.fid,
+                    'name': user.name,
+                    'username': user.username,
+                    'wins': user.winning_nomination_count,
+                    'following': True
+                })
+            else:
+                data.append({
+                    'fid': user.fb_user.fid,
+                    'name': user.name,
+                    'username': user.username,
+                    'wins': user.winning_nomination_count,
+                    'following': False
+                })
+
+        from operator import itemgetter  
+        data = sorted(data, key=itemgetter('following', 'name'), reverse=True)
+    except Exception, err:
+        print err
+
     data = simplejson.dumps(data) 
     return HttpResponse(data, mimetype='application/json')
     
@@ -1813,12 +1910,14 @@ def search_by_names(request):
                 data.append({
                     'fid': user.fb_user.fid,
                     'name': user.name,
+                    'username': user.username,
                     'follow': False
                 })
             else:
                 data.append({
                     'fid': user.fb_user.fid,
                     'name': user.name,
+                    'username': user.username,
                     'follow': True
                 })
                 
@@ -1849,12 +1948,14 @@ def search_cool_kids(request):
                 data.append({
                     'fid': user.fb_user.fid,
                     'name': user.name,
+                    'username': user.username,
                     'follow': False
                 })
             else:
                 data.append({
                     'fid': user.fb_user.fid,
                     'name': user.name,
+                    'username': user.username,
                     'follow': True
                 })
 

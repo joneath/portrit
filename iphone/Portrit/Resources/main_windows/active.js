@@ -337,9 +337,10 @@ function add_profile_window(e){
 	setTimeout(function(){
 	    Ti.App.fireEvent('pass_user', {
             user: e.source.user,
-            name: e.source.name
+            name: e.source.name,
+            username: e.source.username
         });
-	}, 200);
+	}, 100);
 }
 
 function add_detail_window(e){
@@ -352,7 +353,7 @@ function add_detail_window(e){
             photo: e.source.photo,
             won: false
         });
-	}, 200);
+	}, 100);
 }
 
 function add_detail_trophy_window(e){
@@ -366,7 +367,7 @@ function add_detail_trophy_window(e){
             nom_cat: e.source.nom_cat,
             won: true
         });
-	}, 200);
+	}, 100);
 }
 
 function show_tags(e){
@@ -625,7 +626,7 @@ function render_comments(cont, comments){
     	    commentor_name_text = 'You';
     	}
     	else{
-    	    commentor_name_text = comments[i].owner_name;
+    	    commentor_name_text = comments[i].owner_username;
     	}
         
         commentor = Titanium.UI.createLabel({
@@ -640,6 +641,7 @@ function render_comments(cont, comments){
         });
         commentor.user = comments[i].owner_id;
         commentor.name = comments[i].owner_name;
+        commentor.username = comments[i].owner_username;
         commentor.addEventListener('click', add_profile_window);
         
         commentor_cont.add(commentor);
@@ -721,7 +723,7 @@ function render_nom(nom, top, row_count){
         nom_cat_color = get_nom_cat_color(nom_cat_underscore);
 
         nom_header = Titanium.UI.createView({
-            height:35,
+            height:30,
             width: 320,
         });
         
@@ -740,8 +742,8 @@ function render_nom(nom, top, row_count){
     		defaultImage: '../images/photo_loader.png',
     		left: 0,
     		top: 0,
-    		height: 35,
-    		width: 35,
+    		height: 30,
+    		width: 30,
     		hires: true,
     		zIndex: 1
     	});
@@ -752,7 +754,7 @@ function render_nom(nom, top, row_count){
     	    nominatee_name_text = 'You';
     	}
     	else{
-    	    nominatee_name_text = nom.nominatee_name;
+    	    nominatee_name_text = nom.nominatee_username;
     	}
 
     	nominatee_name = Titanium.UI.createLabel({
@@ -773,7 +775,7 @@ function render_nom(nom, top, row_count){
             color: '#fff',
             left: 0,
             top: 5,
-            right: 5,
+            right: 15,
             bottom: 5,
             textAlign: "right",
             size: {width: '100%', height: 'auto'},
@@ -784,7 +786,7 @@ function render_nom(nom, top, row_count){
             backgroundColor: '#222',
             borderRadius: 5,
             height: 20,
-            left: 40,
+            left: 35,
             width: 'auto',
             zIndex: 1
         });
@@ -796,10 +798,12 @@ function render_nom(nom, top, row_count){
         
         nominatee_profile_img.user = nom.nominatee;
         nominatee_profile_img.name = nom.nominatee_name;
+        nominatee_profile_img.username = nom.nominatee_username;
         nominatee_profile_img.addEventListener('click', add_profile_window);
     	
     	nominatee_name.user = nom.nominatee;
     	nominatee_name.name = nom.nominatee_name;
+    	nominatee_name.username = nom.nominatee_username;
     	nominatee_name.addEventListener('click', add_profile_window);
 
         //Add Header to row
@@ -906,6 +910,7 @@ function render_nom(nom, top, row_count){
     	
     	nominator_profile_img.user = nom.nominator;
     	nominator_profile_img.name = nom.nominator_name;
+    	nominator_profile_img.username = nom.nominator_username;
     	nominator_profile_img.addEventListener('click', add_profile_window);
     	
     	nominator_footer.add(nominator_profile_img);
@@ -932,7 +937,7 @@ function render_nom(nom, top, row_count){
     	    nominator_name_text = 'You';
     	}
     	else{
-    	    nominator_name_text = nom.nominator_name;
+    	    nominator_name_text = nom.nominator_username;
     	}
         
         nominator_name = Titanium.UI.createLabel({
@@ -952,6 +957,7 @@ function render_nom(nom, top, row_count){
         
         nominator_name.user = nom.nominator;
         nominator_name.name = nom.nominator_name;
+        nominator_name.username = nom.usernominator_name;
         nominator_name.addEventListener('click', add_profile_window);
         
         if (nom.tagged_users.length > 0){
@@ -1213,6 +1219,7 @@ function render_stream_photos(data){
     	});
     	photo.user = data[i].user_fid;
     	photo.name = data[i].name;
+    	photo.username = data[i].username;
     	photo.addEventListener('click', add_profile_window);
     	
     	row.add(photo);

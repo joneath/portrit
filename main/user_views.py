@@ -94,9 +94,9 @@ def login_fb_user(request):
                 portrit.load_user_friends(True)
         
             if not user.username:
-                check_username(user)
+                first = True
             data = get_user_data(user)
-            data['following'] = user.get_following_data()
+            # data['following'] = user.get_following_data()
             
             data['username'] = user.username
             data['first'] = first

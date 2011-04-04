@@ -300,7 +300,7 @@ function add_detail_trophy_window(e){
             user: user,
             won: true
         });
-	}, 200);
+	}, 100);
 }
 
 function render_trophies(data){
@@ -419,9 +419,10 @@ function add_profile_window(e){
 	setTimeout(function(){
 	    Ti.App.fireEvent('pass_user', {
             user: e.source.user,
-            name: e.source.name
+            name: e.source.name,
+            username: e.source.username
         });
-	}, 200);
+	}, 100);
 }
 
 function add_detail_window(e){
@@ -434,7 +435,7 @@ function add_detail_window(e){
             photo: e.source.photo,
             won: false
         });
-	}, 200);
+	}, 100);
 }
 
 function show_tags(e){
@@ -695,7 +696,7 @@ function render_comments(cont, comments){
     	    commentor_name_text = 'You';
     	}
     	else{
-    	    commentor_name_text = comments[i].owner_name;
+    	    commentor_name_text = comments[i].owner_username;
     	}
         
         commentor = Titanium.UI.createLabel({
@@ -710,6 +711,7 @@ function render_comments(cont, comments){
         });
         commentor.user = comments[i].owner_id;
         commentor.name = comments[i].owner_name;
+        commentor.username = comments[i].owner_username;
         commentor.addEventListener('click', add_profile_window);
         
         commentor_cont.add(commentor);
@@ -783,7 +785,7 @@ function render_active_view(data){
         nominate_photo.photo_id = data[i].id;
         
         photo_header = Titanium.UI.createView({
-            height: 35
+            height: 30
         });
         
         photo_header_background = Titanium.UI.createView({
@@ -921,6 +923,7 @@ function render_active_view(data){
     	
     	nominator_profile_img.user = data[i].nominator;
     	nominator_profile_img.name = data[i].nominator_name;
+    	nominator_profile_img.username = data[i].nominator_username;
     	nominator_profile_img.addEventListener('click', add_profile_window);
     	
     	nominator_footer.add(nominator_profile_img);
@@ -978,7 +981,7 @@ function render_active_view(data){
     	    nominator_name_text = 'You';
     	}
     	else{
-    	    nominator_name_text = data[i].nominator_name;
+    	    nominator_name_text = data[i].nominator_username;
     	}
         
         nominator_name = Titanium.UI.createLabel({
@@ -992,6 +995,7 @@ function render_active_view(data){
         });
         nominator_name.user = data[i].nominator;
         nominator_name.name = data[i].nominator_name;
+        nominator_name.username = data[i].nominator_username;
         nominator_name.addEventListener('click', add_profile_window);
         
         nominator_name_cont.add(nominated_by);

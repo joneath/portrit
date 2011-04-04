@@ -44,6 +44,14 @@ back_buttom.addEventListener('click', function(){
 
 window_nav_bar.add(back_buttom);
 
+var header_label = Titanium.UI.createLabel({
+        text: '',
+        color: '#fff',
+        textAlign: 'center',
+        font:{fontSize:22, fontWeight: 'bold'}
+    });
+window_nav_bar.add(header_label);
+
 win.add(window_nav_bar);
 
 window_activity = Titanium.UI.createActivityIndicator({
@@ -837,7 +845,7 @@ function render_active_view(data){
         nominate_photo.photo_id = data[i].id;
         
         photo_header = Titanium.UI.createView({
-            height: 35
+            height: 30
         });
         
         photo_header_background = Titanium.UI.createView({
@@ -1163,7 +1171,7 @@ function init_active_view(){
         	    active_noms_cache = data.active_noms;
                 render_active_view(active_noms_cache);
             };
-            var url = SERVER_URL + '/api/get_user_profile/?access_token=' + me.access_token + '&method=active&fb_user=' + user + '&source=' + me.fid;
+            var url = SERVER_URL + '/api/get_user_profile/?access_token=' + me.access_token + '&method=active&username=' + username + '&source=' + me.fid;
             xhr.open('GET', url);
             xhr.send();
             window_activity_cont.show();
@@ -1556,7 +1564,7 @@ function init_profile_view(){
             
             window_activity_cont.hide();
         };
-        var url = SERVER_URL + '/api/get_user_profile/?fb_user=' + user + '&source=' + me.fid + '&access_token=' + me.access_token;
+        var url = SERVER_URL + '/api/get_user_profile/?username=' + username + '&access_token=' + me.access_token;
         user_profile_request.open('GET', url);
         user_profile_request.send();   
     }
@@ -1578,7 +1586,9 @@ Ti.App.addEventListener('pass_user', function(eventData) {
     if (init_count == 0){
         user = String(eventData.user);
         name = String(eventData.name);
-
+        username = String(eventData.username);
+        
+        header_label.text = username;
         init_profile_view();
     }
 });

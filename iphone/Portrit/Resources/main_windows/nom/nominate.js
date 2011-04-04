@@ -72,19 +72,21 @@ var fadeOut = Titanium.UI.createAnimation({
 var selected_noms = { }
 var selcted_trophies_cont = null,
 var selected_trophy_count = 0;
+var max_nominations = 1;
 function trophy_selected(e){
     var cat = e.source.nom_cat;
     var index = e.source.index;
     var nom_cat_underscore = cat.replace(' ', '_').toLowerCase();
     
     if (typeof(selected_noms[nom_cat_underscore]) != "undefined"){
-        if (selected_trophy_count == 3){
-            max_trophy_selected_cont.hide();
-            trophy_scroll_view.animate({opacity: 1, duration:200})
+        if (selected_trophy_count == max_nominations){
+            max_trophy_selected_cont.animate({opacity: 0, duration:300, complete: function(){
+                max_trophy_selected_cont.zIndex = -1;
+            }});
         }
         
         trophy_thumbs[index].animate(fadeIn);
-        selected_noms[nom_cat_underscore].animate(fadeOut);
+        // selected_noms[nom_cat_underscore].animate(fadeOut);
         setTimeout(function(){
             selcted_trophies_cont.remove(selected_noms[nom_cat_underscore]);
             delete selected_noms[nom_cat_underscore];
@@ -98,8 +100,8 @@ function trophy_selected(e){
         selected_trophy_count -=1;
     }
     else{
-        if (selected_trophy_count < 3){
-            trophy_thumbs[index].animate(fadeTo);
+        if (selected_trophy_count < max_nominations){
+            // trophy_thumbs[index].animate(fadeTo);
 
             var trophy = Ti.UI.createImageView({
         		image: '../../images/trophies/large/' + nom_cat_underscore + '.png',
@@ -120,12 +122,32 @@ function trophy_selected(e){
             selected_noms[nom_cat_underscore] = trophy;
             selected_trophy_count +=1;
 
-            if (selected_trophy_count == 3){
-                max_trophy_selected_cont.show();
-                trophy_scroll_view.animate({opacity: .3, duration:200})
+            if (selected_trophy_count == max_nominations){
+                trophy_selected_text.text = trophy.nom_cat + ' Selected';
+                max_trophy_selected_cont.zIndex = 1;
+                max_trophy_selected_cont.animate({opacity: 1, duration:300});
             }
         }
     }
+}
+
+
+function clear_nominations(e){
+    max_trophy_selected_cont.zIndex = -1;
+    max_trophy_selected_cont.opacity = 0;
+    // max_trophy_selected_cont.animate({opacity: 0, duration:300, complete: function(){
+    //     
+    // }});
+
+    for (var cat in selected_noms){
+        if (cat && cat != ''){
+            selcted_trophies_cont.remove(selected_noms[cat]);
+            delete selected_noms[cat];
+        }
+    }
+    
+    selected_trophy_count = 0;
+    return false;
 }
 
 function post_nom(e){	
@@ -178,7 +200,7 @@ function post_nom(e){
         nominations_empty_message_cont.add(nominations_empty_message_background);
         
 	    var nominations_empty_message = Titanium.UI.createLabel({
-    	    text: 'Please select at least one trophy.',
+    	    text: 'Please select a trophy.',
             color: '#fff',
             left: 10,
             right: 10,
@@ -566,16 +588,38 @@ function init_nominate_view(){
 	
 	max_trophy_selected_cont = Titanium.UI.createView({
         height: 130,
-        width: 320
+        width: 320,
+        opacity: 0,
+        zIndex: -1
     });
-	max_trophy_selected = Titanium.UI.createLabel({
-	    text: 'Max Selected',
+    max_trophy_selected_cont.addEventListener('click', clear_nominations);
+    
+    max_trophy_selected_cont_background = Titanium.UI.createView({
+        backgroundColor: '#000',
+        opacity: .8,
+        height: '100%',
+        width: '100%',
+        zIndex: -1
+    });
+    max_trophy_selected_cont.add(max_trophy_selected_cont_background);
+    
+    trophy_selected_text = Titanium.UI.createLabel({
+	    text: '',
         color: '#fff',
+        top: 40,
+        size: {width: 'auto', height: 'auto'},
+        font:{fontSize:22, fontWeight: 'bold'}
+    });
+    max_trophy_selected_cont.add(trophy_selected_text);
+    
+	max_trophy_selected = Titanium.UI.createLabel({
+	    text: 'Click Next to Continue',
+        color: '#fff',
+        bottom: 35,
         size: {width: 'auto', height: 'auto'},
         font:{fontSize:16, fontWeight: 'bold'}
     });
     max_trophy_selected_cont.add(max_trophy_selected);
-    max_trophy_selected_cont.hide();
 	
     select_trophy_row.add(max_trophy_selected_cont)
     select_trophy_row.add(trophy_scroll_view);
@@ -775,4 +819,3 @@ Ti.App.addEventListener('pass_photo_data', function(eventData) {
 Ti.App.addEventListener('close_nominate_page', function(eventData) {
     win.close(); 
 });
-

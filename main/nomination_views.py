@@ -923,25 +923,39 @@ def get_top_stream(user):
     return data
     
 def get_top_users(user):
+    from operator import itemgetter
     data = [ ]
     try:
         user_top_cache = cache.get(str(user.id) + '_top_users')
         if user_top_cache == None:
             following = user.get_following()
-            friends = Portrit_User.objects.filter(Q(id=user.id) | Q(id__in=following), winning_nomination_count__gt=0, active=True, pending=False).order_by('winning_nomination_count')[:10]
-            #friends = fb_user.get_following().select_related().filter(Q(id=fb_user.id) | Q(id__in=friends)).annotate(num_wins=Count('winning_noms')).filter(num_wins__gt=0).order_by('-num_wins')[:10]
+            following_id_list = [ ]
+            for friend in following:
+                following_id_list.append(str(friend.id))
+            friends = Portrit_User.objects.filter(Q(id=user.id) | 
+                                                    Q(id__in=following_id_list), 
+                                                    winning_nomination_count__gt=0, 
+                                                    active=True, 
+                                                    pending=False).order_by('winning_nomination_count')[:10]
+                                                    
             for friend in friends:
+                top_cat = Nomination.objects.filter((Q(nominatee=friend) | 
+                                                    Q(tagged_users__in=[friend])), won=True).item_frequencies('nomination_category')
+
+                top_cat = sorted(top_cat.items(), key=itemgetter(1), reverse=True)[:1][0][0]
                 data.append({
                     'fid': friend.fb_user.fid,
                     'name': friend.name,
+                    'username': friend.username,
                     'noms_won': friend.winning_nomination_count,
-                    #'top_nom_cat': friend.winning_noms.all().annotate(noms_cat_count=Count('nomination_category')).order_by('-noms_cat_count')[0].nomination_category.name,
+                    'top_nom_cat': top_cat
                 })
+                
             cache.set(str(user.id) + '_top_users', data)
         else:
             data = user_top_cache
-    except:
-        pass
+    except Exception, err:
+        print err
     return data
     
 def get_target_friends(fb_user, current_user):

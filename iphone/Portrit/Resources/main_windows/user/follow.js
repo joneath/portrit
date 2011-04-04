@@ -79,9 +79,10 @@ function go_to_profile(e){
     	setTimeout(function(){
     	    Ti.App.fireEvent('pass_user', {
                 user: e.rowData.user_fid,
-                name: e.rowData.username
+                name: e.rowData.name,
+                username: e.rowData.username
             });
-    	}, 200);
+    	}, 100);
     }
 }
 
@@ -236,7 +237,8 @@ function render_follow_table_view(data){
         }
         
         row.user_fid = data[i].fid;
-        row.username = data[i].name;
+        row.name = data[i].name;
+        row.username = data[i].username;
         row.addEventListener('click', go_to_profile);
         
         row.add(profile_image);

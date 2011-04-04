@@ -6,25 +6,25 @@ function secondsToHms(d) {
 	var s = Math.floor(d % 3600 % 60);
 	
 	if (days > 1){
-	    return days + ' Days ago';
+	    return days + ' days ago';
 	}
 	else if (days == 1){
-	    return days + ' Day ago';
+	    return days + ' day ago';
 	}
 	else if (h > 1){
-	    return h + ' Hours ago';
+	    return h + ' hours ago';
 	}
 	else if (h == 1){
-	    return h + ' Hour ago';
+	    return h + ' hour ago';
 	}
 	else if (m > 1){
-	    return m + ' Minutes ago';
+	    return m + ' minutes ago';
 	}
 	else if (m == 1){
-	    return m + ' Minute ago';
+	    return m + ' minute ago';
 	}
 	else if (s >= 10){
-	    return s + ' Seconds ago';
+	    return s + ' seconds ago';
 	}
 	else{
 	    return 'Right now';

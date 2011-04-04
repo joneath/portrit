@@ -31,7 +31,7 @@ def notification_read(request):
         notification_ids = request.POST.get('notification_ids').split(',')
     except:
         pass
-        
+
     if notification_ids:
         try:
             ids = []
@@ -40,7 +40,7 @@ def notification_read(request):
                     ids.append(str(id))
 
             if kill:
-                Notification.objects.filter(pk__in=ids).update(read=True, active=False)
+                Notification.objects.filter(pk__in=ids).update(set__read=True, set__active=False)
             else:
                 Notification.objects.filter(id__in=ids).update(set__read=True, set__active=True)
         except:
@@ -61,9 +61,7 @@ def notification_read(request):
     
 def get_active_notifications(user):
     try:
-        all_notifications = Notification.objects(owner=user, active=True, read=False).order_by('-created_date')
-        if len(all_notifications) < 5:
-            all_notifications = Notification.objects(owner=user, active=True).order_by('-created_date')[:5]
+        all_notifications = Notification.objects(owner=user, active=True).order_by('read', '-created_date')
     
         data = [ ]
         for notification in all_notifications:

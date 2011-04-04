@@ -208,16 +208,22 @@ class Photo(Document):
     
     def get_photo(self):
         try:
-            return {
-                'id': str(self.id),
-                'created_time': time.mktime(self.created_date.utctimetuple()),
-                'thumbnail': self.thumbnail,
-                'crop': self.crop,
-                'crop_small': self.crop_small,
-                'source': self.large,
-                'height': self.height,
-                'width': self.width
-            }
+            photo_cache = cache.get(str(self.id) + '_photo')
+            if not photo_cache:
+                data = {
+                    'id': str(self.id),
+                    'created_time': time.mktime(self.created_date.utctimetuple()),
+                    'thumbnail': self.thumbnail,
+                    'crop': self.crop,
+                    'crop_small': self.crop_small,
+                    'source': self.large,
+                    'height': self.height,
+                    'width': self.width
+                }
+                cache.set(str(self.id) + '_photo', data)
+                return data
+            else:
+                return photo_cache
         except:
             return None
     
@@ -288,6 +294,8 @@ class Portrit_User(Document):
     portrit_fb_album_fid = IntField(default=0)
     
     #Analytics
+    web_app_first = BooleanField(default=True)
+    iphone_app_first = BooleanField(default=True)
     given_nomination_count = IntField(default=0)
     recieved_nomination_count = IntField(default=0)
     selfish_nomination_count = IntField(default=0)
@@ -318,6 +326,24 @@ class Portrit_User(Document):
             return True
         else:
             return False
+            
+    def get_following_ids(self):
+        from django.db.models import Q
+        try:
+            following_id_list = cache.get(str(self.id) + '_following_id')
+            if not following_id_list:
+                following = filter(lambda follow: follow.pending == False and follow.active == True and follow.user , self.following)
+                following_list = [ ]
+                for follow in following:
+                    following_list.append(follow.user.id)
+
+                cache.set(str(self.id) + '_following_id', following_list)
+                return following_list
+            else:
+                return following_id_list
+        except Exception, err:
+            print err
+            return []
     
     def get_following(self):
         try:
