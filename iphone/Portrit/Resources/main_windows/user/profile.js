@@ -280,8 +280,9 @@ function add_detail_trophy_window(e){
 	    Ti.App.fireEvent('pass_detail', {
             nom_id: e.source.nom_id,
             photo: e.source.photo,
-            nom_cat: e.source.nom_cat,
-            user: user,
+            cat: e.source.cat,
+            state: e.source.state,
+            user: username,
             won: true
         });
 	}, 200);
@@ -362,7 +363,8 @@ function render_trophies(data){
         	
         	photo_cont.nom_id = data[i].noms[j].id;
             photo_cont.photo = data[i].noms[j].photo;
-            photo_cont.nom_cat = data[i].noms[j].nomination_category;
+            photo_cont.cat = data[i].noms[j].nomination_category.replace(' ', '-');
+            photo_cont.state = 'profile_trophies';
             
         	photo_cont.addEventListener('click', add_detail_trophy_window);
         	
@@ -416,6 +418,8 @@ function add_detail_window(e){
 	    Ti.App.fireEvent('pass_detail', {
             nom_id: e.source.nom_id,
             photo: e.source.photo,
+            state: e.source.state,
+            cat: e.source.cat,
             won: false
         });
 	}, 200);
@@ -918,6 +922,8 @@ function render_active_view(data){
     	
     	main_image.nom_id = data[i].id;
     	main_image.photo = data[i].photo;
+    	main_image.cat = data[i].nomination_category.replace(' ', '-');
+    	main_image.state = 'profile_active';
     	main_image.addEventListener('click', add_detail_window);
     	
     	post_time_cont = Titanium.UI.createView({
@@ -1124,6 +1130,8 @@ function render_active_view(data){
         });
         nom_detail_button.nom_id = data[i].id;
         nom_detail_button.photo = data[i].photo;
+        nom_detail_button.cat = data[i].nomination_category.replace(' ', '-');
+        nom_detail_button.state = 'profile_active';
     	nom_detail_button.addEventListener('click', add_detail_window);
         
         photo_options = Ti.UI.createButton({

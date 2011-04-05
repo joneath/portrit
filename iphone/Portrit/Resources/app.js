@@ -296,6 +296,10 @@ function init_new_user(){
                 var data = JSON.parse(this.responseData);
                 if (data){
                     create_account_win.close(window_slide_out);
+                    var me = {
+                        'username': username.value
+                    };
+                    Ti.App.Properties.setString("me", JSON.stringify(me));
                     load_portrit(true);
                 }
             };
@@ -644,6 +648,7 @@ if (!Titanium.Facebook.loggedIn){
                 }
                 else if (data.auth == 'valid' && data['new'] == false){
                     me.access_token = data.access_token;
+                    me.username = data.username;
                     Ti.App.Properties.setString("me", JSON.stringify(me));
                     landing_win.animate(window_slide_out);
                     load_portrit(true);

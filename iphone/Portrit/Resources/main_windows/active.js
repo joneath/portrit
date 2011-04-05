@@ -4,7 +4,6 @@ Ti.include('../includes.js');
 var me = JSON.parse(Ti.App.Properties.getString("me")),
     win = Ti.UI.currentWindow,
     list_view_data = [ ],
-    noms_loaded = { },
     active_noms_cache = [ ],
     photos_cache = [ ],
     winners_noms_cache = [ ],
@@ -222,14 +221,12 @@ function load_more_noms(e){
         else if (selected_tab == 'active'){
             oldest_nom = data[data.length - 1].created_time;
             for (var i = 0; i < data.length; i++){
-                noms_loaded[data[i].id] = data[i];
                 render_nom(data[i], false);
             }
         }
         else if (selected_tab == 'winners'){
             oldest_nom = data[data.length - 1].created_time;
             for (var i = 0; i < data.length; i++){
-                noms_loaded[data[i].id] = data[i];
                 render_nom(data[i], false);
             }
         }
@@ -291,7 +288,6 @@ function render_active_list_view(data){
         newest_nom = data[0].created_time;
         oldest_nom = data[data.length - 1].created_time;
         for (var i = 0; i < data.length; i++){
-            noms_loaded[data[i].id] = data[i];
             render_nom(data[i], false);
         }
         if (data.length == 10){
@@ -311,7 +307,6 @@ function render_active_list_update(data){
     if (data.length > 0){
         newest_nom = data[0].created_time;
         for (var i = 0; i < data.length; i++){
-            noms_loaded[data[i].id] = data[i];
             render_nom(data[i], true, append_row_count);
             append_row_count += 1;
         }
@@ -351,6 +346,8 @@ function add_detail_window(e){
 	    Ti.App.fireEvent('pass_detail', {
             nom_id: e.source.nom_id,
             photo: e.source.photo,
+            state: e.source.state,
+            cat: e.source.cat,
             won: false
         });
 	}, 100);
@@ -365,6 +362,8 @@ function add_detail_trophy_window(e){
             nom_id: e.source.nom_id,
             photo: e.source.photo,
             nom_cat: e.source.nom_cat,
+            state: e.source.state,
+            cat: e.source.cat,
             won: true
         });
 	}, 100);
@@ -871,13 +870,16 @@ function render_nom(nom, top, row_count){
     	if (nom.won){
     	    main_image.nom_id = nom.id;
         	main_image.photo = nom.photo;
-        	main_image.nom_cat = nom.nomination_category;
+        	main_image.cat = nom.nomination_category.replace(' ', '-');
+        	main_image.state = 'stream_winners';
         	
         	main_image.addEventListener('click', add_detail_trophy_window);
     	}
     	else{
     	    main_image.nom_id = nom.id;
         	main_image.photo = nom.photo;
+        	main_image.cat = nom.nomination_category.replace(' ', '-');
+        	main_image.state = 'stream_active';
         	main_image.addEventListener('click', add_detail_window);
     	}
     	row.add(main_image);
@@ -1085,6 +1087,8 @@ function render_nom(nom, top, row_count){
         if (nom.won){
     	    nom_detail_button.nom_id = nom.id;
         	nom_detail_button.photo = nom.photo;
+        	nom_detail_button.cat = nom.nomination_category.replace(' ', '-');
+        	nom_detail_button.state = 'stream_winners';
         	nom_detail_button.nom_cat = nom.nomination_category;
         	
         	nom_detail_button.addEventListener('click', add_detail_trophy_window);
@@ -1092,6 +1096,8 @@ function render_nom(nom, top, row_count){
     	else{
             nom_detail_button.nom_id = nom.id;
             nom_detail_button.photo = nom.photo;
+            nom_detail_button.cat = nom.nomination_category.replace(' ', '-');
+            nom_detail_button.state = 'stream_active';
         	nom_detail_button.addEventListener('click', add_detail_window);
     	}
         
@@ -1254,7 +1260,6 @@ function activate_photo_stream(){
 
 function activate_active_view(){
     list_view_data = [ ];
-    render_active_list_view(active_noms_cache);
     
     if (active_noms_cache.length == 0){
         window_activity_cont.show();

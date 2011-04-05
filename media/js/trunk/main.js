@@ -493,9 +493,9 @@ $(document).ready(function(){
     function attach_login_handlers(){
         $('.top_cat_photo').live('mouseover mouseout', function(event) {
             if (event.type == 'mouseover') {
-                show_like_tooltip(this);
+                show_tooltip(this);
             } else {
-                hide_like_tooltip(this);
+                hide_tooltip(this);
             }
         });
     }
@@ -3103,34 +3103,34 @@ $(document).ready(function(){
         nom_cat_under = get_cat_under(nom_cat);
             
         if (state == 'stream_active'){
-            title = '<h1 class="title">Active <span class="nom_cat_' + nom_cat_under + '_text">' + nom_cat + '</span> Photos</h1>';
+            title = '<h1 class="title" state="' + state + '" cat="' + nom_cat + '">Active <span class="nom_cat_' + nom_cat_under + '_text">' + nom_cat + '</span> Photos</h1>';
         }
         else if (state == 'stream_winners'){
             won = true;
             vote_class = "won";
             vote_tooltip_text = 'Already won';
             
-            title = '<h1 class="title">Winning Photos</h1>';
+            title = '<h1 class="title" state="' + state + '" cat="' + nom_cat + '">Winning Photos</h1>';
         }
         else if (state == 'community_active'){
-            title = '<h1 class="title"><a href="/#!/' + nom.nominatee_username + '">' + nom.nominatee_username + '\'s</a> <span class="nom_cat_' + nom_cat_under + '_text">' + nom_cat + '</span> Photo</h1>';
+            title = '<h1 class="title" state="' + state + '" cat="' + nom_cat + '"><a href="/#!/' + nom.nominatee_username + '">' + nom.nominatee_username + '\'s</a> <span class="nom_cat_' + nom_cat_under + '_text">' + nom_cat + '</span> Photo</h1>';
         }
         else if (state == 'community_top'){
-            title = '<h1 class="title">Top Community <span class="nom_cat_' + nom_cat_under + '_text">' + nom_cat + '</span> Photos</h1>';
+            title = '<h1 class="title" state="' + state + '" cat="' + nom_cat + '">Top Community <span class="nom_cat_' + nom_cat_under + '_text">' + nom_cat + '</span> Photos</h1>';
         }
         else if (state == 'profile_trophies'){
             won = true;
             vote_class = "won";
             vote_tooltip_text = 'Already won';
             
-            title = '<h1 class="title"><a href="/#!/' + nom.nominatee_username + '">' + nom.nominatee_username + '\'s</a> Winning Photos</h1>';
+            title = '<h1 class="title" state="' + state + '" cat="' + nom_cat + '"><a href="/#!/' + nom.nominatee_username + '">' + nom.nominatee_username + '\'s</a> Winning Photos</h1>';
             
         }
         else if (state == 'profile_active'){
-            title = '<h1 class="title"><a href="/#!/' + nom.nominatee_username + '">' + nom.nominatee_username + '\'s</a> Active Nominations</h1>';
+            title = '<h1 class="title" state="' + state + '" cat="' + nom_cat + '"><a href="/#!/' + nom.nominatee_username + '">' + nom.nominatee_username + '\'s</a> Active Nominations</h1>';
         }
         else{
-            title = '<h1 class="title"><a href="/#!/' + nom.nominatee_username + '">' + nom.nominatee_username + '\'s</a> Photo</h1>';
+            title = '<h1 class="title" state="' + state + '" cat="' + nom_cat + '"><a href="/#!/' + nom.nominatee_username + '">' + nom.nominatee_username + '\'s</a> Photo</h1>';
             
         }
         
@@ -3170,7 +3170,7 @@ $(document).ready(function(){
         
         var nominator_caption = '';
         if (nom.caption){
-            nominator_caption = 'Caption: ' + nom.caption;
+            nominator_caption = 'Caption: ' + nom.caption.replace(/(\r\n|\n|\r)/gm,"");;
         }
         
         if (nom.tagged_users.length > 0){
@@ -3285,33 +3285,34 @@ $(document).ready(function(){
         render_nom_votes(nom.votes);
     }
     
-    var get_votes_timeout = null;
-    function get_nom_votes(id){
-        clearTimeout(get_votes_timeout);
-        get_comment_timeout = setTimeout(function(){
-            $('#nom_votes_wrap a').remove();
-            $('#nom_votes_wrap').append('<img id="votes_loading" src="http://portrit.s3.amazonaws.com/img/ajax-loader-light.gif"/>');
-            $.getJSON('/get_nom_votes/', {'nom_id': id}, function(data){
-                clearTimeout(get_votes_timeout);
-                $('#votes_loading').remove();
-                
-                render_nom_votes(data);
-            });
-        }, 300);
-    }
+    // var get_votes_timeout = null;
+    // function get_nom_votes(id){
+    //     clearTimeout(get_votes_timeout);
+    //     get_comment_timeout = setTimeout(function(){
+    //         $('#nom_votes_wrap a').remove();
+    //         $('#nom_votes_wrap').append('<img id="votes_loading" src="http://portrit.s3.amazonaws.com/img/ajax-loader-light.gif"/>');
+    //         $.getJSON('/get_nom_votes/', {'nom_id': id}, function(data){
+    //             clearTimeout(get_votes_timeout);
+    //             $('#votes_loading').remove();
+    //             
+    //             render_nom_votes(data);
+    //         });
+    //     }, 300);
+    // }
     
     var get_comment_timeout = null;
     function get_nom_comments(id){
         if ($('#loader').length == 0){
             append_load($('#nom_comments_cont'), 'light');
         }
-        $.getJSON('/api/get_comments/', {'nom_id': id}, function(data){
-            clearTimeout(get_comment_timeout);
-            remove_load('fade');
-            setTimeout(function(){
+        
+        clearTimeout(get_comment_timeout);
+        get_comment_timeout = setTimeout(function(){
+            $.getJSON('/api/get_comments/', {'nom_id': id}, function(data){
+                remove_load();
                 render_nom_comments(data);
-            }, 300);
-        });
+            });
+        }, 300);
     }
     
     function render_nom_votes(votes){
@@ -3346,6 +3347,7 @@ $(document).ready(function(){
             now = null;
             
         if (comments.length > 0){
+            $('#comments_empty').remove();
             for (var i = 0; i < comments.length; i++){
                 now = new Date();
                 time = new Date(comments[i].create_datetime * 1000);
@@ -3459,17 +3461,12 @@ $(document).ready(function(){
         var blanks = community_top - data.length;
         
         for (var i = 0; i < data.length; i++){
-            photo_list_html =  '<div class="community_photo_cont" pid="' + data[i].photo.id + '">' +
+            photo_list_html =  '<div class="community_photo_cont" pid="' + data[i].photo.id + '" name="' + data[i].username + '">' +
                                             '<img src="' + data[i].photo.crop + '" owner="' + data[i].username + '" pid="' + data[i].photo.id +'"/>' +
-                                            '<div class="community_photo_overlay">' +
-                                                '<a href="/#!/' + data[i].username + '">' +
-                                                    '<img src="https://graph.facebook.com/' + data[i].user_fid + '/picture?type=square"/>' +
-                                                '</a>' +
-                                                '<a href="/#!/' + data[i].username + '">' + data[i].username + '</a>' +
-                                            '</div>' +
                                     '</div>';
             $('#recent_left_cont').append(photo_list_html);
         }
+        $('#recent_left_cont').append('<p class="tooltip"></p>');
         
         if (typeof(append) == 'undefined'){
             for (var i = 0; i < blanks; i++){
@@ -3966,6 +3963,9 @@ $(document).ready(function(){
             
             if (data[i].caption){
                 caption = data[i].caption;
+                if (caption.length > 40){
+                    caption
+                }
             }
             else{
                 caption = 'No caption provided.'
@@ -4218,6 +4218,16 @@ $(document).ready(function(){
         $('#recent_left_cont').html('');
         append_load($('#recent_left_cont'), 'light');
         $.getJSON('/api/get_winners_stream/', {'access_token': fb_session.access_token}, function(data){
+            remove_load();
+            render_recent_stream(data, $('#recent_left_cont'));
+        });
+    }
+    
+    function get_more_stream_winners(id){
+        scroll_loading = true;
+        append_load($('#recent_left_cont'), 'light');
+        $.getJSON('/api/get_winners_stream/', {'access_token': fb_session.access_token, 'id': id, 'dir': 'old'}, function(data){
+            scroll_loading = false;
             remove_load();
             render_recent_stream(data, $('#recent_left_cont'));
         });
@@ -4554,13 +4564,21 @@ $(document).ready(function(){
                 $('#profile_user_context').append('<div id="user_photo_cont"></div>');
             }
             var img_html = '';
+            var now = new Date();
             for (var i = 0; i < data.length; i++){
-                img_html =  '<div class="user_photo_wrap" pid="' + data[i].id + '">' +
+                time = new Date(data[i].created_time * 1000);
+                time_diff = now - time;
+                time_diff /= 1000;
+                
+                img_html =  '<div class="user_photo_wrap" pid="' + data[i].id + '" name="' + secondsToHms(time_diff) + '">' +
                                 '<a href="/#!/' + selected_user.username + '/photos/" value="' + data[i].id + '">' +
                                     '<img src="' + data[i].crop + '"/>' +
                                 '</a>' +
                             '</div>';
                 $('#user_photo_cont').append(img_html);
+            }
+            if ($('#user_photo_cont .tooltip').length == 0){
+                $('#user_photo_cont').append('<p class="tooltip"></p>');
             }
             $('#user_photo_cont').append('<div class="clear"></div>');
         }
@@ -4582,9 +4600,12 @@ $(document).ready(function(){
                 noms = data[i].noms;
 
                 cat_html =  '<div class="top_nom_cat">' +
-                                '<h2 class="top_cat_heading nom_cat_' + cat_underscore + '">' +
-                                    cat_name + 
-                                '</h2>' +
+                                '<div class="top_cat_heading nom_cat_' + cat_underscore + '">' +
+                                    '<h2>' +
+                                        cat_name + 
+                                    '</h2>' +
+                                    '<div class="clear"></div>' +
+                                '</div>' +
                                 '<div class="top_nom_cat_cont"><p class="tooltip"></p>';
 
                 for (var j = 0; j < noms.length; j++){
@@ -4713,26 +4734,26 @@ $(document).ready(function(){
     }
     
     function init_profile_active(){
-        $('#profile_user_context').html('');
+        $('#profile_user_context').html('<div id="profile_active_cont"><div id="top_right_cont"></div><div id="recent_left_cont"></div><div class="clear"></div></div>');
         if (!user_profile_data.active_noms){
-            append_load($('#profile_user_context'), 'light');
+            append_load($('#recent_left_cont'), 'light');
             $.getJSON('/api/get_user_profile/', {'access_token': fb_session.access_token, 'username': selected_user.username, 'method': 'active'}, function(data){
                 remove_load();
                 user_profile_data.active_noms = data.active_noms;
                 if (user_profile_data.active_noms.length > 0){
-                    render_recent_stream(user_profile_data.active_noms, $('#profile_user_context'));
+                    render_recent_stream(user_profile_data.active_noms, $('#recent_left_cont'));
                 }
                 else{
-                    $('#profile_user_context').append('<div id="cont_empty"><h2>' + selected_user.name + ' has no active nominations.</h2></div>')
+                    $('#recent_left_cont').append('<div id="cont_empty"><h2>' + selected_user.name + ' has no active nominations.</h2></div>')
                 }
             });
         }
         else{
             if (user_profile_data.active_noms.length > 0){
-                render_recent_stream(user_profile_data.active_noms, $('#profile_user_context'));
+                render_recent_stream(user_profile_data.active_noms, $('#recent_left_cont'));
             }
             else{
-                $('#profile_user_context').append('<div id="cont_empty"><h2>' + selected_user.name + ' has no active nominations.</h2></div>')
+                $('#recent_left_cont').append('<div id="cont_empty"><h2>' + selected_user.name + ' has no active nominations.</h2></div>')
             }
         }
     }
@@ -4951,6 +4972,14 @@ $(document).ready(function(){
             stream_view = '';
             window.location.href = '/#!/' + username;
         });
+        
+        $('.user_photo_wrap').live('mouseover mouseout', function(event) {
+            if (event.type == 'mouseover') {
+                show_tooltip(this);
+            } else {
+                hide_tooltip(this);
+            }
+        });
     }
     
     var date = new Date();
@@ -5031,56 +5060,33 @@ $(document).ready(function(){
     
     var like_tooltip_timeout = null;
     var expand_timeout = null;
-    function show_like_tooltip(that){
-        // if (!mobile){
-            clearTimeout(like_tooltip_timeout);
-            var tooltip_that = this;
-            $('.tooltip:visible').css({
-                'top': '0px', 
-                'opacity': '0'
-            });
+    function show_tooltip(that){
+        clearTimeout(like_tooltip_timeout);
+        var tooltip_that = this;
+        $('.tooltip:visible').css({
+            'top': '0px', 
+            'opacity': '0'
+        });
 
-            var name = $(that).attr('name');
-            if (name != ''){
-                var height = $(that).outerHeight();
-                var left = $(that).position().left + (($(that).outerWidth() - $('.tooltip').width()) / 2) - 4;
-                var top = $(that).position().top - 30;
-                $(that).parent().find('.tooltip').html(name + '<span class="tooltip_arrow"></span>').css({
-                    'top': top,
-                    'left': left, 
-                    'width': '150px',
-                    'opacity': '1.0',
-                    'z-index': '100'
-                });
-            }
-            else{
-                var id = $(that).attr('value');
-                
-                FB.api('/' + id, function(response) {
-                    name = response.name;
-                    $(that).attr('name', name);
-                    var height = $(that).outerHeight();
-                    var left = $(that).position().left + (($(that).outerWidth() - $('.tooltip').width()) / 2) - 4;
-                    var top = $(that).position().top - 30;
-                    $(that).parent().find('.tooltip').html(name + '<span class="tooltip_arrow"></span>').css({
-                        'top': top,
-                        'left': left, 
-                        'width': '150px',
-                        'opacity': '1.0',
-                        'z-index': '100'
-                    });
-                });
-            }
-        // }
+        var name = $(that).attr('name');
+        if (name != ''){
+            var left = $(that).position().left + (($(that).width() - $('.tooltip').width()) / 2) - 4;
+            var top = $(that).position().top - 30;
+            $(that).parent().find('.tooltip').html(name + '<span class="tooltip_arrow"></span>').css({
+                'top': top,
+                'left': left, 
+                'width': '150px',
+                'opacity': '1.0',
+                'z-index': '100'
+            });
+        }
     }
     
-    function hide_like_tooltip(that){
-        // if (!mobile){
-            $(that).parent().find('.tooltip').css({
-                'opacity': '0',
-                'z-index': '-1'
-            });
-        // }
+    function hide_tooltip(that){
+        $(that).parent().find('.tooltip').css({
+            'opacity': '0',
+            'z-index': '-1'
+        });
     }
     
     function render_more_comments(comments, cont){
@@ -5641,29 +5647,25 @@ $(document).ready(function(){
         
         $('.top_cat_photo_cont').live('mouseover mouseout', function(event) {
             if (event.type == 'mouseover') {
-                show_like_tooltip(this);
+                show_tooltip(this);
             } else {
-                hide_like_tooltip(this);
+                hide_tooltip(this);
             }
         });
         
         $('.community_photo_cont').live('mouseover mouseout', function(event) {
             if (event.type == 'mouseover') {
-                // var name = $('.community_photo_overlay a', this).text();
-                // var that = this;
-                // $('.community_photo_overlay a', that).text(name);
-                $('.community_photo_overlay', this).show();
-            } 
-            else{
-                $('.community_photo_overlay', this).hide();
+                show_tooltip(this);
+            } else {
+                hide_tooltip(this);
             }
         });
         
         $('.voted_cont a, .new_photo_cont').live('mouseover mouseout', function(event) {
             if (event.type == 'mouseover') {
-                show_like_tooltip(this);
+                show_tooltip(this);
             } else {
-                hide_like_tooltip(this);
+                hide_tooltip(this);
             }
         });
         
@@ -5706,7 +5708,7 @@ $(document).ready(function(){
             if (view_active == 'stream_active'){
                 var last_nom = $('.recent_nom_cont:last');
                 
-                if ($(last_nom).hasClass('end') == false){
+                if ($(last_nom).hasClass('end') == false && $('.recent_nom_cont').length >= 10){
                     $(last_nom).addClass('end');
                     var id = $(last_nom).attr('id');
                     get_more_stream_active(id);
@@ -5715,19 +5717,25 @@ $(document).ready(function(){
             else if (view_active == 'stream_photos'){
                 var last_photo = $('.community_photo_cont:last');
                 
-                if ($(last_photo).hasClass('end') == false){
+                if ($(last_photo).hasClass('end') == false && $('.community_photo_cont').length >= 15){
                     $(last_photo).addClass('end');
                     var pid = $(last_photo).attr('pid');
                     get_more_stream_photos(pid);
                 }
             }
             else if (view_active == 'stream_winners'){
+                var last_nom = $('.recent_nom_cont:last');
                 
+                if ($(last_nom).hasClass('end') == false && $('.recent_nom_cont').length >= 10){
+                    $(last_nom).addClass('end');
+                    var id = $(last_nom).attr('id');
+                    get_more_stream_winners(id);
+                }
             }
             else if (view_active == 'community_photos'){
                 var last_photo = $('.community_photo_cont:last');
                 
-                if ($(last_photo).hasClass('end') == false){
+                if ($(last_photo).hasClass('end') == false && $('.community_photo_cont').length >= 21){
                     $(last_photo).addClass('end');
                     var pid = $(last_photo).attr('pid');
                     get_more_community_photos(pid);
@@ -5736,7 +5744,7 @@ $(document).ready(function(){
             else if (view_active == 'community_active'){
                 var last_nom = $('.community_active_cont:last');
                 
-                if ($(last_nom).hasClass('end') == false){
+                if ($(last_nom).hasClass('end') == false && $('.community_active_cont').length >= 10){
                     $(last_nom).addClass('end');
                     var id = $(last_nom).attr('id');
                     get_more_community_active(id);
@@ -6352,9 +6360,9 @@ $(document).ready(function(){
         
         $('.tagged_user').live('mouseover mouseout', function(event) {
             if (event.type == 'mouseover') {
-                show_like_tooltip(this);
+                show_tooltip(this);
             } else {
-                hide_like_tooltip(this);
+                hide_tooltip(this);
             }
         });
         
@@ -6700,10 +6708,129 @@ $(document).ready(function(){
         // get_nom_votes(nom.id);
     }
     
+    function render_more_nom_detail(data, dir){
+        if (data.length > 0){
+            create_nom_cache(data);
+
+            var nom_in_cat = null;
+            var nom_stream_html = '';
+            for (var i = 0; i < data.length; i++){
+                nom_in_cat = data[i];
+                nom_stream_html +=  '<div id="nom_photo_' + nom_in_cat.id + '" class="nom_photo_thumbnail" style="opacity: 0.6; display:none;">' +
+                                        '<img src="' + nom_in_cat.photo.crop_small + '"/>' +
+                                    '</div>';
+            }
+
+            if (dir == 'up'){
+                $('#nom_cat_stream').append(nom_stream_html);
+            }
+            else{
+                $('#nom_cat_stream .next_photo').after(nom_stream_html);
+            }
+
+            slide_images = $('.nom_photo_thumbnail');
+
+            var img_widths = [ ];
+            var slide_center = 0;
+            var slide_img_width = 0;
+            var center_found = false;
+            var mid_screen = $('#nom_cat_stream').width() / 2;
+            $(slide_images).each(function(j, selected){
+                slide_img_width = 100;
+                if ($(this).attr('name') === 'selected'){
+                    slide_center += (slide_img_width / 2);
+                    center_found = true;
+                }
+                else if (center_found === false){
+                    slide_center += slide_img_width + 20;
+                }
+
+                img_widths.push(slide_img_width + 20);
+            });
+
+            var previous_x = 0;
+            var margin_offset = mid_screen - slide_center;
+
+            $(slide_images).each(function(i, selected){
+                    $(this).css({
+                        'left': previous_x + margin_offset,
+                        'top': 0
+                    });
+                previous_x += img_widths[i];
+            });
+
+            $('.nom_photo_thumbnail').show();
+        }
+        else{
+            if (dir == 'up'){
+                $('.nom_photo_thumbnail:last').attr('end', true);
+            }
+            else{
+                $('.nom_photo_thumbnail:first').attr('end', true);
+            }
+        }    
+    }
+    
+    function load_more_noms(state, cat, dir, pos_to_load){
+        if (state == 'stream_active'){
+            $.getJSON('/api/get_nom_detail/', {'source': selected_user.username, 'nav_selected': state, 'cat': cat, 'dir': dir, 'pos': pos_to_load}, function(data){
+                render_more_nom_detail(data, dir);
+            });
+        }
+        else if (state == 'stream_winners'){
+            
+        }
+        else if (state == 'community_active'){
+            
+        }
+        else if (state == 'community_top'){
+            $.getJSON('/api/get_nom_detail/', {'nav_selected': state, 'cat': cat, 'dir': dir, 'pos': pos_to_load}, function(data){
+                render_more_nom_detail(data, dir);
+            });
+        }
+        else if (state == 'profile_trophies'){
+
+        }
+        else if (state == 'profile_active'){
+
+        }
+    }
+    
+    function check_detail_pagination(current, selected, len, pos){
+        var load_sensitivity = 3;
+        
+        var loaded_top = len - selected + pos;
+        var loaded_bottom = pos - selected;
+        var pos_to_load = 0;
+        var dir = null;
+        
+        var state = $('#nom_detail_cont .title').attr('state');
+        var cat = $('#nom_detail_cont .title').attr('cat');
+        
+        if (loaded_top >= 9 && selected > current && selected + load_sensitivity >= loaded_top && $('.nom_photo_thumbnail:last').attr('end') == undefined){
+            dir = 'up';
+            pos_to_load = loaded_top + 1
+        }
+        else if (selected < current && selected - load_sensitivity <= loaded_bottom && loaded_bottom > 0){
+            dir = 'down'
+            pos_to_load = loaded_bottom
+        }
+        
+        if (dir){
+            load_more_noms(state, cat, dir, pos_to_load);
+        }
+    }
+    
     function attach_nom_detail_handlers(){
         $('.nom_photo_thumbnail').live('click', function(){
             var nom_id = $(this).attr('id').replace('nom_photo_', '');
             var nom = nom_cache[nom_id];
+            
+            var current_selected_index = $('.nom_photo_thumbnail').index($('.nom_photo_thumbnail[name="selected"]'));
+            var selected_index = $('.nom_photo_thumbnail').index(this);
+            var noms_length = $('.nom_photo_thumbnail').length - 1;
+            
+            check_detail_pagination(current_selected_index, selected_index, noms_length, nom.position);
             
             var slide_images = $('.nom_photo_thumbnail');
             var img_widths = [ ];
@@ -6741,17 +6868,17 @@ $(document).ready(function(){
         
         $('.won').live('mouseover mouseout', function(event) {
             if (event.type == 'mouseover') {
-                show_like_tooltip(this);
+                show_tooltip(this);
             } else {
-                hide_like_tooltip(this);
+                hide_tooltip(this);
             }
         });
         
         $('#nom_votes_cont a').live('mouseover mouseout', function(event) {
             if (event.type == 'mouseover') {
-                show_like_tooltip(this);
+                show_tooltip(this);
             } else {
-                hide_like_tooltip(this);
+                hide_tooltip(this);
             }
         });
         
@@ -7115,6 +7242,7 @@ $(document).ready(function(){
         $('#profile_stats_cont > div').die('click')
         $('.user_photo_wrap a').die('click');
         $('.follow_wrap').die('click');
+        $('.user_photo_wrap').die('mouseover mouseout');
         
         // Gallery
         $('#gallery_next').die('click');
@@ -7205,6 +7333,9 @@ $(document).ready(function(){
                 else{
                     view_active = 'stream_winners';
                     if ($('#profile_cont').children().length == 0){
+                        append_wall_html();
+                    }
+                    if ($('#profile_cont').children().length == 0){
                         init_stream_view('winners');
                         init_stream_winners();
                     }
@@ -7272,6 +7403,9 @@ $(document).ready(function(){
                     else{
                         if (url_vars_list.length > 2){
                             view_active = 'community_active_detail';
+                            if (!selected_nom){
+                                selected_nom = url_vars_list[2];
+                            }
                             init_nom_detail('community_active');
                         }
                         else{

@@ -321,6 +321,8 @@ function add_detail_window(e){
 	    Ti.App.fireEvent('pass_detail', {
             nom_id: e.source.nom_id,
             photo: e.source.photo,
+            state: e.source.state,
+            cat, e.source.cat,
             won: false
         });
 	}, 100);
@@ -650,13 +652,12 @@ function render_top(data){
         		height: 75,
         		hires: true
         	});
-        	
-        	photo_cont.user = data[i].noms[j].nominatee;
-            photo_cont.name = data[i].noms[j].nominatee_name;
-            photo_cont.username = data[i].noms[j].nominatee_username;
-            photo_cont.nom_cat = data[i].noms[j].nomination_category;
             
-        	photo_cont.addEventListener('click', add_profile_window);
+            photo_cont.nom_id = data[i].noms[j].id;
+        	photo_cont.photo = data[i].noms[j].photo;
+        	photo_cont.cat = data[i].noms[j].nomination_category.replace(' ', '-');
+        	photo_cont.state = 'community_top';
+        	photo_cont.addEventListener('click', add_detail_window);
         	
         	row.add(photo_cont);
         	photo_in_row_count += 1;
@@ -810,6 +811,8 @@ function render_nom(nom, top, row_count){
 
         	main_image.nom_id = nom.id;
         	main_image.photo = nom.photo;
+        	main_image.cat = nom.nomination_category.replace(' ', '-');
+        	main_image.state = 'community_active';
         	main_image.addEventListener('click', add_detail_window);
         	nomination_wrap.add(main_image);
         	

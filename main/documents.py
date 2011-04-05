@@ -180,6 +180,18 @@ class Photo_Flag(EmbeddedDocument):
         'indexes': ['flagger']
     }
     
+class GPS_Data(EmbeddedDocument):
+    lat_long = GeoPointField()
+    altitude = FloatField()
+    heading = FloatField()
+    accuracy = FloatField()
+    speed = FloatField()
+    altitudeAccuracy = FloatField()
+    
+    meta = {
+        'indexes': ['lat_long']
+    }
+    
 class Photo(Document):
     active = BooleanField(default=True)
     validated = BooleanField(default=False)
@@ -197,13 +209,17 @@ class Photo(Document):
     height = IntField()
     width = IntField()
     
+    location = EmbeddedDocumentField(GPS_Data)
+    
     nominations = ListField(ReferenceField('Nomination'))
     flags = ListField(EmbeddedDocumentField(Photo_Flag))
     owner = ReferenceField('Portrit_User')
     
     meta = {
         'ordering': ['-created_date'],
-        'indexes': ['owner']
+        'indexes': ['owner',
+                    'location',
+                    'nominations']
     }
     
     def get_photo(self):

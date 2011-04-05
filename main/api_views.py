@@ -20,8 +20,7 @@ from settings import ENV, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, NODE_SOCKET, NOD
 from portrit_fb import Portrit_FB
 from nomination_views import get_target_friends, serialize_noms, serialize_nom, get_target_friends
 from datetime import datetime
-from itertools import chain
-import facebook, json, socket, time, math
+import facebook, json, socket, time, math, itertools
 
 def check_access_token(function=None):
     def _dec(view_func):
@@ -115,6 +114,7 @@ def sign_in_create(request):
             
             data = {'auth': 'valid',
                     'new': new,
+                    'username': user.username,
                     'access_token': access_token}
         except:
             data = {'auth': 'invalid'}
@@ -251,47 +251,69 @@ def get_top_stream(request):
     
 @check_access_token
 def get_winners_stream(request):
+    PAGE_SIZE = 10
     data = [ ]
     access_token = request.GET.get('access_token')
-    create_date = request.GET.get('create_date')
-    new_date = request.GET.get('new_date')
-    page_size = request.GET.get('page_size')
-    
-    if not page_size:
-        page_size = 10
+    dir = request.GET.get('dir')
+    id = request.GET.get('id')
     
     try:
         portrit_user = get_user_from_access_token(access_token)
         user = portrit_user.fb_user
-        following = portrit_user.get_following()
-        if create_date:
-            create_date = datetime.fromtimestamp(float(create_date))
-            winning_noms = Nomination.objects.filter(
-                Q(nominatee__in=following) |
-                Q(nominatee=portrit_user) |
-                Q(nominator=portrit_user),
-                created_date__lt=create_date, won=True).order_by('-created_date')[:page_size]
+        friends = portrit_user.get_following()
         
-        elif new_date:
-            new_date = datetime.fromtimestamp(float(new_date))
-            winning_noms = Nomination.objects.filter(
-                Q(nominatee__in=following) |
+        if dir == 'new':
+            nomination = Nomination.objects.get(id=id)
+            nominations = Nomination.objects.filter(
+                Q(nominatee__in=friends) |
                 Q(nominatee=portrit_user) |
                 Q(nominator=portrit_user),
-                created_date__gt=new_date, won=True).order_by('-created_date')[:page_size]
+                created_date__gt=nomination.created_date, 
+                won=True).order_by('-created_date')[:PAGE_SIZE]
+        elif dir == 'old':
+            nomination = Nomination.objects.get(id=id)
+            nominations = Nomination.objects.filter(
+                Q(nominatee__in=friends) |
+                Q(nominatee=portrit_user) |
+                Q(nominator=portrit_user),
+                created_date__lt=nomination.created_date, 
+                won=True).order_by('-created_date')[:PAGE_SIZE]
         else:
-            winning_noms = Nomination.objects.filter(
-                Q(nominatee__in=following) |
+            nominations = Nomination.objects.filter(
+                Q(nominatee__in=friends) |
                 Q(nominatee=portrit_user) |
                 Q(nominator=portrit_user),
-                won=True).order_by('-created_date')[:page_size]
+                won=True).order_by('-created_date')[:PAGE_SIZE]
         
-        data = serialize_noms(winning_noms)
+        data = serialize_noms(nominations)
     except Exception, err:
         print err
     
     data = simplejson.dumps(data)
     return HttpResponse(data, mimetype='application/json')
+    
+def paginate_data(data, dir, pos):
+    PAGE_SIZE = 10
+    bottom = 0
+    top = 10
+    pos = int(pos)
+
+    if pos + PAGE_SIZE > top:
+        if dir == 'up':
+            top = pos + PAGE_SIZE
+        else:
+            top = pos
+            
+    if top - PAGE_SIZE > 0:
+        bottom = top - PAGE_SIZE
+        
+    print top
+    print bottom
+        
+    data = data[bottom:top]
+    print len(data)
+    data = serialize_noms(data, bottom)
+    return data
     
 def get_nom_detail(request):
     data = [ ]
@@ -302,14 +324,8 @@ def get_nom_detail(request):
     source = request.GET.get('source')
     community = request.GET.get('community')
     nav_selected = request.GET.get('nav_selected')
-    page = request.GET.get('page')
-    
-    if not page:
-        page = 1
-    else:
-        page = int(page)
-        
-    print nav_selected
+    pos = request.GET.get('pos')
+    dir = request.GET.get('dir')
     
     try:
         nomination = Nomination.objects.get(id=nom_id)
@@ -329,11 +345,30 @@ def get_nom_detail(request):
             Q(tagged_users__in=[source]) |
             Q(nominatee=source) |
             Q(nominator=source),
-            nomination_category=cat, 
+            nomination_category=cat,
             active=True, 
-            won=False).order_by('-current_vote_count', '-created_date')[PAGE_SIZE * (page - 1): PAGE_SIZE * page]
+            won=False).order_by('-current_vote_count', '-created_date')
+                
+        if dir:
+            data = paginate_data(data, dir, pos)
             
-        data = serialize_noms(data)
+        elif nomination:
+            data = list(data)
+            selected_index = data.index(nomination)
+            top = 10
+            bottom = 0
+        
+            if selected_index - 5 > 0:
+                bottom = selected_index - 4
+        
+            if selected_index + 5 > top:
+                top = selected_index + 5
+            
+            data = data[bottom:top]
+            data = serialize_noms(data, bottom)
+        else:
+            data = data[:PAGE_SIZE]
+            data = serialize_noms(data)
         
     elif nav_selected == 'stream_winners':
         data = Nomination.objects.filter(
@@ -342,30 +377,67 @@ def get_nom_detail(request):
             Q(tagged_users__in=[source]) |
             Q(nominatee=source) |
             Q(nominator=source),
-            won=True).order_by('-current_vote_count', '-created_date')[PAGE_SIZE * (page - 1): PAGE_SIZE * page]
+            won=True).order_by('-current_vote_count', '-created_date')[:PAGE_SIZE]
             
         data = serialize_noms(data)
         
     elif nav_selected == 'community_active':
-        data = [serialize_nom(nomination)]
+        cat = nomination.nomination_category
+        data = Nomination.objects.filter(
+            nomination_category=cat, 
+            active=True,
+            public=True,
+            won=False).order_by('-current_vote_count', '-created_date')
+            
+        if dir:
+            data = paginate_data(data, dir, pos)
+        else:
+            data = list(data)
+            selected_index = data.index(nomination)
+            top = 10
+            bottom = 0
+
+            if selected_index - 5 > 0:
+                bottom = selected_index - 4
+
+            if selected_index + 5 > top:
+                top = selected_index + 5
+
+            data = data[bottom:top]
+            data = serialize_noms(data, bottom)
         
     elif nav_selected == 'community_top':
         if nomination:
-            data = Nomination.objects.filter(
-                nomination_category=nomination.nomination_category, 
-                active=True,
-                public=True,
-                won=False).order_by('-current_vote_count', '-created_date')[PAGE_SIZE * (page - 1): PAGE_SIZE * page]
+            cat = nomination.nomination_category
         else:
-            print "here"
-            print cat
-            data = Nomination.objects.filter(
-                nomination_category=cat, 
-                active=True,
-                public=True,
-                won=False).order_by('-current_vote_count', '-created_date')[PAGE_SIZE * (page - 1): PAGE_SIZE * page]
-        
-        data = serialize_noms(data)
+            cat = cat.replace('-', ' ');
+            
+        data = Nomination.objects.filter(
+            nomination_category=cat, 
+            active=True,
+            public=True,
+            won=False).order_by('-current_vote_count', '-created_date')
+            
+        if dir:
+            data = paginate_data(data, dir, pos)
+
+        elif nomination:
+            data = list(data)
+            selected_index = data.index(nomination)
+            top = 10
+            bottom = 0
+
+            if selected_index - 5 > 0:
+                bottom = selected_index - 4
+
+            if selected_index + 5 > top:
+                top = selected_index + 5
+
+            data = data[bottom:top]
+            data = serialize_noms(data, bottom)
+        else:
+            data = data[:PAGE_SIZE]
+            data = serialize_noms(data)
         
     elif nav_selected == 'profile_trophies':
         cat = cat.replace('-', ' ');
@@ -373,7 +445,7 @@ def get_nom_detail(request):
             Q(tagged_users__in=[source]) |
             Q(nominatee=source),
             nomination_category=cat,
-            won=True).order_by('-current_vote_count', '-created_date')[PAGE_SIZE * (page - 1): PAGE_SIZE * page]
+            won=True).order_by('-current_vote_count', '-created_date')[:PAGE_SIZE]
             
         data = serialize_noms(data)
         
@@ -382,7 +454,7 @@ def get_nom_detail(request):
             Q(tagged_users__in=[source]) |
             Q(nominatee=source),
             active=True, 
-            won=False).order_by('-current_vote_count', '-created_date')[PAGE_SIZE * (page - 1): PAGE_SIZE * page]
+            won=False).order_by('-current_vote_count', '-created_date')# [PAGE_SIZE * (page - 1): PAGE_SIZE * page]
             
         data = serialize_noms(data)
         
@@ -402,7 +474,6 @@ def get_nom_detail(request):
     #     
     # else:
     #     data = serialize_nom(nomination)
-    
     data = simplejson.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
@@ -1124,7 +1195,11 @@ def get_follow_data_detailed(request):
                 trophy_count = 0
                 active_count = 0
                 try:
-                    photo_count = len(Photo.objects.filter(active=True, pending=False, owner=user))
+                    photo_count = len(Photo.objects.filter(owner=user,
+                                                    nominations__size=0,
+                                                    trophy=False,
+                                                    active=True, 
+                                                    pending=False))
                     trophy_count = len(Nomination.objects.filter(Q(nominatee=user) | Q(tagged_users__in=[user]), won=True))  #fb_user.winning_noms.all().count()
                     active_count = len(Nomination.objects.filter(Q(nominatee=user) | Q(tagged_users__in=[user]), active=True, won=False))  #fb_user.active_nominations.all().count()
                 except:
@@ -1600,15 +1675,36 @@ def get_active_notifications(request):
             
         data = [ ]
         for notification in all_notifications:
+            
+            try:
+                source_id = notification.source.fb_user.fid
+                source_name = notification.source.name
+                source_username = notification.source.username
+            except:
+                source_id = None
+                source_name = None
+                source_username = None
+                
+            try:
+                destination_id = notification.destination.fb_user.fid
+                destination_name = notification.destination.name
+                destination_username = notification.destination.username
+            except:
+                destination_id = None
+                destination_name = None
+                destination_username = None
+            
             if not notification.notification_type.name == 'new_follow':
                 data.append({
                     'notification_type': notification.notification_type.name,
                     'create_time': time.mktime(notification.created_date.utctimetuple()),
                     'read': notification.read,
-                    'source_id': notification.source.fb_user.fid,
-                    'source_name': notification.source.name,
-                    'destination_id': notification.destination.fb_user.fid,
-                    'destination_name': notification.destination.name,
+                    'source_id': source_id,
+                    'source_name': source_name,
+                    'source_username': source_username,
+                    'destination_id': destination_id,
+                    'destination_name': destination_name,
+                    'destination_username': destination_username,
                     'nomination': str(notification.nomination.id),
                     'photo': notification.nomination.photo.get_photo(),
                     'notification_id': str(notification.id),
@@ -1620,10 +1716,12 @@ def get_active_notifications(request):
                     'create_time': time.mktime(notification.created_date.utctimetuple()),
                     'read': notification.read,
                     'pending': notification.pending,
-                    'source_id': notification.source.fb_user.fid,
-                    'source_name': notification.source.name,
-                    'destination_id': notification.destination.fb_user.fid,
-                    'destination_name': notification.destination.name,
+                    'source_id': source_id,
+                    'source_name': source_name,
+                    'source_username': source_username,
+                    'destination_id': destination_id,
+                    'destination_name': destination_name,
+                    'destination_username': destination_username,
                     'notification_id': str(notification.id),
                 })
     except Exception, err:

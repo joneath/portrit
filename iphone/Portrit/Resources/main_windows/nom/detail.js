@@ -1295,7 +1295,7 @@ function render_nom_detail(noms){
     tv.setData([section]);
 }
 
-function init_detail_view(){
+function init_detail_view(state){
     var xhr = Titanium.Network.createHTTPClient();
     var url = '';
     var detail_header_text = '';
@@ -1337,7 +1337,6 @@ function init_detail_view(){
             
             render_nom_detail(noms_in_cat);
         };
-        url = SERVER_URL + '/api/get_noms_in_cat/?access_token=' + me.access_token + '&nom_id=' + nom_id;
     }
     else{
         xhr.onload = function()
@@ -1380,14 +1379,14 @@ function init_detail_view(){
             
             render_nom_detail(noms_in_cat);
         };
-        
-        if (user){
-            url = SERVER_URL + '/api/get_user_wins_trophy_cat/?fb_user=' + user + '&nom_cat=' + cat + '&nom_id='+  nom_id;
-        }
-        else{
-            url = SERVER_URL + '/api/get_all_wins_trophy_cat/?source=' + me.fid + '&nom_cat=' + cat + '&nom_id='+  nom_id;
-        }
     }
+    
+    var target_user = me.username;
+    if (user){
+        target_user = user;
+    }
+    
+    url = SERVER_URL + '/api/get_nom_detail/?source=' + target_user + '&nom_id=' + nom_id + '&nav_selected=' + state + '&cat=' + cat;
 
     xhr.open('GET', url);
 
@@ -1402,9 +1401,10 @@ Ti.App.addEventListener('pass_detail', function(eventData) {
         nom_id = String(eventData.nom_id);
         photo = eventData.photo;
         won = eventData.won;
+        state = eventData.state;
+        cat = String(eventData.cat);
         if (won == 1){
             won = true;
-            cat = String(eventData.nom_cat);
             if (typeof(eventData.user) != 'undefined'){
                 user = String(eventData.user);
             }
@@ -1423,7 +1423,6 @@ Ti.App.addEventListener('pass_detail', function(eventData) {
         });
 
         win.add(tv);
-
-        init_detail_view(false);
+        init_detail_view(state);
     }
 });

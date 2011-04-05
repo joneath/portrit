@@ -972,7 +972,7 @@ def get_target_friends(fb_user, current_user):
         
     return friends
     
-def serialize_noms(noms):
+def serialize_noms(noms, position=0):
     data = [ ]
     try:
         for nom in noms:
@@ -982,6 +982,10 @@ def serialize_noms(noms):
                     nom_data = nom.serialize_nom()
                 else:
                     nom_data = nom_cache
+                    
+                nom_data['position'] = position
+                position += 1
+                
                 data.append(nom_data)
             except:
                 pass
