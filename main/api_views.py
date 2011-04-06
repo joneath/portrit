@@ -637,7 +637,7 @@ def nominate_photo(request):
                                 nomination.tagged_users.append(tagged_user)
                                 
                                 try:
-                                    notification = Notification(source=nominator_portrit_user, destination=tagged_user, nomination=nomination, notification_type=tagged_notification)
+                                    notification = Notification(owner=tagged_user, source=nominator_portrit_user, destination=tagged_user, nomination=nomination, notification_type=tagged_notification)
                                     notification.save()
                                 except Exception, err:
                                     print err
@@ -666,8 +666,10 @@ def nominate_photo(request):
                         'nomination_category': nom_cat.title,
                         'nominator': nomination.nominator.fb_user.fid,
                         'nominator_name': nomination.nominator.name,
+                        'nominator_username': nomination.nominator.username,
                         'nominatee': nomination.nominatee.fb_user.fid,
                         'nominatee_name': nomination.nominatee.name,
+                        'nominatee_username': nomination.nominatee.username,
                         'tagged_users': nomination.get_tagged_users(),
                         'won': False,
                         'created_time': time.mktime(nomination.created_date.utctimetuple()),
@@ -692,6 +694,10 @@ def nominate_photo(request):
             target_friends = [ ]
             for tagged_user in tagged_user_list:
                 target_friends.append(tagged_user)
+                
+            if nomination.nominator != nomination.nominatee:
+                print "here"
+                target_friends.append(nomination.nominatee)
 
             target_friends = list(set(target_friends))
             friends = { }
@@ -940,6 +946,7 @@ def follow_unfollow_user(request):
                         'create_datetime': time.mktime(notification.created_date.utctimetuple()),
                         'follower_id': source.fid,
                         'follower_name': source_portrit_user.name,
+                        'follower_username': source_portrit_user.username,
                         'friends_to_update': [target.fid],
                     }
                 }
@@ -1852,9 +1859,11 @@ def new_comment(request):
                     'create_datetime': time.mktime(comment.created_date.utctimetuple()),
                     'comment_sender_id': user.fid,
                     'comment_sender_name': portrit_user.name,
+                    'comment_sender_username': portrit_user.username,
                     'nomination_category': nomination.nomination_category,
                     'nom_owner_id': owner.fb_user.fid,
                     'nom_owner_name': owner.name,
+                    'nom_owner_username': owner.username,
                     'won': nomination.won,
                     'friends': friends,
                     'friends_to_update': friends,

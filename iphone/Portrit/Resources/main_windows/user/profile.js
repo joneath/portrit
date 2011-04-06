@@ -420,6 +420,7 @@ function add_detail_window(e){
             photo: e.source.photo,
             state: e.source.state,
             cat: e.source.cat,
+            user: username,
             won: false
         });
 	}, 200);

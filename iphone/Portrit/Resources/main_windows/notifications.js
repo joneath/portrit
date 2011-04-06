@@ -56,13 +56,14 @@ function add_detail_window(e){
 	    Ti.App.fireEvent('pass_detail', {
             nom_id: e.rowData.nom_id,
             photo: e.rowData.photo,
+            user: e.rowData.username,
             won: false
         });
 	}, 200);
 }
 
 function add_detail_trophy_window(e){
-    var w = Ti.UI.createWindow({backgroundColor:"#333", url:'../nom/detail.js'});
+    var w = Ti.UI.createWindow({backgroundColor:"#333", url:'nom/detail.js'});
 	Titanium.UI.currentTab.open(w,{animated:true});
 	
 	setTimeout(function(){
@@ -71,6 +72,7 @@ function add_detail_trophy_window(e){
             photo: e.rowData.photo,
             nom_cat: e.rowData.nom_cat,
             user: e.rowData.user,
+            user: e.rowData.username,
             won: true
         });
 	}, 200);
@@ -84,7 +86,8 @@ function add_profile_window(e){
     	setTimeout(function(){
     	    Ti.App.fireEvent('pass_user', {
                 user: e.source.user,
-                name: e.source.name
+                name: e.source.name,
+                username: e.rowData.username,
             });
     	}, 200);
     }
@@ -120,6 +123,7 @@ function render_notifications(data){
         label_text = '',
         left_image = '',
         target_name = '',
+        target_username = '',
         time = null,
         now = new Date(),
         time_label = null,
@@ -133,19 +137,22 @@ function render_notifications(data){
         });
         
         if (data[i].notification_type == 'tagged_nom'){
-            label_text = data[i].source_name + ' tagged you in a photo.';
+            label_text = data[i].source_username + ' tagged you in a photo.';
             left_image = '../images/notification_tag.png';
             
             row.nom_id = data[i].nomination;
             row.photo = data[i].photo;
+            row.username = data[i].source_username;
         	row.addEventListener('click', add_detail_window);
         }
         else if (data[i].notification_type == 'nom_won'){
             if (data[i].destination_id == me.fid){
                 target_name = 'Your';
+                target_username = me.username;
             }
             else{
-                target_name = data[i].destination_name + '\'s';
+                target_name = data[i].destination_username + '\'s';
+                target_username = data[i].destination_username;
             }
             label_text = target_name + ' nomination won';
             left_image = '../images/notification_trophy.png';
@@ -154,32 +161,40 @@ function render_notifications(data){
             row.photo = data[i].photo;
             row.nom_cat = data[i].nomination_category;
             row.user = data[i].destination_id;
+            row.username = target_username;
             
         	row.addEventListener('click', add_detail_trophy_window);
         }
         else if (data[i].notification_type == 'new_nom'){
-            label_text = data[i].source_name + ' nominated your photo.';
+            label_text = data[i].source_username + ' nominated your photo.';
             left_image = '../images/notification_nomination.png';
             
             row.nom_id = data[i].nomination;
             row.photo = data[i].photo;
+            row.username = me.username;
+            
         	row.addEventListener('click', add_detail_window);
         }
         else if (data[i].notification_type == 'new_comment'){
             if (data[i].destination_id == me.fid){
                 target_name = 'your';
+                target_username = me.username;
             }
             else if (data[i].destination_id == data[i].source_id){
                 target_name = 'their';
+                target_username = data[i].source_username;
             }
             else{
-                target_name = data[i].destination_name + '\'s';
+                target_name = data[i].destination_username + '\'s';
+                target_username = data[i].destination_username
             }
-            label_text = data[i].source_name + ' commented on ' + target_name + ' photo.';
+            label_text = data[i].source_username + ' commented on ' + target_name + ' photo.';
             left_image = '../images/notification_comments.png';
             
             row.nom_id = data[i].nomination;
             row.photo = data[i].photo;
+            row.username = target_username;
+            
         	row.addEventListener('click', add_detail_window);
         }
         else if (data[i].notification_type == 'new_follow'){
@@ -197,15 +212,17 @@ function render_notifications(data){
                 pending_button_bar.row = row;
                 pending_button_bar.addEventListener('click', post_follow_permission);
                 row.add(pending_button_bar);
-                label_text = data[i].source_name + ' would like to follow you.';
+                label_text = data[i].source_username + ' would like to follow you.';
             }
             else{
-                label_text = data[i].source_name + ' has begun to follow you.';
+                label_text = data[i].source_username + ' has begun to follow you.';
             }
-            left_image = '../images/following_asset.png';
+            left_image = '../images/notification_following.png';
             
             row.user = data[i].source_id;
             row.name = data[i].source_name;
+            row.username = data[i].source_username;
+            
         	row.addEventListener('click', add_profile_window);
         }
         row.leftImage = left_image;
@@ -263,18 +280,22 @@ function render_notifications(data){
             notification_label.photo = data[i].photo;
             notification_label.nom_cat = data[i].nomination_category;
             notification_label.user = data[i].destination_id;
+            notification_label.username = data[i].destination_username;
             
             row.add(time_view);
         }
         else{
             nomination_category_bar = Titanium.UI.createView({
-                backgroundColor: '#fff',
+                backgroundColor: '#3da732',
                 height: 40,
                 width: 10,
                 right: 0,
             });
+            row.selectedBackgroundColor = '#3da732';
+            
             notification_label.user = data[i].source_id;
             notification_label.name = data[i].source_name;
+            notification_label.username = data[i].source_username;
             if (data[i].pending){
                 notification_label.right = 120;
             }

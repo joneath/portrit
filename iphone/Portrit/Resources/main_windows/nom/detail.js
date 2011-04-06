@@ -7,6 +7,7 @@ var win = Ti.UI.currentWindow,
     nom_id = null,
     cat = null,
     user = null,
+    username = null,
     won = false,
     photo = null,
     selected_nom = null,
@@ -75,6 +76,12 @@ function remove_comments(){
     
 function update_nom_detail(index){
     selected_nom = noms_in_cat[index];
+    
+    var nom_cat_underscore = selected_nom.nomination_category.replace(' ', '_').toLowerCase();
+    var nom_cat_color = get_nom_cat_color(nom_cat_underscore);
+    
+    detail_header_background.backgroundColor = nom_cat_color;
+    detail_middle_cont.backgroundColor = nom_cat_color;
     
     var nominatee_profile_img_url = 'https://graph.facebook.com/' + selected_nom.nominatee + '/picture?type=square';
     detail_header_profile_image.image = nominatee_profile_img_url;
@@ -767,7 +774,7 @@ function render_nom_detail(noms){
 	
 	var detail_row = Titanium.UI.createView({
         backgroundColor: '#fff',
-        height: 100,
+        height: 90,
         width: 320,
         bottom: 0
         // selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
@@ -777,13 +784,13 @@ function render_nom_detail(noms){
         backgroundImage: '../../images/upper_drop_shadow.png',
         height: 2,
         width: 320,
-        bottom: 100
+        bottom: 90
     });
     win.add(detail_row_top_shadow);
     
     var detail_left_cont = Titanium.UI.createView({
         backgroundColor: '#fff',
-        height: 100,
+        height: 90,
         width: 160,
         left: 0
     });
@@ -858,7 +865,7 @@ function render_nom_detail(noms){
     
     var nominator_bottom_cont = Titanium.UI.createView({
         backgroundColor: '#fff',
-        height: 60,
+        height: 50,
         width: 160,
         left: 0,
         top: 40
@@ -866,9 +873,12 @@ function render_nom_detail(noms){
     
     caption_top = 'auto';
     caption_text_align = 'center';    
+    caption_size = 12;
     var caption = '';
     if (selected_nom.caption){
         caption = selected_nom.caption;
+        caption_text_align = 'left';
+        caption_size = 10;
     }
     else{
         caption = 'No caption provided.';
@@ -878,10 +888,8 @@ function render_nom_detail(noms){
 	    textAlign: caption_text_align,
         color: '#333',
         top: caption_top,
-        left: 10,
-        right: 10,
-        font:{fontSize: 11},
-        size: {width: 140, height: 'auto'}
+        font:{fontSize: caption_size},
+        size: {width: 150, height: 'auto'}
     });
     nominator_bottom_cont.add(nominator_caption);
     
@@ -889,7 +897,7 @@ function render_nom_detail(noms){
     
     detail_middle_cont = Titanium.UI.createView({
         backgroundColor: nom_cat_color,
-        height: 100,
+        height: 90,
         width: 100,
         left: 160
     });
@@ -936,7 +944,7 @@ function render_nom_detail(noms){
     if (!won){
         var detail_right_cont = Titanium.UI.createView({
             backgroundColor: '#333',
-            height: 100,
+            height: 90,
             width: 60,
             left: 260
         });
@@ -945,7 +953,7 @@ function render_nom_detail(noms){
     		backgroundImage: '../../images/up_arrow.png',
     		width: 40,
     		height: 40,
-    		top: 5
+    		top: 3
     	});
     	vote_up.direction = 'up';
     	vote_up.addEventListener('click', vote);
@@ -954,7 +962,7 @@ function render_nom_detail(noms){
     		backgroundImage: '../../images/down_arrow.png',
     		width: 40,
     		height: 40,
-    		top: 55
+    		top: 48
     	});
     	vote_down.direction = 'down';
     	vote_down.addEventListener('click', vote);
@@ -1295,96 +1303,95 @@ function render_nom_detail(noms){
     tv.setData([section]);
 }
 
+function find_nom_in_list(id, data){
+    var selected_nom = data[0];
+    for (var i = 0; i < data.length; i++){
+        if (data[i].id == id){
+            selected_nom = data[i];
+            break;
+        }
+    }
+    return selected_nom;
+}
+
 function init_detail_view(state){
     var xhr = Titanium.Network.createHTTPClient();
     var url = '';
     var detail_header_text = '';
-    if (!won){
-        xhr.onload = function()
-        {
-            var data = JSON.parse(this.responseData);
-            selected_nom = data.selected_nom;
-            noms_in_cat = data.noms;
 
-            detail_header_text = 'Active ' + selected_nom.nomination_category + ' Photos';
-
-            var detail_header = Titanium.UI.createView({
-                height: 40,
-                width: 200
-            });
-
-            var nom_cat_label = Titanium.UI.createLabel({
-        	    text: detail_header_text,
-                textAlign: 'left',
-                color: '#fff',
-                height: 'auto',
-                width: 'auto',
-                opacity: 0,
-                minimumFontSize: 12,
-                font:{fontSize: 14, fontWeight: 'bold'}
-            });
-            detail_header.add(nom_cat_label);
-
-            window_nav_bar.add(detail_header);
-            
-            var lable_animation = Titanium.UI.createAnimation({
-                curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
-                opacity: 1,
-                duration: 200
-            });
-
-            nom_cat_label.animate(lable_animation);
-            
-            render_nom_detail(noms_in_cat);
-        };
-    }
-    else{
-        xhr.onload = function()
-        {
-            var data = JSON.parse(this.responseData);
-            var nom_cat_underscore = cat.replace(' ', '_').toLowerCase();
-            var nom_cat_color = get_nom_cat_color(nom_cat_underscore);
-            
-            selected_nom = data.selected_nom;
-            noms_in_cat = data.noms;
-            
-            detail_header_text = 'Winning ' + cat + ' Photos';
-
-            var detail_header = Titanium.UI.createView({
-                height: 40,
-                width: 200
-            });
-
-            var nom_cat_label = Titanium.UI.createLabel({
-        	    text: detail_header_text,
-                textAlign: 'left',
-                color: '#fff',
-                height: 'auto',
-                width: 'auto',
-                opacity: 0,
-                minimumFontSize: 12,
-                font:{fontSize: 14, fontWeight: 'bold'}
-            });
-            detail_header.add(nom_cat_label);
-
-            window_nav_bar.add(detail_header);
-            
-            var lable_animation = Titanium.UI.createAnimation({
-                curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
-                opacity: 1,
-                duration: 200
-            });
-
-            nom_cat_label.animate(lable_animation);
-            
-            render_nom_detail(noms_in_cat);
-        };
-    }
+    xhr.onload = function()
+    {
+        var data = JSON.parse(this.responseData);
+        if (nom_id){
+            selected_nom = find_nom_in_list(nom_id, data);
+        }
+        else{
+            selected_nom = data[0];
+        }
+        noms_in_cat = data;
+        
+        render_nom_detail(noms_in_cat);
+    };
     
     var target_user = me.username;
     if (user){
         target_user = user;
     }
+    
+    var heading_user = target_user + '\'s';
+    if (target_user == me.username){
+        heading_user = 'Your'
+    }
+    
+    detail_header_text = '';
+    if (state == 'stream_active'){
+        detail_header_text = 'Active ' + cat + ' Photos';
+    }
+    else if (state == 'stream_winners'){
+        detail_header_text = 'Winning Photos';
+    }
+    else if (state == 'community_active'){
+        detail_header_text = 'Community ' + cat + ' Photos';
+    }
+    else if (state == 'community_top'){
+        detail_header_text = 'Top Community ' + cat + ' Photos';
+    }
+    else if (state == 'profile_trophies'){
+        detail_header_text = heading_user + ' Winning Photos';
+    }
+    else if (state == 'profile_active'){
+        detail_header_text = heading_user + ' Active Nominations';
+    }
+    else{
+        detail_header_text = heading_user + ' Photo';
+    }
+
+    var detail_header = Titanium.UI.createView({
+        height: 40,
+        width: 200,
+    });
+
+    var nom_cat_label = Titanium.UI.createLabel({
+	    text: detail_header_text,
+        textAlign: 'left',
+        color: '#fff',
+        height: 'auto',
+        width: 'auto',
+        opacity: 0,
+        minimumFontSize: 11,
+        font:{fontSize: 14, fontWeight: 'bold'}
+    });
+    detail_header.add(nom_cat_label);
+
+    window_nav_bar.add(detail_header);
+    
+    var lable_animation = Titanium.UI.createAnimation({
+        curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
+        opacity: 1,
+        duration: 200
+    });
+
+    nom_cat_label.animate(lable_animation);
     
     url = SERVER_URL + '/api/get_nom_detail/?source=' + target_user + '&nom_id=' + nom_id + '&nav_selected=' + state + '&cat=' + cat;
 
@@ -1403,18 +1410,19 @@ Ti.App.addEventListener('pass_detail', function(eventData) {
         won = eventData.won;
         state = eventData.state;
         cat = String(eventData.cat);
+        if (typeof(eventData.user) != 'undefined'){
+            username = String(eventData.user);
+            user = String(eventData.user);
+        }
         if (won == 1){
             won = true;
-            if (typeof(eventData.user) != 'undefined'){
-                user = String(eventData.user);
-            }
         }
 
         tv = Ti.UI.createTableView({
                 backgroundColor: '#222',
                 separatorStyle: 0,
                 top: 40,
-                bottom: 100,
+                bottom: 90,
                 style: Titanium.UI.iPhone.TableViewStyle.PLAIN
             });
 

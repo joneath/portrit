@@ -1882,28 +1882,56 @@ div#nom_detail_cont{
         
         div#main_nom_cont_right{
             float:              right;
-            height:             500px;
+            height:             490px;
             width:              250px;
+            margin-top:         10px;
         }
         
             div#main_nom_cont_right_wrap{
-                height:                 500px;
+                height:                 490px;
                 position:               relative;
             }
-        
-            div#main_nom_cont_right h2{
-                border-bottom:          1px solid #DEDEDE;
-                color:                  #6E6E6E;
-                font-size:              20px;
-                margin-left:            20px;
-                margin-right:           20px;
-                padding-top:            10px;
-                padding-bottom:         5px;
-                text-align:             left;
+            
+            div#main_nom_cont_right_wrap div#nominatee_cont{
+                height:                 100px;
+                padding:                20px;
             }
             
+                div#nominatee_cont .user_img{
+                    float:                  left;
+                    height:                 50px;
+                    width:                  50px;
+                    position:               static;
+                }
+            
+                div#nomination_text_cont{
+                    color:              #555;
+                    margin-right:       5px;
+                    margin-left:        60px;
+                    text-align:         left;
+                }
+                
+                    div#nomination_text_cont span{
+                        color:                  #555;
+                        font-size:              22px;
+                    }
+                    
+                    div#nomination_text_cont span:hover{
+                        text-decoration:        underline;
+                    }
+            
+                    div#nomination_text_cont p{
+                        font-size:              18px;
+                        margin-top:             5px;
+                    }
+                
+                    div#nomination_text_cont h3{
+                        font-size:              30px;
+                        font-weight:            bold;
+                    }
+            
             div#vote_cont{
-                margin-top:             85px;
+                height:                 150px;
                 position:               relative;
             }
             
@@ -1922,58 +1950,85 @@ div#nom_detail_cont{
                     }
             
                 div#vote_cont_left{
+                    color:                  #fff;
                     float:                  left;
-                    margin-left:            85px;
+                    position:               relative;
+                    height:                 150px;
+                    text-align:             center;
+                    text-shadow:        0 -1px 1px rgba(0,0,0,0.25);
+                }
+                
+                div#vote_cont_left.active{
+                    width:                  160px;
+                }
+                
+                div#vote_cont_left.won{
+                    width:                  100%;
+                }
+                
+                    #vote_cont_left h3{
+                        font-size:              28px;
+                        font-weight:            bold;
+                        padding-top:            15px;
+                    }
+                    
+                    #vote_cont_left h2{
+                        font-size:              72px;
+                        font-weight:            bold;
+                    }
+                
+                div#vote_cont_right{
+                    float:                  right;
+                    background-color:       #444;
+                    height:                 150px;
+                    width:                  90px;
                     position:               relative;
                 }
                 
-                div#vote_cont_left .vote{
-                    cursor:                 pointer;
-                    display:                block;
-                    margin-bottom:          20px;
-                    opacity:                0.8;
-                }
+                    div#vote_cont_right .vote_arrow{
+                        position:               absolute;
+                        left:                   -20px;
+                        top:                    52px;
+                        z-index:                100;
+                    }
                 
-                div#vote_cont_left .vote.voted{
-                    opacity:                1.0;
-                }
+                    div#vote_cont_right .vote{
+                        cursor:                 pointer;
+                        display:                block;
+                        margin:                 0 auto;
+                        margin-top:             10px;
+                        margin-bottom:          10px;
+                        opacity:                0.8;
+                    }
                 
-                div#vote_cont_left .vote:hover{
-                    opacity:                1.0;
-                }
+                    div#vote_cont_right .vote.voted{
+                        opacity:                1.0;
+                    }
                 
-                div#vote_cont_left .won{
-                    cursor:                 default;
-                    opacity:                0.4;
-                    border-radius:          5px;
-                    -moz-border-radius:     5px;
-                    box-shadow:         inset rgba(0, 0, 0, 0.5) 0px 0px 3px 0px;
-                    -moz-box-shadow:    inset 0px 0px 3px 0px rgba(0, 0, 0, 0.5);
-                    -webkit-box-shadow: inset rgba(0, 0, 0, 0.5) 0px 0px 3px 0px;
-                }
+                    div#vote_cont_right .vote:hover{
+                        opacity:                1.0;
+                    }
                 
-                div#vote_cont_left .won:hover{
-                    opacity:                0.4;
-                }
+                    div#vote_cont_right .won{
+                        cursor:                 default;
+                        opacity:                0.4;
+                        border-radius:          5px;
+                        -moz-border-radius:     5px;
+                        box-shadow:         inset rgba(0, 0, 0, 0.5) 0px 0px 3px 0px;
+                        -moz-box-shadow:    inset 0px 0px 3px 0px rgba(0, 0, 0, 0.5);
+                        -webkit-box-shadow: inset rgba(0, 0, 0, 0.5) 0px 0px 3px 0px;
+                    }
                 
-                div#vote_cont_left p#nom_vote_count{
-                    color:                  #CB6698;
-                    font-size:              50px;
-                    font-weight:            bold;
-                    min-width:              50px;
-                    position:               relative;
-                    right:                  55px;
-                    top:                    -122px;
-                }
+                    div#vote_cont_right .won:hover{
+                        opacity:                0.4;
+                    }
                 
                 div#main_nom_cont_right_wrap div#trophy_cont{
-                    position:           absolute;
-                    width:              100%;
-                    bottom:             0px;
-                    height:             150px;
+                    height:             200px;
+                    background-color:   #222;
                 }
                 
-                div#info_wrap div#trophy_cont{
+                div#info_wrap div#nominatee_cont{
                     background-color:   #333;
                     padding-top:        10px;
                     text-align:         center;
@@ -1984,7 +2039,7 @@ div#nom_detail_cont{
                     -moz-border-radius-bottomleft:         5px;
                 }
                 
-                    div#trophy_cont .winning_trophy_cont{
+                    div#nominatee_cont .winning_trophy_cont{
                         cursor:             pointer;
                         display:            inline-block;
                         margin-bottom:      10px;
@@ -1992,7 +2047,7 @@ div#nom_detail_cont{
                         width:              65px;
                     }
                     
-                        div#trophy_cont .winning_trophy_cont .winning_trophy_count{
+                        div#nominatee_cont .winning_trophy_cont .winning_trophy_count{
                             color:          white;
                             font-size:      18px;
                             font-weight:    bold;
@@ -2006,48 +2061,7 @@ div#nom_detail_cont{
                             border-radius:      30px;
                             -moz-border-radius:         30px;
                         }
-                
-                    div#nomination_text_cont{
-                        color:              white;
-                        margin-right:       5px;
-                        margin-left:        5px;
-                        margin-top:         25px;
-                        text-align:         left;
-                    }
-                    
-                        div#nomination_text_cont span{
-                            color:                  white;
-                            font-size:              22px;
-                        }
-                        
-                        div#nomination_text_cont span:hover{
-                            text-decoration:        underline;
-                        }
-                
-                        div#nomination_text_cont p{
-                            font-size:              18px;
-                        }
-                    
-                        div#nomination_text_cont h3{
-                            font-size:              30px;
-                            font-weight:            bold;
-                        }
-                        
-                        div#nomination_text_cont #nom_trophy_icon{
-                            bottom:                 150px;
-                            position:               absolute;
-                            right:                  0px;
-                        }
-                        
-                        div#nomination_text_cont .user_img{
-                            float:                  left;
-                            margin-right:           10px;
-                            position:               static;
-                            border-top-right-radius:    15px;
-                            border-bottom-left-radius:  15px;
-                            -moz-border-radius-topright:        15px;
-                            -moz-border-radius-bottomleft:      15px;
-                        }
+
             
             div#main_nom_cont_right #nom_votes_cont{
                 margin:             0px 20px;
@@ -4288,6 +4302,48 @@ div#context_overlay{
                             margin-top:         10px;
                         }
                         
+        .vote_arrow{
+            height:             44px;
+            width:              20px;
+            background-image:   url(http://portrit.s3.amazonaws.com/img/sprite.png);
+            background-position: -708px -635px;
+        }
+                        
+        .new_nom_icon{
+            height:             31px;
+            width:              31px;
+            background-image:   url(http://portrit.s3.amazonaws.com/img/sprite.png);
+            background-position: -658px -25px;
+        }
+        
+        .new_comment_icon{
+            height:             31px;
+            width:              31px;
+            background-image:   url(http://portrit.s3.amazonaws.com/img/sprite.png);
+            background-position: -690px -27px;
+        }
+        
+        .tagged_nom_icon{
+            height:             31px;
+            width:              31px;
+            background-image:   url(http://portrit.s3.amazonaws.com/img/sprite.png);
+            background-position: -722px -27px;
+        }
+        
+        .nom_won_icon{
+            height:             31px;
+            width:              31px;
+            background-image:   url(http://portrit.s3.amazonaws.com/img/sprite.png);
+            background-position: -627px -25px;
+        }
+        
+        .new_follow_icon{
+            height:             31px;
+            width:              31px;
+            background-image:   url(http://portrit.s3.amazonaws.com/img/sprite.png);
+            background-position: -754px -26px;
+        }
+                        
         .tag{
             position:           relative;
             cursor:             pointer;
@@ -4649,6 +4705,7 @@ div#context_overlay{
         #profile_user_context .follow_wrap > img{
             float:              left;
             margin-top:         15px;
+            margin-left:        15px;
         }
         
         #profile_user_context .follow_wrap > h3{
@@ -4748,6 +4805,7 @@ div#context_overlay{
         list-style:         none;
         position:           absolute;
         bottom:             0px;
+        margin-right:       10px;
     }
     
     .stream_nav_cont li{
@@ -5594,7 +5652,7 @@ div#latest_photos{
     }
     
     .community_active_mid{
-        background-color:   #eee;
+        background-color:   #fff;
         height:             55px;
         overflow:           hidden;
     }
@@ -5607,7 +5665,7 @@ div#latest_photos{
         }
     
     .community_active_bottom{
-        background-color:   #333;
+        background-color:   #dedede;
         color:              white;
         height:             45px;
     }
@@ -5619,7 +5677,7 @@ div#latest_photos{
         }
         
         .community_active_bottom .active_stat{
-            background-color:   #888;
+            background-color:   #333;
             width:              120px;
             height:             25px;
             float:              left;
@@ -5629,7 +5687,6 @@ div#latest_photos{
         }
         
             .community_active_bottom .active_stat h4{
-                font-weight:        bold;
                 font-size:          14px;
                 text-align:         center;
                 line-height:        25px;
@@ -5648,119 +5705,7 @@ div#latest_photos{
                 float:              right;
                 line-height:        25px;
             }
-        
-div#photo_cont{
-    overflow-x:     hidden;
-    position:       relative;
-    z-index:        1;
-    width:          auto;
-}
-
-    div#photo_cont #left_quick_nav{
-        font-style:         italic;
-        position:           absolute;
-        right:              20px;
-        z-index:            1000;
-    }
-    
-        #left_quick_nav a{
-            color:              #bebebe;
-        }
-        
-        #left_quick_nav a:hover{
-            color:              white;
-        }
-    
-    div#photo_cont #right_quick_nav{
-        background:         rgba(0,0,0,0.7);
-        font-style:         italic;
-        padding:            5px;
-        position:           absolute;
-        right:              0px;
-        z-index:            1000;
-        border-bottom-left-radius:  10px;
-        -moz-border-radius-bottomleft:      10px;
-    }
-    
-        #right_quick_nav a{
-            color:              #bebebe;
-            display:            block;
-        }
-        
-        #right_quick_nav a:hover{
-            color:              white;
-        }
-
-    div#photo_cont div.photo_thumbs{
-        display:            inline-block;
-        margin:             15px;
-    }
-    
-    div.photo_thumbs:hover{
-        cursor:             pointer;
-    }
-    
-        div.photo_thumbs img{
-            border:             5px solid #ffffff;
-        }
-        
-        div#photo_cont div.photo_thumbs .trophy_cat{
-            height:             75px;
-            position:           absolute;
-            bottom:             8px;
-            right:              5px;
-            border:             none;
-        }
-    
-    div#photo_scroller{
-        overflow-x:         hidden;
-    }
-    
-    div#photo_list{
-        min-height:         170px;
-        position:           relative;
-    }
-    
-    div#photo_large{
-        margin-bottom:      20px;
-        position:           relative;
-        text-align:         center;
-    }
-    
-        #photo_large_inline_cont{
-            border:             5px solid #1e1e1e;
-            display:            inline-block;
-            position:           relative;
-            z-index:            10;
-        }
-        
-            #photo_large_inline_cont .trophy_cont_gallery{
-                position:       absolute;
-                bottom:         0px;
-                right:          0px;
-            }
-        
-            #photo_large_inline_cont #nominate_photo, #photo_large_inline_cont #go_nom_detail{
-                position:           absolute;
-                font-size:          16px;
-                font-weight:        bold;
-                top:                -46px;
-                left:               0px;
-                padding:            12px 5px;
-                width:              120px;
-                border-bottom-left-radius:  0px;
-                border-top-left-radius:     10px;
-                border-top-right-radius:    10px;
-                border-bottom-right-radius: 0px;
-                z-index:            1;
-                -moz-border-radius-topleft:         10px;
-                -moz-border-radius-topright:        10px;
-                -moz-border-radius-bottomleft:      0px;
-                -moz-border-radius-bottomright:     0px;
-                -webkit-box-shadow:     none;
-                box-shadow:     none;
-            }
-            
+                    
         #new_nom_wrap{
             padding:            20px;
         }
@@ -6896,7 +6841,7 @@ div#payment_types_cont{
     color:                  #666;
     position:               absolute;
     right:                  0px;
-    top:                    15px;
+    top:                    14px;
     font-size:              12px;
     cursor:                 pointer;
 }
@@ -7032,7 +6977,7 @@ div#payment_types_cont{
             opacity:            1.0;
             position:           absolute;
             top:                -8px;
-            left:               110px;
+            left:               140px;
             z-index:            1001;
             height:             20px;
             width:              20px;
@@ -7065,10 +7010,10 @@ div#payment_types_cont{
             cursor:                 default;
             display:                none;
             height:                 335px;
-            left:                   -90px;
+            left:                   -120px;
             top:                    67px;
             position:               absolute;
-            width:                  250px;
+            width:                  300px;
             z-index:                10101;
             border-radius:  10px;
             -moz-border-radius:     10px;
@@ -7101,16 +7046,17 @@ div#payment_types_cont{
             color:                  #666;
             cursor:                 pointer;
             font-size:              14px;
-            margin:                 7px 0px;
-            margin-right:           10px;
-            padding:                3px 0px;
-            padding-right:          10px;
+            margin:                 5px 0px;
             position:               relative;
             text-align:             left;
         }
         
+            .notification_popup_cont .notification_icon{
+                float:              left;
+            }
+        
             .notification_popup_cont.new_follow{
-                background-color:       red;
+                background-color:       #3da732;
             }
         
             .color_transition{
@@ -7126,13 +7072,20 @@ div#payment_types_cont{
             }
             
             .notification_text_cont{
-                margin-left:            30px;
-                margin-right:           20px;
+                margin-right:           10px;
+                padding-right:          5px;
+                padding-left:           35px;
+                padding-top:            5px;
+                padding-bottom:         5px;
+            }
+            
+            .notification_text_cont.white_back{
+                background-color:       #fff;
             }
             
             .notification_popup_cont .kill_notification{
                 position:               absolute;
-                right:                  -10px;
+                right:                  0px;
                 top:                    -10px;
             }
         
@@ -7143,6 +7096,9 @@ div#payment_types_cont{
                 margin-left:            0px;
             }
             
-            .notification_text_cont span.time{
+            .notification_text_cont p.time{
+                display:                inline;
                 font-size:              12px;
+                float:                  right;
+                margin-top:             2px;
             }

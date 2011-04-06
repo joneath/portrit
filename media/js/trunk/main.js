@@ -1717,39 +1717,30 @@ $(document).ready(function(){
         update_title_notification_count();
         nom_cat = data.nomination_category.replace(' ', '_').toLowerCase();
         if (method == 'new_nom'){
-            if (friends[data.nominator]){
-                name = friends[data.nominator].name;
-            }
-            else if (data.nominator == me.id){
+            if (data.nominator == me.id){
                 name = 'You';
             }
             else{
-                name = '';
+                name = data.nominator_username;
             }
             notification_html = '<div class="notification_popup_cont color_transition nom_cat_'  + nom_cat + '" name="' + nom_cat + '" value="' + data.id + '" read="false" id="notification_' + data.notification_id + '" onclick="void(0)">' +
-                                    '<div class="nom_cat_' + nom_cat +' notification_color"></div>' +
-                                    '<div class="notification_text_cont">' +
+                                    '<div class="new_nom_icon notification_icon"></div>'+
+                                    '<div class="notification_text_cont white_back">' +
                                         '<p class="strong" style="">' + name +'</p>' +
-                                        '<span> nominated your photo.</span><span class="time"> - Right now</span>' +
+                                        '<span> nominated your photo.</span>' +
+                                        '<p class="time">Right now</p>' +
                                     '</div>' +
                                     '<div class="kill_notification close_img ' + close_size + '" value="' + data.notification_id + '" style="display:none;"></div>' +
                                 '</div>';
         }
         if (method == 'tagged_nom'){
-            if (friends[data.nominator]){
-                name = friends[data.nominator].name;
-            }
-            else if (data.nominator == me.id){
-                name = 'You';
-            }
-            else{
-                name = '';
-            }
+            name = data.nominator_username;
             notification_html = '<div class="notification_popup_cont color_transition nom_cat_'  + nom_cat + '" name="' + nom_cat + '" value="' + data.id + '" read="false" id="notification_' + data.notification_id + '" onclick="void(0)">' +
-                                    '<div class="nom_cat_' + nom_cat +' notification_color"></div>' +
-                                    '<div class="notification_text_cont">' +
+                                    '<div class="tagged_nom_icon notification_icon"></div>'+
+                                    '<div class="notification_text_cont white_back">' +
                                         '<p class="strong" style="">' + name +'</p>' +
-                                        '<span> tagged you in a nomination.</span><span class="time"> - Right now</span>' +
+                                        '<span> tagged you in a nomination.</span>' +
+                                        '<p class="time">Right now</p>' +
                                     '</div>' +
                                     '<div class="kill_notification close_img ' + close_size + '" value="' + data.notification_id + '" style="display:none;"></div>' +
                                 '</div>';
@@ -1759,25 +1750,21 @@ $(document).ready(function(){
                 name = 'You';
             }
             else{
-                name = data.comment_sender_name;
+                name = data.comment_sender_username;
             }
             if (data.nom_owner_id == me.id){
                 owner_text = 'your';
             }
             else{
-                if (friends[data.nom_owner_id]){
-                    owner_text = friends[data.nom_owner_id].name + '\'s';
-                }
-                else{
-                    owner_text = '';
-                }
+                owner_text = data.nom_owner_username + '\'s';
             }
             
             notification_html = '<div class="notification_popup_cont color_transition nom_cat_'  + nom_cat + '" name="' + nom_cat + '" value="' + data.id + '" read="false" id="notification_' + data.notification_id + '" onclick="void(0)">' +
-                                    '<div class="nom_cat_' + nom_cat +' notification_color"></div>' +
-                                    '<div class="notification_text_cont">' +
+                                    '<div class="new_comment_icon notification_icon"></div>'+
+                                    '<div class="notification_text_cont white_back">' +
                                         '<p class="strong" style="">' + name +'</p>' +
-                                        '<span> commented on ' + owner_text + ' photo.<span class="time"> - Right now</span>' +
+                                        '<span> commented on ' + owner_text + ' photo.</span>' + 
+                                        '<p class="time">Right now</p>' +
                                     '</div>' +
                                     '<div class="kill_notification close_img ' + close_size + '" value="' + data.notification_id + '" style="display:none;"></div>' +
                                 '</div>';
@@ -1786,19 +1773,28 @@ $(document).ready(function(){
             if (data.nominatee == me.id){
                 name = 'Your';
             }
-            else if(!data.nominatee_name){
-                name = friends[data.nominatee].name + '\'s';
-            }
             else{
                 name = data.nominatee_name + '\'s';
             }
             notification_html = '<div class="notification_popup_cont color_transition nom_cat_'  + nom_cat + '" name="' + nom_cat + '" value="' + data.id + '" read="false" won="true" id="notification_' + data.notification_id + '" onclick="void(0)">' +
-                                    '<div class="nom_cat_' + nom_cat +' notification_color"></div>' +
-                                    '<div class="notification_text_cont">' +
+                                    '<div class="nom_won_icon notification_icon"></div>'+
+                                    '<div class="notification_text_cont white_back">' +
                                         '<p class="strong" style="">' + name +'</p>' +
-                                        '<span> photo won the </span><p class="strong" style="">' + data.nomination_category + '</p><span> trophy!</span><span class="time"> - Right now</span>' +
+                                        '<span> photo won the </span><p class="strong" style="">' + data.nomination_category + '</p><span> trophy!</span>' +
+                                        '<p class="time">Right now</p>' +
                                     '</div>' +
                                     '<div class="kill_notification close_img ' + close_size + '" value="' + data.notification_id + '" style="display:none;"></div>' +
+                                '</div>';
+        }
+        else if (data[i].notification_type == 'new_follow'){
+            notification_html +='<div class="notification_popup_cont new_follow" value="' + data.follower_username + '" read="false" id="notification_' + data.id + '" onclick="void(0)">' +
+                                    '<div class="new_follow_icon notification_icon"></div>'+
+                                    '<div class="notification_text_cont white_back">' +
+                                        '<p class="strong">' + data.follower_username + '</p><span> has begun to follow you.</span>' +
+                                        '<p class="time">Right now</p>' +
+                                        '<div class="clear"></div>' +
+                                    '</div>' +
+                                    '<div class="kill_notification close_img ' + close_size + '" value="' + data[i].notification_id + '" style="display:none;"/></div>' +
                                 '</div>';
         }
 
@@ -1834,7 +1830,7 @@ $(document).ready(function(){
                     }
                 }
                 else{
-                    source_name = data[i].source_name;
+                    source_name = data[i].source_username;
                 }
                 
                 if (data[i].destination_id && data[i].destination_id != ''){
@@ -1847,7 +1843,7 @@ $(document).ready(function(){
                         }
                     }
                     else{
-                        dest_name = data[i].destination_name + '\'s';
+                        dest_name = data[i].destination_username + '\'s';
                     }
                 }
                 else{
@@ -1877,37 +1873,45 @@ $(document).ready(function(){
                 now /= 1000
                 time_str = secondsToHms(parseInt(now));
                 if (data[i].notification_type == 'new_nom'){
-                    notification_html +='<div class="notification_popup_cont ' + color_class + '" name="' + nom_cat + '" value="' + data[i].nomination + '" read="' + data[i].read + '" id="notification_' + data[i].notification_id + '" time="' + data[i].create_time +'" onclick="void(0)">' +
-                                            '<div class="nom_cat_' + nom_cat + ' notification_color"></div>' +
-                                            '<div class="notification_text_cont">' +
-                                                '<p class="strong">' + source_name + '</p><span> nominated your photo.<span class="time"> - ' + time_str + '</span>' +
+                    notification_html +='<div class="notification_popup_cont nom_cat_' + nom_cat + '" name="' + nom_cat + '" value="' + data[i].nomination + '" read="' + data[i].read + '" id="notification_' + data[i].notification_id + '" time="' + data[i].create_time +'" onclick="void(0)">' +
+                                            '<div class="new_nom_icon notification_icon ' + color_class + '"></div>'+
+                                            '<div class="notification_text_cont white_back">' +
+                                                '<p class="strong">' + source_name + '</p><span> nominated your photo.</span>' +
+                                                '<p class="time">' + time_str + '</p>' +
+                                                '<div class="clear"></div>' +
                                             '</div>' +
                                             '<div class="kill_notification close_img ' + close_size + '" value="' + data[i].notification_id + '" style="display:none;"></div>' +
                                         '</div>';
                 }
                 else if (data[i].notification_type == 'new_comment'){
-                    notification_html +='<div class="notification_popup_cont ' + color_class + '" name="' + nom_cat + '" value="' + data[i].nomination + '" read="' + data[i].read + '" id="notification_' + data[i].notification_id + '" time="' + data[i].create_time +'" onclick="void(0)">' +
-                                            '<div class="nom_cat_' + nom_cat + ' notification_color"></div>' +
-                                            '<div class="notification_text_cont">' +
-                                                '<p class="strong">' + source_name + '</p><span> commented on ' + dest_name + ' photo.<span class="time"> - ' + time_str + '</span>' +
+                    notification_html +='<div class="notification_popup_cont nom_cat_' + nom_cat + '" name="' + nom_cat + '" value="' + data[i].nomination + '" read="' + data[i].read + '" id="notification_' + data[i].notification_id + '" time="' + data[i].create_time +'" onclick="void(0)">' +
+                                            '<div class="new_comment_icon notification_icon"></div>' +
+                                            '<div class="notification_text_cont white_back ' + color_class + '">' +
+                                                '<p class="strong">' + source_name + '</p><span> commented on ' + dest_name + ' photo.</span>' + 
+                                                '<p class="time">' + time_str + '</p>' +
+                                                '<div class="clear"></div>' +
                                             '</div>' +
                                             '<div class="kill_notification close_img ' + close_size + '" value="' + data[i].notification_id + '" style="display:none;"/></div>' +
                                         '</div>';
                 }
                 else if (data[i].notification_type == 'tagged_nom'){
-                    notification_html +='<div class="notification_popup_cont ' + color_class + '" name="' + nom_cat + '" value="' + data[i].nomination + '" read="' + data[i].read + '" id="notification_' + data[i].notification_id + '" time="' + data[i].create_time +'" onclick="void(0)">' +
-                                            '<div class="nom_cat_' + nom_cat + ' notification_color"></div>' +
-                                            '<div class="notification_text_cont">' +
-                                                '<p class="strong">' + source_name + '</p><span> tagged you in a nomination.<span class="time"> - ' + time_str + '</span>' +
+                    notification_html +='<div class="notification_popup_cont nom_cat_' + nom_cat + '" name="' + nom_cat + '" value="' + data[i].nomination + '" read="' + data[i].read + '" id="notification_' + data[i].notification_id + '" time="' + data[i].create_time +'" onclick="void(0)">' +
+                                            '<div class="tagged_nom_icon notification_icon"></div>'+
+                                            '<div class="notification_text_cont white_back ' + color_class + '">' +
+                                                '<p class="strong">' + source_name + '</p><span> tagged you in a nomination.</span>' +
+                                                '<p class="time">' + time_str + '</p>' +
+                                                '<div class="clear"></div>' +
                                             '</div>' +
                                             '<div class="kill_notification close_img ' + close_size + '" value="' + data[i].notification_id + '" style="display:none;"></div>' +
                                         '</div>';
                 }
                 else if (data[i].notification_type == 'nom_won'){
-                    notification_html +='<div class="notification_popup_cont ' + color_class + '" name="' + nom_cat + '" value="' + data[i].nomination + '" read="' + data[i].read + '" id="notification_' + data[i].notification_id + '" won="true" time="' + data[i].create_time +'" onclick="void(0)">' +
-                                            '<div class="nom_cat_' + nom_cat + ' notification_color"></div>' +
-                                            '<div class="notification_text_cont">' +
-                                                '<p class="strong">' + dest_name + '</p><span> photo won the </span><p class="strong">' + data[i].nomination_category + '</p><span> trophy!</span><span class="time"> - ' + time_str + '</span>' +
+                    notification_html +='<div class="notification_popup_cont nom_cat_' + nom_cat + '" name="' + nom_cat + '" value="' + data[i].nomination + '" read="' + data[i].read + '" id="notification_' + data[i].notification_id + '" won="true" time="' + data[i].create_time +'" onclick="void(0)">' +
+                                            '<div class="nom_won_icon notification_icon"></div>'+
+                                            '<div class="notification_text_cont white_back ' + color_class + '">' +
+                                                '<p class="strong">' + dest_name + '</p><span> photo won the </span><p class="strong">' + data[i].nomination_category + '</p><span> trophy!</span>' +
+                                                '<p class="time">' + time_str + '</p>' +
+                                                '<div class="clear"></div>' +
                                             '</div>' +
                                             '<div class="kill_notification close_img ' + close_size + '" value="' + data[i].notification_id + '" style="display:none;"/></div>' +
                                         '</div>';
@@ -1917,9 +1921,15 @@ $(document).ready(function(){
                     // }
                 }
                 else if (data[i].notification_type == 'new_follow'){
+                    if (!data[i].read){
+                        color_class = 'new_follow';
+                    }
                     notification_html +='<div class="notification_popup_cont new_follow" value="' + data[i].source_id + '" read="' + data[i].read + '" id="notification_' + data[i].notification_id + '" time="' + data[i].create_time +'" onclick="void(0)">' +
-                                            '<div class="notification_text_cont">' +
-                                                '<p class="strong">' + data[i].source_name + '</p><span> has begun to follow you.</span><span class="time"> - ' + time_str + '</span>' +
+                                            '<div class="new_follow_icon notification_icon"></div>'+
+                                            '<div class="notification_text_cont white_back ' + color_class + '">' +
+                                                '<p class="strong">' + source_name + '</p><span> has begun to follow you.</span>' +
+                                                '<p class="time">' + time_str + '</p>' +
+                                                '<div class="clear"></div>' +
                                             '</div>' +
                                             '<div class="kill_notification close_img ' + close_size + '" value="' + data[i].notification_id + '" style="display:none;"/></div>' +
                                         '</div>';
@@ -2144,7 +2154,7 @@ $(document).ready(function(){
     $('.notification_popup_cont').live('mouseover mouseout', function(event) {
         var cat_name = $(this).attr('name');
         if (event.type == 'mouseover') {
-            $(this).addClass('nom_cat_' + cat_name).removeClass('color_transition');
+            $('.notification_text_cont', this).removeClass('white_back').addClass('nom_cat_' + cat_name).removeClass('color_transition');
             $(this).css({
                 'color': 'white'
             });
@@ -2153,7 +2163,7 @@ $(document).ready(function(){
             });
             $(this).find('.kill_notification').show();
         } else {
-            $(this).removeClass('nom_cat_' + cat_name);
+            $('.notification_text_cont', this).removeClass('nom_cat_' + cat_name).addClass('white_back');
             $(this).css({
                 'color': ''
             });
@@ -3113,7 +3123,7 @@ $(document).ready(function(){
             title = '<h1 class="title" state="' + state + '" cat="' + nom_cat + '">Winning Photos</h1>';
         }
         else if (state == 'community_active'){
-            title = '<h1 class="title" state="' + state + '" cat="' + nom_cat + '"><a href="/#!/' + nom.nominatee_username + '">' + nom.nominatee_username + '\'s</a> <span class="nom_cat_' + nom_cat_under + '_text">' + nom_cat + '</span> Photo</h1>';
+            title = '<h1 class="title" state="' + state + '" cat="' + nom_cat + '">Community <span class="nom_cat_' + nom_cat_under + '_text">' + nom_cat + '</span> Photos</h1>';
         }
         else if (state == 'community_top'){
             title = '<h1 class="title" state="' + state + '" cat="' + nom_cat + '">Top Community <span class="nom_cat_' + nom_cat_under + '_text">' + nom_cat + '</span> Photos</h1>';
@@ -3158,8 +3168,18 @@ $(document).ready(function(){
             nom_stream_html = '';
         }
         
+        var votes_cont_class = 'active';
+        var vote_cont_html ='<div id="vote_cont_right">' +
+                                '<p class="tooltip"></p>' +
+                                '<div class="vote_arrow"></div>' +
+                                '<span class="vote vote_up ' + vote_class + '" value="' + nom.id + '" name="' + vote_tooltip_text + '"></span>' +
+                                '<span class="vote vote_down ' + vote_class + '" value="' + nom.id + '" name="' + vote_tooltip_text + '"></span>' +
+                            '</div>';
+        
         if (nom.won){
             nom_winning_text = 'Won';
+            votes_cont_class = 'won';
+            vote_cont_html = '';
         }
         else if (!nom.active){
             nom_winning_text = 'Lost';
@@ -3193,31 +3213,33 @@ $(document).ready(function(){
                                 '</div>' +
                                 '<div id="main_nom_cont_right">' +
                                     '<div id="main_nom_cont_right_wrap">' +
-                                        '<h2>Votes</h2>' +
-                                        '<div id="vote_cont">' +
-                                            '<div id="vote_cont_left">' +
-                                                '<p class="tooltip"></p>' +
-                                                '<span class="vote vote_up ' + vote_class + '" value="' + nom.id + '" name="' + vote_tooltip_text + '"></span>' +
-                                                '<span class="vote vote_down ' + vote_class + '" value="' + nom.id + '" name="' + vote_tooltip_text + '"></span>' +
-                                                '<p id="nom_vote_count">' + nom.vote_count + '</p>' +
-                                            '</div>' +
-                                            '<div class="clear"></div>' +
-                                        '</div>' +
-                                        '<div id="trophy_cont" class="nom_cat_' + nom_cat_under + '">' +
+                                        '<div id="nominatee_cont">' +
+                                            '<a href="/#!/' + nom.nominatee_username + '">' +
+                                                '<img class="user_img" src="https://graph.facebook.com/' + nom.nominatee + '/picture?type=square"/>' +
+                                            '</a>' +
                                             '<div id="nomination_text_cont">' +
                                                 '<a href="/#!/' + nom.nominatee_username + '">' +
-                                                    '<img class="user_img" src="https://graph.facebook.com/' + nom.nominatee + '/picture?type=square"/>' +
                                                     '<span class="strong">' + nom.nominatee_username + '</span>' +
                                                 '</a>' + 
                                                 '<p>' + nom_winning_text + '</p>' +
                                                 '<h3>' + nom_cat + '</h3>' +
-                                                '<div id="nom_trophy_icon" class="trophy_img ' + trophy_size + ' ' + nom_cat_under + '"></div>' +
                                             '</div>' +
+                                        '</div>' +
+                                        '<div id="trophy_cont">' +
+                                            '<div id="nom_trophy_icon" class="trophy_img ' + trophy_size + ' ' + nom_cat_under + '"></div>' +
+                                        '</div>' +
+                                        '<div id="vote_cont">' +
+                                            '<div id="vote_cont_left" class="' + votes_cont_class + ' nom_cat_' + nom_cat_under + '">' +
+                                                '<h3>Votes</h3>' +
+                                                '<h2 id="nom_vote_count">' + nom.vote_count + '</h2>' +
+                                            '</div>' +
+                                            vote_cont_html + 
+                                            '<div class="clear"></div>' +
                                         '</div>' +
                                     '</div>' +
                                 '</div>' +
                                 '<div class="clear"></div>' +
-                        '</div>';
+                            '</div>';
                    
         nom_bottom_cont_html =  '<div id="main_nom_bottom_cont">' +
                                     '<div id="nom_comments_cont">' +
@@ -3964,7 +3986,7 @@ $(document).ready(function(){
             if (data[i].caption){
                 caption = data[i].caption;
                 if (caption.length > 40){
-                    caption
+                    caption = data[i].caption.slice(0, 40) + '...';
                 }
             }
             else{
@@ -3980,7 +4002,6 @@ $(document).ready(function(){
                                         '<a href="/#!/community/active/' + data[i].id + '/" class="nomination_id" value="' + data[i].id + '">' +
                                             '<img src="' + data[i].photo.crop + '"/>' +
                                         '</a>' +
-                                        '<div class="trophy_img small ' + cat_underscore + '"></div>' +
                                     '</div>' +
                                     '<div class="community_active_right_cont">' +
                                         '<div class="community_active_header nom_cat_' + cat_underscore + '">' +
@@ -6679,7 +6700,7 @@ $(document).ready(function(){
         
         cat_underscore = nom.nomination_category.replace(' ', '_').toLowerCase();
         
-        $('#trophy_cont').removeClass().addClass('nom_cat_' + cat_underscore);
+        $('#vote_cont_left').removeClass().addClass('nom_cat_' + cat_underscore);
         $('#nomination_text_cont h3').text(nom.nomination_category);
         $('#nom_trophy_icon').removeClass().addClass('trophy_img large ' + cat_underscore);//.attr('src', 'http://portrit.s3.amazonaws.com/img/trophies/large/' + cat_underscore + '.png');
         $('#nominator_overlay_cont a').attr('href', '/#!/' + nom.nominator_username);
@@ -7324,6 +7345,11 @@ $(document).ready(function(){
                     $('#profile_cont').html('');
                 }
                 if (url_vars_list.length > 1){
+                    selected_user = {
+                        'username': me.username,
+                        'fid': me.id,
+                        'name': me.name
+                    };
                     if ($('#profile_cont').children().length == 0){
                         append_wall_html();
                     }

@@ -322,7 +322,7 @@ function add_detail_window(e){
             nom_id: e.source.nom_id,
             photo: e.source.photo,
             state: e.source.state,
-            cat, e.source.cat,
+            cat: e.source.cat,
             won: false
         });
 	}, 100);
@@ -595,28 +595,37 @@ function render_top(data){
         cat_color = get_nom_cat_color(cat_name_underscore);
         
         trophy_header = Titanium.UI.createView({
-                height: 30,
-                width: 320
-            });
+            height: 35,
+            width: 320
+        });
             
         trophy_header_background = Titanium.UI.createView({
-                backgroundColor: cat_color,
-                opacity: 0.9,
-                height: '100%',
-                width: '100%'
-            });
+            backgroundColor: cat_color,
+            opacity: 0.9,
+            top: 0,
+            height: 30,
+            width: 320
+        });
         trophy_header.add(trophy_header_background);
             
         trophy_label = Titanium.UI.createLabel({
-        	    text: data[i].cat_name,
-                color: '#fff',
-                left: 5,
-                width: 'auto',
-                height: 'auto',
-                font:{fontSize:16, fontWeight: 'bold'}
-            });
+    	    text: data[i].cat_name,
+            color: '#fff',
+            left: 5,
+            width: 'auto',
+            height: 30,
+            top: 0,
+            font:{fontSize:16, fontWeight: 'bold'}
+        });
             
         trophy_header.add(trophy_label);
+        
+        header_top_margin = Titanium.UI.createView({
+            height: 5,
+            bottom: 0,
+            width: 320
+        });
+        trophy_header.add(header_top_margin);
         
         section = Titanium.UI.createTableViewSection({
             headerView: trophy_header
@@ -626,11 +635,13 @@ function render_top(data){
                 height:'auto',
                 selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
         });
+        
         var photo_in_row_count = 0;
         var row_count = 0;
         var photo_cont = null;
         for (var j = 0; j < data[i].noms.length; j++){
             if (j % 3 == 0 && j > 0){
+                top_offset = 0;
                 section.add(row);
                 row = Ti.UI.createTableViewRow({
                         height:'auto',
@@ -646,7 +657,7 @@ function render_top(data){
             photo_cont = Ti.UI.createImageView({
         		image: data[i].noms[j].photo.source,
         		defaultImage: '../images/photo_loader.png',
-                top: 5,
+                bottom: 5,
         		left: (photo_in_row_count * 105) + 5,
         		width: 100,
         		height: 75,
@@ -817,7 +828,7 @@ function render_nom(nom, top, row_count){
         	nomination_wrap.add(main_image);
         	
         	caption_cont = Titanium.UI.createView({
-        	    backgroundColor: '#eee',
+        	    backgroundColor: '#fff',
                 height: 45,
                 top: 0,
                 left: 100,
@@ -842,7 +853,7 @@ function render_nom(nom, top, row_count){
             nomination_wrap.add(caption_cont);
             
             bottom_cont = Titanium.UI.createView({
-        	    backgroundColor: '#eee',
+        	    backgroundColor: '#dedede',
                 height: 30,
                 top: 45,
                 left: 100,
@@ -851,42 +862,12 @@ function render_nom(nom, top, row_count){
             });
             nomination_wrap.add(bottom_cont);
             
-            // comments_cont = Titanium.UI.createView({
-            //              backgroundColor: '#dedede',
-            //     height: 30,
-            //     top: 0,
-            //     left: 0,
-            //     width: 95,
-            //     zIndex: 1
-            // });
-            // bottom_cont.add(comments_cont);
-            // 
-            // comments_label = Titanium.UI.createLabel({
-            //     text: 'Comments',
-            //     color: '#333',
-            //     width: 'auto',
-            //     height: 'auto',
-            //     left: 3,
-            //     font:{fontSize:12, fontWeight: 'bold'}
-            // });
-            // comments_cont.add(comments_label);
-            // 
-            // comments_count_label = Titanium.UI.createLabel({
-            //     text: nom.comment_count,
-            //     color: '#333',
-            //     width: 'auto',
-            //     height: 'auto',
-            //     right: 3,
-            //     font:{fontSize:12, fontWeight: 'bold'}
-            // });
-            // comments_cont.add(comments_count_label);
-            
             post_time_cont = Titanium.UI.createView({
-                backgroundColor: '#bebebe',
-                left: 0,
-                top: 0,
-                height: 30,
-                width: 95,
+                backgroundColor: '#222',
+                left: 5,
+                top: 5,
+                height: 20,
+                width: 100,
                 zIndex: 1
             });
             bottom_cont.add(post_time_cont);
@@ -896,7 +877,7 @@ function render_nom(nom, top, row_count){
             time_diff /= 1000;
             post_time = Titanium.UI.createLabel({
         	    text: secondsToHms(time_diff),
-                color: '#333',
+                color: '#fff',
                 left: 5,
                 top: 5,
                 right: 5,
@@ -907,18 +888,18 @@ function render_nom(nom, top, row_count){
             post_time_cont.add(post_time);
             
             votes_cont = Titanium.UI.createView({
-        	    backgroundColor: '#aeaeae',
-                height: 30,
-                top: 0,
-                left: 95,
-                width: 95,
+        	    backgroundColor: '#222',
+                height: 20,
+                top: 5,
+                left: 110,
+                width: 75,
                 zIndex: 1
             });
             bottom_cont.add(votes_cont);
             
             votes_label = Titanium.UI.createLabel({
                 text: 'Votes',
-                color: '#333',
+                color: '#fff',
                 width: 'auto',
                 height: 'auto',
                 left: 5,
@@ -928,7 +909,7 @@ function render_nom(nom, top, row_count){
             
             votes_count_label = Titanium.UI.createLabel({
                 text: nom.vote_count,
-                color: '#333',
+                color: '#fff',
                 width: 'auto',
                 height: 'auto',
                 right: 5,
