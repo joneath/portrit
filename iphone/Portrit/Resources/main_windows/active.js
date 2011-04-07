@@ -215,24 +215,24 @@ function load_more_noms(e){
     {
     	var data = JSON.parse(this.responseData);
         
-        if (selected_tab == 'photos'){
+        if (data.length > 0){
+            if (selected_tab == 'photos'){
 
-        }
-        else if (selected_tab == 'active'){
-            oldest_nom = data[data.length - 1].created_time;
-            for (var i = 0; i < data.length; i++){
-                render_nom(data[i], false);
             }
-        }
-        else if (selected_tab == 'winners'){
-            oldest_nom = data[data.length - 1].created_time;
-            for (var i = 0; i < data.length; i++){
-                render_nom(data[i], false);
+            else if (selected_tab == 'active'){
+                oldest_nom = data[data.length - 1].id;
+                for (var i = 0; i < data.length; i++){
+                    render_nom(data[i], false);
+                }
             }
+            else if (selected_tab == 'winners'){
+                oldest_nom = data[data.length - 1].id;
+                for (var i = 0; i < data.length; i++){
+                    render_nom(data[i], false);
+                }
+            }
+            tv.setData(list_view_data);
         }
-        
-
-        tv.setData(list_view_data);
     };
 
     var url = '';
@@ -240,10 +240,10 @@ function load_more_noms(e){
         
     }
     else if (selected_tab == 'active'){
-        url = SERVER_URL + '/api/get_recent_stream/?access_token=' + me.access_token + '&create_date=' + oldest_nom;
+        url = SERVER_URL + '/api/get_recent_stream/?access_token=' + me.access_token + '&id=' + oldest_nom + '&dir=old';
     }
     else if (selected_tab == 'winners'){
-        url = SERVER_URL + '/api/get_winners_stream/?access_token=' + me.access_token + '&create_date=' + oldest_nom;
+        url = SERVER_URL + '/api/get_winners_stream/?access_token=' + me.access_token + '&id=' + oldest_nom + '&dir=old';
     }
     xhr.open('GET', url);
 
@@ -286,7 +286,7 @@ var tv = Ti.UI.createTableView({
 function render_active_list_view(data){
     if (data.length > 0){
         newest_nom = data[0].created_time;
-        oldest_nom = data[data.length - 1].created_time;
+        oldest_nom = data[data.length - 1].id;
         for (var i = 0; i < data.length; i++){
             render_nom(data[i], false);
         }
@@ -316,7 +316,7 @@ function render_active_list_update(data){
                 temp_list_data.push(list_view_data[i]);
             }
             list_view_data = temp_list_data;
-            oldest_nom = list_view_data[list_view_data.length - 1].created_time;
+            oldest_nom = list_view_data[list_view_data.length - 1].id;
         }
         tv.setData(list_view_data);
     }
@@ -348,6 +348,7 @@ function add_detail_window(e){
             photo: e.source.photo,
             state: e.source.state,
             cat: e.source.cat,
+            user: me.username,
             won: false
         });
 	}, 100);
@@ -364,6 +365,7 @@ function add_detail_trophy_window(e){
             nom_cat: e.source.nom_cat,
             state: e.source.state,
             cat: e.source.cat,
+            user: me.username,
             won: true
         });
 	}, 100);

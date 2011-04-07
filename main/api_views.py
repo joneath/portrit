@@ -1212,7 +1212,7 @@ def get_follow_data_detailed(request):
                 except:
                     pass
                     
-                if user.id in source_following:
+                if user.id in source_following_list:
                     data['data'].append({
                         'fid': user.fb_user.fid,
                         'name': user.name,

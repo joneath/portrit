@@ -2262,7 +2262,7 @@ $(document).ready(function(){
                 diff_time = now - time;
                 diff_time /= 1000;
                 time_str = secondsToHms(parseInt(diff_time));
-                $(this).find('.time').text(' - ' + time_str);
+                $(this).find('.time').text(time_str);
             });
             
             if ($('.notification_popup_cont').length > 0){
@@ -3199,47 +3199,36 @@ $(document).ready(function(){
         
         trophy_size = 'large';
         
-        nom_main_cont_html ='<div id="main_nom_cont" value="' + nom.id + '">' +
-                                '<div id="main_nom_cont_left">' +
-                                    '<div id="main_nom_cont_left_wrap">' +
-                                        '<img id="main_nom_photo" src="' + nom.photo.source  + '"/>' +
-                                        '<div id="nominator_overlay_cont">' +
-                                            '<a href="/#!/' + nom.nominator_username + '"><img class="user_img" src="https://graph.facebook.com/' + nom.nominator + '/picture?type=square"/></a>' +
+        $('#nom_detail_cont').prepend(title);
+        
+        $('#main_nom_cont').attr('value', nom.id);
+        $('#main_nom_photo').attr('src', nom.photo.source);
+        
+        $('#nominator_overlay_cont').html('<a href="/#!/' + nom.nominator_username + '"><img class="user_img" src="https://graph.facebook.com/' + nom.nominator + '/picture?type=square"/></a>' +
                                             '<h2>Nominated by <span class="strong"><a href="/#!/' + nom.nominator_username + '">' + nom.nominator_username + '</a></span></h2>' +
                                             '<p>' + nominator_caption + '</p>' +
-                                            tagged_user_html +
-                                        '</div>' +
-                                    '</div>' +
-                                '</div>' +
-                                '<div id="main_nom_cont_right">' +
-                                    '<div id="main_nom_cont_right_wrap">' +
-                                        '<div id="nominatee_cont">' +
-                                            '<a href="/#!/' + nom.nominatee_username + '">' +
-                                                '<img class="user_img" src="https://graph.facebook.com/' + nom.nominatee + '/picture?type=square"/>' +
-                                            '</a>' +
-                                            '<div id="nomination_text_cont">' +
-                                                '<a href="/#!/' + nom.nominatee_username + '">' +
-                                                    '<span class="strong">' + nom.nominatee_username + '</span>' +
-                                                '</a>' + 
-                                                '<p>' + nom_winning_text + '</p>' +
-                                                '<h3>' + nom_cat + '</h3>' +
-                                            '</div>' +
-                                        '</div>' +
-                                        '<div id="trophy_cont">' +
-                                            '<div id="nom_trophy_icon" class="trophy_img ' + trophy_size + ' ' + nom_cat_under + '"></div>' +
-                                        '</div>' +
-                                        '<div id="vote_cont">' +
-                                            '<div id="vote_cont_left" class="' + votes_cont_class + ' nom_cat_' + nom_cat_under + '">' +
-                                                '<h3>Votes</h3>' +
-                                                '<h2 id="nom_vote_count">' + nom.vote_count + '</h2>' +
-                                            '</div>' +
-                                            vote_cont_html + 
-                                            '<div class="clear"></div>' +
-                                        '</div>' +
-                                    '</div>' +
-                                '</div>' +
-                                '<div class="clear"></div>' +
-                            '</div>';
+                                            tagged_user_html);
+        
+        $('#nominatee_cont').html('<a href="/#!/' + nom.nominatee_username + '">' +
+                                    '<img class="user_img" src="https://graph.facebook.com/' + nom.nominatee + '/picture?type=square"/>' +
+                                '</a>' +
+                                '<div id="nomination_text_cont">' +
+                                    '<a href="/#!/' + nom.nominatee_username + '">' +
+                                        '<span class="strong">' + nom.nominatee_username + '</span>' +
+                                    '</a>' + 
+                                    '<p>' + nom_winning_text + '</p>' +
+                                    '<h3>' + nom_cat + '</h3>' +
+                                '</div>');
+                                
+        $('#trophy_cont').html('<div id="nom_trophy_icon" class="trophy_img ' + trophy_size + ' ' + nom_cat_under + '"></div>');
+        $('#vote_cont').html('<div id="vote_cont_left" class="' + votes_cont_class + ' nom_cat_' + nom_cat_under + '">' +
+                                '<h3>Votes</h3>' +
+                                '<h2 id="nom_vote_count">' + nom.vote_count + '</h2>' +
+                            '</div>' +
+                            vote_cont_html + 
+                            '<div class="clear"></div>');
+                            
+        
                    
         nom_bottom_cont_html =  '<div id="main_nom_bottom_cont">' +
                                     '<div id="nom_comments_cont">' +
@@ -3265,8 +3254,8 @@ $(document).ready(function(){
                                     '<div class="clear"></div>' +
                                 '</div>';
         
-        var html = '<div id="nom_detail_cont">' + title + nom_main_cont_html + nom_stream_html + nom_bottom_cont_html + '</div>';
-        $('#profile_cont').append(html);
+        var html = nom_stream_html + nom_bottom_cont_html;
+        $('#nom_detail_cont').append(html);
         
         slide_images = $('.nom_photo_thumbnail');
         
@@ -3618,6 +3607,34 @@ $(document).ready(function(){
         $('.stream_nav').removeClass('selected');
         $('#profile_cont').html('');
         stream_view = '';
+        
+        var nom_main_cont_html ='<div id="nom_detail_cont">' +
+                                    '<div id="main_nom_cont">' +
+                                        '<div id="main_nom_cont_left">' +
+                                            '<div id="main_nom_cont_left_wrap">' +
+                                                '<img id="main_nom_photo" src="http://portrit.s3.amazonaws.com/img/album-loader-dark.gif"/>' +
+                                                '<div id="nominator_overlay_cont">' +
+                                                    '' +
+                                                '</div>' +
+                                            '</div>' +
+                                        '</div>' +
+                                        '<div id="main_nom_cont_right">' +
+                                            '<div id="main_nom_cont_right_wrap">' +
+                                                '<div id="nominatee_cont">' +
+                                                    '' +
+                                                '</div>' +
+                                                '<div id="trophy_cont">' +
+                                                    '' +
+                                                '</div>' +
+                                                '<div id="vote_cont">' +
+                                                    '' +
+                                                '</div>' +
+                                            '</div>' +
+                                        '</div>' +
+                                        '<div class="clear"></div>' +
+                                    '</div>' +
+                                '</div>';
+        $('#profile_cont').append(nom_main_cont_html);
         
         $.getJSON('/api/get_nom_detail/', {'source': selected_user.username, 'nom_id': selected_nom, 'nav_selected': stream_to_get, 'cat': cat}, function(data){
             if (data.length > 0){
@@ -4140,19 +4157,28 @@ $(document).ready(function(){
                     user_thumbnail = '<img src="https://graph.facebook.com/' + nom.nominatee + '/picture?type=square"/>';
                     photo_thumbnail = '<img src="' + nom.photo.thumbnail + '"/>';
                     
-                    top_nom_html =  '<div class="top_nom_wrap">' +
+                    top_nom_html =  '<div class="top_nom_wrap" name="' + nom.nominatee_username + '">' +
                                         '<p class="vote_count nom_cat_' + nom_cat_underscore + '">' + getGetOrdinal(i + 1) + '</p>' +
                                         '<a href="/#!/' + nom.nominatee_username + '">' + 
                                             user_thumbnail +
                                         '</a>' +
-                                        '<div class="top_nom_user_cont">' +
-                                            '<a href="/#!/' + nom.nominatee_username + '">' + name + '</a>' +
-                                            '<span>Votes: ' + nom.vote_count + '</span>' +
-                                        '</div>' +
                                         '<div class="top_nom_clip_cont" value="' + nom.id + '">' +
                                             '<div class="top_nom_clip">' +
                                                 '<a href="/#!/stream/nominations/' + nom_cat_text.replace(' ', '-') + '/" class="nomination_id" value="' + nom.id + '">' +
                                                     photo_thumbnail +
+                                                '</a>' +
+                                            '</div>' +
+                                        '</div>' +
+                                        '<div class="top_nom_user_cont">' +
+                                            '<div class="trophy_cont">' +
+                                                '<a href="/#!/stream/nominations/' + nom_cat_text.replace(' ', '-') + '/" class="nomination_id" value="' + nom.id + '">' +
+                                                    '<div class="trophy_img small ' + nom_cat_underscore + '"></div>' +
+                                                '</a>' +
+                                            '</div>' +
+                                            '<div class="vote_cont">' +
+                                                '<a href="/#!/stream/nominations/' + nom_cat_text.replace(' ', '-') + '/" class="nomination_id" value="' + nom.id + '">' +
+                                                    '<h3>Votes</h3>' +
+                                                    '<h2>' + nom.vote_count + '</h2>' +
                                                 '</a>' +
                                             '</div>' +
                                         '</div>' +
@@ -4161,6 +4187,7 @@ $(document).ready(function(){
                     $('#current_top_noms').append(top_nom_html);
                 }
             }
+            $('#current_top_noms').append('<p class="tooltip"></p>');
         }
         else{
             $('#top_right_cont').append('<h2>No current nominations.</h2>');
@@ -4386,7 +4413,7 @@ $(document).ready(function(){
                                     '</div>' +
                                     '<div id="gallery_selected_cont" class="gallery_thumb">' +
                                         '<img src="' + selected_photo.crop + '"/>' +
-                                        '<div id="nominate">Nominate</div>' +
+                                        '<div id="nominate" class="active">Nominate</div>' +
                                         '<div id="nominate_arrow" class="nominate_arrow"></div>' +
                                     '</div>' +
                                     '<div id="gallery_next_cont" class="gallery_thumb" value="' + next_photo_value + '">' +
@@ -4426,6 +4453,8 @@ $(document).ready(function(){
             }
         }
         selected_photo = selected_user.photos[selected_photo_index];
+        
+        $('#photo_nominated_cont').remove();
         
         if (selected_photo_index - 1 >= 0){
             prev_photo = selected_user.photos[selected_photo_index - 1];
@@ -4473,9 +4502,52 @@ $(document).ready(function(){
         $('#gallery_next_cont').html(next_photo_html).attr('value', next_photo_value);
         
         $('#gallery_photo_center > img').attr('src', selected_photo.source);
+        
+        if (selected_photo.nominated ){
+            render_photo_nominated(selected_photo.nom);
+        }
+        else{
+            $('#gallery_selected_cont').removeClass('nominated');
+            $('#nominate').removeClass().addClass('active');
+        }
     }
     
-    mutual_friends_list = [ ];
+    function render_photo_nominated(nom){
+        $('#gallery_selected_cont').addClass('nominated');
+        $('#nominate').removeClass().addClass('disabled');
+        
+        
+        var photo_nominated_html =  '<div id="photo_nominated_cont">' +
+                                        '<h2>You nominated this photo for ' + nom + '</h2>' +
+                                        '<div class="trophy_img large ' + get_cat_under(nom) + '"></div>' +
+                                        '<h3>Go to the <a href="/#!/" class="nom_cat_' + get_cat_under(nom) + '_text">Stream</a> to see your nomination</h3>' +
+                                    '</div>';
+        
+        $('#gallery_photo_cont').append(photo_nominated_html);
+    }
+    
+    function add_photo_nominated(id, noms){
+        noms = noms.split(',');
+        var noms_html = '';
+        var nom = '';
+        
+        for (var i = 0; i < noms.length; i++){
+            if (noms[i]){
+                nom = noms[i];
+            }
+        }
+        
+        for (var i = 0; i < selected_user.photos.length; i++){
+            if (selected_user.photos[i].id == id){
+                selected_user.photos[i].nominated = true;
+                selected_user.photos[i].nom = nom;
+                break;
+            }
+        }
+        
+        render_photo_nominated(nom);
+    }
+    
     function attach_gallery_handlers(){
         $('#gallery_next').live('click', function(){
             $('#gallery_next_cont').click();
@@ -4530,10 +4602,12 @@ $(document).ready(function(){
         });
         
         $('#nominate').live('mouseover mouseout', function(event) {
-            if (event.type == 'mouseover') {
-                $('#nominate_arrow').removeClass().addClass('nominate_arrow_hover');
-            } else {
-                $('#nominate_arrow').removeClass().addClass('nominate_arrow');
+            if ($(this).hasClass('disabled') == false){
+                if (event.type == 'mouseover') {
+                    $('#nominate_arrow').removeClass().addClass('nominate_arrow_hover');
+                } else {
+                    $('#nominate_arrow').removeClass().addClass('nominate_arrow');
+                }
             }
         });
     }
@@ -4652,10 +4726,17 @@ $(document).ready(function(){
     
     function render_profile_follow(data, method){
         var follow_html = '';
+        var follow_button = '';
         var data = data.data;
         
         $('#profile_user_context').append('<h2>' + capitaliseFirstLetter(method) + '</h2><div id="follow_cont"></div>');
         for (var i = 0; i < data.length; i++){
+            if (data[i].follow){
+                follow_button = '<span class="sick large green follow">Follow</span>';
+            }
+            else{
+                follow_button = '<span class="sick large red unfollow">Unfollow</span>';
+            }
             follow_html =   '<div class="follow_wrap" value="' + data[i].username + '">' +
                                 '<img src="https://graph.facebook.com/' + data[i].fid + '/picture?type=square"/>' +
                                 '<h3>' + data[i].username + '</h3>' +
@@ -4663,6 +4744,7 @@ $(document).ready(function(){
                                     '<div class="follow_photos"><h4>Photos</h4><p>' + data[i].photo_count + '</p></div>' +
                                     '<div class="follow_trophies"><h4>Trophies</h4><p>' + data[i].trophy_count + '</p></div>' +
                                     '<div class="follow_active"><h4>Active</h4><p>' + data[i].active_count + '</p></div>' +
+                                    follow_button + 
                                 '</div>' +
                             '</div>';
                             
@@ -5427,40 +5509,6 @@ $(document).ready(function(){
         }
     }
     
-    function load_more_noms(){
-        scroll_loading = true;
-        var oldest_time = $('.recent_nom_cont:last').attr('time');
-        var page_size = 10;
-        
-        if (mobile || tablet){
-            page_size = 5;
-        }
-        
-        var user_to_load = selected_user;
-        
-        if (user_to_load == 'me'){
-            user_to_load = me.id;
-        }
-        
-        if (stream_view == 'stream'){
-            $('#recent_left_cont').append('<div id="profile_loading"><img src="http://portrit.s3.amazonaws.com/img/ajax-loader-light.gif"/></div>');
-        }
-        else{
-            $('#active_cont').append('<div id="profile_loading"><img src="http://portrit.s3.amazonaws.com/img/ajax-loader-light.gif"/></div>');
-        }
-        $.getJSON('/get_more_recent_stream/', {'selected_user': user_to_load, 'create_time': oldest_time, 'page_size': page_size}, function(data){
-            $('#profile_loading').remove();
-            render_recent_stream(data);
-            if (data.length > 0){
-                scroll_loading = false;
-            }
-        });
-        
-        if (typeof(_gaq) !== "undefined"){
-            _gaq.push(['_trackEvent', 'Stream', 'Load More', '']);
-        }
-    }
-    
     var selected_result_index = 0;
     var result_length = 0;
     function render_search_results(data){
@@ -6209,6 +6257,10 @@ $(document).ready(function(){
                     _gaq.push(['_trackEvent', 'Post Nom', 'Click', '']);
                 }
                 $('#close_overlay').click();
+                
+                if (view_active == 'gallery'){
+                    add_photo_nominated(selected_photo.id, selected_nominations);
+                }
             }
         });
         
@@ -6497,6 +6549,14 @@ $(document).ready(function(){
             });
         });
         
+        // $('.top_nom_wrap').live('mouseover mouseout', function(event) {
+        //     if (event.type == 'mouseover') {
+        //         show_tooltip(this);
+        //     } else {
+        //         hide_tooltip(this);
+        //     }
+        // });
+        
         $(window).bind('scroll', function(e){
             var scroll_pos = $(window).scrollTop();
             
@@ -6701,6 +6761,13 @@ $(document).ready(function(){
         cat_underscore = nom.nomination_category.replace(' ', '_').toLowerCase();
         
         $('#vote_cont_left').removeClass().addClass('nom_cat_' + cat_underscore);
+        if (nom.won){
+            $('#vote_cont_left').addClass('won');
+        }
+        else{
+            $('#vote_cont_left').addClass('active');
+        }
+        
         $('#nomination_text_cont h3').text(nom.nomination_category);
         $('#nom_trophy_icon').removeClass().addClass('trophy_img large ' + cat_underscore);//.attr('src', 'http://portrit.s3.amazonaws.com/img/trophies/large/' + cat_underscore + '.png');
         $('#nominator_overlay_cont a').attr('href', '/#!/' + nom.nominator_username);
@@ -6830,11 +6897,11 @@ $(document).ready(function(){
         
         if (loaded_top >= 9 && selected > current && selected + load_sensitivity >= loaded_top && $('.nom_photo_thumbnail:last').attr('end') == undefined){
             dir = 'up';
-            pos_to_load = loaded_top + 1
+            pos_to_load = loaded_top + 1;
         }
         else if (selected < current && selected - load_sensitivity <= loaded_bottom && loaded_bottom > 0){
-            dir = 'down'
-            pos_to_load = loaded_bottom
+            dir = 'down';
+            pos_to_load = loaded_bottom;
         }
         
         if (dir){
@@ -6907,7 +6974,7 @@ $(document).ready(function(){
             var comment_cont = $(this).parent().parent().find('#new_comment_cont');
             
             comment_form_shown = true;
-            $(this).hide()
+            $(this).addClass('off');
             $(comment_cont).show();
             $('.comment_body').focus();
         });

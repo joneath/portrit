@@ -12,6 +12,10 @@ var win = Ti.UI.currentWindow,
     photo = null,
     selected_nom = null,
     selected_nom_index = 0,
+    scroll_offset = {
+        x: 0,
+        y: 0
+    },
     noms_in_cat = null,
     current_comments = null,
     window_nav_bar = null,
@@ -226,6 +230,197 @@ function update_nom_detail(index){
     get_nom_comments(comments_row, selected_nom.id);
 }
 
+function update_nom_cache(data, dir){
+    if (dir == 'up'){
+        for (var i = 0; i < data.length; i++){
+            noms_in_cat.push(data[i]);
+        }
+    }
+    else{
+        for (var i = 0; i < data.length; i++){
+            noms_in_cat.splice(i,0,data[i]);
+        }
+    }
+}
+
+function render_more_nom_detail(noms, dir){
+    if (noms.length > 0){
+        update_nom_cache(noms, dir);
+        
+        for (var i = 0; i < noms.length; i++){
+            photo_thumb = Ti.UI.createImageView({
+                image: noms[i].photo.crop,
+                defaultImage: '../../images/photo_loader.png',
+                borderColor: '#fff',
+                backgroundColor: '#000',
+                borderWidth: 2,
+                width: 55,
+                height: 42,
+                left: 0,
+                hires: true
+            });
+            scroll_offset.x += 60; 
+            photo_thumb.nom = noms[i];
+            
+            if (dir == 'up'){
+                thumb_list.push(photo_thumb);
+            }
+            else{
+                thumb_list.splice(i,0,photo_thumb);
+            }
+        
+            var max_height = 320;
+            var highres = true;
+            var photo_width = 0;
+            var photo_height = 0;
+                if (Ti.Platform.displayCaps.density == 'high') {
+                    if (noms[i].photo.width > Ti.Platform.displayCaps.platformWidth){
+                        photo_width = Ti.Platform.displayCaps.platformWidth;
+                    }
+                    else{
+                        photo_width = noms[i].photo.width;
+                    }
+        
+                    if (noms[i].photo.height && noms[i].photo.height > max_height){
+                        if (noms[i].photo.height > noms[i].photo.width){
+                            photo_height = max_height;
+                            photo_width = photo_height * (noms[i].photo.width / noms[i].photo.height);
+                        }
+                        else{
+                            photo_height = photo_width * (noms[i].photo.height / noms[i].photo.width);
+                        }
+                    }
+                    else{
+                        photo_height = max_height;
+                    }
+                    highres = true;
+                }
+                else{
+                    if (photo_width < 320){
+                        photo_width = noms[i].photo.width;
+                    }
+                    else{
+                        photo_width = 320
+                    }
+        
+                    if (noms[i].photo.height && noms[i].photo.height > max_height){
+                        photo_width = max_height * (noms[i].photo.width / noms[i].photo.height);
+                        photo_height = photo_width * (noms[i].photo.height / noms[i].photo.width);
+                    }
+                    else{
+                        photo_height = max_height;
+                    }
+                    highres = false;
+                }
+        
+            detail_img = Ti.UI.createImageView({
+                image: noms[i].photo.source,
+                defaultImage: '../../images/photo_loader.png',
+                width: photo_width,
+                height: photo_height,
+                hires: highres
+            });
+            scroll_view_cont = Titanium.UI.createView({
+                width: 320,
+                height: 'auto'
+            });
+            scroll_view_cont.add(detail_img);
+            scroll_view_cont.nom = noms[i];
+            
+            if (dir == 'up'){
+                photo_list.push(scroll_view_cont);
+            }
+            else{
+                photo_list.splice(i,0,scroll_view_cont);
+            }
+        
+            photo_thumb.opacity = 0.5;
+        
+            photo_thumb.addEventListener('click', photo_thumb_click);
+            noms_scroll_view.add(photo_thumb);
+        }
+        
+        for (var i = 0; i < thumb_list.length; i++){
+            thumb_list[i].left = 5 + (60 * i);
+        }
+        scroll_width = (thumb_list.length * 60) + 5;
+        noms_scroll_view.contentWidth = scroll_width;
+        
+        noms_scroll_view.contentOffset = scroll_offset;
+        
+        scrollView.views = photo_list;
+        
+        if (dir == 'up'){
+            
+        }
+        else{
+            
+        }
+    }
+    else{
+        
+    }
+}
+
+function load_more_noms(state, cat, dir, pos_to_load){
+    var url = '';
+    if (state == 'stream_active'){
+        url = SERVER_URL + '/api/get_nom_detail/?source=' + username + '&nav_selected=' +state + '&cat=' + cat + '&dir=' + dir + '&pos=' + pos_to_load;
+        
+        // $.getJSON('/api/get_nom_detail/', {'source': username, 'nav_selected': state, 'cat': cat, 'dir': dir, 'pos': pos_to_load}, function(data){
+        //     render_more_nom_detail(data, dir);
+        // });
+    }
+    else if (state == 'stream_winners'){
+        
+    }
+    else if (state == 'community_active'){
+        
+    }
+    else if (state == 'community_top'){
+        url = SERVER_URL + '/api/get_nom_detail/?nav_selected=' +state + '&cat=' + cat + '&dir=' + dir + '&pos=' + pos_to_load;
+    }
+    else if (state == 'profile_trophies'){
+
+    }
+    else if (state == 'profile_active'){
+
+    }
+    
+    var xhr = Titanium.Network.createHTTPClient();
+    
+    xhr.onload = function(){
+        var data = JSON.parse(this.responseData);
+        render_more_nom_detail(data, dir);
+    }
+    xhr.open('GET', url);
+    xhr.send();
+}
+
+function check_detail_pagination(current, selected, len, pos){
+    var load_sensitivity = 3;
+    
+    var loaded_top = (len - selected) + pos;
+    var loaded_bottom = pos - selected;
+    var pos_to_load = 0;
+    var dir = null;
+    
+    var cat = noms_in_cat[selected].nomination_category;
+    
+    if (loaded_top >= 9 && selected > current && selected + load_sensitivity >= loaded_top && typeof(noms_in_cat[selected].end) == 'undefined'){
+        dir = 'up';
+        pos_to_load = loaded_top;
+    }
+    else if (selected < current && selected - load_sensitivity <= loaded_bottom && loaded_bottom > 0){
+        dir = 'down';
+        pos_to_load = loaded_bottom;
+    }
+    
+    if (dir){
+        load_more_noms(state, cat, dir, pos_to_load);
+    }
+}
+
 function show_votes(e){
     var w = Ti.UI.createWindow({backgroundColor:"#ddd", url:'votes.js'});
 	Titanium.UI.currentTab.open(w,{animated:true});
@@ -279,8 +474,7 @@ function open_options(e){
         if (e.index == 0){
             var xhr = Titanium.Network.createHTTPClient();
 
-            xhr.onload = function()
-            {
+            xhr.onload = function(){
                 var data = JSON.parse(this.responseData);
                 if (data == true){
                     var flag_cont_background = Titanium.UI.createView({
@@ -653,6 +847,36 @@ function me_in_votes(votes){
     return false;
 }
 
+function photo_thumb_click(e){
+    var nom = e.source.nom;
+    var source_index = find_nom_index_in_list(nom.id, noms_in_cat);
+
+    var scroll_pos = (source_index * 60) - 125;
+    if (scroll_pos < 0){
+        scroll_pos = 0;
+    }
+    else if (scroll_pos + 320 > scroll_width){
+        scroll_pos = scroll_width - 320;
+    }
+
+    noms_scroll_view.scrollTo(scroll_pos, 0);
+    
+    if (nom.id != selected_nom.id){
+        old_index = selected_nom_index;
+        selected_nom_index = find_nom_index_in_list(nom.id, noms_in_cat);
+        
+        thumb_list[old_index].opacity = 0.5;
+        thumb_list[selected_nom_index].opacity = 1;
+        scrollView.scrollToView(photo_list[selected_nom_index]);
+        update_nom_detail(selected_nom_index);
+        
+        if (!won){
+	        place_text.text = getOrdinal(noms_in_cat[selected_nom_index].position+1),
+        }
+        check_detail_pagination(old_index, selected_nom_index, noms_in_cat.length, noms_in_cat[selected_nom_index].position);
+    }
+}
+
 function render_nom_detail(noms){
     var nom_cat_underscore = selected_nom.nomination_category.replace(' ', '_').toLowerCase();
     var nom_cat_color = get_nom_cat_color(nom_cat_underscore);
@@ -988,13 +1212,13 @@ function render_nom_detail(noms){
     detail_row.add(detail_middle_cont);
     win.add(detail_row);
     
-    var scroll_width = (noms.length * 60) + 5;
+    scroll_width = (noms.length * 60) + 5;
     
     if (scroll_width <= 320){
         scroll_width = 321;
     }
     
-    var noms_scroll_view = Titanium.UI.createScrollView({
+    noms_scroll_view = Titanium.UI.createScrollView({
     	contentWidth: scroll_width,
     	contentHeight: 50,
     	top: 0,
@@ -1110,7 +1334,6 @@ function render_nom_detail(noms){
     		hires: true
     	});
     	photo_thumb.nom = noms[i];
-    	photo_thumb.index = i;
     	thumb_list.push(photo_thumb);
     	
     	var max_height = 320;
@@ -1179,7 +1402,7 @@ function render_nom_detail(noms){
     	    selected_nom_index = i;
     	    if (!won){
     	        place_text = Titanium.UI.createLabel({
-            	    text: getOrdinal(i+1),
+            	    text: getOrdinal(noms[i].position+1),
                     textAlign: 'center',
                     color: '#fff',
                     height: 'auto',
@@ -1190,22 +1413,6 @@ function render_nom_detail(noms){
                     zIndex: 1,
                     font:{fontSize: 32, fontWeight: 'bold'}
                 });
-                
-                // var now = new Date();
-                // var time = new Date(selected_nom.created_time * 1000);
-                // var time_diff = now - time;
-                // time_diff /= 1000;
-                // post_time = Titanium.UI.createLabel({
-                //                  text: secondsToHms(time_diff),
-                //     color: '#fff',
-                //     opacity: 0.8,
-                //     left: 5,
-                //     top: 35,
-                //     right: 5,
-                //     bottom: 5,
-                //     size: {width: 'auto', height: 'auto'},
-                //     font:{fontSize:12}
-                // });
 
                 post_time_background = Titanium.UI.createView({
                     backgroundColor: '#000',
@@ -1225,7 +1432,6 @@ function render_nom_detail(noms){
                 });
                 post_time_cont.add(post_time_background);
                 post_time_cont.add(place_text);   
-                // post_time_cont.add(post_time);
                 detail_img_cont.add(post_time_cont);
                 
                 vote_up.nom = noms[i];
@@ -1242,32 +1448,7 @@ function render_nom_detail(noms){
             noms_scroll_view.scrollTo(scroll_pos, 0);
     	}
     	
-    	photo_thumb.addEventListener('click', function(e){
-    	    var nom = e.source.nom;
-            
-            var scroll_pos = (e.source.index * 60) - 125;
-            if (scroll_pos < 0){
-                scroll_pos = 0;
-            }
-            else if (scroll_pos + 320 > scroll_width){
-                scroll_pos = scroll_width - 320;
-            }
-
-            noms_scroll_view.scrollTo(scroll_pos, 0);
-    	    
-    	    if (nom.id != selected_nom.id){
-    	        thumb_list[selected_nom_index].opacity = 0.5;
-    	        thumb_list[e.source.index].opacity = 1;
-                selected_nom_index = e.source.index;
-                scrollView.scrollToView(selected_nom_index);
-                // scrollView.scroll({});
-                update_nom_detail(selected_nom_index);
-    	        
-    	        if (!won){
-        	        place_text.text = getOrdinal(selected_nom_index+1); 
-    	        }
-    	    }
-    	});
+    	photo_thumb.addEventListener('click', photo_thumb_click);
         
         noms_scroll_view.add(photo_thumb);
     }
@@ -1285,16 +1466,19 @@ function render_nom_detail(noms){
             }
             else if (scroll_pos + 320 > scroll_width){
                 scroll_pos = scroll_width - 320;
-            }   
+            }
             noms_scroll_view.scrollTo(scroll_pos, 0);
-            thumb_list[selected_nom_index].opacity = 0.5;
-	        thumb_list[e.currentPage].opacity = 1;
-	        
-	        selected_nom_index = e.currentPage;
+            
+            old_index = selected_nom_index;
+	        selected_nom_index = find_nom_index_in_list(nom.id, noms_in_cat);
+            
+            thumb_list[old_index].opacity = 0.5;
+	        thumb_list[selected_nom_index].opacity = 1;
 	        update_nom_detail(selected_nom_index);
 	        if (!won){
-    	        place_text.text = getOrdinal(selected_nom_index+1); 
+    	        place_text.text = getOrdinal(nom.position+1); 
 	        }
+	        check_detail_pagination(old_index, selected_nom_index, noms_in_cat.length, noms_in_cat[selected_nom_index].position);
         }
     });
     
@@ -1312,6 +1496,15 @@ function find_nom_in_list(id, data){
         }
     }
     return selected_nom;
+}
+
+function find_nom_index_in_list(id, data){
+    for (var i = 0; i < data.length; i++){
+        if (data[i].id == id){
+            return i;
+            break;
+        }
+    }
 }
 
 function init_detail_view(state){
@@ -1412,7 +1605,6 @@ Ti.App.addEventListener('pass_detail', function(eventData) {
         cat = String(eventData.cat);
         if (typeof(eventData.user) != 'undefined'){
             username = String(eventData.user);
-            user = String(eventData.user);
         }
         if (won == 1){
             won = true;
