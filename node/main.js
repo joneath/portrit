@@ -33,6 +33,7 @@ var Portrit = function(){
             try{
                 var data = JSON.parse(data_stream);
                 for (var id in data.payload.friends){
+                    console.log(id);
                     if (id != undefined){
                         // if (nomination_emitter.listeners(data.payload.friends[id].fid).length == 0 && data.payload.friends[id].allow_notifications){
                         //     fb_mail_emitter.addListener(data.payload.friends[id].fid, fb_mail_send);
@@ -44,20 +45,20 @@ var Portrit = function(){
                         // }
                     }
                 }
-                if (data.payload.friends_to_update){
-                    data.method = data.secondary_method;
-                    console.log(data.method);
-                    for (var id in data.payload.friends_to_update){
-                        if (id != undefined){
-                            try{
-                                nomination_emitter.emit(data.payload.friends_to_update[id].fid, undefined, data);
-                            }
-                            catch (err){
-                                
-                            }
-                        }
-                    }
-                }
+                // if (data.payload.friends_to_update){
+                //     data.method = data.secondary_method;
+                //     console.log(data.method);
+                //     for (var id in data.payload.friends_to_update){
+                //         if (id != undefined){
+                //             try{
+                //                 nomination_emitter.emit(data.payload.friends_to_update[id].fid, undefined, data);
+                //             }
+                //             catch (err){
+                //                 
+                //             }
+                //         }
+                //     }
+                // }
                 data_stream = '';
             }
             catch (err){

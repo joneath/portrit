@@ -909,14 +909,20 @@ def get_top_stream(user):
     data = [ ]
     PAGE_SIZE = 10
     try:
-        following = user.get_following()
-        nominations = Nomination.objects.filter(
-            Q(nominatee__in=following) |
-            Q(nominatee=user) |
-            Q(nominator=user) |
-            Q(tagged_users__in=following),
-            active=True, won=False).order_by('-current_vote_count', '-created_date')[:PAGE_SIZE]
-        data = serialize_noms(nominations)
+        user_top_stream_cache = cache.get(str(user.id) + '_top_stream')
+        if not user_top_stream_cache:
+            following = user.get_following()
+            nominations = Nomination.objects.filter(
+                Q(nominatee__in=following) |
+                Q(nominatee=user) |
+                Q(nominator=user) |
+                Q(tagged_users__in=following),
+                active=True, won=False).order_by('-current_vote_count', '-created_date')[:PAGE_SIZE]
+            data = serialize_noms(nominations)
+            
+            cache.set(str(user.id) + '_top_stream', data, 60*5)
+        else:
+            data = user_top_stream_cache
     except Exception, err:
         print err
         

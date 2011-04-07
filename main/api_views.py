@@ -613,6 +613,7 @@ def nominate_photo(request):
             notification_type = Notification_Type.objects.get(name="new_nom")
             tagged_notification = Notification_Type.objects.get(name="tagged_nom")
             tagged_user_list = [ ]
+            new_nomination = None
             for nomination in nominations:
                 if nomination != '':
                     nom_cat = Nomination_Category.objects.get(title=nomination)
@@ -628,7 +629,8 @@ def nominate_photo(request):
                         nomination.public = True
 
                     nomination.save()
-                    print tags
+                    new_nomination = nomination
+                    
                     try:
                         for tag in tags:
                             if tag != '':
@@ -659,7 +661,7 @@ def nominate_photo(request):
                         notification.save()
                     else:
                         notification = None
-                    
+
                     data = {
                         'id': str(nomination.id),
                         'active': True,
@@ -683,10 +685,10 @@ def nominate_photo(request):
                             'vote_name': nomination.nominator.name,
                         }],
                     }
-                
+                    
                     if notification:
                         data['notification_id'] = str(notification.id)
-
+                        
                     nom_data.append(data)
 
             #Send update notification to event handlers
@@ -694,20 +696,18 @@ def nominate_photo(request):
             target_friends = [ ]
             for tagged_user in tagged_user_list:
                 target_friends.append(tagged_user)
+               
+            if new_nomination.nominator != new_nomination.nominatee:
+                target_friends.append(new_nomination.nominatee)
                 
-            if nomination.nominator != nomination.nominatee:
-                print "here"
-                target_friends.append(nomination.nominatee)
-
             target_friends = list(set(target_friends))
             friends = { }
             for friend in target_friends:
                 try:
-                    friend = Portrit_User.objects.get(fb_user__fid=friend)
                     friends[friend.fb_user.fid] = {'fid': friend.fb_user.fid}
                 except:
                     friends = { }
-
+                
             node_data = {
                 'method': 'new_nom',
                 'payload': {
@@ -763,6 +763,8 @@ def vote_on_nomination(request):
         target_friends = nomination.nominatee.get_following()
         for vote in nomination.votes:
             target_friends.append(vote)
+            
+        target_friends.append(nomination.nominatee)
             
         friends = { }
         for friend in target_friends:
@@ -901,36 +903,31 @@ def follow_unfollow_user(request):
     method = request.POST.get('method')
     
     try:
-        source_portrit_user = get_user_from_access_token(access_token)
-        source = source_portrit_user.fb_user
-        target = FB_User.objects.get(fid=int(target))
-        target_portrit_user = target.get_portrit_user()
+        source = get_user_from_access_token(access_token)
+        target = Portrit_User.objects.get(username=target)
+        
         if method == 'follow':
             pending = False
-            if not target_portrit_user.allow_follows:
+            if not target.allow_follows:
                 pending = True
             
-            for test in User_Followers.objects.filter(portrit_user=target_portrit_user, fb_user=source, pending=pending):
-                print test.id
-                print test.active
+            following_rec = Follow(user=target, pending=pending)
+            following_rec.save()
+            source.following.append(following_rec)
+            source.save()
             
-            following_rec, created = User_Following.objects.get_or_create(portrit_user=source_portrit_user, fb_user=target, pending=pending)
-            if not created:
-                following_rec.active = True
-                following_rec.save()
-                
-            follower_rec, created = User_Followers.objects.get_or_create(portrit_user=target_portrit_user, fb_user=source, pending=pending)
-            if not created:
-                follower_rec.active = True
-                follower_rec.save()
+            #Create follower following user record
+            following_rec = Follow(user=source, pending=pending)
+            following_rec.save()
+            target.followers.append(following_rec)
+            target.save()
                 
             #Create following notification
             try:
                 # if not follower_rec.pending_notification:
                 notification_type = Notification_Type.objects.get(name='new_follow')
-                notification = Notification(source=source, destination=target, pending=pending, notification_type=notification_type)
+                notification = Notification(owner=target, source=source, destination=target, pending=pending, notification_type=notification_type)
                 notification.save()
-                target_portrit_user.notifications.add(notification)
                 print "notification saved"
             
                 if pending:
@@ -942,12 +939,12 @@ def follow_unfollow_user(request):
                     'method': 'new_follow',
                     'secondary_method': 'new_follow_update',
                     'payload': {
-                        'id': notification.id,
+                        'id': str(notification.id),
                         'create_datetime': time.mktime(notification.created_date.utctimetuple()),
-                        'follower_id': source.fid,
-                        'follower_name': source_portrit_user.name,
-                        'follower_username': source_portrit_user.username,
-                        'friends_to_update': [target.fid],
+                        'follower_id': source.fb_user.fid,
+                        'follower_name': source.name,
+                        'follower_username': source.username,
+                        'friends': {target.fb_user.fid: {'fid': target.fb_user.fid}}
                     }
                 }
             
@@ -965,16 +962,18 @@ def follow_unfollow_user(request):
 
         elif method == 'unfollow':
             try:
-                following_rec = User_Following.objects.filter(portrit_user=source_portrit_user, fb_user=target, active=True)[0]
-                following_rec.active = False
-                following_rec.save()
-            except Exception, err:
-                print err
+                source_following = source.following
+                following_record = filter(lambda follow: follow.user == target and follow.active == True, source_following)
+                for rec in following_record:
+                    rec.active = False
+                    rec.save()
                 
-            try:
-                follower_rec = User_Followers.objects.filter(portrit_user=target_portrit_user, fb_user=source, active=True)[0]
-                follower_rec.active = False
-                follower_rec.save()
+                target_followers = target.followers
+                follower_record = filter(lambda follow: follow.user == source and follow.active == True, target_followers)
+                for rec in follower_record:
+                    rec.active = False
+                    rec.save()
+
             except Exception, err:
                 print err
             
@@ -1144,10 +1143,10 @@ def get_follow_data_detailed(request):
             if not all:
                 target_followers = target_followers[PAGE_SIZE * (page - 1):PAGE_SIZE * page]
                 
-            source_followers = source_portrit_user.get_followers()
-            source_followers_list = []
-            for follower in source_followers:
-                source_followers_list.append(follower.id)
+            source_following = source_portrit_user.get_following()
+            source_following_list = []
+            for follower in source_following:
+                source_following_list.append(follower.id)
         
             for user in target_followers:
                 photo_count = 0
@@ -1164,7 +1163,7 @@ def get_follow_data_detailed(request):
                 except:
                     pass
                     
-                if user.id in source_followers_list:
+                if user.id in source_following_list:
                     data['data'].append({
                         'fid': user.fb_user.fid,
                         'name': user.name,
@@ -1296,10 +1295,6 @@ def get_user_profile(request):
             user_trophy_count = cache.get(str(user.fid) + '_trophy_count')
             if not user_trophy_count:
                 trophy_count = portrit_user.winning_nomination_count
-                # 
-                # len(Nomination.objects.filter(Q(tagged_users__in=[portrit_user]) | 
-                #                                             Q(nominatee=portrit_user), 
-                #                                             won=True).order_by('-created_date'))
                 data['trophy_count'] = trophy_count
                 cache.set(str(user.fid) + '_trophy_count', trophy_count)
             else:
@@ -1811,8 +1806,8 @@ def new_comment(request):
             
             voters = nomination.votes
             all_commentors = [ ]
-            for comment in Comment.objects.filter(nomination=str(nomination.id), active=True):
-                all_commentors.append(comment.owner)
+            for other_comment in Comment.objects.filter(nomination=str(nomination.id), active=True):
+                all_commentors.append(other_comment.owner)
                 
             tagged_users = nomination.tagged_users
             
@@ -1844,12 +1839,6 @@ def new_comment(request):
                     notification.save()
                     friend['notification_id'] = str(notification.id)
                        
-            # friends_to_update = { }
-            # target_friends = get_target_friends(owner, user)
-            # for friend in friends:
-            #     friends_to_update[friend] = {'fid': friend,
-            #                             'allow_notifications': False}
-
             node_data = {
                 'method': 'new_comment',
                 'secondary_method': 'new_comment_update',
@@ -1866,7 +1855,6 @@ def new_comment(request):
                     'nom_owner_username': owner.username,
                     'won': nomination.won,
                     'friends': friends,
-                    'friends_to_update': friends,
                 }
             }
             

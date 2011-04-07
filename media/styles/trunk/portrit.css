@@ -184,6 +184,7 @@ div#wrapper{
     margin-bottom:      10px;
     width:              100%;
     min-width:          900px;
+    min-height:         80px;
     top:                0px;
     z-index:            10;
 }
@@ -1742,6 +1743,7 @@ div#nom_detail_cont{
 
     div#nom_detail_cont .title{
         font-size:              30px;
+        height:                 34px;
         margin-left:            15px;
     }
     
@@ -1798,6 +1800,7 @@ div#nom_detail_cont{
             border:             5px solid white;
             cursor:             pointer;
             height:             100px;
+            width:              100px;
             margin-top:         10px;
             position:           absolute;
         }
@@ -1989,7 +1992,7 @@ div#nom_detail_cont{
                         position:               absolute;
                         left:                   -20px;
                         top:                    52px;
-                        z-index:                100;
+                        z-index:                2;
                     }
                 
                     div#vote_cont_right .vote{
@@ -2102,8 +2105,8 @@ div#nom_detail_cont{
             div#comment_heading_cont{
                 background-color:       #eee;
                 border-bottom:          1px solid #DEDEDE;
-                padding-top:            10px;
-                padding-bottom:         5px;
+                height:                 40px;
+                padding-top:            7px;
                 padding-left:           10px;
                 text-align:             left;
             }
@@ -2146,8 +2149,8 @@ div#nom_detail_cont{
                 color:                  #444;
                 font-size:              20px;
                 padding-left:           15px;
-                padding-top:            19px;
-                padding-bottom:         5px;
+                line-height:            47px;
+                height:                 47px;
                 text-align:             left;
             }
             
@@ -4752,10 +4755,33 @@ div#context_overlay{
             width:              600px;
         }
         
-            #profile_user_context .follow_wrap .user_stats_cont span{
+            #profile_user_context .follow_wrap .user_stats_cont .follow_button_cont{
+                background-color:   inherit;
                 float:              right;
                 margin-right:       25px;
+                width:              90px;
+                text-align:         center;
             }
+            
+                .user_stats_cont .follow_button_cont img{
+                    position:           relative;
+                    z-index:            10;
+                }
+            
+                .user_stats_cont .follow_button_cont span{
+                    width:              60px;
+                    -moz-box-shadow:    none;
+                    -webkit-box-shadow: none;
+                    box-shadow:         none;
+                }
+                
+                .user_stats_cont .follow_button_cont span.disabled{
+                    background-color:   #999;
+                }
+                
+                .user_stats_cont .follow_button_cont span.disabled:hover{
+                    background-color:   #999;
+                }
         
         #profile_user_context .follow_wrap .user_stats_cont > div{
             background-color:   #aaa;
@@ -6935,6 +6961,10 @@ div#payment_types_cont{
         float:                  left;
         height:                 40px;
         width:                  10px;
+    }
+    
+    .notification_cont .new_follow{
+        background-color:       #3DA732;
     }
     
     .notification_cont p{

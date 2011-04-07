@@ -716,10 +716,6 @@ $(document).ready(function(){
     stream_view = null,
     view_active = '',
     fb_server_timeout = null;
-    user_notifications = {
-        'new_noms': { },
-        'comments': { }
-    },
     close_size = 'normal',
     me = null;
     
@@ -1266,7 +1262,6 @@ $(document).ready(function(){
         $('head').append(meta_html);
     }
     
-    var notifcation_cache = [ ];
     function wait_for_message(){
         // if (window["WebSocket"]) {
         //     //Has websockets
@@ -1325,94 +1320,31 @@ $(document).ready(function(){
         if (data && data.method){
             if (data.method == 'new_nom'){
                 for (var i = 0; i < data.payload.nom_data.length; i++){
-                    //Check if notification is user
-                    if (data.payload.nom_data[i].nominator != me.id){
-                        if (data.payload.nom_data[i].nominatee == me.id){
-                            render_notification("new_nom", data.payload.nom_data[i]);
-                            update_notifications(data.payload.nom_data[i], 'new_nom');
-                            notifcation_cache.unshift({
-                                'data': data.payload.nom_data[i],
-                                'method': 'new_nom'
-                            });
-                        }
-                        else if (data.payload.nom_data[i].tagged_users.find_elm(me.id) >= 0){
-                            render_notification("tagged_nom", data.payload.nom_data[i]);
-                            update_notifications(data.payload.nom_data[i], 'tagged_nom');
-                            notifcation_cache.unshift({
-                                'data': data.payload.nom_data[i],
-                                'method': 'tagged_nom'
-                            });
-                        }
-
-                        //Update my feed
-                        if (my_feed){
-                            active_noms_cache[data.payload.nom_data[i].id] = data.payload.nom_data[i];
-                            if (active_nom_cats_map[data.payload.nom_data[i].nomination_category.replace(' ', '_').toLowerCase()]){
-                                active_nom_cats_map[data.payload.nom_data[i].nomination_category.replace(' ', '_').toLowerCase()].push(data.payload.nom_data[i].id);
-                            }
-                            else{
-                                active_nom_cats_map[data.payload.nom_data[i].nomination_category.replace(' ', '_').toLowerCase()] = [data.payload.nom_data[i].id];
-                            }
-                            for (var k = 0; k < my_feed.length; k++){
-                                if (my_feed[k].cat_name == data.payload.nom_data[i].nomination_category){
-                                    my_feed[k].noms.push(data.payload.nom_data[i]);
-                                }
-                            }
-                        }
-                        if (user_winning_noms_cache[data.payload.nom_data[i].nominatee] && data.payload.nom_data[i].nominator != me.id){
-                            user_winning_noms_cache[data.payload.nom_data[i].nominatee].active_nom_objs.push(data.payload.nom_data[i]);
-                        }
+                    if (data.payload.nom_data[i].nominatee == me.id){
+                        render_notification("new_nom", data.payload.nom_data[i]);
+                        update_notifications(data.payload.nom_data[i], 'new_nom');
+                    }
+                    else if (data.payload.nom_data[i].tagged_users.find_elm(me.id) >= 0){
+                        render_notification("tagged_nom", data.payload.nom_data[i]);
+                        update_notifications(data.payload.nom_data[i], 'tagged_nom');
                     }
                 }
-                if ($('#empty_noms_cont').length > 0 && $('#new_noms_action').length == 0){
-                    // $('#scroller').prepend('<div id="new_noms_action" style="display:none;"><h2>New nominations have arrived! Click to view.</h2></div>');
-                    // $('#new_noms_action').fadeIn();
-                    // $('#new_noms_action').bind('click', function(){
-                    //     $('#new_noms_action').unbind('click');
-                    //     clear_canvas(getUrlVars());
-                    //     attach_main_handlers();
-                    //     main_view();
-                    //     $('#wall_view').addClass('main_control_active');
-                    //     $('html, body').scrollTop(0);
-                    // });
-                }
-                else if (view_active == 'main' && default_view == 'wall' && stream_view == 'recent_noms'){
+                if (view_active == 'stream_active'){
                     inject_nom_stream(data.payload.nom_data);
-                }
-                else if (view_active == 'main' && default_view == 'wall'){
-                    update_feed(data.payload);
-                }
-                if ($('#empty_noms_cont').length > 0){
-                    // $('#empty_noms_cont').fadeOut(function(){
-                    //     $(this).remove();
-                    //     $('#profile_cont').fadeIn();
-                    // });
                 }
             }
             else if (data.method == 'vote'){
                 if (data.payload.vote_user != me.id){
-                    if (active_noms_cache){
-                        if (active_noms_cache[data.payload.nom_id]){
-                            active_noms_cache[data.payload.nom_id].vote_count = data.payload.vote_count;
-                            active_noms_cache[data.payload.nom_id].votes.push({'vote_user': data.payload.vote_user, 'vote_name': data.payload.vote_name});
+                    if (nom_cache){
+                        if (nom_cache[data.payload.nom_id]){
+                            nom_cache[data.payload.nom_id].vote_count = data.payload.vote_count;
+                            nom_cache[data.payload.nom_id].votes.push({'vote_user': data.payload.vote_user, 
+                                                                        'vote_name': data.payload.vote_name, 
+                                                                        'vote_username': data.payload.vote_username});
                         }
                     }
-                    if (view_active == 'main' && default_view == 'wall' && stream_view == 'recent_noms'){
+                    if (view_active == 'stream_active' || view_active == 'nom_detail'){
                         update_vote_count(data.payload);
-                    }
-                    else if (view_active == 'main' && default_view == 'wall'){
-                        update_vote_count(data.payload);
-                    }
-                    else if (view_active == 'nom_detail'){
-                        update_vote_count(data.payload);
-                    }
-                }
-                if (user_winning_noms_cache[data.payload.nominatee]){
-                    var active_nom_objs = user_winning_noms_cache[data.payload.nominatee].active_nom_objs;
-                    for (var i = 0; i < active_nom_objs.length; i++){
-                        if (data.payload.nom_id == active_nom_objs[i].id){
-                            active_nom_objs[i].vote_count = data.payload.vote_count;
-                        }
                     }
                 }
             }
@@ -1420,20 +1352,14 @@ $(document).ready(function(){
                 if (data.payload.comment_sender_id != me.id){
                     render_notification("new_comment", data.payload);
                     update_notifications(data.payload, 'new_comment');
-                    notifcation_cache.unshift({
-                        'data': data.payload,
-                        'method': 'new_comment'
-                    });
+
                     if (view_active == 'nom_detail'){
                         if (data.payload.id == $('#main_nom_cont').attr('value')){
                             render_comment_update(data.payload);
                         }
                     }
-                    else if (view_active == 'main' && default_view == 'wall'){
-                        update_comment_count(data.payload);
-                        if (stream_view == 'recent_noms'){
-                            render_recent_comment_update(data.payload);
-                        }
+                    else if (view_active == 'stream_active'){
+                        render_recent_comment_update(data.payload);
                     }
                 }
             }
@@ -1444,8 +1370,7 @@ $(document).ready(function(){
                             render_comment_update(data.payload);
                         }
                     }
-                    else if (view_active == 'main' && default_view == 'wall'){
-                        update_comment_count(data.payload);
+                    else if (view_active == 'stream_active'){
                         if (stream_view == 'recent_noms'){
                             render_recent_comment_update(data.payload);
                         }
@@ -1453,12 +1378,12 @@ $(document).ready(function(){
                 }
             }
             else if (data.method == 'nom_won'){
-                notifcation_cache.unshift({
-                    'data': data.payload,
-                    'method': 'nom_won'
-                });
                 render_notification("nom_won", data.payload);
                 update_notifications(data.payload, 'nom_won');
+            }
+            else if (data.method == 'new_follow'){
+                render_notification("new_follow", data.payload);
+                update_notifications(data.payload, 'new_follow');
             }
         }
         if (typeof(long_poll) !== "undefined"){
@@ -1470,10 +1395,10 @@ $(document).ready(function(){
     function render_recent_comment_update(data){
         var comment_cont_html ='<div class="comment" id="comment_' + data.comment_id +'" style="display:none;">' +
                                     '<p class="comment_time" value="' + data.create_datetime + '">Right now</p>' +
-                                    '<a href="#!/user=' + data.comment_sender_id + '">' +
+                                    '<a href="/#!/' + data.comment_sender_username + '">' +
                                         '<img class="user_photo" src="https://graph.facebook.com/' + data.comment_sender_id + '/picture?type=square"/>' +
                                     '</a>' +
-                                    '<a href="#?user=' + data.comment_sender_id + '" class="post_username from_username">' + data.comment_sender_name + '</a>' +
+                                    '<a href="/#!/' + data.comment_sender_username + '" class="post_username from_username">' + data.comment_sender_username + '</a>' +
                                     '<p>' + data.comment + '</p>' +
                                 '</div>';
         $('#' + data.id + ' .recent_nom_comment_heading').after(comment_cont_html);
@@ -1490,12 +1415,13 @@ $(document).ready(function(){
     }
     
     function render_comment_update(data){
+        $('#comments_empty').remove();
         var comment_cont_html ='<div class="comment" style="display:none;">' +
                                     '<p class="comment_time" value="' + data.create_datetime + '">Right now</p>' +
-                                    '<a href="#!/user=' + data.comment_sender_id + '">' +
+                                    '<a href="/#!/' + data.comment_sender_username + '">' +
                                         '<img class="user_photo" src="https://graph.facebook.com/' + data.comment_sender_id + '/picture?type=square"/>' +
                                     '</a>' +
-                                    '<a href="#?user=' + data.comment_sender_id + '" class="post_username from_username">' + data.comment_sender_name + '</a>' +
+                                    '<a href="/#!/' + data.comment_sender_username + '" class="post_username from_username">' + data.comment_sender_username + '</a>' +
                                     '<p>' + data.comment + '</p>' +
                                 '</div>';
                                 
@@ -1515,59 +1441,56 @@ $(document).ready(function(){
     var notification_popup_fade_timeout = null;
     var notification_popup_remove_timeout = null;
     function render_notification(method, data){
-        var notification_html = '',
-            method_html = '';
+        var notification_html = '';
+        var method_html = '';
+        var follow_class = '';
+        var follow_username = '';
         
         if (method == 'new_nom'){
             var nominator = ''
-            if (data.nominator != me.id){
-                nominator = friends[data.nominator].name;
+            if (data.nominator == me.id){
+                nominator = 'You';
             }
             else{
-                nominator = 'You';
+                nominator = data.nominator_username;
             }
             
             method_html =   '<div class="nom_cat_' + data.nomination_category.replace(' ', '_').toLowerCase() + ' notification_color"></div>' +
                             '<div class="notification_text_cont">' +
                                 '<p class="strong">' + nominator + '</p>' + '<span> nominated your photo for the </span><p class="strong">' + data.nomination_category + '</p><span> trophy!</span>' +
                             '</div>';
-                            
-            user_notifications.new_noms[data.id] = data;
         }
         if (method == 'tagged_nom'){
             var nominator = ''
-            if (data.nominator != me.id){
-                nominator = friends[data.nominator].name;
+            if (data.nominator == me.id){
+                nominator = 'You';
             }
             else{
-                nominator = 'You';
+                nominator = data.nominator_username;
             }
             
             method_html =   '<div class="nom_cat_' + data.nomination_category.replace(' ', '_').toLowerCase() + ' notification_color"></div>' +
                             '<div class="notification_text_cont">' +
                                 '<p class="strong">' + nominator + '</p>' + '<span> tagged you in a nomination for the </span><p class="strong">' + data.nomination_category + '</p><span> trophy!</span>' +
                             '</div>';
-                            
-            user_notifications.new_noms[data.id] = data;
         }
         else if (method == 'new_comment'){
             if (data.nom_owner_id == me.id){
                 method_html =   '<div class="nom_cat_' + data.nomination_category.replace(' ', '_').toLowerCase() + ' notification_color"></div>' +
                                 '<div class="notification_text_cont">' +
-                                    '<p class="strong">' + data.comment_sender_name + '</p>' + '<span> commented on your <p class="strong">' + data.nomination_category + '</p> nomination!</span>' +
+                                    '<p class="strong">' + data.comment_sender_username + '</p>' + '<span> commented on your <p class="strong">' + data.nomination_category + '</p> nomination!</span>' +
                                 '</div>';
             }
             else if (data.nom_owner_id == data.comment_sender_id){
                 method_html =   '<div class="nom_cat_' + data.nomination_category.replace(' ', '_').toLowerCase() + ' notification_color"></div>' +
                                 '<div class="notification_text_cont">' +
-                                    '<p class="strong">' + data.comment_sender_name + '</p>' + '<span> commented on their <p class="strong">' + data.nomination_category + '</p> nomination!</span>' +
+                                    '<p class="strong">' + data.comment_sender_username + '</p>' + '<span> commented on their <p class="strong">' + data.nomination_category + '</p> nomination!</span>' +
                                 '</div>';
             }
             else{
-                var nom_owner_name = friends[data.nom_owner_id].name;
                 method_html =   '<div class="nom_cat_' + data.nomination_category.replace(' ', '_').toLowerCase() + ' notification_color"></div>' +
                                 '<div class="notification_text_cont">' +
-                                    '<p class="strong">' + data.comment_sender_name + '</p>' + '<span> commented on <span class="strong">' + nom_owner_name + '\'s</span> <p class="strong">' + data.nomination_category + '</p> nomination!</span>' +
+                                    '<p class="strong">' + data.comment_sender_username + '</p>' + '<span> commented on <span class="strong">' + data.nom_owner_username + '\'s</span> <p class="strong">' + data.nomination_category + '</p> nomination!</span>' +
                                 '</div>';
             }
         }
@@ -1579,18 +1502,19 @@ $(document).ready(function(){
                                 '</div>';
             }
             else{
-                var name = '';
-                // if (!data.nominatee_name){
-                    name = friends[data.nominatee].name;
-                // }
-                // else{
-                //     name = data.nominatee_name;
-                // }
                 method_html =   '<div class="nom_cat_' + data.nomination_category.replace(' ', '_').toLowerCase() + ' notification_color"></div>' +
                                 '<div class="notification_text_cont">' +
-                                    '<p class="strong">' + name + '\'s</p>' + '<span> photo won the <p class="strong">' + data.nomination_category + '</p> nomination!</span>' +
+                                    '<p class="strong">' + data.nominatee_username + '\'s</p>' + '<span> photo won the <p class="strong">' + data.nomination_category + '</p> nomination!</span>' +
                                 '</div>';
             }
+        }
+        else if (method == 'new_follow'){
+            follow_class = 'new_follow';
+            follow_username = data.follower_username;
+            method_html =   '<div class="new_follow notification_color"></div>' +
+                            '<div class="notification_text_cont">' +
+                                '<p class="strong">' + follow_username + '</p>' + '<span> is now following you.</span>' +
+                            '</div>';
         }
         
         var notification_id = '';
@@ -1599,7 +1523,7 @@ $(document).ready(function(){
             notification_id = data.notification_id;
         }
         
-        notification_html = '<div class="notification_popup" style="display:none;" value="' + data.id + '" name="' + notification_id + '">' +
+        notification_html = '<div class="notification_popup ' + follow_class + '" style="display:none;" username="' + follow_username + '" value="' + data.id + '" name="' + notification_id + '">' +
                                 '<div class="close_notification close_img ' + close_size + '"></div>' +
                                 '<div class="notification_cont">' +
                                     method_html +
@@ -1657,7 +1581,14 @@ $(document).ready(function(){
         
         title_notification_count = 0;
         update_title_notification_count();
-        window.location.href = '#!/nom_id=' + nom_id;
+        if ($(this).hasClass('new_follow')){
+            var username = $(this).attr('username');
+            window.location.href = '/#!/' + username;
+        }
+        else{
+            window.location.href = '/#!/nomination/' + nom_id;
+        }
+        
         $(this).css({
             'opacity': 0
         });
@@ -1715,7 +1646,9 @@ $(document).ready(function(){
             owner_text = '';
         title_notification_count += 1;
         update_title_notification_count();
-        nom_cat = data.nomination_category.replace(' ', '_').toLowerCase();
+        if (typeof(data.nomination_category) != 'undefined'){
+            nom_cat = data.nomination_category.replace(' ', '_').toLowerCase();
+        }
         if (method == 'new_nom'){
             if (data.nominator == me.id){
                 name = 'You';
@@ -1786,15 +1719,15 @@ $(document).ready(function(){
                                     '<div class="kill_notification close_img ' + close_size + '" value="' + data.notification_id + '" style="display:none;"></div>' +
                                 '</div>';
         }
-        else if (data[i].notification_type == 'new_follow'){
+        else if (method == 'new_follow'){
             notification_html +='<div class="notification_popup_cont new_follow" value="' + data.follower_username + '" read="false" id="notification_' + data.id + '" onclick="void(0)">' +
                                     '<div class="new_follow_icon notification_icon"></div>'+
                                     '<div class="notification_text_cont white_back">' +
-                                        '<p class="strong">' + data.follower_username + '</p><span> has begun to follow you.</span>' +
+                                        '<p class="strong">' + data.follower_username + '</p><span> is now following you.</span>' +
                                         '<p class="time">Right now</p>' +
                                         '<div class="clear"></div>' +
                                     '</div>' +
-                                    '<div class="kill_notification close_img ' + close_size + '" value="' + data[i].notification_id + '" style="display:none;"/></div>' +
+                                    '<div class="kill_notification close_img ' + close_size + '" value="' + data.notification_id + '" style="display:none;"/></div>' +
                                 '</div>';
         }
 
@@ -1863,6 +1796,17 @@ $(document).ready(function(){
                         }
                     }
                 }
+                else if (data[i].notification_type == 'new_follow'){
+                    if (!data[i].read){
+                        if (first_unread){
+                            $('#footer_notification_cont').css({
+                               'opacity': '1.0' 
+                            });
+                            $('#footer_notification_cont > p').addClass('nom_cat_' + nom_cat + '_text');
+                            first_unread = false;
+                        }
+                    }
+                }
                 else{
                     color_class = '';
                 }
@@ -1922,39 +1866,23 @@ $(document).ready(function(){
                 }
                 else if (data[i].notification_type == 'new_follow'){
                     if (!data[i].read){
-                        color_class = 'new_follow';
+                        color_class = 'color_transition new_follow';
                     }
-                    notification_html +='<div class="notification_popup_cont new_follow" value="' + data[i].source_id + '" read="' + data[i].read + '" id="notification_' + data[i].notification_id + '" time="' + data[i].create_time +'" onclick="void(0)">' +
+                    notification_html +='<div class="notification_popup_cont new_follow" value="' + source_name + '" read="' + data[i].read + '" id="notification_' + data[i].notification_id + '" time="' + data[i].create_time +'" onclick="void(0)">' +
                                             '<div class="new_follow_icon notification_icon"></div>'+
                                             '<div class="notification_text_cont white_back ' + color_class + '">' +
-                                                '<p class="strong">' + source_name + '</p><span> has begun to follow you.</span>' +
+                                                '<p class="strong">' + source_name + '</p><span> is now following you.</span>' +
                                                 '<p class="time">' + time_str + '</p>' +
                                                 '<div class="clear"></div>' +
                                             '</div>' +
                                             '<div class="kill_notification close_img ' + close_size + '" value="' + data[i].notification_id + '" style="display:none;"/></div>' +
                                         '</div>';
                 }
-                notifcation_cache.unshift({
-                    'data': data[i],
-                    'method': data[i].notification_type
-                });
             }
         }
         
         if (my_winnings && my_winnings.length > 0){
-            var wait_for_context_interval = null;
-            if (render_perms_context){
-                wait_for_context_interval = setInterval(function(){
-                    if ($('#context_overlay_cont > div').children().length == 0){
-                        clearInterval(wait_for_context_interval);
-                        render_publish_story(my_winnings);
-                        render_perms_context = false;
-                    }
-                }, 250);
-            }
-            else{
-                render_publish_story(my_winnings);
-            }
+            render_publish_story(my_winnings);
         }
         $('#notification_footer_popup_cont').append(notification_html);
     }
@@ -2148,7 +2076,12 @@ $(document).ready(function(){
             won_url = '/won';
         }
         
-        window.location.href = '/#!/nomination/' + nom_id + '/';
+        if ($(this).hasClass('new_follow')){
+            window.location.href = '/#!/' + nom_id + '/';
+        }
+        else{
+            window.location.href = '/#!/nomination/' + nom_id + '/';
+        }
     });
     
     $('.notification_popup_cont').live('mouseover mouseout', function(event) {
@@ -3199,6 +3132,7 @@ $(document).ready(function(){
         
         trophy_size = 'large';
         
+        $('#nom_detail_cont .title').remove();
         $('#nom_detail_cont').prepend(title);
         
         $('#main_nom_cont').attr('value', nom.id);
@@ -3384,59 +3318,20 @@ $(document).ready(function(){
         $('#nom_comments_cont').append(comment_cont_html);
     }
     
-    function update_comment_count(data){
-        var nom_id = data.id;
-        var nom = active_noms_cache[nom_id];
-        var comment_count = 0;
-        var comment_container = null;
-        
-        if (view_active == 'main' && default_view == 'wall' && stream_view == 'recent_noms'){
-            comment_container = $('.nom_comment_' + nom_id + ' span');
-            comment_count = $(comment_container).text();
-            comment_count = parseInt(comment_count) + 1;
-            $(comment_container).text(comment_count);
-        }
-        else{
-            comment_container = $('#nom_' + nom_id + ' .nom_photo_bottom_wrap .comments');
-            comment_count = $(comment_container).text().replace('Comments: ', '');
-            comment_count = parseInt(comment_count) + 1;
-            $(comment_container).text('Comments: ' + comment_count);
-        }
-
-    }
-    
     function update_vote_count(data){
         if (data){
             var nom_id = data.nom_id;
-            var nom = active_noms_cache[nom_id];
             var votes_html = '';
-            nom.vote_count = data.vote_count;
-            if (view_active == 'main' && stream_view == 'recent_noms'){
-                $('.nom_vote_' + nom_id).find('span').text(data.vote_count);
+            if (view_active == 'stream_active'){
                 $('.nom_vote_' + nom_id).find('h2').text('Votes: ' + data.vote_count);
             }
-            else if (view_active == 'main'){
-                $('#nom_photo_' + nom_id + ' p').text(data.vote_count);
-                if ($('#nom_' + nom_id).length > 0){
-                    $('#nom_' + nom_id + ' .vote_cont p').text(data.vote_count);
-                    if ($('#nom_' + nom_id + ' #voted_' + data.vote_user).length == 0){
-                        votes_html =   '<a href="#!/user=' + data.vote_user + '" id="voted_' + data.vote_user + '" name="' + data.vote_name + '">' +
-                                            '<img src="https://graph.facebook.com/' + data.vote_user + '/picture?type=square"/>' +
-                                        '</a>';
-                        $('#nom_' + nom_id + ' .voted_cont').append(votes_html);
-                    }
-                }
-            }
             else if (view_active == 'nom_detail'){
-                $('#nom_photo_' + nom_id + ' p').text(data.vote_count);
                 if ($('#main_nom_cont').attr('value') == nom_id){
-                    $('#vote_cont_left p').text(data.vote_count);
-                    // if ($('#nom_' + nom_id + ' #voted_' + data.vote_user).length == 0){
-                        votes_html =   '<a href="#!/user=' + data.vote_user + '" id="voted_' + data.vote_user + '" name="' + data.vote_name + '">' +
-                                            '<img src="https://graph.facebook.com/' + data.vote_user + '/picture?type=square"/>' +
-                                        '</a>';
-                        $('#nom_votes_wrap').append(votes_html);
-                    // }
+                    $('#nom_vote_count').text(data.vote_count);
+                    votes_html =   '<a href="/#!/=' + data.vote_username + '" id="voted_' + data.vote_user + '" name="' + data.vote_username + '">' +
+                                        '<img src="https://graph.facebook.com/' + data.vote_user + '/picture?type=square"/>' +
+                                    '</a>';
+                    $('#nom_votes_wrap').append(votes_html);
                 }
             }
         }
@@ -3609,6 +3504,7 @@ $(document).ready(function(){
         stream_view = '';
         
         var nom_main_cont_html ='<div id="nom_detail_cont">' +
+                                    '<h1 class="title"></h1>' +
                                     '<div id="main_nom_cont">' +
                                         '<div id="main_nom_cont_left">' +
                                             '<div id="main_nom_cont_left_wrap">' +
@@ -4732,10 +4628,10 @@ $(document).ready(function(){
         $('#profile_user_context').append('<h2>' + capitaliseFirstLetter(method) + '</h2><div id="follow_cont"></div>');
         for (var i = 0; i < data.length; i++){
             if (data[i].follow){
-                follow_button = '<span class="sick large green follow">Follow</span>';
+                follow_button = '<span class="sick large green follow" value="follow" target="' + data[i].username + '">Follow</span>';
             }
             else{
-                follow_button = '<span class="sick large red unfollow">Unfollow</span>';
+                follow_button = '<span class="sick large red follow" value="unfollow" target="' + data[i].username + '">Unfollow</span>';
             }
             follow_html =   '<div class="follow_wrap" value="' + data[i].username + '">' +
                                 '<img src="https://graph.facebook.com/' + data[i].fid + '/picture?type=square"/>' +
@@ -4744,7 +4640,9 @@ $(document).ready(function(){
                                     '<div class="follow_photos"><h4>Photos</h4><p>' + data[i].photo_count + '</p></div>' +
                                     '<div class="follow_trophies"><h4>Trophies</h4><p>' + data[i].trophy_count + '</p></div>' +
                                     '<div class="follow_active"><h4>Active</h4><p>' + data[i].active_count + '</p></div>' +
-                                    follow_button + 
+                                    '<div class="follow_button_cont">' +
+                                        follow_button + 
+                                    '</div>' +
                                 '</div>' +
                             '</div>';
                             
@@ -5298,18 +5196,6 @@ $(document).ready(function(){
         }
     }
     
-    function update_nom_stream_vote_count(nom_id, data){
-        $('#nom_vote_count').text(data.vote_count);
-        if (user_winning_noms_cache[data.nominatee]){
-            var active_nom_objs = user_winning_noms_cache[data.nominatee].active_nom_objs;
-            for (var i = 0; i < active_nom_objs.length; i++){
-                if (nom_id == active_nom_objs[i].id){
-                    active_nom_objs[i].vote_count = data.vote_count;
-                }
-            }
-        }
-    }
-    
     function vote_up_handler(){
         var that = this;
         var nomination_id = $(this).attr('value');
@@ -5328,10 +5214,9 @@ $(document).ready(function(){
                     $(vote_count_elm).text(data.vote_count);
                     if (nom_cache[nomination_id]){
                         nom_cache[nomination_id].vote_count = data.vote_count;
-                        nom_cache[nomination_id].votes.push({'vote_user': me.id, 'vote_name': me.name});
+                        nom_cache[nomination_id].votes.push({'vote_user': me.id, 'vote_name': me.name, 'vote_username': me.username});
                     }
-
-                    update_nom_stream_vote_count(nomination_id, data);
+                    $('#nom_vote_count').text(data.vote_count);
                 }
             });
             vote_tooltip_on = false;
@@ -5360,10 +5245,9 @@ $(document).ready(function(){
                     $(vote_count_elm).text(data.vote_count);
                     if (nom_cache[nomination_id]){
                         nom_cache[nomination_id].vote_count = data.vote_count;
-                        nom_cache[nomination_id].votes.push({'vote_user': me.id, 'vote_name': me.name});
+                        nom_cache[nomination_id].votes.push({'vote_user': me.id, 'vote_name': me.name, 'vote_username': me.username});
                     }
-                
-                    update_nom_stream_vote_count(nomination_id, data);
+                    $('#nom_vote_count').text(data.vote_count);
                 }
             });
             $('#vote_tooltip').fadeOut();
@@ -6549,13 +6433,28 @@ $(document).ready(function(){
             });
         });
         
-        // $('.top_nom_wrap').live('mouseover mouseout', function(event) {
-        //     if (event.type == 'mouseover') {
-        //         show_tooltip(this);
-        //     } else {
-        //         hide_tooltip(this);
-        //     }
-        // });
+        $('.follow').live('click', function(e){
+            e.stopPropagation();
+            
+            var value = $(this).attr('value');
+            var target = $(this).attr('target');
+            
+            if (value == 'follow'){
+                $(this).removeClass('green').addClass('red').attr('value', 'unfollow').text('Unfollow');
+            }
+            else{
+                $(this).removeClass('red').addClass('green').attr('value', 'follow').text('Follow');
+            }
+            
+            $.post('/api/follow_unfollow_user/', {'access_token': fb_session.access_token, 'target': target, 'method': value }, function(data){
+                
+            });
+            
+            // $(this).addClass('disabled');
+            // $(this).parent().append('<img src="http://portrit.s3.amazonaws.com/img/small-loader.gif"/>');
+            
+            return false;
+        });
         
         $(window).bind('scroll', function(e){
             var scroll_pos = $(window).scrollTop();
@@ -7521,8 +7420,7 @@ $(document).ready(function(){
                     //Nom Detail View
                     append_wall_html();
                     selected_nom = url_vars_list[1];
-                    view_active = 'community_active_detail';
-                    init_nom_detail('community_active');
+                    init_nom_detail();
                 }
                 else{
                     //Raise 404
