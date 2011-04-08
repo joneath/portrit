@@ -333,7 +333,7 @@ def get_nom_detail(request):
         nomination = None
         
     following = [ ]
-    if source:
+    if source and source != 'null':
         source = Portrit_User.objects.get(username=source)
         source_following = source.get_following()
     
@@ -1108,7 +1108,6 @@ def get_follow_data(request):
     data = simplejson.dumps(data)
     return HttpResponse(data, mimetype='application/json')
 
-@check_access_token      
 def get_follow_data_detailed(request):
     data = {
         'data': [ ],
@@ -1129,8 +1128,12 @@ def get_follow_data_detailed(request):
     total_count = 0
     
     try:
-        source_portrit_user = get_user_from_access_token(access_token)
-        source = source_portrit_user.fb_user
+        if access_token:
+            source_portrit_user = get_user_from_access_token(access_token)
+            source = source_portrit_user.fb_user
+        else:
+            source_portrit_user = None
+            source = None
         target_portrit_user = Portrit_User.objects.get(fb_user__fid=int(target))
         target = target_portrit_user.fb_user
     
@@ -1140,10 +1143,11 @@ def get_follow_data_detailed(request):
             if not all:
                 target_followers = target_followers[PAGE_SIZE * (page - 1):PAGE_SIZE * page]
                 
-            source_following = source_portrit_user.get_following()
-            source_following_list = []
-            for follower in source_following:
-                source_following_list.append(follower.id)
+            if source:
+                source_following = source_portrit_user.get_following()
+                source_following_list = []
+                for follower in source_following:
+                    source_following_list.append(follower.id)
         
             for user in target_followers:
                 photo_count = 0
@@ -1160,7 +1164,7 @@ def get_follow_data_detailed(request):
                 except:
                     pass
                     
-                if user.id in source_following_list:
+                if source and user.id in source_following_list:
                     data['data'].append({
                         'fid': user.fb_user.fid,
                         'name': user.name,
@@ -1184,18 +1188,15 @@ def get_follow_data_detailed(request):
         
         elif method == 'following':
             target_following = target_portrit_user.get_following()
-            print "target following"
-            print target_following
             data['count'] = len(target_following)
             if not all:
                 target_following = target_following[PAGE_SIZE * (page - 1):PAGE_SIZE * page]
-                
-            source_following = source_portrit_user.get_following()
-            print "source following"
-            print source_following
-            source_following_list = []
-            for following in source_following:
-                source_following_list.append(following.id)
+            
+            if source:
+                source_following = source_portrit_user.get_following()
+                source_following_list = []
+                for following in source_following:
+                    source_following_list.append(following.id)
         
             for user in target_following:
                 photo_count = 0
@@ -1212,7 +1213,7 @@ def get_follow_data_detailed(request):
                 except:
                     pass
                     
-                if user.id in source_following_list:
+                if source and user.id in source_following_list:
                     data['data'].append({
                         'fid': user.fb_user.fid,
                         'name': user.name,
@@ -1241,7 +1242,6 @@ def get_follow_data_detailed(request):
     data = simplejson.dumps(data)
     return HttpResponse(data, mimetype='application/json')
    
-@check_access_token  
 def get_user_profile(request):
     data = {
         'photos': [ ],
@@ -1270,13 +1270,17 @@ def get_user_profile(request):
         page_size = int(page_size)
     
     try:
-        if username:
+        if username and username != 'null':
             portrit_user = Portrit_User.objects.get(username=username)
             user = portrit_user.fb_user
             
-            source_portrit_user = get_user_from_access_token(access_token)
-            source = source_portrit_user.fb_user
-            data['follow'] = source_portrit_user.check_follow(portrit_user)
+            if access_token:
+                source_portrit_user = get_user_from_access_token(access_token)
+                source = source_portrit_user.fb_user
+                data['follow'] = source_portrit_user.check_follow(portrit_user)
+            else:
+                source_portrit_user = None
+                source = None
         else:
             portrit_user = get_user_from_access_token(access_token)
             user = portrit_user.fb_user
@@ -1459,14 +1463,14 @@ def get_user_active_noms(request):
 def sort_by_wins(a, b):
     return cmp(int(b['count']), int(a['count']))
   
-@check_access_token 
 def get_user_trophies(request):
     PAGE_SIZE = 6
     data = [ ]
     access_token = request.GET.get('access_token')
     target = request.GET.get('target')
     try:
-        target_portrit_user = get_user_from_access_token(access_token)
+        if access_token:
+            target_portrit_user = get_user_from_access_token(access_token)
         if target:
             target_portrit_user = Portrit_User.objects.get(fb_user__fid=int(target))
             
@@ -1615,16 +1619,12 @@ def get_community_top_nominations_cat(request):
     
     if landing:
         nominations = cache.get('landing_nominations_' + cat.replace(' ', ''))
-        print nominations
         if not nominations:
-            print "jere"
             nominations = Nomination.objects.filter(nomination_category=cat,
                                                     public=True).order_by('-created_date', '-current_vote_count')[:PAGE_SIZE]
             data = serialize_noms(nominations)
-            print data
             cache.set('landing_nominations_' + cat.replace(' ', ''), data, 60*15)
         else:
-            print "from cahce"
             data = nominations
     else:    
         nominations = Nomination.objects.filter(nomination_category=cat,

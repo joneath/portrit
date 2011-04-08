@@ -33,7 +33,7 @@ html, body{
 body{
     background-color:   #000000;
     color:              #ffffff;
-    font-family:        Arial, Helvetica, sans-serif;
+    font-family:        Helvetica, Arial, Verdana, sans-serif;
     width:              100%;
     min-width:          900px;
     overflow-y:         scroll;
@@ -150,7 +150,7 @@ a:hover{
 .yellow.sick, .yellow.sick:visited, .yellow.sick_abs		{ background-color: #ffb515; }
 .yellow.sick:hover							{ background-color: #fc9200; }
 
-.sick.off{
+.off{
     cursor:         default;
     opacity:        .7;
 }
@@ -178,7 +178,7 @@ div#wrapper{
 }
 
 #header{
-    border:             1px solid #1e1e1e;
+    border-bottom:      1px solid #1e1e1e;
     text-align:         center;
     margin:             0px -1px;
     margin-bottom:      10px;
@@ -187,6 +187,10 @@ div#wrapper{
     min-height:         80px;
     top:                0px;
     z-index:            10;
+}
+
+#header.public{
+    background-color:       #222;
 }
 
 #header_wrap{
@@ -209,6 +213,61 @@ div#wrapper{
 #loading{
     text-align:         center;
 }
+
+#public_header{
+    width:              850px;
+    height:             100px;
+    margin:             0 auto;
+}
+
+    #public_header #public_logo_wrap{
+        float:              left;
+        margin-top:         17px;
+        height:             56px;
+        width:              121px;
+    }
+    
+        #public_header #public_logo_wrap img{
+            height:             56px;
+        }
+        
+    #public_header #public_tagline_cont{
+        float:              left;
+        width:              350px;
+        text-align:         left;
+        margin-left:        40px;
+        margin-top:         35px;
+        line-height:        22px;
+    }
+    
+    #public_header #public_login_cont{
+        color:              #333;
+        float:              right;
+        width:              315px;
+        height:             100px;
+        background-image: -webkit-gradient(
+            linear,
+            left bottom,
+            left top,
+            color-stop(0.04, rgb(173,173,173)),
+            color-stop(0.7, rgb(250,250,250))
+        );
+        background-image: -moz-linear-gradient(
+            center bottom,
+            rgb(173,173,173) 4%,
+            rgb(250,250,250) 70%
+        );
+    }
+    
+        #public_login_cont #public_login_wrap{
+            margin-top:             25px;
+        }
+        
+            #public_login_wrap p{
+                text-align:             center;
+                margin-top:             15px;
+                font-size:              14px;
+            }
 
 div#login_cont{
     height:             100%;
@@ -2342,12 +2401,10 @@ div#profile_cont_wrap{
     width:              auto;
     z-index:            1;
 }
-
-    div#profile_cont_wrap div#scroller{
-        min-height:             300px;
-        position:               relative;
+ 
+    #recent_cont_1 .stream_nav_cont ul{
+        right:              0px;
     }
-    
 
 #comments_empty{
     font-size:              20px;
@@ -2682,8 +2739,30 @@ div#community{
             -moz-border-radius-bottomright:  10px;
         }
         
+            #community_right_cont #community_public_push{
+                background-color:       #fff;
+                height:                 10px;
+            }
+        
+            #community_right_cont #app_download_cont{
+                height:                 70px;
+                background-color:       #DEDEDE;
+            }
+            
+                #app_download_cont h2{
+                    font-weight:            bold;
+                    font-size:              14px;
+                    line-height:            70px;
+                    margin-left:            15px;
+                }
+        
 .top_nom_cat{
-    margin-top:             15px;
+    margin-top:             10px;
+}
+
+.top_nom_cat.short{
+    float:                  left;
+    width:                  480px;
 }
 
     .top_nom_cat .top_cat_heading{
@@ -2726,6 +2805,11 @@ div#community{
         border:                 1px solid #dedede;
         padding:                10px;
         margin:                 15px;
+    }
+    
+    .top_nom_cat.short .top_nom_cat_cont{
+        padding:                5px;
+        margin:                 5px;
     }
     
     .top_nom_cat .top_cat_photo_cont{
@@ -4461,6 +4545,16 @@ div#context_overlay{
         }
         
         .flag:active			{ top: 1px; }
+        
+        .flag.off:hover{
+            cursor:             default;
+            background-image:   url(http://portrit.s3.amazonaws.com/img/sprite.png);
+            background-position: -624px -642px;
+        }
+        
+        .flag.off:active{
+            top:                0;
+        }
                    
         .switch_on{
             cursor:             pointer;
@@ -4741,6 +4835,14 @@ div#context_overlay{
 #profile_user_context{
     
 }
+    
+    #profile_user_context #user_trophy_cont{
+        margin-top:         15px;
+    }
+    
+        #user_trophy_cont .top_nom_cat{
+            margin-top:         0px;
+        }
 
     #profile_user_context > h2{
         font-size:          24px;
@@ -4898,8 +5000,12 @@ div#context_overlay{
     }
     
         #profile_active_cont .recent_nom_cont{
-            margin-top:     0px;
-            margin-bottom:  15px;
+            margin-top:         0px;
+            margin-bottom:      15px;
+        }
+        
+        #profile_user_context #profile_active_cont #recent_left_cont{
+            min-height:         100px;
         }
 
 .stream_nav_cont{
@@ -5046,6 +5152,10 @@ div#wall_cont div#profile_wrap{
                 margin:             0px 5px;
             }
             
+            div#profile_wrap > ul > li.public{
+                
+            }
+            
             div#profile_wrap > ul > li#show_upload{
                 background-color:   #E95C41;
                 color:              white;
@@ -5060,7 +5170,7 @@ div#wall_cont div#profile_wrap{
                 -moz-border-radius-topright:    5px;
             }
             
-            div#profile_wrap > ul > li#countdown_cont{
+            div#profile_wrap > ul > #countdown_cont{
                 width:              300px;
                 height:             100%;
                 background-color:   #444;
@@ -5217,14 +5327,12 @@ div#latest_photos{
 }
 
     #top_right_cont > h1{
-        background-color:   white;
-        font-size:          20px;
-        padding:            14px;
-        margin:             15px 25px;
+        color:              #fff;
+        font-size:          22px;
+        height:             45px;
+        line-height:        55px;
         position:           relative;
         text-align:         center;
-        border-radius:      15px;
-        -moz-border-radius: 15px;
     }
     
     #top_right_cont > h2{
