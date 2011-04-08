@@ -268,6 +268,11 @@ $(document).ready(function(){
         });
         
         $('#login').bind('click', login_user);
+        
+        $('#landing_photo_cont .top_cat_photo').live('click', function(){
+            $('#landing_photo_cont .top_cat_photo').die('click');
+            init_public_view();
+        });
     }
     
     var landing_photo_timeout = null;
@@ -288,7 +293,9 @@ $(document).ready(function(){
                     $('#landing_photo_cont > div').append('<p class="tooltip"></p>');
                     for (var i = 0; i < data.length; i++){
                         photo_html ='<div style="display: none;" class="top_cat_photo" name="' + data[i].nominatee_username + '">' +
-                                        '<img src="' + data[i].photo.crop_small + '"/>' +
+                                        '<a href="/#!/community/active/' + data[i].id + '/">' +
+                                            '<img src="' + data[i].photo.crop_small + '"/>' +
+                                        '</a>' +
                                     '</div>';
                         $('#landing_photo_cont > div').append(photo_html);
                     }
@@ -302,122 +309,6 @@ $(document).ready(function(){
                 }
             }, 50);
         });
-    }
-    
-    function render_public_photo(){
-        var nom_id = getUrlVars().nom_id;
-        var photo_id = getUrlVars().photo;
-        if (nom_id){
-            var nom_cat_underscore = '';
-            $.getJSON('/get_nom/', {'nom_id': nom_id}, function(data){
-                nom_cat_underscore = data.nom_cat.replace(' ', '_').toLowerCase();
-                $('#public_photo_wrap').append('<img src="' + data.photo.src + '"/>');
-                var user_html = '<div id="public_user_cont" class="public_nom">' +
-                                    '<div id="public_user_top_cont">' +
-                                        '<img src="https://graph.facebook.com/' + data.fid + '/picture?type=square"/>' +
-                                        '<h2>' + data.name + '</h2>' +
-                                        '<div class="clear"></div>' +
-                                    '</div>' +
-                                    '<div id="public_user_bottom_cont">' +
-                                        '<p>' + data.name + ' is using <span class="strong">Portrit - award the best photos. It\'s up to you and your Facebook friends to find who\'s got the best pics.</span></p>' +
-                                        '<div class="triangle_small"></div>' +
-                                    '</div>' +
-                                    '<div id="public_nom_cont">' +
-                                        '<h3>Nominated for</h3>' +
-                                        '<h2>' + data.nom_cat + '</h2>' +
-                                        '<div class="trophy_img large ' + nom_cat_underscore +'"></div>' +
-                                    '</div>' +
-                                '</div>';
-                $('#public_middle_right_cont').append(user_html);
-            });
-        }
-        else{
-            $.getJSON('/get_photo/', {'photo_id': photo_id}, function(data){
-                $('#public_photo_wrap').append('<img src="' + data.photo.source + '"/>');
-                var user_html = '<div id="public_user_cont">' +
-                                    '<div id="public_user_top_cont">' +
-                                        '<img src="https://graph.facebook.com/' + data.fid + '/picture?type=square"/>' +
-                                        '<h2>' + data.name + '</h2>' +
-                                        '<div class="clear"></div>' +
-                                    '</div>' +
-                                    '<div id="public_user_bottom_cont">' +
-                                        '<p>' + data.name + ' is using <span class="strong">Portrit - award the best photos. It\'s up to you and your Facebook friends to find who\'s got the best pics.</span></p>' +
-                                    '</div>' +
-                                '</div>';
-                $('#public_middle_right_cont').append(user_html);
-            });
-        }
-        var public_photo_cont_html ='<div id="login_header">' +
-                                        '<img id="login_logo" src="http://portrit.s3.amazonaws.com/img/logo_blank.png"/>' +
-                                    '</div>' +
-                                    '<div id="public_login_cont">' +
-                                        '<div id="public_login_header">' +
-                                            '<h1>Let\'s make photos more social!</h1>' +
-                                            '<div id="public_header_right">' +
-                                                '<p>Try Portrit</p>' +
-                                                '<a id="login" class="fb_button fb_button_large"><span class="fb_button_text">Login with Facebook</span></a>' +
-                                            '</div>' +
-                                            '<div class="clear"></div>' +
-                                        '</div>' +
-                                        '<div id="public_middle_cont">' +
-                                            '<div id="public_photo_cont">' +
-                                                '<div id="public_photo_wrap">' +
-                                                    '' +
-                                                '</div>' +
-                                                '<div id="public_photo_overlay_cont">' +
-                                                    '' +
-                                                '</div>' +
-                                            '</div>' +
-                                            '<div id="public_middle_right_cont">' +
-                                                '' +
-                                            '</div>' +
-                                        '</div>' +
-                                        '<div id="login_bottom_cont">' +
-                                            '<h1>Finding the best photos between your friends.</h1>' +
-                                            '<div id="point_1" class="login_points">' +
-                                                '<div class="point_header">' +
-                                                    '<h2 id="point_1_text">1</h2>' +
-                                                    '<h3>Nominate</h3>' +
-                                                '</div>' +
-                                                '<div class="clear"></div>' +
-                                                '<div class="login_points_cont">' +
-                                                    '<div class="login_points_bottom">' +
-                                                        '<h4>Nominate your friend\'s rockin\' pics.</h4>' +
-                                                        '<p>Be nice and courteous or evil and sick, it\'s up to you.</p>' +
-                                                    '</div>' +
-                                                '</div>' +
-                                            '</div>' +
-                                            '<div id="point_2" class="login_points">' +
-                                                '<div class="point_header">' +
-                                                    '<h2 id="point_2_text">2</h2>' +
-                                                    '<h3>Vote</h3>' +
-                                                '</div>' +
-                                                '<div class="clear"></div>' +
-                                                '<div class="login_points_cont">' +
-                                                    '<div class="login_points_bottom">' +
-                                                        '<h4>Give your vote to the best.</h4>' +
-                                                        '<p>The power is in your hands. Use it wisely.</p>' +
-                                                    '</div>' +
-                                                '</div>' +
-                                            '</div>' +
-                                            '<div id="point_3" class="login_points">' +
-                                                '<div class="point_header">' +
-                                                    '<h2 id="point_3_text">3</h2>' +
-                                                    '<h3>Earn</h3>' +
-                                                '</div>' +
-                                                '<div class="clear"></div>' +
-                                                '<div class="login_points_cont">' +
-                                                    '<div class="login_points_bottom">' +
-                                                        '<h4>Earn trophies for your amazing photos.</h4>' +
-                                                        '<p>No longer search through thousands of your friend\'s photos to find the best.</p>' +
-                                                    '</div>' +
-                                                '</div>' +
-                                            '</div>' +
-                                            '<div class="clear"></div>' +
-                                        '</div>' +
-                                    '</div>';
-        
-        $('#login_cont').append(public_photo_cont_html);
     }
     
     function login_user(){
@@ -2860,7 +2751,9 @@ $(document).ready(function(){
 	function render_public_header(){
 	    var public_header_html ='<div id="public_header">' +
 	                                '<div id="public_logo_wrap">' +
-	                                    '<img src="http://portrit.s3.amazonaws.com/img/logo_blank.png"/>' +
+	                                    '<a href="/">' +
+	                                        '<img src="http://portrit.s3.amazonaws.com/img/logo_blank.png"/>' +
+	                                    '</a>' +
 	                                '</div>' +
 	                                '<div id="public_tagline_cont">' +
 	                                    '<p id="tagline_main"><span>Snap</span>, <span>nominate</span>, <span>vote</span>, and <span>earn</span> wherever you go with the <span>Portrit</span> app.</p>' +
@@ -3868,7 +3761,7 @@ $(document).ready(function(){
             nom_cat_text = nom.nomination_category;
             nom_cat_underscore = nom.nomination_category.replace(' ', '_').toLowerCase();
 
-            if (nom.nominatee == me.id){
+            if (me && nom.nominatee == me.id){
                 name = 'You';
             }
             else{
@@ -3903,7 +3796,7 @@ $(document).ready(function(){
             
             nominator_name = '';
             nominator_caption = '';
-            if (nom.nominator == me.id){
+            if (me && nom.nominator == me.id){
                 nominator_name = 'You';
             }
             else{
@@ -6639,7 +6532,7 @@ $(document).ready(function(){
                 var name = '';
                 for (var i = 0; i < nom.tagged_users.length; i++){
                     name = nom.tagged_users[i].username;
-                    if (nom.tagged_users[i].user == me.id){
+                    if (me && nom.tagged_users[i].user == me.id){
                         name = 'You';
                     }
                     

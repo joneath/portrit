@@ -383,28 +383,31 @@ def get_nom_detail(request):
         
     elif nav_selected == 'community_active':
         cat = nomination.nomination_category
-        data = Nomination.objects.filter(
-            nomination_category=cat, 
-            active=True,
-            public=True,
-            won=False).order_by('-current_vote_count', '-created_date')
+        if nomination.active:
+            data = Nomination.objects.filter(
+                nomination_category=cat, 
+                active=True,
+                public=True,
+                won=False).order_by('-current_vote_count', '-created_date')
             
-        if dir:
-            data = paginate_data(data, dir, pos)
+            if dir:
+                data = paginate_data(data, dir, pos)
+            else:
+                data = list(data)
+                selected_index = data.index(nomination)
+                top = 10
+                bottom = 0
+
+                if selected_index - 5 > 0:
+                    bottom = selected_index - 4
+
+                if selected_index + 5 > top:
+                    top = selected_index + 5
+
+                data = data[bottom:top]
+                data = serialize_noms(data, bottom)
         else:
-            data = list(data)
-            selected_index = data.index(nomination)
-            top = 10
-            bottom = 0
-
-            if selected_index - 5 > 0:
-                bottom = selected_index - 4
-
-            if selected_index + 5 > top:
-                top = selected_index + 5
-
-            data = data[bottom:top]
-            data = serialize_noms(data, bottom)
+            data = [serialize_nom(nomination)]
         
     elif nav_selected == 'community_top':
         if nomination:
