@@ -634,8 +634,8 @@ def nominate_photo(request):
                     try:
                         for tag in tags:
                             if tag != '':
-                                tagged_user_list.append(int(tag))
                                 tagged_user = Portrit_User.objects.get(fb_user__fid=int(tag))
+                                tagged_user_list.append(tagged_user)
                                 nomination.tagged_users.append(tagged_user)
                                 
                                 try:
@@ -677,6 +677,7 @@ def nominate_photo(request):
                         'created_time': time.mktime(nomination.created_date.utctimetuple()),
                         'caption': comment_text,
                         'comments': False,
+                        'quick_comments': [ ],
                         'comment_count': 0,
                         'photo': photo.get_photo(),
                         'vote_count': nomination.current_vote_count,
@@ -697,7 +698,7 @@ def nominate_photo(request):
             for tagged_user in tagged_user_list:
                 target_friends.append(tagged_user)
                
-            if new_nomination.nominator != new_nomination.nominatee:
+            if new_nomination.nominator.id != new_nomination.nominatee.id:
                 target_friends.append(new_nomination.nominatee)
                 
             target_friends = list(set(target_friends))
@@ -917,9 +918,9 @@ def follow_unfollow_user(request):
             source.save()
             
             #Create follower following user record
-            following_rec = Follow(user=source, pending=pending)
-            following_rec.save()
-            target.followers.append(following_rec)
+            follower_rec = Follow(user=source, pending=pending)
+            follower_rec.save()
+            target.followers.append(follower_rec)
             target.save()
                 
             #Create following notification
@@ -928,12 +929,10 @@ def follow_unfollow_user(request):
                 notification_type = Notification_Type.objects.get(name='new_follow')
                 notification = Notification(owner=target, source=source, destination=target, pending=pending, notification_type=notification_type)
                 notification.save()
-                print "notification saved"
             
                 if pending:
-                    follower_rec.pending_notification = notification
-                    follower_rec.save()
-                    print "pending record added"
+                    following_rec.pending_notification = notification
+                    following_rec.save()
                 
                 node_data = {
                     'method': 'new_follow',
@@ -944,7 +943,8 @@ def follow_unfollow_user(request):
                         'follower_id': source.fb_user.fid,
                         'follower_name': source.name,
                         'follower_username': source.username,
-                        'friends': {target.fb_user.fid: {'fid': target.fb_user.fid}}
+                        'friends': {target.fb_user.fid: {'fid': target.fb_user.fid}},
+                        'pending': pending
                     }
                 }
             
@@ -989,36 +989,30 @@ def follow_permission_submit(request):
     data = False
     notification_id = request.POST.get('notification_id')
     value = request.POST.get('value')
-    
     try:
         notification = Notification.objects.get(id=notification_id)
-        follower_rec = notification.user_followers_set.all()[0]
-        following_rec = User_Following.objects.filter(portrit_user=follower_rec.fb_user.get_portrit_user(), fb_user=follower_rec.portrit_user.fb_user, pending=True)[0]
-        # print follower_rec.portrit_user
-        # print follower_rec.fb_user
-        # print follower_rec.id
-        # 
-        # print following_rec.portrit_user
-        # print following_rec.fb_user
-        # print following_rec.id
+        notification.active = False
+        notification.read = True
+        notification.pending = False
+        
+        follow_rec = Follow.objects.filter(pending_notification=notification)
+        
+        follower = notification.source
+        owner = notification.owner
+        
+        follower_rec = Follow(user=follower)
+        follower_rec.save()
+        owner.followers.append(follower_rec)
+        owner.save()
+        
         if value == '1':
-            follower_rec.pending = False
-            following_rec.pending = False
-            
-            notification.active = False
-            notification.pending = False
+            follow_rec.update(set__active=True)
+            follow_rec.update(set__pending=False)
             
         elif value == '0':
-            follower_rec.pending = False
-            following_rec.pending = False
-            follower_rec.active = False
-            following_rec.active = False
+            follow_rec.update(set__active=False)
+            follow_rec.update(set__pending=False)
             
-            notification.active = False
-            notification.pending = False
-            
-        follower_rec.save()
-        following_rec.save()
         notification.save()
             
         data = True
@@ -1086,6 +1080,9 @@ def get_follow_data(request):
                 
             data['count'] = len(target_following)
             source_following = source.get_following()
+            
+            if mutual and target.id != source.id:
+                source_following.append(source)
         
             for user in target_following:
                 if user in source_following:
@@ -1187,11 +1184,15 @@ def get_follow_data_detailed(request):
         
         elif method == 'following':
             target_following = target_portrit_user.get_following()
+            print "target following"
+            print target_following
             data['count'] = len(target_following)
             if not all:
                 target_following = target_following[PAGE_SIZE * (page - 1):PAGE_SIZE * page]
                 
             source_following = source_portrit_user.get_following()
+            print "source following"
+            print source_following
             source_following_list = []
             for following in source_following:
                 source_following_list.append(following.id)
@@ -1607,13 +1608,29 @@ def get_community_top_nominations_cat(request):
     PAGE_SIZE = 12
     cat = request.GET.get('cat')
     page_size = request.GET.get('page_size')
+    landing = request.GET.get('landing')
     
     if page_size:
         PAGE_SIZE = int(page_size)
     
-    nominations = Nomination.objects.filter(nomination_category=cat,
-                                            public=True).order_by('-created_date', '-current_vote_count')[:PAGE_SIZE]
-    data = serialize_noms(nominations)
+    if landing:
+        nominations = cache.get('landing_nominations_' + cat.replace(' ', ''))
+        print nominations
+        if not nominations:
+            print "jere"
+            nominations = Nomination.objects.filter(nomination_category=cat,
+                                                    public=True).order_by('-created_date', '-current_vote_count')[:PAGE_SIZE]
+            data = serialize_noms(nominations)
+            print data
+            cache.set('landing_nominations_' + cat.replace(' ', ''), data, 60*15)
+        else:
+            print "from cahce"
+            data = nominations
+    else:    
+        nominations = Nomination.objects.filter(nomination_category=cat,
+                                                public=True).order_by('-created_date', '-current_vote_count')[:PAGE_SIZE]
+        data = serialize_noms(nominations)
+        
     data = simplejson.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
@@ -1701,6 +1718,7 @@ def get_active_notifications(request):
                     'notification_type': notification.notification_type.name,
                     'create_time': time.mktime(notification.created_date.utctimetuple()),
                     'read': notification.read,
+                    'pending': notification.pending,
                     'source_id': source_id,
                     'source_name': source_name,
                     'source_username': source_username,

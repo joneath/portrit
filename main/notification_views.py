@@ -90,6 +90,7 @@ def get_active_notifications(user):
                 'notification_type': notification.notification_type.name,
                 'create_time': time.mktime(notification.created_date.utctimetuple()),
                 'read': notification.read,
+                'pending': notification.pending,
                 'source_id': source_id,
                 'source_name': source_name,
                 'source_username': source_username,

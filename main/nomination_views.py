@@ -949,7 +949,7 @@ def get_top_users(user):
                                                     Q(tagged_users__in=[friend])), won=True).item_frequencies('nomination_category')
 
                 top_cat = sorted(top_cat.items(), key=itemgetter(1), reverse=True)[:1][0][0]
-                data.append({
+                data.insert(0, {
                     'fid': friend.fb_user.fid,
                     'name': friend.name,
                     'username': friend.username,

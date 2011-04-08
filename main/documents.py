@@ -260,6 +260,9 @@ class FB_User(EmbeddedDocument):
     access_token = StringField()
     mobile_access_token = StringField()
     
+    about = StringField()
+    location = StringField()
+    
     meta = {
         'ordering': ['-created_date'],
         'indexes': ['fid',
@@ -349,10 +352,11 @@ class Portrit_User(Document):
             following_id_list = cache.get(str(self.id) + '_following_id')
             if not following_id_list:
                 following = filter(lambda follow: follow.pending == False and follow.active == True and follow.user , self.following)
-                following_list = [ ]
+                following_dict = {}
                 for follow in following:
-                    following_list.append(follow.user.id)
+                    following_dict[follow.user.id] = follow.user.id
 
+                following_list = following_dict.values()
                 cache.set(str(self.id) + '_following_id', following_list)
                 return following_list
             else:
@@ -364,22 +368,22 @@ class Portrit_User(Document):
     def get_following(self):
         try:
             following = filter(lambda follow: follow.pending == False and follow.active == True, self.following)
-            following_list = [ ]
+            following_dict = { }
             for follow in following:
-                following_list.append(follow.user)
-        
-            return following_list
+                following_dict[follow.user.id] = follow.user
+            
+            return following_dict.values()
         except:
             return []
         
     def get_followers(self):
         try:
             followers = filter(lambda follow: follow.pending == False and follow.active == True, self.followers)
-            followers_list = [ ]
+            followers_dict = { }
             for follow in followers:
-                followers_list.append(follow.user)
-            
-            return followers_list
+                followers_dict[follow.user.id] = follow.user
+
+            return followers_dict.values()
         except:
             return []
             
@@ -467,7 +471,9 @@ class Follow(Document):
     pending_notification = ReferenceField('Notification')
     
     meta = {
-        'indexes': ['user',
+        'indexes': ['active',
+                    'pending',
+                    'user',
                     'pending_notification']
     }
     

@@ -177,18 +177,17 @@ def mark_nom_as_won(nom):
     
         #Save tagged user win
         try:
-            for tagged_user in nom.tagged_users.all():
+            for tagged_user in nom.tagged_users:
                 try:
-                    tagged_user = Portrit_User.objects.get(fb_user=tagged_user)
                     tagged_user.winning_nomination_count += 1
                     tagged_user.winning_noms.append(nom)
                     tagged_user.save()
                 
-                    friends_to_notify[tagged_user.fb_user.fid] = {'fid': tagged_user.fb_user.fid}
-                
                     notification = Notification(destination=tagged_user, owner=tagged_user, nomination=nom, notification_type=notification_type)
                     notification.save()
-                
+                    
+                    friends_to_notify[tagged_user.fb_user.fid] = {'fid': tagged_user.fb_user.fid, 'notification_id': str(notification.id)}
+
                     #Check send to facebook
                     # try:
                     #     if tagged_user.allow_portrit_album :
@@ -208,18 +207,16 @@ def mark_nom_as_won(nom):
         for friend in active_commentors:
             target_friends[friend.fb_user.fid] = friend
     
-        print "Target Friends"
-        print target_friends
         Notification.objects.filter(nomination=nom, notification_type=new_nom_notification_type).update(set__active=False)
-    
+        
         for friend in target_friends.keys():
             try:
                 notification = Notification(destination=nom.nominatee, owner=target_friends[friend], nomination=nom, notification_type=notification_type)
                 notification.save()
-                try:
-                    friends_to_notify[friend] = {'fid': friend, 'notification_id': str(notification.id)}
-                except:
-                    pass
+            except:
+                pass
+            try:
+                friends_to_notify[friend] = {'fid': friend, 'notification_id': str(notification.id)}
             except:
                 pass
     

@@ -61,16 +61,13 @@ def login_fb_user(request):
                 graph = facebook.GraphAPI(cookie["access_token"])
                 profile = graph.get_object("me")
                 email = None
-                try:
-                    email = profile['email']
-                except:
-                    pass
 
                 fb_user = FB_User(fid=str(profile["id"]), access_token=cookie["access_token"])
                 user, created = Portrit_User.objects.get_or_create(fb_user=fb_user)
                 
-                user.name = name=profile['name']
-                user.email = email=email
+                user.name = profile['name']
+                user.email = email
+                
                 user.save()
             
                 first = True
