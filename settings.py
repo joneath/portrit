@@ -25,10 +25,11 @@ if ENV == "LOCAL":
     MEDIA_URL = '/site_media/'
     BASE_URL = "http://localhost:8000/"
     
-    EMAIL_HOST = 'smtp.webfaction.com'
-    EMAIL_PORT = '25'
-    EMAIL_HOST_USER = 'joneath_portrit'
-    EMAIL_HOST_PASSWORD = 'HGMirNOGzJC4K8uzgqMc5'
+    EMAIL_USE_TLS = True
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = '587'
+    EMAIL_HOST_USER = 'portritinc@gmail.com'
+    EMAIL_HOST_PASSWORD = 'eTKQK23qUT8Vaz5sH33j'
     SERVER_EMAIL = "no-reply@portrit.com"
     
     FACEBOOK_APP_ID = "155664697800227"
@@ -69,7 +70,7 @@ elif ENV == "TEST":
     EMAIL_HOST = 'smtp.gmail.com'
     EMAIL_PORT = '587'
     EMAIL_HOST_USER = 'portritinc@gmail.com'
-    EMAIL_HOST_PASSWORD = 'portritblao'
+    EMAIL_HOST_PASSWORD = 'eTKQK23qUT8Vaz5sH33j'
     SERVER_EMAIL = "no-reply@portrit.com"
     
     FACEBOOK_APP_ID = "123063501058161"
@@ -78,7 +79,7 @@ elif ENV == "TEST":
     NODE_SOCKET = 8081
     NODE_HOST = "127.0.0.1"
     
-    CACHE_BACKEND = 'memcached://127.0.0.1:11211/?timeout=86400'
+    CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
     
     ADMINS = (
         # ('Your Name', 'your_email@domain.com'),
@@ -112,7 +113,7 @@ else:
     EMAIL_HOST = 'smtp.gmail.com'
     EMAIL_PORT = '587'
     EMAIL_HOST_USER = 'portritinc@gmail.com'
-    EMAIL_HOST_PASSWORD = 'portritblao'
+    EMAIL_HOST_PASSWORD = 'eTKQK23qUT8Vaz5sH33j'
     SERVER_EMAIL = "no-reply@portrit.com"
     
     FACEBOOK_APP_ID = "126374870731237"
@@ -121,7 +122,7 @@ else:
     NODE_SOCKET = 8081
     NODE_HOST = '10.117.57.137'
     
-    CACHE_BACKEND = 'memcached://10.202.90.88:11211/?timeout=86400'
+    CACHE_BACKEND = 'memcached://10.202.90.88:11211/'
     
     ADMINS = (
         # ('Your Name', 'your_email@domain.com'),

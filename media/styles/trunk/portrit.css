@@ -138,15 +138,15 @@ a:hover{
 .large.sick, .large.sick:visited, .large.sick_abs  			{ font-size: 14px; padding: 8px 14px 9px; }
 
 .green.sick, .green.sick:visited, .green.sick_abs		    { background-color: #91bd09; }
-.green.sick:hover						    { background-color: #749a02; }
-.blue.sick, .blue.sick:visited, .blue.sick_abs		    { background-color: #2daebf; }
-.blue.sick:hover							    { background-color: #007d9a; }
-.red.sick, .red.sick:visited, .red.sick_abs			    { background-color: #e33100; }
-.red.sick:hover							    { background-color: #872300; }
+.green.sick:hover, .green.sick_abs:hover				    { background-color: #749a02; }
+.blue.sick, .blue.sick:visited, .blue.sick_abs		        { background-color: #2daebf; }
+.blue.sick:hover, .blue.sick_abs:hover		                { background-color: #007d9a; }
+.red.sick, .red.sick:visited, .red.sick_abs			        { background-color: #e33100; }
+.red.sick:hover, .red.sick_abs:hover					    { background-color: #872300; }
 .magenta.sick, .magenta.sick:visited, .magenta.sick_abs		{ background-color: #a9014b; }
-.magenta.sick:hover, .magenta.sick_abs:hover							{ background-color: #630030; }
+.magenta.sick:hover, .magenta.sick_abs:hover				{ background-color: #630030; }
 .orange.sick, .orange.sick:visited, .orange.sick_abs		{ background-color: #ff5c00; }
-.orange.sick:hover							{ background-color: #d45500; }
+.orange.sick:hover, .orange.sick_abs:hover					{ background-color: #d45500; }
 .yellow.sick, .yellow.sick:visited, .yellow.sick_abs		{ background-color: #ffb515; }
 .yellow.sick:hover							{ background-color: #fc9200; }
 
@@ -474,7 +474,7 @@ div#login_cont{
                 }
                 
                 #tagline_main{
-                    color:          #bbb;
+                    color:          #ddd;
                     font-size:      16px;
                     margin-bottom:  10px;
                 }
@@ -871,10 +871,10 @@ div#search{
         padding:            15px;
         position:           relative;
         width:              500px;
-        border-top-right-radius: 10px;
-        border-top-left-radius:  10px;
-        -moz-border-radius-topright:     10px;
-        -moz-border-radius-topleft:      10px;
+        border-top-right-radius:        5px;
+        border-top-left-radius:         5px;
+        -moz-border-radius-topright:    5px;
+        -moz-border-radius-topleft:     5px;
         background-image: -webkit-gradient(
             linear,
             left bottom,
@@ -953,6 +953,8 @@ div#search{
     
         #results_wrap .search_result_cont img{
             float:              left;
+            height:             50px;
+            width:              50px;
         }
         
         #results_wrap .search_result_cont h3{
@@ -1020,7 +1022,7 @@ div#feedback{
 }
 
     div#feedback div#feedback_cont{
-        background-color:   #eee;
+        background-color:   #fff;
         color:              #333;
         display:            inline-block;
         margin-top:         40px;
@@ -1028,8 +1030,8 @@ div#feedback{
         position:           relative;
         text-align:         left;
         width:              600px;
-        border-radius:      10px;
-        -moz-border-radius:         10px;
+        border-radius:          5px;
+        -moz-border-radius:     5px;
     }
     
     div#feedback_cont h2{
@@ -1821,10 +1823,6 @@ div#nom_detail_cont{
         margin:             0 auto;
         position:           relative;
         z-index:            1;
-        border-top-left-radius:     10px;
-        border-top-right-radius:    10px;
-        -moz-border-radius-topleft:         10px;
-        -moz-border-radius-topright:        10px;
     }
     
         div#main_nom_cont_left{
@@ -1835,10 +1833,10 @@ div#nom_detail_cont{
             margin-top:             10px;
             position:               relative;
             width:                  700px;
-            border-top-left-radius:         10px;
-            border-top-right-radius:        10px;
-            -moz-border-radius-topleft:     10px;
-            -moz-border-radius-topright:    10px;
+            border-top-left-radius:         5px;
+            border-top-right-radius:        5px;
+            -moz-border-radius-topleft:     5px;
+            -moz-border-radius-topright:    5px;
         }
         
             div#main_nom_cont_left_wrap{
@@ -2097,10 +2095,10 @@ div#nom_detail_cont{
         top:                -5px;
         width:              960px;
         z-index:            1;
-        border-bottom-right-radius:    10px;
-        border-bottom-left-radius:     10px;
-        -moz-border-radius-bottomright:        10px;
-        -moz-border-radius-bottomleft:         10px;
+        border-bottom-right-radius:     5px;
+        border-bottom-left-radius:      5px;
+        -moz-border-radius-bottomright: 5px;
+        -moz-border-radius-bottomleft:  5px;
     }
     
         div#nom_comments_cont{
@@ -2676,10 +2674,10 @@ div#community{
     
     div#community #community_cont{
         background-color:       #333;
-        border-bottom-right-radius:     8px;
-        -moz-border-radius-bottomright: 8px;
-        border-bottom-left-radius:      8px;
-        -moz-border-radius-bottomleft:  8px;
+        border-bottom-right-radius:     5px;
+        -moz-border-radius-bottomright: 5px;
+        border-bottom-left-radius:      5px;
+        -moz-border-radius-bottomleft:  5px;
     }
     
         #community_cont #recent_left_cont{
@@ -2688,8 +2686,8 @@ div#community{
             min-height:             300px;
             padding-left:           0px;
             width:                  660px;
-            border-bottom-left-radius:      10px;
-            -moz-border-radius-bottomleft:  10px;
+            border-bottom-left-radius:      5px;
+            -moz-border-radius-bottomleft:  5px;
         }
         
             #recent_left_cont .community_photo_cont{
@@ -3435,8 +3433,8 @@ div#profile_cont{
                 background-color:       #222;
                 height:                 40px;
                 width:                  220px;
-                border-bottom-left-radius:      7px;
-                -moz-border-radius-bottomleft:  7px;
+                border-bottom-left-radius:      4px;
+                -moz-border-radius-bottomleft:  4px;
             }
             
             #gallery_left_stream #gallery_next:hover{
@@ -4091,8 +4089,8 @@ div#context_overlay{
         margin:                 0 auto;
         position:               relative;
         box-shadow:             rgba(0, 0, 0, 0.496094) 0px 0px 8px 3px;
-        border-radius:          10px;
-        -moz-border-radius:     10px;
+        border-radius:          5px;
+        -moz-border-radius:     5px;
     }
     
         div#context_overlay_cont.share_nom{
@@ -4679,10 +4677,10 @@ div#context_overlay{
     list-style:         none;
     position:           relative;
     padding:            5px 10px;
-    border-top-right-radius:    5px;
-    border-top-left-radius:     5px;
-    -moz-border-radius-topleft:         5px;
-    -moz-border-radius-topright:        5px;
+    border-top-right-radius:        3px;
+    border-top-left-radius:         3px;
+    -moz-border-radius-topleft:     3px;
+    -moz-border-radius-topright:    3px;
 }
 
     .stream_nav:hover, .sub_stream_nav:hover{
@@ -4694,10 +4692,10 @@ div#context_overlay{
     background-color:   white;
     font-weight:        bold;
     margin-top:         0px;
-    border-top-right-radius:    5px;
-    border-top-left-radius:     5px;
-    -moz-border-radius-topleft:         5px;
-    -moz-border-radius-topright:        5px;
+    border-top-right-radius:        3px;
+    border-top-left-radius:         3px;
+    -moz-border-radius-topleft:     3px;
+    -moz-border-radius-topright:    3px;
 }
 
 .stream_nav #active_nom_count{
@@ -4751,6 +4749,19 @@ div#context_overlay{
         z-index:            10;
     }
     
+        #profile_user_header #user_profile_image .follow{
+            position:           absolute;
+            z-index:            10;
+            bottom:             -25px;
+            width:              97px;
+            left:               25px;
+            text-align:         center;
+            border-bottom-left-radius:          0px;
+            border-bottom-right-radius:         0px;
+            -moz-border-radius-bottomleft:      0px;
+            -moz-border-radius-bottomright:     0px;
+        }
+    
     #profile_user_header #profile_nav_cont{
         float:              left;
         height:             125px;
@@ -4779,8 +4790,8 @@ div#context_overlay{
         height:             100px;
         margin-top:         25px;
         margin-right:       25px;
-        border-radius:      10px;
-        -moz-border-radius: 10px;
+        border-radius:      5px;
+        -moz-border-radius: 5px;
     }
     
         #profile_stats_cont > div{
@@ -4813,17 +4824,17 @@ div#context_overlay{
         
         #profile_followers_count_cont{
             border-right:       1px solid #bebebe;
-            border-bottom-left-radius:      10px;
-            border-top-left-radius:         10px;
-            -moz-border-radius-topleft:     10px;
-            -moz-border-radius-bottomleft:  10px;
+            border-bottom-left-radius:      5px;
+            border-top-left-radius:         5px;
+            -moz-border-radius-topleft:     5px;
+            -moz-border-radius-bottomleft:  5px;
         }
         
         #profile_following_count_cont{
-            border-bottom-right-radius:     10px;
-            border-top-right-radius:        10px;
-            -moz-border-radius-topright:    10px;
-            -moz-border-radius-bottomright: 10px;
+            border-bottom-right-radius:     5px;
+            border-top-right-radius:        5px;
+            -moz-border-radius-topright:    5px;
+            -moz-border-radius-bottomright: 5px;
         }
         
 #cont_empty{
@@ -4981,23 +4992,26 @@ div#context_overlay{
             }
       
     #profile_user_context #settings_cont{
-        margin-left:        25px;
+        margin:             0 auto;
         margin-top:         15px;
+        width:              600px;
     }
-            
-        #profile_user_context #settings_cont > h1{
-            font-size:          24px;
-            font-weight:        bold;
+        
+        h2.mb{
             margin-bottom:      10px;
+        }
+        
+        .mbs{
+            margin-bottom:      5px;
         }
         
     #profile_user_context #profile_active_cont{
         background-color:   #333;
         margin-top:         15px;
-        border-bottom-right-radius:     8px;
-        border-bottom-left-radius:      8px;
-        -moz-border-radius-bottomright: 8px;
-        -moz-border-radius-bottomleft:  8px;
+        border-bottom-right-radius:     2px;
+        border-bottom-left-radius:      5px;
+        -moz-border-radius-bottomright: 2px;
+        -moz-border-radius-bottomleft:  5px;
     }
     
         #profile_active_cont .recent_nom_cont{
@@ -5072,8 +5086,14 @@ div#wall_cont div#profile_wrap{
     position:               relative;
     text-align:             left;
     z-index:                1;
-    border-radius:          10px;
-    -moz-border-radius:     10px;
+    border-top-right-radius:            10px;
+    border-top-left-radius:             10px;
+    border-bottom-right-radius:         5px;
+    border-bottom-left-radius:          5px;
+    -moz-border-radius-topright:        10px;
+    -moz-border-radius-topleft:         10px;
+    -moz-border-radius-bottomright:     5px;
+    -moz-border-radius-bottomleft:      5px;
 }
 
     div#active_stream_text_cont{
@@ -5165,10 +5185,10 @@ div#wall_cont div#profile_wrap{
                 margin-right:       310px;
                 position:           relative;
                 padding:            5px 10px;
-                border-top-right-radius:        5px;
-                border-top-left-radius:         5px;
-                -moz-border-radius-topleft:     5px;
-                -moz-border-radius-topright:    5px;
+                border-top-right-radius:        3px;
+                border-top-left-radius:         3px;
+                -moz-border-radius-topleft:     3px;
+                -moz-border-radius-topright:    3px;
             }
             
             div#profile_wrap > ul > #countdown_cont{
@@ -5291,10 +5311,10 @@ div#latest_photos{
     float:              left;
     min-height:         300px;
     width:              660px;
-    border-bottom-right-radius:     10px;
-    border-bottom-left-radius:      10px;
-    -moz-border-radius-bottomleft:          10px;
-    -moz-border-radius-bottomright:         10px;
+    border-bottom-right-radius:     5px;
+    border-bottom-left-radius:      5px;
+    -moz-border-radius-bottomleft:          5px;
+    -moz-border-radius-bottomright:         5px;
 }
 
     #recent_left_cont #load_more_noms_cont{
@@ -5578,15 +5598,13 @@ div#latest_photos{
         
             .top_friend p{
                 color:              white;
-                float:              left;
-                font-size:          20px;
+                float:              right;
+                font-size:          16px;
                 font-weight:        bold;
-                margin-left:        8px;
-                margin-top:         8px;
-                padding:            5px;
-                width:              45px;
-                border-radius:      5px;
-                -moz-border-radius:     5px;
+                height:             50px;
+                width:              50px;
+                line-height:        50px;
+                text-align:         center;
             }
             
             .top_friend h2{
@@ -5594,9 +5612,10 @@ div#latest_photos{
                 display:            inline-block;
                 font-size:          14px;
                 font-weight:        bold;
-                margin-top:         9px;
-                margin-left:        5px;
-                width:              170px;
+                line-height:        50px;
+                margin-left:        15px;
+                float:              left;
+                width:              120px;
                 text-align:         left;
             }
             
@@ -5605,30 +5624,28 @@ div#latest_photos{
             }
             
             .top_friend img{
-                float:              right;
+                float:              left;
                 height:             50px;
                 width:              50px;
             }
             
-            .top_friend span{
-                color:              white;
-                font-size:          14px;
-                position:           absolute;
-                right:              0px;
-                padding:            4px 6px;
-                bottom:             0px;
-                border-top-left-radius:         5px;
-                -moz-border-radius-topleft:     5px;
+            .top_friend h3{
+                color:              #333;
+                font-size:          20px;
+                font-weight:        bold;
+                float:              left;
+                line-height:        50px;
+                width:              50px;
             }
                 
 #recent_cont_1{
     background-color:       #333;
     float:                  left;
     height:                 100%;
-    border-bottom-right-radius:     8px;
-    border-bottom-left-radius:      8px;
-    -moz-border-radius-bottomright:         8px;
-    -moz-border-radius-bottomleft:          8px;
+    border-bottom-right-radius:         5px;
+    border-bottom-left-radius:          5px;
+    -moz-border-radius-bottomright:     5px;
+    -moz-border-radius-bottomleft:      5px;
 }
 
 .recent_nom_cont{
@@ -5778,8 +5795,8 @@ div#latest_photos{
                 margin-bottom:          20px;
                 padding:                10px 20px;
                 text-align:             center;
-                border-radius:          10px;
-                -moz-border-radius:     10px;
+                border-radius:          5px;
+                -moz-border-radius:     5px;
             }
             
             .recent_nom_vote_count a{
@@ -6635,20 +6652,46 @@ div#all_friends {
         
     }
     
-        #settings_cont > div{
-            height:             43px;
+        #settings_cont > h1{
+            font-size:          26px;
+            font-weight:        bold;
+            margin-bottom:      5px;
+        }
+        
+        #settings_cont .sub_setting_cont{
             margin-bottom:      10px;
+        }
+        
+        #settings_cont h2{
+            font-size:          20px;
+            font-weight:        bold;
+        }
+        
+            #settings_cont h2 span{
+                color:              #777;
+                float:              right;
+                font-size:          16px;
+                line-height:        20px;
+            }
+    
+        #settings_cont .sub_setting_cont > div{
+            height:             50px;
+            margin-left:        10px;
             width:              600px;
         }
         
         #settings_cont label{
-            float:              left;
             font-size:          18px;
+            margin-top:         6px;
+        }
+        
+        #settings_cont label.single_line{
+            line-height:        50px;
+            margin-top:         0px;
         }
         
         #settings_cont .sub_label{
             color:              #777;
-            float:              left;
             font-size:          14px;
         }
         
@@ -6660,6 +6703,7 @@ div#all_friends {
             position:           relative;
             cursor:             pointer;
             float:              right;
+            margin-top:         4px;
         }
         
         #settings_cont #clear_db{
@@ -7119,8 +7163,8 @@ div#payment_types_cont{
     opacity:                0;
     position:               relative;
     width:                  200px;
-    border-radius:  10px;
-    -moz-border-radius:     10px;
+    border-radius:          5px;
+    -moz-border-radius:     5px;
     -webkit-box-shadow:     rgba(0, 0, 0, 0.496094) 0px 0px 8px 3px;
     -moz-box-shadow:        0px 0px 8px 3px rgba(0, 0, 0, 0.5);
     -webkit-transition:     opacity .35s ease-out;
@@ -7281,8 +7325,8 @@ div#payment_types_cont{
             position:               absolute;
             width:                  300px;
             z-index:                10101;
-            border-radius:  10px;
-            -moz-border-radius:     10px;
+            border-radius:          5px;
+            -moz-border-radius:     5px;
             -webkit-box-shadow:     rgba(0, 0, 0, 0.496094) 0px 0px 2px 3px;
             -moz-box-shadow:        0px 0px 2px 3px rgba(0, 0, 0, 0.5);
             box-shadow:     rgba(0, 0, 0, 0.496094) 0px 0px 2px 3px;

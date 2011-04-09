@@ -2118,6 +2118,12 @@ def change_user_settings(request):
             portrit_user.allow_follows = value
         elif method == 'post_wins':
             portrit_user.allow_winning_fb_album = value
+        elif method == 'email_follow':
+            portrit_user.email_on_follow = value
+        elif method == 'email_nomination':
+            portrit_user.email_on_nomination = value
+        elif method == 'email_win':
+            portrit_user.email_on_win = value
             
         portrit_user.save()
         data = portrit_user.get_settings()

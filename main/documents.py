@@ -340,7 +340,7 @@ class Portrit_User(Document):
     }
     
     def check_follow(self, target):
-        following = filter(lambda follow: follow.user == target, self.following)
+        following = filter(lambda follow: follow.user == target and follow.active == True, self.following)
         if following:
             return True
         else:

@@ -212,10 +212,19 @@ def get_user_data(user):
         tut_counts = False
         if not user.tutorial_completed:
             tut_counts = user.get_tutorial_counts()
+            
+        email_on_follow = user.email_on_follow
+        email_on_nomination = user.email_on_nomination
+        email_on_win = user.email_on_win
+        email = user.email
         
         data = {
             'notifications': notifications,
             'tut_counts': tut_counts,
+            'email_on_follow': email_on_follow,
+            'email_on_nomination': email_on_nomination,
+            'email_on_win': email_on_win,
+            'email': email,
         }
     except:
         pass
