@@ -1,26 +1,23 @@
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotFound
 from django.template import RequestContext
-from django.core import serializers
-from django.utils import simplejson
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.core.cache import cache
-
-# from main.models import Portrit_User, FB_User, Album, Photo, Nomination, Nomination_Category, Comment, \
-#                         Notification, Notification_Type, User_Following, User_Followers, GPS_Data, Photo_Flag
 
 from main.documents import *
 
 from settings import ENV, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, NODE_SOCKET, NODE_HOST
 
 from portrit_fb import Portrit_FB
-from nomination_views import get_target_friends, serialize_noms, serialize_nom, get_target_friends
+from nomination_views import serialize_noms, serialize_nom
+from top_users import get_top_users, get_interesting_users
+from twitter_utils import *
+
 from datetime import datetime
-import facebook, json, socket, time, math, itertools
+import facebook, json, socket, time, math, itertools, oauth, httplib
+
+CONSUMER = oauth.OAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET)
 
 def check_access_token(function=None):
     def _dec(view_func):
@@ -119,20 +116,20 @@ def sign_in_create(request):
         except:
             data = {'auth': 'invalid'}
     
-    data = simplejson.dumps(data)
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
 def check_username_availability(request):
     data = False
     username = request.POST.get('username')
-    
+    print username
     try: 
         Portrit_User.objects.get(username__iexact=username)
         data = True
     except Exception, err:
         print err
     
-    data = simplejson.dumps(data)
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
 @check_access_token
@@ -141,8 +138,7 @@ def add_username(request):
     access_token = request.POST.get('access_token')
     username = request.POST.get('username')
     post_wins_to_fb = request.POST.get('post_wins')
-    
-    print "here"
+    email_notifications = request.POST.get('email_notifications')
     
     try:
         user = get_user_from_access_token(access_token)
@@ -153,17 +149,46 @@ def add_username(request):
             print user
             user.username = username
             print user.username
-            print post_wins_to_fb
-            if post_wins_to_fb == '1':
+            print email_notifications
+            
+            if post_wins_to_fb == '1' or post_wins_to_fb == 'true' or post_wins_to_fb == True:
                 user.allow_winning_fb_album = True
-            else:
-                user.allow_winning_fb_album = False
+            
+            if email_notifications == '1' or email_notifications == 'true' or email_notifications == True:
+                user.email_on_follow = True
+                user.email_on_nomination = True
+                user.email_on_win = True
+            
             user.save()
+            
+            #Send email notification
+            if user.email:
+                node_data = {
+                    'email': True,
+                    'method': 'welcome',
+                    'payload': {
+                        'target_email': user.email,
+                        'target_fid': user.fb_user.fid,
+                        'target_name': user.name,
+                        'target_username': user.username,
+                    }
+                }
+
+                node_data = json.dumps(node_data)
+                try:
+                    sock = socket.socket(
+                        socket.AF_INET, socket.SOCK_STREAM)
+                    sock.connect((NODE_HOST, NODE_SOCKET))
+                    sock.send(node_data)
+                    sock.close()
+                except Exception, err:
+                    print err
+            
             data = True
     except Exception, err:
         print err
     
-    data = simplejson.dumps(data)
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
 
 @check_access_token
@@ -214,7 +239,7 @@ def get_recent_stream(request):
     except Exception, err:
         print err
     
-    data = simplejson.dumps(data)
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
 @check_access_token
@@ -246,7 +271,7 @@ def get_top_stream(request):
     except Exception, err:
         print err
     
-    data = simplejson.dumps(data)
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
 @check_access_token
@@ -289,7 +314,7 @@ def get_winners_stream(request):
     except Exception, err:
         print err
     
-    data = simplejson.dumps(data)
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
 def paginate_data(data, dir, pos):
@@ -477,7 +502,7 @@ def get_nom_detail(request):
     #     
     # else:
     #     data = serialize_nom(nomination)
-    data = simplejson.dumps(data)
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
 @check_access_token
@@ -513,7 +538,7 @@ def get_noms_in_cat(request):
     except Exception, err:
         print err
     
-    data = simplejson.dumps(data)
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
 def get_user_wins_trophy_cat(request):
@@ -540,7 +565,7 @@ def get_user_wins_trophy_cat(request):
         'selected_nom': serialize_nom(nom),
     }
     
-    data = simplejson.dumps(data)
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
 def get_all_wins_trophy_cat(request):
@@ -568,7 +593,7 @@ def get_all_wins_trophy_cat(request):
         'selected_nom': serialize_nom(nom),
     }
 
-    data = simplejson.dumps(data)
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
 @check_access_token
@@ -700,6 +725,9 @@ def nominate_photo(request):
             target_friends = [ ]
             for tagged_user in tagged_user_list:
                 target_friends.append(tagged_user)
+                
+            for user in new_nomination.nominatee.get_followers():
+                target_friends.append(user)
                
             if new_nomination.nominator.id != new_nomination.nominatee.id:
                 target_friends.append(new_nomination.nominatee)
@@ -708,7 +736,7 @@ def nominate_photo(request):
             friends = { }
             for friend in target_friends:
                 try:
-                    friends[friend.fb_user.fid] = {'fid': friend.fb_user.fid}
+                    friends[friend.fb_user.fid] = friend.get_notification_data()
                 except:
                     friends = { }
                 
@@ -729,12 +757,39 @@ def nominate_photo(request):
                 sock.close()
             except Exception, err:
                 print err
+                
+            #Send email notification
+            if new_nomination.nominator.id != new_nomination.nominatee.id and new_nomination.nominatee.email_on_nomination:
+                user = new_nomination.nominatee
+                source = new_nomination.nominator
+                node_data = {
+                    'email': True,
+                    'method': 'new_nom',
+                    'payload': {
+                        'target_email': user.email,
+                        'target_fid': user.fb_user.fid,
+                        'target_name': user.name,
+                        'target_username': user.username,
+                        'nom_cat': new_nomination.nomination_category,
+                        'nom_id': str(new_nomination.id),
+                    }
+                }
+                
+                node_data = json.dumps(node_data)
+                try:
+                    sock = socket.socket(
+                        socket.AF_INET, socket.SOCK_STREAM)
+                    sock.connect((NODE_HOST, NODE_SOCKET))
+                    sock.send(node_data)
+                    sock.close()
+                except Exception, err:
+                    print err
 
             data = nom_data
     except Exception, err:
         print err
 
-    data = simplejson.dumps(data) 
+    data = json.dumps(data) 
     return HttpResponse(data, mimetype='application/json')
   
 @check_access_token   
@@ -773,7 +828,7 @@ def vote_on_nomination(request):
         friends = { }
         for friend in target_friends:
             try:
-                friends[friend.fb_user.fid] = {'fid': friend.fb_user.fid}
+                friends[friend.fb_user.fid] = friend.get_notification_data()
             except:
                 friends = { }
         
@@ -808,7 +863,7 @@ def vote_on_nomination(request):
                 'nominatee_name': nomination.nominatee.name,
                 'nominatee_username': nomination.nominatee.username}
 
-    data = simplejson.dumps(data)
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
 def get_follow_count(request):
@@ -836,7 +891,7 @@ def get_follow_count(request):
     except Exception, err:
         print err
 
-    data = simplejson.dumps(data)
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
 def get_my_follow_data(request):
@@ -896,7 +951,7 @@ def get_my_follow_data(request):
     # except:
     #     pass
     
-    data = simplejson.dumps(data)
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
   
 @check_access_token  
@@ -958,8 +1013,36 @@ def follow_unfollow_user(request):
                     sock.connect((NODE_HOST, NODE_SOCKET))
                     sock.send(node_data)
                     sock.close()
+                    
                 except Exception, err:
                     print err
+                    
+                #Send email notification
+                if target.email_on_follow:
+                    node_data = {
+                        'email': True,
+                        'method': 'new_follow',
+                        'payload': {
+                            'target_email': target.email,
+                            'target_fid': target.fb_user.fid,
+                            'target_name': target.name,
+                            'target_username': target.username,
+                            'source_fid': source.fb_user.fid,
+                            'source_name': source.name,
+                            'source_username': source.username
+                        }
+                    }
+
+                    node_data = json.dumps(node_data)
+                    try:
+                        sock = socket.socket(
+                            socket.AF_INET, socket.SOCK_STREAM)
+                        sock.connect((NODE_HOST, NODE_SOCKET))
+                        sock.send(node_data)
+                        sock.close()
+                    except Exception, err:
+                        print err
+                        
             except Exception, err:
                 print err
 
@@ -984,7 +1067,7 @@ def follow_unfollow_user(request):
     except Exception, ex:
         print ex
     
-    data = simplejson.dumps(data)
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
 @check_access_token
@@ -1023,7 +1106,7 @@ def follow_permission_submit(request):
     except Exception, ex:
         print ex
     
-    data = simplejson.dumps(data)
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
 @check_access_token
@@ -1108,7 +1191,7 @@ def get_follow_data(request):
     except Exception, err:
         print err
     
-    data = simplejson.dumps(data)
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
 
 def get_follow_data_detailed(request):
@@ -1242,7 +1325,7 @@ def get_follow_data_detailed(request):
     except Exception, err:
         print err
     
-    data = simplejson.dumps(data)
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
    
 def get_user_profile(request):
@@ -1381,7 +1464,7 @@ def get_user_profile(request):
     except Exception, err:
         print err
     
-    data = simplejson.dumps(data)
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
 @check_access_token
@@ -1444,7 +1527,7 @@ def get_user_stream_photos(request):
     except Exception, err:
         print err
 
-    data = simplejson.dumps(data)
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
 def get_user_active_noms(request):
@@ -1460,7 +1543,7 @@ def get_user_active_noms(request):
     
     data = serialize_noms(user_active_noms)
     
-    data = simplejson.dumps(data)
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
 def sort_by_wins(a, b):
@@ -1503,7 +1586,7 @@ def get_user_trophies(request):
     except Exception, err:
         print err
 
-    data = simplejson.dumps(data)
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
 @check_access_token
@@ -1520,10 +1603,32 @@ def get_more_user_trophies(request):
     except Exception, err:
         print err     
     
-    data = simplejson.dumps(data)
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
 # Communtiy Views
+def get_top_users_request(request):
+    data = [ ]
+    
+    try:
+        data = get_top_users()
+    except Exception, err:
+        print err
+        
+    data = json.dumps(data)
+    return HttpResponse(data, mimetype='application/json')
+    
+def get_interesting_users_request(request):
+    data = [ ]
+    
+    try:
+        data = get_interesting_users()
+    except Exception, err:
+        print err        
+    
+    data = json.dumps(data)
+    return HttpResponse(data, mimetype='application/json')
+
 def get_community_photos(request):
     data = []
     PAGE_SIZE = 21
@@ -1577,7 +1682,7 @@ def get_community_photos(request):
         data = photo_data
     except Exception, err:
         print err
-    data = simplejson.dumps(data)
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
 def get_community_nominations(request):
@@ -1607,7 +1712,7 @@ def get_community_nominations(request):
                                                 public=True).order_by('-created_date')[:PAGE_SIZE]
         data = serialize_noms(nominations)
     
-    data = simplejson.dumps(data)
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
 def get_community_top_nominations_cat(request):
@@ -1634,7 +1739,7 @@ def get_community_top_nominations_cat(request):
                                                 public=True).order_by('-created_date', '-current_vote_count')[:PAGE_SIZE]
         data = serialize_noms(nominations)
         
-    data = simplejson.dumps(data)
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
 def get_community_top_stream(request):
@@ -1673,7 +1778,7 @@ def get_community_top_stream(request):
     except Exception, err:
         print err
 
-    data = simplejson.dumps(data)
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
 # Notification Views
@@ -1750,7 +1855,7 @@ def get_active_notifications(request):
     except Exception, err:
         print err
         
-    data = simplejson.dumps(data)
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
 
 @check_access_token 
@@ -1795,7 +1900,7 @@ def get_comments(request):
     except Exception, err:
         print err
       
-    data = simplejson.dumps(data) 
+    data = json.dumps(data) 
     return HttpResponse(data, mimetype='application/json')
     
 @check_access_token 
@@ -1895,7 +2000,7 @@ def new_comment(request):
     except Exception, err:
         print err
     
-    data = simplejson.dumps(data) 
+    data = json.dumps(data) 
     return HttpResponse(data, mimetype='application/json')
     
 # Flag Views
@@ -1925,7 +2030,7 @@ def flag_photo(request):
     except Exception, err:
         print err
     
-    data = simplejson.dumps(data) 
+    data = json.dumps(data) 
     return HttpResponse(data, mimetype='application/json')
 
 # Search Views  
@@ -1963,7 +2068,7 @@ def search(request):
     except Exception, err:
         print err
     
-    data = simplejson.dumps(data) 
+    data = json.dumps(data) 
     return HttpResponse(data, mimetype='application/json')
     
 def combined_search(request):
@@ -2003,7 +2108,7 @@ def combined_search(request):
     except Exception, err:
         print err
 
-    data = simplejson.dumps(data) 
+    data = json.dumps(data) 
     return HttpResponse(data, mimetype='application/json')
     
 def search_by_names(request):
@@ -2042,7 +2147,7 @@ def search_by_names(request):
     except Exception, err:
         print err
     
-    data = simplejson.dumps(data) 
+    data = json.dumps(data) 
     return HttpResponse(data, mimetype='application/json')
     
 def search_cool_kids(request):
@@ -2080,7 +2185,7 @@ def search_cool_kids(request):
     except Exception, err:
         print err
 
-    data = simplejson.dumps(data) 
+    data = json.dumps(data) 
     return HttpResponse(data, mimetype='application/json')
 
 @check_access_token
@@ -2094,7 +2199,7 @@ def get_user_settings(request):
     except Exception, err:
         print err
 
-    data = simplejson.dumps(data) 
+    data = json.dumps(data) 
     return HttpResponse(data, mimetype='application/json')
 
 @check_access_token
@@ -2130,5 +2235,59 @@ def change_user_settings(request):
     except Exception, err:
         print err
     
-    data = simplejson.dumps(data) 
+    data = json.dumps(data) 
     return HttpResponse(data, mimetype='application/json')
+ 
+@check_access_token    
+def auth_twitter(request):
+    data = ''
+    CONNECTION = httplib.HTTPSConnection(SERVER)
+    
+    access_token = request.GET.get('access_token')
+    portrit_user = get_user_from_access_token(access_token)
+    
+    token = get_unauthorised_request_token(CONSUMER, CONNECTION)
+    auth_url = get_authorisation_url(CONSUMER, token)
+    
+    twitter_user = Twitter_User(pending=True, unauthed_token=token.to_string())
+    portrit_user.twitter_user = twitter_user
+    portrit_user.save()
+    
+    response = HttpResponseRedirect(auth_url)
+    request.session['unauthed_token'] = token.to_string()  
+    return response
+    
+@check_access_token
+def deauth_twitter(request):
+    data = False
+    access_token = request.POST.get('access_token')
+    try:
+        portrit_user = get_user_from_access_token(access_token)
+        print portrit_user
+        portrit_user.twitter_user.active = False
+        portrit_user.save()
+        data = True
+        print "deauthed"
+    except:
+        pass
+        
+    data = json.dumps(data) 
+    return HttpResponse(data, mimetype='application/json')
+    
+def return_twitter(request):
+    unauthed_token = request.session.get('unauthed_token', None)
+    if not unauthed_token:
+        return HttpResponse("No un-authed token cookie")
+    token = oauth.OAuthToken.from_string(unauthed_token)   
+    if token.key != request.GET.get('oauth_token', 'no-token'):
+        return HttpResponse("Something went wrong! Tokens do not match")
+    verifier = request.GET.get('oauth_verifier')
+    access_token = exchange_request_token_for_access_token(CONSUMER, token, params={'oauth_verifier':verifier})
+    
+    portrit_user = Portrit_User.objects.get(twitter_user__unauthed_token=unauthed_token)
+    portrit_user.twitter_user.access_token = access_token.to_string()
+    portrit_user.twitter_user.pending = False
+    portrit_user.save()
+    print portrit_user.twitter_user.access_token
+    
+    return render_to_response('close_popup.html', {'access_token': portrit_user.twitter_user.access_token}, context_instance=RequestContext(request))

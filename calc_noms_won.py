@@ -186,7 +186,33 @@ def mark_nom_as_won(nom):
                     notification = Notification(destination=tagged_user, owner=tagged_user, nomination=nom, notification_type=notification_type)
                     notification.save()
                     
-                    friends_to_notify[tagged_user.fb_user.fid] = {'fid': tagged_user.fb_user.fid, 'notification_id': str(notification.id)}
+                    friends_to_notify[tagged_user.fb_user.fid] = tagged_user.get_notification_data()
+                    friends_to_notify[tagged_user.fb_user.fid]['notification_id'] = str(notification.id)
+                    
+                    #Send email notification
+                    if tagged_user.email_on_follow:
+                        node_data = {
+                            'email': True,
+                            'method': 'nom_won',
+                            'payload': {
+                                'target_email': tagged_user.email,
+                                'target_fid': tagged_user.fb_user.fid,
+                                'target_name': tagged_user.name,
+                                'target_username': tagged_user.username,
+                                'nom_id': str(nom.id),
+                                'nom_cat': nom.nomination_category
+                            }
+                        }
+
+                        node_data = json.dumps(node_data)
+                        try:
+                            sock = socket.socket(
+                                socket.AF_INET, socket.SOCK_STREAM)
+                            sock.connect((NODE_HOST, NODE_SOCKET))
+                            sock.send(node_data)
+                            sock.close()
+                        except Exception, err:
+                            print err
 
                     #Check send to facebook
                     # try:
@@ -216,7 +242,10 @@ def mark_nom_as_won(nom):
             except:
                 pass
             try:
-                friends_to_notify[friend] = {'fid': friend, 'notification_id': str(notification.id)}
+                friends_to_notify[friend] = target_friends[friend].get_notification_data()
+                friends_to_notify[friend]['notification_id'] = str(notification.id)
+                
+                {'fid': friend, 'notification_id': str(notification.id)}
             except:
                 pass
     
@@ -249,6 +278,31 @@ def mark_nom_as_won(nom):
             sock.close()
         except:
             pass
+            
+        #Send email notification
+        if nominatee.email_on_follow:
+            node_data = {
+                'email': True,
+                'method': 'nom_won',
+                'payload': {
+                    'target_email': nominatee.email,
+                    'target_fid': nominatee.fb_user.fid,
+                    'target_name': nominatee.name,
+                    'target_username': nominatee.username,
+                    'nom_id': str(nom.id),
+                    'nom_cat': nom.nomination_category
+                }
+            }
+
+            node_data = json.dumps(node_data)
+            try:
+                sock = socket.socket(
+                    socket.AF_INET, socket.SOCK_STREAM)
+                sock.connect((NODE_HOST, NODE_SOCKET))
+                sock.send(node_data)
+                sock.close()
+            except Exception, err:
+                print err
     except Exception, err:
         print err
 

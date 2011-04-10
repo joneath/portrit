@@ -13,7 +13,7 @@ else if (RUNTIME == 'test'){
     NODE_PORT = 8082;
 }
 else{
-    SERVER_URL = 'http://192.168.1.126:8080';
+    SERVER_URL = 'http://192.168.1.145:8080';
     NODE_SERVER = 'localhost';
     NODE_PORT = 8082;
 }

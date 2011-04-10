@@ -89,6 +89,9 @@ urlpatterns += patterns('',
     url(r'^api/follow_permission_submit/$', 'main.api_views.follow_permission_submit'),
     
     #Community
+    url(r'^api/get_top_users/$', 'main.api_views.get_top_users_request'),
+    url(r'^api/get_interesting_users/$', 'main.api_views.get_interesting_users_request'),
+    
     url(r'^api/get_community_photos/$', 'main.api_views.get_community_photos'),
     url(r'^api/get_community_nominations/$', 'main.api_views.get_community_nominations'),
     url(r'^api/get_community_top_nominations_cat/$', 'main.api_views.get_community_top_nominations_cat'),
@@ -114,6 +117,11 @@ urlpatterns += patterns('',
     #Settings
     url(r'^api/get_user_settings/$', 'main.api_views.get_user_settings'),
     url(r'^api/change_user_settings/$', 'main.api_views.change_user_settings'),
+    
+    #Twitter 
+    url(r'^api/auth_twitter/$', 'main.api_views.auth_twitter'),
+    url(r'^api/deauth_twitter/$', 'main.api_views.deauth_twitter'),
+    url(r'^return_twitter/$', 'main.api_views.return_twitter'),
 )
 
 #iPhone Views

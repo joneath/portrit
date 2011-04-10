@@ -66,7 +66,12 @@ def login_fb_user(request):
                 user, created = Portrit_User.objects.get_or_create(fb_user=fb_user)
                 
                 user.name = profile['name']
-                user.email = email
+                
+                try:
+                    email = profile['email']
+                    user.email = email
+                except:
+                    pass
                 
                 user.save()
             
@@ -217,10 +222,12 @@ def get_user_data(user):
         email_on_nomination = user.email_on_nomination
         email_on_win = user.email_on_win
         email = user.email
+        twitter_access_token = user.get_twitter_access_token()
         
         data = {
             'notifications': notifications,
             'tut_counts': tut_counts,
+            'twitter_access_token': twitter_access_token,
             'email_on_follow': email_on_follow,
             'email_on_nomination': email_on_nomination,
             'email_on_win': email_on_win,

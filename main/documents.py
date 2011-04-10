@@ -284,6 +284,7 @@ class Twitter_User(EmbeddedDocument):
     created_date = DateTimeField(default=datetime.datetime.now)
 
     access_token = StringField()
+    unauthed_token = StringField()
     
     meta = {
         'ordering': ['-created_date'],
@@ -339,12 +340,28 @@ class Portrit_User(Document):
                     'followers']
     }
     
+    def get_twitter_access_token(self):
+        try:
+            if self.twitter_user.active:
+                return self.twitter_user.access_token
+            else:
+                return None
+        except:
+            return None
+    
     def check_follow(self, target):
         following = filter(lambda follow: follow.user == target and follow.active == True, self.following)
         if following:
             return True
         else:
             return False
+            
+    def get_notification_data(self):
+        """Used for Node notifications"""
+        data = {
+            'fid': self.fb_user.fid
+        }
+        return data
             
     def get_following_ids(self):
         from django.db.models import Q
