@@ -89,8 +89,8 @@ elif ENV == "TEST":
     AWS_KEY = 'yKWjljJoVQsgt4vKTx8d7A'
     AWS_SECRET_KEY = 'wwmtVM3qGdRA8PFIiympmWKjy0hqicoLNnIjA0Arh4'
     
-    TWITTER_CONSUMER_KEY = 'RrYAd721jXeCJsp9QqtFw'
-    TWITTER_CONSUMER_SECRET = 'rWxNvv8pOSB0t9kgT59xVc2IUQXH1l8ESpfOst5sggw'
+    TWITTER_CONSUMER_KEY = 'yKWjljJoVQsgt4vKTx8d7A'
+    TWITTER_CONSUMER_SECRET = 'wwmtVM3qGdRA8PFIiympmWKjy0hqicoLNnIjA0Arh4'
     
     try:
         connect('portrit', host='', port=27017)
