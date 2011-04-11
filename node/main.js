@@ -16,8 +16,8 @@ var Portrit = function(){
         port: 465,
         ssl: true,
         use_authentication: true,
-        user: "portritinc@gmail.com",
-        pass: "AKIAIRT77BO4DEQK7EDQ=93k70ucKPD6dj2y5U+07798gm5LCFHeApkb4yacI"
+        user: "no-reply@portrit.com",
+        pass: "AKIAIYXPXPJDU2VIKQKQ=nMI2Etuxpa64IXyGCbtmnmSNE7DKmX0uUhKUmzuv"
     }
     
     function get_nom_cat_color(nom_cat){
@@ -373,7 +373,7 @@ var Portrit = function(){
     });
     
     if (dev){
-        request_server.listen(8080, '192.168.1.145');
+        request_server.listen(8080, '192.168.1.126');
     }
     else{
         request_server.listen(8080, '10.117.57.137');

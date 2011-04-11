@@ -1,5 +1,5 @@
-import oauth, urllib
-from django.conf import settings
+import oauth, urllib, urllib2, json
+import settings
 
 
 signature_method = oauth.OAuthSignatureMethod_HMAC_SHA1()
@@ -9,12 +9,13 @@ REQUEST_TOKEN_URL = getattr(settings, 'OAUTH_REQUEST_TOKEN_URL', 'https://%s/oau
 ACCESS_TOKEN_URL = getattr(settings, 'OAUTH_ACCESS_TOKEN_URL', 'https://%s/oauth/access_token' % SERVER)
 AUTHORIZATION_URL = getattr(settings, 'OAUTH_AUTHORIZATION_URL', 'http://%s/oauth/authorize' % SERVER)
 
-CONSUMER_KEY = getattr(settings, 'CONSUMER_KEY', 'RrYAd721jXeCJsp9QqtFw')
-CONSUMER_SECRET = getattr(settings, 'CONSUMER_SECRET', 'rWxNvv8pOSB0t9kgT59xVc2IUQXH1l8ESpfOst5sggw')
+CONSUMER_KEY = getattr(settings, 'TWITTER_CONSUMER_KEY', '')
+CONSUMER_SECRET = getattr(settings, 'TWITTER_CONSUMER_SECRET', '')
 
 # We use this URL to check if Twitters oAuth worked
 TWITTER_CHECK_AUTH = 'https://twitter.com/account/verify_credentials.json'
 TWITTER_FRIENDS = 'https://twitter.com/statuses/friends.json'
+TWITTER_UPDATE_STATUS = 'https://twitter.com/statuses/update.json'
 
 def request_oauth_resource(consumer, url, access_token, parameters=None, signature_method=signature_method, http_method="GET"):
     """
@@ -87,3 +88,20 @@ def update_status(consumer, connection, access_token, status):
                                            http_method='POST')
     json = fetch_response(oauth_request, connection)
     return json
+    
+def shorten_url(url):
+    print url
+    bitly_params = {
+        'login': settings.BITLY_LOGIN,
+        'apiKey': settings.BITLY_APIKEY,
+        'longUrl': url,
+        'format': 'json',
+    }
+    params = urllib.urlencode(bitly_params)
+    bitly_request_url = 'http://api.bit.ly/v3/shorten?' + params
+    data = urllib2.urlopen(bitly_request_url).read()
+    data = json.loads(data)
+    print data
+    url = data['data']['url']
+    
+    return url

@@ -16,9 +16,6 @@ MANAGERS = ADMINS
 BITLY_LOGIN = 'portrit'
 BITLY_APIKEY = 'R_554a2c395f085d017040066581d65325'
 
-TWITTER_CONSUMER_KEY = 'RrYAd721jXeCJsp9QqtFw'
-TWITTER_CONSUMER_SECRET = 'rWxNvv8pOSB0t9kgT59xVc2IUQXH1l8ESpfOst5sggw'
-
 if ENV == "LOCAL":
     DATABASE_ENGINE = ''           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
     DATABASE_NAME = ''             # Or path to database file if using sqlite3.
@@ -48,6 +45,9 @@ if ENV == "LOCAL":
     
     AWS_KEY = 'AKIAIYXPXPJDU2VIKQKQ'
     AWS_SECRET_KEY = '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'
+    
+    TWITTER_CONSUMER_KEY = '676tZGmZP5SDdp9h1iFnA'
+    TWITTER_CONSUMER_SECRET = 'lemMxxNgnJZUQFK5mwfYzPs7JWKcmvbVtgAKssfTwA'
     
     try:
         connect('portrit')
@@ -86,11 +86,11 @@ elif ENV == "TEST":
         ("Jonathan Eatherly", "jonathan.eatherly@gmail.com"),
     )
     
-    AWS_KEY = 'AKIAIYXPXPJDU2VIKQKQ'
-    AWS_SECRET_KEY = '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'
+    AWS_KEY = 'yKWjljJoVQsgt4vKTx8d7A'
+    AWS_SECRET_KEY = 'wwmtVM3qGdRA8PFIiympmWKjy0hqicoLNnIjA0Arh4'
     
-    BITLY_LOGIN = 'portrit'
-    BITLY_APIKEY = 'R_554a2c395f085d017040066581d65325'
+    TWITTER_CONSUMER_KEY = 'RrYAd721jXeCJsp9QqtFw'
+    TWITTER_CONSUMER_SECRET = 'rWxNvv8pOSB0t9kgT59xVc2IUQXH1l8ESpfOst5sggw'
     
     try:
         connect('portrit', host='', port=27017)
@@ -132,8 +132,8 @@ else:
     AWS_KEY = 'AKIAIYXPXPJDU2VIKQKQ'
     AWS_SECRET_KEY = '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'
     
-    BITLY_LOGIN = 'portrit'
-    BITLY_APIKEY = 'R_554a2c395f085d017040066581d65325'
+    TWITTER_CONSUMER_KEY = 'RrYAd721jXeCJsp9QqtFw'
+    TWITTER_CONSUMER_SECRET = 'rWxNvv8pOSB0t9kgT59xVc2IUQXH1l8ESpfOst5sggw'
     
     try:
         connect('portrit', host='', port=27017)

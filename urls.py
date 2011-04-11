@@ -122,6 +122,9 @@ urlpatterns += patterns('',
     url(r'^api/auth_twitter/$', 'main.api_views.auth_twitter'),
     url(r'^api/deauth_twitter/$', 'main.api_views.deauth_twitter'),
     url(r'^return_twitter/$', 'main.api_views.return_twitter'),
+    url(r'^api/share_twitter/$', 'main.api_views.share_twitter'),
+    
+    url(r'^api/shorten_url/$', 'main.api_views.shorten_url_request'),
 )
 
 #iPhone Views

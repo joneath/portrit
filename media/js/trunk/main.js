@@ -112,6 +112,18 @@ $(document).ready(function(){
     });
 });
 
+    var ENV = 'LOCAL';
+    var HOST = 'http://192.168.1.126:8080/';
+    
+    if (window.location.hostname == 'http://test.portrit.com'){
+        ENV = 'TEST';
+        HOST = 'http://test.portrit.com/';
+    }
+    else if (window.location.hostname == 'http://portrit.com'){
+        ENV = 'PRODUCTION';
+        HOST = 'http://portrit.com/';
+    }
+
     var window_href = window.location.href;
     if (window_href.indexOf('?ref=nf') > 0){
         window.location.href = window_href.replace('?ref=nf', '');
@@ -3072,7 +3084,7 @@ $(document).ready(function(){
                                     '<div id="nom_comments_cont">' +
                                         '<div id="comment_heading_cont">' +
                                             '<span class="sick large ' + action_botton_class + '" id="add_new_comment">Comment</span>' +
-                                            '<div class="flag flag_photo ' + action_botton_class + '" pid="' + nom.photo.id + '" thumb="' + nom.photo.crop + '"></div>' +
+                                            '<div class="flag flag_photo ' + action_botton_class + '" nom_id="' + nom.id + '"></div>' +
                                             '<div class="clear"></div>' +
                                         '</div>' +
                                         '<div id="new_comment_cont">' +
@@ -3133,21 +3145,6 @@ $(document).ready(function(){
         get_nom_comments(nom.id);
         render_nom_votes(nom, nom.votes);
     }
-    
-    // var get_votes_timeout = null;
-    // function get_nom_votes(id){
-    //     clearTimeout(get_votes_timeout);
-    //     get_comment_timeout = setTimeout(function(){
-    //         $('#nom_votes_wrap a').remove();
-    //         $('#nom_votes_wrap').append('<img id="votes_loading" src="http://portrit.s3.amazonaws.com/img/ajax-loader-light.gif"/>');
-    //         $.getJSON('/get_nom_votes/', {'nom_id': id}, function(data){
-    //             clearTimeout(get_votes_timeout);
-    //             $('#votes_loading').remove();
-    //             
-    //             render_nom_votes(data);
-    //         });
-    //     }, 300);
-    // }
     
     var get_comment_timeout = null;
     function get_nom_comments(id){
@@ -3669,7 +3666,7 @@ $(document).ready(function(){
                                         '<div class="recent_nom_comment_heading" value="' + nom.id + '">' +
                                             '<span class="add_new_comment sick large">Comment</span>' +
                                             '<span class="nom_detail sick large">Detail</span>' +
-                                            '<div class="flag flag_photo" pid="' + nom.photo.id + '" thumb="' + nom.photo.crop + '"></div>' +
+                                            '<div class="flag flag_photo" nom_id="' + nom.id + '"></div>' +
                                             '<div class="clear"></div>' +
                                         '</div>' +
                                         comment_html +
@@ -3825,7 +3822,7 @@ $(document).ready(function(){
                                         '<div class="recent_nom_comment_heading" value="' + nom.id + '">' +
                                             '<span class="add_new_comment sick large">Comment</span>' +
                                             '<span class="nom_detail sick large">Detail</span>' +
-                                            '<div class="flag flag_photo" pid="' + nom.photo.id + '" thumb="' + nom.photo.crop + '"></div>' +
+                                            '<div class="flag flag_photo" nom_id="' + nom.id + '"></div>' +
                                             '<div class="clear"></div>' +
                                         '</div>' +
                                         comment_html +
@@ -3927,7 +3924,7 @@ $(document).ready(function(){
                                             '<h2>' + caption + '</h2>' +
                                         '</div>' +
                                         '<div class="community_active_bottom">' +
-                                            '<div class="flag flag_photo ' + flag_class + '" pid="' + data[i].photo.id + '" thumb="' + data[i].photo.crop + '"></div>' +
+                                            '<div class="flag flag_photo ' + flag_class + '" nom_id="' + data[i].id + '"></div>' +
                                             '<div class="active_stat">' +
                                                 '<h4>' + secondsToHms(time_diff) + '</h4>' +
                                             '</div>' +
@@ -4336,13 +4333,21 @@ $(document).ready(function(){
                                     '</div>' +
                                     '<div id="gallery_photo_bottom_cont">' +
                                         '<p>' + secondsToHms(time_diff) + '</p>' +
-                                        '<div class="flag flag_photo ' + flag_class + '" pid="' + selected_photo.id + '" thumb="' + selected_photo.crop + '"></div>' +
+                                        '<div class="flag flag_photo ' + flag_class + '" pid="' + selected_photo.id + '" thumb="' + selected_photo.crop + '" fb_crop="' + selected_photo.crop_small + '"></div>' +
                                     '</div>' +
                                 '</div>' + 
+                                '<div id="gallery_photo_cache" style="display:none;"></div>' +
                             '</div>' +
                             '<div class="clear"></div>';
                             
         $('#gallery_cont').append(gallery_html);
+        
+        if (selected_photo_index - 1 >= 0){
+            $('#gallery_photo_cache').append('<img src="' + selected_user.photos[selected_photo_index - 1].source + '"/>');
+        }
+        if (selected_photo_index + 1 < selected_user.photos.length){
+            $('#gallery_photo_cache').append('<img src="' + selected_user.photos[selected_photo_index + 1].source + '"/>');
+        }
     }
     
     function update_gallery_view(id){
@@ -4424,6 +4429,14 @@ $(document).ready(function(){
         }
         else{
             $('#nominate').removeClass().addClass('active');
+        }
+        
+        $('#gallery_photo_cache').html('');
+        if (selected_photo_index - 1 >= 0){
+            $('#gallery_photo_cache').append('<img src="' + selected_user.photos[selected_photo_index - 1].source + '"/>');
+        }
+        if (selected_photo_index + 1 < selected_user.photos.length){
+            $('#gallery_photo_cache').append('<img src="' + selected_user.photos[selected_photo_index + 1].source + '"/>');
         }
     }
     
@@ -6202,6 +6215,11 @@ $(document).ready(function(){
             }  
         });
         
+        $('#nom_caption').live('keyup', function(e){
+            var caption_length = $(this).val().length;
+            $('#text_remail_cont').text(caption_length + '/90');
+        });
+        
         $('#nom_caption').live('keydown', function(e){
             var caption_length = $(this).val().length;
             $('#text_remail_cont').text(caption_length + '/90');
@@ -6527,7 +6545,9 @@ $(document).ready(function(){
         $('.flag_photo').live('click', function(){
             if ($(this).hasClass('off') == false){
                 var photo_id = $(this).attr('pid');
+                var nom_id = $(this).attr('nom_id');
                 var thumb = $(this).attr('thumb');
+                var nom = nom_cache[nom_id];
 
                 var flag_photo_html =   '<div id="flag_cont">' +
                                             '<div id="flag_heading">' +
@@ -6537,22 +6557,36 @@ $(document).ready(function(){
                                             '<div id="flag_options">' +
                                                 '<h2>Share photo</h2>' +
                                                 '<div class="round_cont">' +
-                                                    '<div class="round_cont_option share" value="portrit" style="border-bottom: 1px solid #bebebe;">' +
-                                                        '<img src="http://portrit.s3.amazonaws.com/img/p_logo.png"/>' +
-                                                        '<h3>Portrit</h3>' +
-                                                        '<p class="strong">Share this photo with your followers on Portrit.</p>' + 
-                                                        '<div class="clear"></div>' +
-                                                    '</div>' +
+                                                    // '<div class="round_cont_option share" value="portrit" style="border-bottom: 1px solid #bebebe;">' +
+                                                    //     '<img src="http://portrit.s3.amazonaws.com/img/p_logo.png"/>' +
+                                                    //     '<h3>Portrit</h3>' +
+                                                    //     '<p class="strong">Share this photo with your followers on Portrit.</p>' + 
+                                                    //     '<div class="clear"></div>' +
+                                                    // '</div>' +
                                                     '<div class="round_cont_option share" value="facebook" style="border-bottom: 1px solid #bebebe;">' +
                                                         '<img src="http://portrit.s3.amazonaws.com/img/f_logo.png"/>' +
                                                         '<h3>Facebook</h3>' +
                                                         '<p class="strong">Share this photo on Facebook.</p>' + 
                                                         '<div class="clear"></div>' +
                                                     '</div>' +
+                                                    '<div id="share_facebook_cont" class="share_cont" style="display:none; border-bottom: 1px solid #bebebe;">' +
+                                                         '<textarea class="share_caption inactive" id="facebook_caption">Caption</textarea>' +
+                                                         '<p class="caption_limit">0/140</p>' +
+                                                         '<span class="sick post_share" value="facebook">Post</span>' +
+                                                         '<span class="sick cancel_share">Cancel</span>' +
+                                                         '<div class="clear"></div>' +
+                                                    '</div>' +
                                                     '<div class="round_cont_option share" value="twitter">' +
                                                         '<img src="http://portrit.s3.amazonaws.com/img/twitter_logo.png"/>' +
                                                         '<h3>Twitter</h3>' +
                                                         '<p class="strong">Share this photo on Twitter.</p>' + 
+                                                        '<div class="clear"></div>' +
+                                                    '</div>' +
+                                                    '<div id="share_twitter_cont" class="share_cont" style="display:none; border-top: 1px solid #bebebe;">' +
+                                                        '<textarea class="share_caption inactive" id="twitter_caption">Caption</textarea>' +
+                                                        '<p class="caption_limit">0/140</p>' +
+                                                        '<span class="sick post_share" value="twitter">Post</span>' +
+                                                        '<span class="sick cancel_share">Cancel</span>' +
                                                         '<div class="clear"></div>' +
                                                     '</div>' +
                                                 '</div>' +
@@ -6561,9 +6595,14 @@ $(document).ready(function(){
                                                     '<div class="round_cont_option" value="flag">' +
                                                         '<p>Please only flag photos that break the Portrit Terms of Service. Such as pornography, violence, spam, etc.</p>' +
                                                     '</div>' +
+                                                    '<div id="flag_photo_confirmation" class="share_cont" style="display:none; border-top: 1px solid #bebebe;">' +
+                                                        '<h2 style="text-align: center; margin-bottom: 10px;">Are you sure?</h2>' +
+                                                        '<span class="sick cancel_share" style="float:left; margin-left: 0px">No</span>' +
+                                                        '<span class="sick post_share" value="flag">Yes</span>' +
+                                                        '<div class="clear"></div>' +
+                                                    '</div>' +
                                                 '</div>' +
                                                 '<div class="clear"></div>' +
-                                                '<span class="sick large" id="cancel_flag">Cancel</span>' +
                                             '</div>' +
                                             '<div class="clear"></div>' +
                                         '</div>';
@@ -6572,11 +6611,16 @@ $(document).ready(function(){
                 $('#context_overlay_cont > div').append(flag_photo_html);
                 show_context_overlay(true, true);
 
-                $('#cancel_flag').unbind('click');
-                $('#cancel_flag').bind('click', function(){
+                $('#close_overlay').bind('click', function(){
+                    $('#close_overlay').unbind('click');
                     $('#cancel_flag').unbind('click');
                     $('.round_cont_option').unbind('click');
-                    $('#close_overlay').click();
+                    $('.share_caption').unbind('keydown');
+                    $('.share_caption').unbind('keyup');
+                    $('.share_caption').unbind('blur');
+                    $('.share_caption').unbind('focus');
+                    $('.cancel_share').die('click');
+                    $('.post_share').die('click');
                 });
 
                 $('.round_cont_option').unbind('click');
@@ -6584,18 +6628,137 @@ $(document).ready(function(){
                     var value = $(this).attr('value');
                     
                     if (value == 'flag'){
-                        
+                        if ($(this).hasClass('selected')){
+                            $(this).removeClass('selected');
+                            $('#flag_photo_confirmation').slideUp('fast');
+                        }
+                        else{
+                            $(this).addClass('selected');
+                            $('#flag_photo_confirmation').slideDown('fast');
+                        }
                     }
                     else if (value == 'portrit'){
                         
                     }
                     else if (value == 'facebook'){
-                        
+                        if ($(this).hasClass('selected')){
+                            $(this).removeClass('selected');
+                            $('#share_facebook_cont').slideUp('fast');
+                            $('#share_facebook_cont textarea').val('Caption').removeClass('inputed').addClass('inactive');
+                            $('#share_facebook_cont .caption_limit').text('0/140');
+                        }
+                        else{
+                            $(this).addClass('selected');
+                            $('#share_facebook_cont').slideDown('fast');
+                        }
                     }
                     else if (value == 'twitter'){
+                        if ($(this).hasClass('selected')){
+                            $(this).removeClass('selected');
+                            $('#share_twitter_cont').slideUp('fast');
+                            $('#share_twitter_cont textarea').val('Caption').removeClass('inputed').addClass('inactive');
+                            $('#share_twitter_cont .caption_limit').text('0/140');
+                        }
+                        else{
+                            if (!twitter_access_token){
+                                send_twitter_auth_request();
+                            }
+                            $(this).addClass('selected');
+                            $('#share_twitter_cont').slideDown('fast');
+                            var test = nom;
+                        }
+                    }
+                });
+                
+                $('.cancel_share').die('click');
+                $('.cancel_share').live('click', function(){
+                    $(this).parent().prev().click();
+                });
+                
+                $('.post_share').die('click');
+                $('.post_share').live('click', function(){
+                    var caption = '';
+                    var url = '';
+                    var crop = '';
+                    var method = $(this).attr('value');
+                    
+                    if (nom){
+                        url = HOST + '#!/nomination/' + nom.id + '/';
+                        crop = nom.photo.crop_small;
+                    }
+                    else{
                         
                     }
-                });   
+                    
+                    if (method == 'twitter'){
+                        caption = $('#twitter_caption').val();
+                        if (caption == 'Caption'){
+                            caption = '';
+                        }
+                        share_on_twitter(caption, url);
+                    }
+                    else if (method == 'facebook'){
+                        caption = $('#facebook_caption').val();
+                        if (caption == 'Caption'){
+                            caption = '';
+                        }
+                        var title = '';
+                        if (nom){
+                            title = me.username + ' shared a nomination on Portrit';
+                        }
+                        else{
+                            title = me.username + ' shared a photo on Portrit';
+                        }
+                        share_on_facebook(title, caption, url, crop);
+                    }
+                    else if (method == 'flag_photo'){
+                        var photo_id = '';
+                        if (nom){
+                            photo_id = nom.photo.id;
+                        }
+                        else{
+                            
+                        }
+                        $.post('/api/flag/photo/', {'access_token': fb_session.access_token, 'photo_id': photo_id}, function(data){
+                            
+                        });
+                    }
+                    $(this).parent().prev().click();
+                });
+                
+                $('.share_caption').unbind('focus');
+                $('.share_caption').bind('focus', function(){
+                    $(this).removeClass().addClass('inputed');
+                    if (this.value == 'Caption'){
+                        this.value = '';
+                    }  
+                    if(this.value != 'Caption'){  
+                        this.select();  
+                    }
+                });
+
+                $('.share_caption').unbind('blur');
+                $('.share_caption').bind('blur', function(){
+                    if ($.trim(this.value) == ''){
+                        $(this).removeClass().addClass('inactive');
+                        this.value = 'Caption';
+                    }
+                });
+
+                $('.share_caption').unbind('keydown');
+                $('.share_caption').bind('keyup', function(e){
+                    var caption_length = $(this).val().length;
+                    $(this).parent().find('.caption_limit').text(caption_length + '/140');
+                });
+                
+                $('.share_caption').unbind('keydown');
+                $('.share_caption').bind('keydown', function(e){
+                    var caption_length = $(this).val().length;
+                    $(this).parent().find('.caption_limit').text(caption_length + '/140');
+                    if (caption_length >= 140 && e.keyCode != 8){
+                        return false;
+                    }
+                });
             }
         });
         
@@ -6660,7 +6823,17 @@ $(document).ready(function(){
     
     var twitter_window_location_intervale
     function send_twitter_auth_request(){
-        var callback_url = 'http://192.168.1.145:8080/return_twitter/';
+        var callback_url = '';
+        if (ENV == 'LOCAL'){
+            callback_url = 'http://192.168.1.145:8080/return_twitter/';
+        }
+        else if (ENV == 'TEST'){
+            callback_url = 'http://test.portrit.com/return_twitter/';
+        }
+        else if (ENV == 'PRODUCTION'){
+            callback_url = 'http://portrit.com/return_twitter/';
+        }
+        
         var twitter_window = window.open('/api/auth_twitter?access_token=' + fb_session.access_token ,"TwitterAuth", "width=800,height=434");
     }
     
@@ -6823,7 +6996,7 @@ $(document).ready(function(){
         });
     }
     
-    function update_nom_detail(nom, won){
+    function update_nom_detail(nom){
         $('#main_nom_photo').attr('src', nom.photo.source);
         $('#nom_vote_count').text(nom.vote_count);
         
@@ -6901,7 +7074,7 @@ $(document).ready(function(){
         
         $('#nomination_text_cont p').text(winning_text);
         
-        get_nom_comments(nom.id, won);
+        get_nom_comments(nom.id);
         render_nom_votes(nom, nom.votes);
         // get_nom_votes(nom.id);
     }
@@ -7061,7 +7234,7 @@ $(document).ready(function(){
                 previous_x += img_widths[i];
             });
             
-            update_nom_detail(nom, won);
+            update_nom_detail(nom);
         });
         
         $('.won').live('mouseover mouseout', function(event) {
@@ -7204,8 +7377,8 @@ $(document).ready(function(){
             caption_class= "inactive";
         }
         
-        var share_nom_html ='<div id="share_nom_cont">' +
-                                '<h1>Share your nomination</h1>' +
+        var share_nom_html ='<div id="share_nom_cont" nom="' + data[0].id + '" crop="' + data[0].photo.crop_small + '">' +
+                                '<h1 style="font-size: 30px;">Share your nomination</h1>' +
                                 '<textarea class="' + caption_class + '" id="share_nom_comment" value="Caption"/></textarea>' +
                                 '<p id="text_remail_cont">0/140</p>' +
                                 '<div id="share_bottom_cont">' +
@@ -7217,14 +7390,14 @@ $(document).ready(function(){
                                         '<div class="share_service">' +
                                             '<img src="http://portrit.s3.amazonaws.com/img/f_logo.png"/>' +
                                             '<h1>Facebook</h1>' +
-                                            '<div class="switch switch_off" value="on" name="facebook"></div>' +
+                                            '<div id="share_facebook" class="switch switch_off" value="on" name="facebook"></div>' +
                                             '<div class="clear"></div>' +
                                         '</div>' +
                                         '<div id="share_mid"></div>' +
                                         '<div class="share_service">' +
                                             '<img src="http://portrit.s3.amazonaws.com/img/twitter_logo.png"/>' +
                                             '<h1>Twitter</h1>' +
-                                            '<div class="switch switch_off" value="on" name="twitter"></div>' +
+                                            '<div id="share_twitter" class="switch switch_off" value="on" name="twitter"></div>' +
                                             '<div class="clear"></div>' +
                                         '</div>' +
                                     '</div>' +
@@ -7245,19 +7418,57 @@ $(document).ready(function(){
         attach_nom_share_handlers();
     }
     
+    function share_on_facebook(title, caption, url, crop){
+        $.post('/api/shorten_url/', {'url': url}, function(data){
+            url = data.url;
+            FB.api('/me/feed', 'post', {
+                'message': caption,
+                'caption': caption,
+                'link': url,
+                'picture': crop,
+                'name': title
+            }, function(response){
+
+            });
+        });
+    }
+    
+    function share_on_twitter(caption, url){
+        $.post('/api/share_twitter/', {'access_token': fb_session.access_token, 'status': caption, 'url': url}, function(data){
+            
+        });
+    }
+    
     function attach_nom_share_handlers(){
-        $('#cancel_share').live('click', function(){
+        $('#cancel_share').bind('click', function(){
             close_context_overlay();
             
-            $('#cancel_share').die('click');
-            $('.share_service .switch').die('click');
+            $('#cancel_share').unbind('click');
+            $('#post_share').unbind('click');
+            $('#share_nom_comment').unbind('focus');
+            $('#share_nom_comment').unbind('blur');
+            $('#share_nom_comment').unbind('keyup');
+            $('#share_nom_comment').unbind('keydown');
         });
         
-        $('.share_service .switch').live('click', function(){
+        $('#post_share').bind('click', function(){
+            var caption = $('#share_nom_comment').val();
+            var nom = $('#share_nom_cont').attr('nom');
+            var crop = $('#share_nom_cont').attr('crop');
+            var url = HOST + '#!/nomination/' + nom + '/';
             
-        });
-        
-        $('#post_share').live('click', function(){
+            if (caption.length > 140){
+                caption = caption.splice(0, 136) + '...';
+            }
+            
+            if ($('#share_facebook').hasClass('switch_on')){
+                var title = me.username + ' nominated a photo on Portrit';
+                share_on_facebook(title, caption, url, crop);
+            }
+            if ($('#share_twitter').hasClass('switch_on')){
+                share_on_twitter(caption, url);
+            }
+            
             $('#cancel_share').click();
         });
         
@@ -7278,7 +7489,12 @@ $(document).ready(function(){
             }
         });
         
-        $('#share_nom_comment').live('keydown', function(e){
+        $('#share_nom_comment').bind('keyup', function(e){
+            var caption_length = $(this).val().length;
+            $('#text_remail_cont').text(caption_length + '/140');
+        });
+        
+        $('#share_nom_comment').bind('keydown', function(e){
             var caption_length = $(this).val().length;
             $('#text_remail_cont').text(caption_length + '/140');
             if (caption_length >= 140 && e.keyCode != 8){

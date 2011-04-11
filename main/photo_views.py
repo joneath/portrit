@@ -104,7 +104,7 @@ def upload_photo(request):
             small_cropped_image = crop_to_size(image, (300,300), large_img_size, (100, 100))
             small_cropped_image.save(file_loc + '_crop_small.jpg', 'JPEG', quality=90)
             
-            s = S3Bucket('portrit_photos', access_key=AWS_KEY, secret_key=AWS_SECRET_KEY)
+            s = S3Bucket('cdn.portrit.com', access_key=AWS_KEY, secret_key=AWS_SECRET_KEY)
             thumbnail = open(file_loc + '_130.jpg', 'rb+')
             s.put(thumbnail_size_name, thumbnail.read(), acl="public-read")
             thumbnail.close()
@@ -121,7 +121,7 @@ def upload_photo(request):
             s.put(crop_small_size_name, small_cropped_image.read(), acl="public-read")
             small_cropped_image.close()
 
-            s3_url = "http://portrit_photos.s3.amazonaws.com/"
+            s3_url = "http://cdn.portrit.com/"
             photo = Photo(path=file_loc, 
                         thumbnail=(s3_url+thumbnail_size_name), 
                         large=(s3_url+large_size_name), 

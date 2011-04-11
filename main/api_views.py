@@ -2263,13 +2263,12 @@ def deauth_twitter(request):
     access_token = request.POST.get('access_token')
     try:
         portrit_user = get_user_from_access_token(access_token)
-        print portrit_user
         portrit_user.twitter_user.active = False
         portrit_user.save()
         data = True
         print "deauthed"
-    except:
-        pass
+    except Exception, err:
+        print err
         
     data = json.dumps(data) 
     return HttpResponse(data, mimetype='application/json')
@@ -2288,6 +2287,43 @@ def return_twitter(request):
     portrit_user.twitter_user.access_token = access_token.to_string()
     portrit_user.twitter_user.pending = False
     portrit_user.save()
-    print portrit_user.twitter_user.access_token
     
     return render_to_response('close_popup.html', {'access_token': portrit_user.twitter_user.access_token}, context_instance=RequestContext(request))
+  
+@check_access_token  
+def share_twitter(request):
+    data = False
+    
+    access_token = request.POST.get('access_token')
+    url = request.POST.get('url')
+    status = request.POST.get('status')
+    
+    url = shorten_url(url)
+    status = status + ' ' + url
+    
+    CONNECTION = httplib.HTTPSConnection(SERVER)
+    try:
+        portrit_user = get_user_from_access_token(access_token)
+        twitter_access_token = portrit_user.twitter_user.access_token
+        token = oauth.OAuthToken.from_string(twitter_access_token)
+        update_status(CONSUMER, CONNECTION, token, status)
+        
+        data = True
+    except Exception, err:
+        print err
+        
+    data = json.dumps(data) 
+    return HttpResponse(data, mimetype='application/json')
+    
+def shorten_url_request(request):
+    data = {'url': None}
+    url = request.POST.get('url')
+    print url
+    try:
+        url = shorten_url(url)
+        data['url'] = url
+    except Exception, err:
+        print err
+        
+    data = json.dumps(data) 
+    return HttpResponse(data, mimetype='application/json')
