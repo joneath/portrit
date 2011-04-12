@@ -163,6 +163,15 @@ def mark_nom_as_won(nom):
         nominatee.save()
     
         print "Nominatee Winning Record Saved"
+        
+        try:
+            if nominatee.allow_winning_fb_album:
+                if not nominatee.portrit_fb_album_fid:
+                    create_portrit_album(nominatee)
+                to_facebook_trophy_album(nominatee.fb_user.access_token, nom.photo.get_photo()['source'], nominatee.portrit_fb_album_fid, nom)
+        except Exception, err:
+            print err
+        
     
         target_friends[nominatee.fb_user.fid] = nominatee
     
@@ -215,13 +224,13 @@ def mark_nom_as_won(nom):
                             print err
 
                     #Check send to facebook
-                    # try:
-                    #     if tagged_user.allow_portrit_album :
-                    #         if not tagged_user.portrit_fb_album_fid:
-                    #             create_portrit_album(tagged_user)
-                    #         to_facebook_trophy_album(portrit_user.fb_user.access_token, nom.get_photo()['source'], portrit_user.portrit_fb_album_fid, nom)
-                    # except:
-                    #     pass
+                    try:
+                        if tagged_user.allow_winning_fb_album :
+                            if not tagged_user.portrit_fb_album_fid:
+                                create_portrit_album(tagged_user)
+                            to_facebook_trophy_album(tagged_user.fb_user.access_token, nom.photo.get_photo()['source'], tagged_user.portrit_fb_album_fid, nom)
+                    except:
+                        pass
                 except:
                     pass
         except:

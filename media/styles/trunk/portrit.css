@@ -2084,6 +2084,7 @@ div#nom_detail_cont{
                 height:                 40px;
                 padding-top:            7px;
                 padding-left:           10px;
+                position:               relative;
                 text-align:             left;
             }
             
@@ -2406,13 +2407,13 @@ div#new_comment_cont{
         -moz-border-radius-topleft:     5px;
     }
 
-    div.comment_top_head a.cancel_new_comment{
+    div.comment_top_head span.cancel_new_comment{
         float:                  left;
         margin-left:            5px;
         margin-top:             7px;
     }
 
-    div.comment_top_head a.post_new_comment{
+    div.comment_top_head span.post_new_comment{
         color:                  #99CB6E;
         float:                  right;
         margin-right:           5px;
@@ -3238,6 +3239,8 @@ div#profile_cont{
     
         #gallery_cont #gallery_header img{
             float:                  left;
+            height:                 50px;
+            width:                  50px;
         }
         
         #gallery_cont #gallery_header h2{
@@ -3638,6 +3641,29 @@ div#profile_cont{
         text-align:             center;
     }
     
+.public_tooltip{
+    background-color:       #fff;
+    padding:                5px;
+    position:               absolute;
+    left:                   0px;
+    top:                    0px;
+    opacity:                0;
+    width:                  150px;
+    z-index:                1000;
+    border-radius:          5px;
+    -moz-border-radius:     5px;
+    -webkit-box-shadow:     rgba(0, 0, 0, 0.496094) 0px 3px 7px;
+    box-shadow:             rgba(0, 0, 0, 0.496094) 0px 3px 7px;
+    -moz-box-shadow:        0 3px 7px rgba(0, 0, 0, 0.5);
+}
+
+    p.public_tooltip{
+        color:                  #333;
+        font-weight:            bold;
+        font-size:              13px;
+        text-align:             center;
+    }
+    
 .green_checkmark{
     height:                 24px;
     width:                  24px;
@@ -3767,7 +3793,7 @@ div#context_overlay{
                     }
     
         div#context_overlay_cont.tagged_user_overlay{
-            background-color:   #ddd;
+            background-color:   #fff;
             width:              500px;
         }
         
@@ -4074,8 +4100,8 @@ div#context_overlay{
                     background-color:   white;
                     width:              580px;
                     left:               0px;
-                    bottom:             -170px;
-                    height:             140px;
+                    bottom:             -150px;
+                    height:             120px;
                     padding:            10px;
                     z-index:            1;
                     border-radius:      5px;
@@ -4105,7 +4131,7 @@ div#context_overlay{
                         #photo_upload_permission_cont li{
                             margin:             0 auto;
                             margin-bottom:      10px;
-                            width:              400px;
+                            width:              500px;
                         }
                     
                         #photo_upload_permission_cont ul h3{
@@ -4113,12 +4139,12 @@ div#context_overlay{
                             float:              left;
                             font-size:          16px;
                             font-weight:        bold;
-                            margin-top:         13px;
+                            margin-top:         14px;
                         }
                         
                         #photo_upload_permission_cont ul p{
                             float:              left;
-                            width:              275px;
+                            width:              375px;
                             font-size:          13px;
                         }
                         
@@ -4332,6 +4358,34 @@ div#context_overlay{
                     font-weight:        normal;
                     margin:             25px 0px;
                 }
+                
+#stream_empty{
+    width:              500px;
+    margin:             0 auto;
+    margin-top:         50px;
+}
+
+    #stream_empty h1{
+        color:              #F95057;
+        font-size:          26px;
+    }
+    
+    #stream_empty h3{
+        font-weight:        bold;
+    }
+    
+    #stream_empty ul{
+        list-style:         none;
+        margin-top:         20px;
+    }
+    
+        #stream_empty ul li{
+            margin:             15px 0px;
+        }
+        
+            #stream_empty ul li p{
+                color:              #666;
+            }
                 
 .stream_nav, .sub_stream_nav{
     background-color:   #cecece;
@@ -4610,6 +4664,7 @@ div#context_overlay{
             
                 .user_stats_cont .follow_button_cont span{
                     width:              60px;
+                    border:             none;
                     -moz-box-shadow:    none;
                     -webkit-box-shadow: none;
                     box-shadow:         none;
@@ -5261,7 +5316,6 @@ div#latest_photos{
             background-color:   white;
             cursor:             pointer;
             display:            inline-block;
-            margin-bottom:      5px;
             overflow:           hidden;
             position:           relative;
             width:              290px;

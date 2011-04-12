@@ -87,9 +87,10 @@ function go_to_profile(e){
 }
 
 function follow_event(e){
-    var method = e.source.method,
-        parent = e.source.parent_row,
-        user_fid = e.source.user_fid;
+    var method = e.source.method;
+    var parent = e.source.parent_row;
+    var user_fid = e.source.user_fid;
+    var username = e.source.username;
         
     parent.remove(e.source);
     
@@ -123,6 +124,7 @@ function follow_event(e){
             follow_button.parent_row = parent;
             follow_button.button = true;
             follow_button.user_fid = user_fid;
+            follow_button.username = username;
             
             follow_button.addEventListener('click', follow_event);
             parent.remove(actInd);
@@ -133,7 +135,7 @@ function follow_event(e){
         xhr.open('POST', url);
 
         // send the data
-        xhr.send({'access_token': me.access_token, 'target': user_fid, method: 'follow'});
+        xhr.send({'access_token': me.access_token, 'target': username, method: 'follow'});
     }
     else{
         var xhr = Titanium.Network.createHTTPClient();
@@ -156,6 +158,7 @@ function follow_event(e){
             follow_button.parent_row = parent;
             follow_button.button = true;
             follow_button.user_fid = user_fid;
+            follow_button.username = username;
             
             follow_button.addEventListener('click', follow_event);
             parent.remove(actInd);
@@ -166,7 +169,7 @@ function follow_event(e){
         xhr.open('POST', url);
 
         // send the data
-        xhr.send({'access_token': me.access_token, 'target': user_fid, method: 'unfollow'});
+        xhr.send({'access_token': me.access_token, 'target': username, method: 'unfollow'});
     }
     
     setTimeout(function(){
@@ -233,6 +236,7 @@ function render_follow_table_view(data){
             follow_button.button = true;
             follow_button.parent_row = row;
             follow_button.user_fid = data[i].fid;
+            follow_button.username = data[i].username;
             follow_button.addEventListener('click', follow_event);
         }
         

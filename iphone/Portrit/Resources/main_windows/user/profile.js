@@ -580,11 +580,12 @@ function add_comment_to_nom(e){
 
 function open_options(e){
     var photo_id = e.source.photo_id;
+    var nom = e.source.nom;
     
     var optionsDialogOpts = {
-    	options:['Flag photo', 'Cancel'],
+    	options:['Flag photo', 'Share on Facebook', 'Share on Twitter', 'Cancel'],
     	destructive:0,
-    	cancel:1,
+    	cancel:3,
     	title:'Photo options'
     };
 
@@ -653,6 +654,15 @@ function open_options(e){
             xhr.send({'access_token': me.access_token,
                         'photo_id': photo_id});
         }
+        else if (e.index == 1){
+            // Facebook Share
+            var title = me.username + ' shared a nomination on Portrit';
+            share_nom(nom, 'Facebook', title);
+        }
+        else if (e.index == 2){
+            // Twitter Share
+            share_nom(nom, 'Twitter', '');
+        }
 	});
 	dialog.show();
 }
@@ -684,6 +694,7 @@ function follow_event(e){
             follow_button.method = 'unfollow';
             follow_button.parent_cont = parent;
             follow_button.button = true;
+            follow_button.username = username;
             follow_button.user_fid = user_fid;
             
             follow_button.addEventListener('click', follow_event);
@@ -695,7 +706,7 @@ function follow_event(e){
         xhr.open('POST', url);
 
         // send the data
-        xhr.send({'access_token': me.access_token, 'target': user_fid, method: 'follow'});
+        xhr.send({'access_token': me.access_token, 'target': username, method: 'follow'});
     }
     else{
         parent.remove(e.source);
@@ -720,6 +731,7 @@ function follow_event(e){
             follow_button.method = 'follow';
             follow_button.parent_cont = parent;
             follow_button.button = true;
+            follow_button.username = username;
             follow_button.user_fid = user_fid;
             
             follow_button.addEventListener('click', follow_event);
@@ -731,7 +743,7 @@ function follow_event(e){
         xhr.open('POST', url);
 
         // send the data
-        xhr.send({'access_token': me.access_token, 'target': user_fid, method: 'unfollow'});
+        xhr.send({'access_token': me.access_token, 'target': username, method: 'unfollow'});
     }
 }
 
@@ -805,7 +817,18 @@ function render_comments(cont, comments){
                 width: 320,
                 zIndex: -1
             });
-    	comment_cont.add(photo_action_bottom_round);
+    	comment_cont.add(photo_action_bottom_round); 
+    }
+    else{
+        photo_action_bottom_round = Titanium.UI.createView({
+                backgroundColor: '#ddd',
+                borderRadius: 5,
+                height: 10,
+                top: -5,
+                width: 320,
+                zIndex: -1
+            });
+    	cont.add(photo_action_bottom_round);
     }
 }
 
@@ -1145,6 +1168,7 @@ function render_active_view(data){
         });
         photo_options.nom_id = data[i].id;
         photo_options.photo_id = data[i].photo.id;
+        photo_options.nom = data[i];
         photo_options.addEventListener('click', open_options);
         
         photo_action_row.add(add_comment);
@@ -1541,6 +1565,7 @@ function init_profile_view(){
                 follow_button.parent_cont = profile_header;
                 follow_button.button = true;
                 follow_button.user_fid = user;
+                follow_button.username = username;
                 follow_button.addEventListener('click', follow_event);
                 profile_header.add(follow_button);
             }
@@ -1578,8 +1603,6 @@ function init_profile_view(){
         user_profile_request.send();   
     }
     
-    init_count += 1;
-    
     // Titanium.Facebook.requestWithGraphPath(String(user), {}, 'GET', function(e) {
     //     if (e.success) {
     //         alert(e.result);
@@ -1593,6 +1616,7 @@ function init_profile_view(){
 
 Ti.App.addEventListener('pass_user', function(eventData) {
     if (init_count == 0){
+        init_count += 1;
         user = String(eventData.user);
         name = String(eventData.name);
         username = String(eventData.username);

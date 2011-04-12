@@ -11,6 +11,8 @@ AUTHORIZATION_URL = getattr(settings, 'OAUTH_AUTHORIZATION_URL', 'http://%s/oaut
 
 CONSUMER_KEY = getattr(settings, 'TWITTER_CONSUMER_KEY', '')
 CONSUMER_SECRET = getattr(settings, 'TWITTER_CONSUMER_SECRET', '')
+MOBILE_CONSUMER_KEY = getattr(settings, 'TWITTER_MOBILE_CONSUMER_KEY', '')
+MOBILE_CONSUMER_SECRET = getattr(settings, 'TWITTER_MOBILE_CONSUMER_SECRET', '')
 
 # We use this URL to check if Twitters oAuth worked
 TWITTER_CHECK_AUTH = 'https://twitter.com/account/verify_credentials.json'
@@ -90,7 +92,6 @@ def update_status(consumer, connection, access_token, status):
     return json
     
 def shorten_url(url):
-    print url
     bitly_params = {
         'login': settings.BITLY_LOGIN,
         'apiKey': settings.BITLY_APIKEY,
@@ -101,7 +102,6 @@ def shorten_url(url):
     bitly_request_url = 'http://api.bit.ly/v3/shorten?' + params
     data = urllib2.urlopen(bitly_request_url).read()
     data = json.loads(data)
-    print data
     url = data['data']['url']
     
     return url

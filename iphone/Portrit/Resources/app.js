@@ -408,6 +408,13 @@ function render_photos(data){
                     height:'auto',
                     selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
             });
+            img_cont = Titanium.UI.createView({
+                height: 'auto',
+                width: 320,
+                top: 5
+            });
+            row.add(img_cont);
+            
             photo_data.push(row);
         }
         else if (i == 0){
@@ -415,20 +422,31 @@ function render_photos(data){
                     height:'auto',
                     selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
             });
+            
+            var img_cont = Titanium.UI.createView({
+                height: 'auto',
+                width: 320,
+                top: 5
+            });
+            row.add(img_cont);
+            
             photo_data.push(row);
+        }
+        if (i + 3 > top){
+            img_cont.bottom = 5;
         }
         
         var image_thumb = Ti.UI.createImageView({
     		image: data[i].photo.crop,
     		defaultImage: 'images/photo_loader.png',
-    		left: (photo_in_row * 105) + 5,
-    		bottom: 5,
-    		top: top_offset,
+            left: (photo_in_row * 105) + 5,
+            // bottom: 5,
+            // top: top_offset,
     		width: 100,
     		height: 75,
     		hires: true
     	});
-        row.add(image_thumb);
+    	img_cont.add(image_thumb);
         photo_in_row += 1;
     }
     photo_cont.setData(photo_data);

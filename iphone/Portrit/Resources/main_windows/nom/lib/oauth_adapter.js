@@ -149,6 +149,13 @@ var OAuthAdapter = function(pConsumerSecret, pConsumerKey, pSignatureMethod)
     {
         return ! (accessToken == null || accessTokenSecret == null);
     };
+    
+    this.get_access_token = function(){
+        return {
+            'access_token': accessToken,
+            'access_token_secret': accessTokenSecret,
+        }
+    }
 
     // creates a message to send to the service
     var createMessage = function(pUrl)

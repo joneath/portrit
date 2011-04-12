@@ -588,3 +588,21 @@ function load_notifications(){
 }
 
 load_notifications();
+
+reset = false;
+win.addEventListener('focus', function(){
+    if (reset){
+        reset = false;
+        list_view_data = [ ];
+        notification_cache = [ ];
+
+        me = JSON.parse(Ti.App.Properties.getString("me"));
+
+        load_notifications();
+    }
+});
+
+Ti.App.addEventListener('reset', function(eventData) {
+    tv.setData([]);
+    reset = true;
+});

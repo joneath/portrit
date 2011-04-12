@@ -45,6 +45,7 @@ def init_app(request):
         data = {
             'noms': serialize_noms(nominations),
             'notification_count': notification_count,
+            'username': user.username
         }
                    
     except Exception, err:

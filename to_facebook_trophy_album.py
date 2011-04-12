@@ -3,6 +3,8 @@ import sys
 os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
 
 from main.documents import *
+from main.twitter_utils import shorten_url
+
 from settings import ENV, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, NODE_SOCKET, NODE_HOST, MEDIA_ROOT
 
 import json, socket, urllib, urllib2, datetime
@@ -21,11 +23,13 @@ def to_facebook_trophy_album(access_token, img_src, facebook_album_id, nom):
     image = MyOpener()
     image.retrieve(img_src, path)
     
+    post_url = shorten_url('http://portrit.com/#!/nomination/' + str(nom.id))
+    
     vote_count = nom.current_vote_count
     vote_text = '1 vote.'
     if vote_count > 1:
         vote_text = str(vote_count) + ' votes.'
-    message = 'Won ' + nom.nomination_category.name + ' with ' + vote_text + '\n' + 'http://portrit.com/#/nom_id=' + str(nom.id)
+    message = 'Won ' + nom.nomination_category + ' with ' + vote_text + '\n' + post_url
     args = {
         'access_token': access_token,
         'message': message,

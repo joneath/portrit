@@ -5,21 +5,13 @@ var url = require("url");
 var net = require('net');
 var events = require("events");
 var path = require("path");
-var nodemailer = require('nodemailer');
+// var nodemailer = require('nodemailer');
+var postmark = require("postmark")("7e81d8b2-4429-44e1-a493-eef87d130669");
 
 var Portrit = function(){
     var self = this;
     var dev = true;
-    
-    nodemailer.SMTP = {
-        host: "smtp.sessmtp.net",
-        port: 465,
-        ssl: true,
-        use_authentication: true,
-        user: "no-reply@portrit.com",
-        pass: "AKIAIYXPXPJDU2VIKQKQ=nMI2Etuxpa64IXyGCbtmnmSNE7DKmX0uUhKUmzuv"
-    }
-    
+
     function get_nom_cat_color(nom_cat){
         if (nom_cat == 'artsy'){
             return '#689AC9';
@@ -77,7 +69,7 @@ var Portrit = function(){
         else if (method == 'nom_won'){
             var cat_under = get_cat_under(data.nom_cat);
             var cat_color = get_nom_cat_color(cat_under);
-            template_html = '<h1 style="font-size: 28px; font-weight: bold; margin-bottom: 10px;">Yay ' + data.target_name.split(' ')[0] + ', You just won!.</h1>' +
+            template_html = '<h1 style="font-size: 28px; font-weight: bold; margin-bottom: 10px;">Yay ' + data.target_name.split(' ')[0] + ', You just won!</h1>' +
                             '<p style="font-size: 14px;">You have just won the ' + data.nom_cat + ' Trophy. You can visit your <a href="http://portrit.com/#!/' + data.target_username + '/trophies/" style="color: #1686f7; cursor: pointer; text-decoration: none;">trophy room here</a>.</p>' +
                             '<div style="-moz-border-radius: 5px; border-radius: 5px; background-color: #333; width: 500px; height: 105px; margin: 0 auto;">' +
                                 '<div style="float:left; width:100px; text-align: center;">' +
@@ -108,7 +100,7 @@ var Portrit = function(){
         }
         
         var generic_html =  '<div style="font-family: Helvetica, Arial, Verdana, sans-serif; width: 710px; color: #333;">' +
-                                '<div id="portrit_header" style="background-color: #333; height: 90px; text-align: center;">' +
+                                '<div id="portrit_header" style="background-color: #333; height: 115px; text-align: center;">' +
                                     '<img style="margin-top: 10px; margin-bottom: 5px; height: 90px;" src="http://portrit.s3.amazonaws.com/img/logo_blank.png"/>' +
                                 '</div>' +
                                 template_html +
@@ -132,46 +124,42 @@ var Portrit = function(){
     function send_mail(data){
         var email_html = '';
         console.log('mail event');
-        if (data.method == 'new_nom'){
-            email_html = get_email_html(data.method, data.payload);
-            nodemailer.send_mail({sender: "no-reply@portrit.com", 
-                                  to: data.payload.target_email,
-                                  subject: 'Hey ' + data.payload.target_name.split(' ')[0] + ', You Have Been Nominated.',
-                                  html: email_html},
-                                  function(error, success){
-                                      console.log("Message "+(success?"sent":"failed"));
-                                  });
-        }
-        else if (data.method == 'nom_won'){
-            email_html = get_email_html(data.method, data.payload);
-            nodemailer.send_mail({sender: "no-reply@portrit.com", 
-                                  to: data.payload.target_email,
-                                  subject: 'Yay ' + data.payload.target_name.split(' ')[0] + ', You Just Won.',
-                                  html: email_html},
-                                  function(error, success){
-                                      console.log("Message "+(success?"sent":"failed"));
-                                  });
-        }
-        else if (data.method == 'new_follow'){
-            email_html = get_email_html(data.method, data.payload);
-            nodemailer.send_mail({sender: "no-reply@portrit.com", 
-                                  to: data.payload.target_email,
-                                  subject: data.payload.source_name + ' is now following you on Portrit!',
-                                  html: email_html},
-                                  function(error, success){
-                                      console.log("Message "+(success?"sent":"failed"));
-                                  });
-        }
-        else if (data.method == 'welcome'){
-            email_html = get_email_html(data.method, data.payload);
-            nodemailer.send_mail({sender: "no-reply@portrit.com", 
-                                  to: data.payload.target_email,
-                                  subject: 'Welcome To Portrit!',
-                                  html: email_html},
-                                  function(error, success){
-                                      console.log("Message "+(success?"sent":"failed"));
-                                  });
-        }
+        // if (data.method == 'new_nom'){
+        //     email_html = get_email_html(data.method, data.payload);
+        //     postmark.send({
+        //         "From": "notifications@portrit.com", 
+        //         "To": data.payload.target_email, 
+        //         "Subject": 'Hey ' + data.payload.target_name.split(' ')[0] + ', You Have Been Nominated.',
+        //         "HtmlBody": email_html
+        //     });
+        // }
+        // else if (data.method == 'nom_won'){
+        //     email_html = get_email_html(data.method, data.payload);
+        //     postmark.send({
+        //         "From": "notifications@portrit.com", 
+        //         "To": data.payload.target_email, 
+        //         "Subject": 'Yay ' + data.payload.target_name.split(' ')[0] + ', You Just Won.',
+        //         "HtmlBody": email_html
+        //     });
+        // }
+        // else if (data.method == 'new_follow'){
+        //     email_html = get_email_html(data.method, data.payload);
+        //     postmark.send({
+        //         "From": "notifications@portrit.com", 
+        //         "To": data.payload.target_email, 
+        //         "Subject": data.payload.source_name + ' is now following you on Portrit!',
+        //         "HtmlBody": email_html
+        //     });
+        // }
+        // else if (data.method == 'welcome'){
+        //     email_html = get_email_html(data.method, data.payload);
+        //     postmark.send({
+        //         "From": "notifications@portrit.com", 
+        //         "To": data.payload.target_email, 
+        //         "Subject": 'Welcome To Portrit!',
+        //         "HtmlBody": email_html
+        //     });
+        // }
         console.log(data.method);
     }
     

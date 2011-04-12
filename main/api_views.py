@@ -18,6 +18,7 @@ from datetime import datetime
 import facebook, json, socket, time, math, itertools, oauth, httplib
 
 CONSUMER = oauth.OAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET)
+CONSUMER_MOBILE = oauth.OAuthConsumer(MOBILE_CONSUMER_KEY, MOBILE_CONSUMER_SECRET)
 
 def check_access_token(function=None):
     def _dec(view_func):
@@ -69,6 +70,7 @@ def sign_in_create(request):
     if len(user) == 0:
         graph = facebook.GraphAPI(access_token)
         try:
+            print "empty"
             profile = graph.get_object("me")
             fb_user = FB_User(fid=profile['id'], mobile_access_token=access_token)
             
@@ -107,12 +109,17 @@ def sign_in_create(request):
                 user.fb_user.mobile_access_token = access_token
                 user.save()
             else:
-                access_token = user.fb_user.mobile_access_token
+                if access_token:
+                    user.fb_user.mobile_access_token = access_token
+                    user.save()
+                else:
+                    access_token = user.fb_user.mobile_access_token
             
             data = {'auth': 'valid',
                     'new': new,
                     'username': user.username,
                     'access_token': access_token}
+                    
         except:
             data = {'auth': 'invalid'}
     
@@ -358,7 +365,7 @@ def get_nom_detail(request):
         nomination = None
         
     following = [ ]
-    if source and source != 'null':
+    if source and source != 'undefined':
         source = Portrit_User.objects.get(username=source)
         source_following = source.get_following()
     
@@ -402,9 +409,29 @@ def get_nom_detail(request):
             Q(tagged_users__in=[source]) |
             Q(nominatee=source) |
             Q(nominator=source),
-            won=True).order_by('-current_vote_count', '-created_date')[:PAGE_SIZE]
+            won=True).order_by('-created_date', '-current_vote_count')
             
-        data = serialize_noms(data)
+            
+        if dir:
+            data = paginate_data(data, dir, pos)
+
+        elif nomination:
+            data = list(data)
+            selected_index = data.index(nomination)
+            top = 10
+            bottom = 0
+
+            if selected_index - 5 > 0:
+                bottom = selected_index - 4
+
+            if selected_index + 5 > top:
+                top = selected_index + 5
+
+            data = data[bottom:top]
+            data = serialize_noms(data, bottom)
+        else:
+            data = data[:PAGE_SIZE]
+            data = serialize_noms(data)
         
     elif nav_selected == 'community_active':
         cat = nomination.nomination_category
@@ -478,13 +505,33 @@ def get_nom_detail(request):
         data = serialize_noms(data)
         
     elif nav_selected == 'profile_active':
+        print source.username
         data = Nomination.objects.filter(
             Q(tagged_users__in=[source]) |
             Q(nominatee=source),
             active=True, 
-            won=False).order_by('-current_vote_count', '-created_date')# [PAGE_SIZE * (page - 1): PAGE_SIZE * page]
+            won=False).order_by('-created_date', '-current_vote_count')
             
-        data = serialize_noms(data)
+        if dir:
+            data = paginate_data(data, dir, pos)
+
+        elif nomination:
+            data = list(data)
+            selected_index = data.index(nomination)
+            top = 10
+            bottom = 0
+
+            if selected_index - 5 > 0:
+                bottom = selected_index - 4
+
+            if selected_index + 5 > top:
+                top = selected_index + 5
+
+            data = data[bottom:top]
+            data = serialize_noms(data, bottom)
+        else:
+            data = data[:PAGE_SIZE]
+            data = serialize_noms(data)
         
     else:
         data = [serialize_nom(nomination)]
@@ -871,16 +918,15 @@ def get_follow_count(request):
     user = request.GET.get('user')
 
     try:
-        user = FB_User.objects.get(fid=int(user))
-        portrit_user = user.get_portrit_user()
+        portrit_user = Portrit_User.objects.get(fb_user__fid=int(user))
 
         try:
-            following_count = user.get_following().count()
+            following_count = len(portrit_user.get_following())
         except:
             following_count = 0
 
         try:
-            followers_count = user.get_followers().count()
+            followers_count = len(portrit_user.get_followers())
         except:
             followers_count = 0
 
@@ -894,65 +940,65 @@ def get_follow_count(request):
     data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
-def get_my_follow_data(request):
-    data = {
-        'data': [ ],
-        'count': 0,
-    }
-    PAGE_SIZE = 20
-    
-    target = request.GET.get('user')
-    method = request.GET.get('method')
-    page = request.GET.get('page')
-    all = request.GET.get('all')
-    
-    if not page:
-        page = 1
-    else:
-        page = int(page)
-    
-    # try:
-    target = FB_User.objects.get(fid=int(target))
-    target_portrit_user = target.get_portrit_user()
-    
-    total_count = 0
-
-    if method == 'followers':
-        target_followers = target.get_followers()
-        data['count'] = target_followers.count()
-        if not all:
-            target_followers = target_followers[PAGE_SIZE * (page - 1):PAGE_SIZE * page]
-
-        for fb_user in target_followers.iterator():
-            data['data'].append({
-                'fid': fb_user.fid,
-                'name': fb_user.get_name(),
-                'follow': False
-            })
-        
-        from operator import itemgetter  
-        data['data'] = sorted(data['data'], key=itemgetter('name'))
-    
-    elif method == 'following':
-        target_following = target.get_following()
-        data['count'] = target_following.count()
-        if not all:
-            target_following = target_following[PAGE_SIZE * (page - 1):PAGE_SIZE * page]
-
-        for fb_user in target_following.iterator():
-            data['data'].append({
-                'fid': fb_user.fid,
-                'name': fb_user.get_name(),
-                'follow': True
-            })
-        
-        from operator import itemgetter  
-        data['data'] = sorted(data['data'], key=itemgetter('name'))
-    # except:
-    #     pass
-    
-    data = json.dumps(data)
-    return HttpResponse(data, mimetype='application/json')
+# def get_my_follow_data(request):
+#     data = {
+#         'data': [ ],
+#         'count': 0,
+#     }
+#     PAGE_SIZE = 20
+#     
+#     target = request.GET.get('user')
+#     method = request.GET.get('method')
+#     page = request.GET.get('page')
+#     all = request.GET.get('all')
+#     
+#     if not page:
+#         page = 1
+#     else:
+#         page = int(page)
+#     
+#     # try:
+#     target = FB_User.objects.get(fid=int(target))
+#     target_portrit_user = target.get_portrit_user()
+#     
+#     total_count = 0
+# 
+#     if method == 'followers':
+#         target_followers = target.get_followers()
+#         data['count'] = target_followers.count()
+#         if not all:
+#             target_followers = target_followers[PAGE_SIZE * (page - 1):PAGE_SIZE * page]
+# 
+#         for fb_user in target_followers.iterator():
+#             data['data'].append({
+#                 'fid': fb_user.fid,
+#                 'name': fb_user.get_name(),
+#                 'follow': False
+#             })
+#         
+#         from operator import itemgetter  
+#         data['data'] = sorted(data['data'], key=itemgetter('name'))
+#     
+#     elif method == 'following':
+#         target_following = target.get_following()
+#         data['count'] = target_following.count()
+#         if not all:
+#             target_following = target_following[PAGE_SIZE * (page - 1):PAGE_SIZE * page]
+# 
+#         for fb_user in target_following.iterator():
+#             data['data'].append({
+#                 'fid': fb_user.fid,
+#                 'name': fb_user.get_name(),
+#                 'follow': True
+#             })
+#         
+#         from operator import itemgetter  
+#         data['data'] = sorted(data['data'], key=itemgetter('name'))
+#     # except:
+#     #     pass
+#     
+#     data = json.dumps(data)
+#     return HttpResponse(data, mimetype='application/json')
   
 @check_access_token  
 def follow_unfollow_user(request):
@@ -1140,10 +1186,13 @@ def get_follow_data(request):
                 
             data['count'] = len(target_followers)
         
-            source_followers = source.get_followers()
+            source_following_list = []
+            source_following = source.get_following()
+            for follower in source_following:
+                source_following_list.append(follower.id)
         
             for user in target_followers:
-                if user in source_followers:
+                if source and user.id in source_following_list:
                     data['data'].append({
                         'fid': user.fb_user.fid,
                         'name': user.name,
@@ -1165,13 +1214,17 @@ def get_follow_data(request):
                 target_following = target_following[PAGE_SIZE * (page - 1):PAGE_SIZE * page]
                 
             data['count'] = len(target_following)
+
+            source_following_list = []
             source_following = source.get_following()
+            for following in source_following:
+                source_following_list.append(following.id)
             
             if mutual and target.id != source.id:
                 source_following.append(source)
         
             for user in target_following:
-                if user in source_following:
+                if source and user.id in source_following_list:
                     data['data'].append({
                         'fid': user.fb_user.fid,
                         'name': user.name,
@@ -2008,13 +2061,14 @@ def new_comment(request):
 def flag_photo(request):
     data = False
     photo_id = request.POST.get('photo_id')
+    nom_id = request.POST.get('nom_id')
     access_token = request.POST.get('access_token')
     
     try:
         portrit_user = get_user_from_access_token(access_token)
         photo = Photo.objects.get(id=str(photo_id))
         
-        if len(photo.flags.filter(flagger=portrit_user)) == 0:
+        if len(filter(lambda flag: flag.flagger == portrit_user, photo.flags)) == 0:
             flag_rec = Photo_Flag(flagger=portrit_user)
             photo.flags.append(flag_rec)
             
@@ -2024,7 +2078,18 @@ def flag_photo(request):
                 
             photo.save()
         
-        #Create Email, Send to Admins
+            #Create Email, Send to Admins
+            from django.core.mail import EmailMultiAlternatives
+            subject = 'New Flagged Photo'
+            text_content = 'FROM: ' + portrit_user.username + '\n' \
+                            'PHOTO ID: ' + str(photo.id)  + '\n'
+            html_content =  '<h2>FROM: ' + portrit_user.username + '</h2>' \
+                            '<h2>PHOTO ID: ' + str(photo.id) + '</h2>' \
+                            '<img src="' + photo.large + '"/>'
+
+            msg = EmailMultiAlternatives(subject, html_content, 'no-reply@portrit.com', ['flag@portrit.com'])
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
         
         data = True
     except Exception, err:
@@ -2149,44 +2214,6 @@ def search_by_names(request):
     
     data = json.dumps(data) 
     return HttpResponse(data, mimetype='application/json')
-    
-def search_cool_kids(request):
-    data = [ ]
-    source = request.POST.get('source')
-
-    try:
-        if source:
-            source = Portrit_User.objects.get(fb_user__fid=int(source))
-            source_following = source.get_following()
-        else:
-            source_following = [ ]
-        
-        names = names.split(',')
-        users = Portrit_User.objects.filter(name__in=names)[:100]
-
-        for user in users:
-            if user in source_following:
-                data.append({
-                    'fid': user.fb_user.fid,
-                    'name': user.name,
-                    'username': user.username,
-                    'follow': False
-                })
-            else:
-                data.append({
-                    'fid': user.fb_user.fid,
-                    'name': user.name,
-                    'username': user.username,
-                    'follow': True
-                })
-
-        from operator import itemgetter  
-        data = sorted(data, key=itemgetter('name'))
-    except Exception, err:
-        print err
-
-    data = json.dumps(data) 
-    return HttpResponse(data, mimetype='application/json')
 
 @check_access_token
 def get_user_settings(request):
@@ -2264,6 +2291,8 @@ def deauth_twitter(request):
     try:
         portrit_user = get_user_from_access_token(access_token)
         portrit_user.twitter_user.active = False
+        portrit_user.twitter_user.access_token = None
+        portrit_user.twitter_user.mobile_access_token = None
         portrit_user.save()
         data = True
         print "deauthed"
@@ -2289,6 +2318,28 @@ def return_twitter(request):
     portrit_user.save()
     
     return render_to_response('close_popup.html', {'access_token': portrit_user.twitter_user.access_token}, context_instance=RequestContext(request))
+   
+@check_access_token   
+def save_mobile_twitter_token(request):
+    data = False
+    access_token = request.POST.get('access_token')
+    twitter_access_token = request.POST.get('twitter_access_token')
+    twitter_access_token_secret = request.POST.get('twitter_access_token_secret')
+    
+    try:
+        portrit_user = get_user_from_access_token(access_token)
+        twitter_token = 'oauth_token_secret=' + twitter_access_token_secret + '&oauth_token=' + twitter_access_token
+        portrit_user.twitter_user.active = True
+        portrit_user.twitter_user.access_token = None
+        portrit_user.twitter_user.mobile_access_token = twitter_token
+        portrit_user.save()
+        
+        data = True
+    except Exception, err:
+        print err
+    
+    data = json.dumps(data) 
+    return HttpResponse(data, mimetype='application/json')
   
 @check_access_token  
 def share_twitter(request):
@@ -2304,9 +2355,13 @@ def share_twitter(request):
     CONNECTION = httplib.HTTPSConnection(SERVER)
     try:
         portrit_user = get_user_from_access_token(access_token)
-        twitter_access_token = portrit_user.twitter_user.access_token
-        token = oauth.OAuthToken.from_string(twitter_access_token)
-        update_status(CONSUMER, CONNECTION, token, status)
+        twitter_access_token = portrit_user.twitter_user.get_access_token()
+        print twitter_access_token
+        token = oauth.OAuthToken.from_string(twitter_access_token['access_token'])
+        if twitter_access_token['mobile']:  
+            update_status(CONSUMER_MOBILE, CONNECTION, token, status)
+        else:
+            update_status(CONSUMER, CONNECTION, token, status)
         
         data = True
     except Exception, err:

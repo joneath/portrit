@@ -43,6 +43,8 @@ class Portrit_FB(object):
                 following_rec = Follow(user=target_portrit_user)
                 following_rec.save()
                 self.user.followers.append(following_rec)
+                following_rec = Follow(user=target_portrit_user)
+                following_rec.save()
                 self.user.following.append(following_rec)
                 self.user.save()
                 
@@ -50,6 +52,8 @@ class Portrit_FB(object):
                 following_rec = Follow(user=self.user)
                 following_rec.save()
                 target_portrit_user.following.append(following_rec)
+                following_rec = Follow(user=self.user)
+                following_rec.save()
                 target_portrit_user.followers.append(following_rec)
                 target_portrit_user.save()
                 

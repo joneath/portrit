@@ -90,6 +90,17 @@ function submit_nom(e){
     xhr.onload = function()
     {   
         var data = JSON.parse(this.responseData);
+        var nom = data[0];
+        
+        if (twitter_switch.value){
+            share_on_twitter(me, nom, caption_text);
+        }
+        if (facebook_switch.value){
+            var title = me.username + ' nominated a photo on Portrit';
+            
+            share_on_facebook(me, nom, caption_text, title);
+        }
+        
         win.close();
         tabGroup.close();
         tabGroup.opacity = 0;
@@ -128,7 +139,7 @@ function submit_nom(e){
         'owner': user,
         'nominations': nominations,
         'tags': tagged_users,
-        'comment_text': caption_text
+        'comment_text': caption_text,
     };
     
     // send the data
@@ -187,7 +198,7 @@ function init_share_nom(){
             backgroundColor: '#fff',
             selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
     });
-    var facebook_switch = Titanium.UI.createSwitch({
+    facebook_switch = Titanium.UI.createSwitch({
         value: false,
         right: 10
     });
@@ -221,7 +232,7 @@ function init_share_nom(){
         row.add(link_label);
     }
     else{
-        var twitter_switch = Titanium.UI.createSwitch({
+        twitter_switch = Titanium.UI.createSwitch({
             value: false,
             right: 10
         });

@@ -598,11 +598,12 @@ function add_comment_to_nom(e){
 
 function open_options(e){
     var photo_id = e.source.photo_id;
+    var nom = e.source.nom;
     
     var optionsDialogOpts = {
-    	options:['Flag photo', 'Cancel'],
+    	options:['Flag photo', 'Share on Facebook', 'Share on Twitter', 'Cancel'],
     	destructive:0,
-    	cancel:1,
+    	cancel:3,
     	title:'Photo options'
     };
 
@@ -670,6 +671,15 @@ function open_options(e){
             // send the data
             xhr.send({'access_token': me.access_token,
                         'photo_id': photo_id});
+        }
+        else if (e.index == 1){
+            // Facebook Share
+            var title = me.username + ' shared a nomination on Portrit';
+            share_nom(nom, 'Facebook', title);
+        }
+        else if (e.index == 2){
+            // Twitter Share
+            share_nom(nom, 'Twitter', '');
         }
 	});
 	dialog.show();
@@ -746,7 +756,18 @@ function render_comments(cont, comments){
                 width: 320,
                 zIndex: -1
             });
-    	comment_cont.add(photo_action_bottom_round);
+    	comment_cont.add(photo_action_bottom_round); 
+    }
+    else{
+        photo_action_bottom_round = Titanium.UI.createView({
+                backgroundColor: '#ddd',
+                borderRadius: 5,
+                height: 10,
+                top: -5,
+                width: 320,
+                zIndex: -1
+            });
+    	cont.add(photo_action_bottom_round);
     }
 }
 
@@ -1086,6 +1107,7 @@ function render_active_view(data){
         });
         photo_options.nom_id = data[i].id;
         photo_options.photo_id = data[i].photo.id;
+        photo_options.nom = data[i];
         photo_options.addEventListener('click', open_options);
         
         photo_action_row.add(add_comment);
@@ -1691,6 +1713,7 @@ Ti.App.addEventListener('update_my_photos', function(eventData) {
 });
 
 var update_follow_counts_flag = false;
+var reset = false;
 
 win.addEventListener('focus', function(){
     if (update_profile){
@@ -1703,8 +1726,26 @@ win.addEventListener('focus', function(){
         update_follow_counts_flag = false;
         update_follow_counts();
     }
+    
+    if (reset){
+        get_user_profile_count = 0;
+        me = JSON.parse(Ti.App.Properties.getString("me"));
+        
+        reset = false;
+        user = me.fid
+        name = me.name;
+        
+        list_view_data = [ ];
+        init_profile_view();
+    }
 });
 
 Ti.App.addEventListener('update_follow_counts', function(eventData) {
     update_follow_counts_flag = true;
+});
+
+Ti.App.addEventListener('reset', function(eventData) {
+    
+    tv.setData([]);
+    reset = true;
 });

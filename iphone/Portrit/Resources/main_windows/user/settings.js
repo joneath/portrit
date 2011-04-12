@@ -43,6 +43,12 @@ var header_label = Titanium.UI.createLabel({
 window_nav_bar.add(header_label);
 win.add(window_nav_bar);
 
+var fadeIn = Titanium.UI.createAnimation({
+    curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
+    opacity: 1.0,
+    duration: 300
+});
+
 function open_email_dialog(type){
     var emailDialog = Titanium.UI.createEmailDialog();
     if (!emailDialog.isSupported()) {
@@ -184,10 +190,8 @@ function init_options(){
         'style':'wide'
     });
     Titanium.Facebook.addEventListener('logout', function(e) {
-        // tabGroup.close();
-        var win = Ti.UI.createWindow({backgroundColor:"#000", url:'../../portrit.js'});
-        win.open();
-        // tabGroup.open();
+        var login_win = Ti.UI.createWindow({backgroundColor:"#000", url:'../../portrit.js'});
+        login_win.open(fadeIn);
     });
     
     var row = Ti.UI.createTableViewRow({
@@ -333,3 +337,7 @@ tv.addEventListener('click', function(e){
 win.add(tv);
 
 init_options();
+
+Ti.App.addEventListener('reset', function(eventData) {
+    win.close();
+});

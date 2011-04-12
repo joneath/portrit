@@ -73,7 +73,8 @@ function go_to_profile(e){
     	setTimeout(function(){
     	    Ti.App.fireEvent('pass_user', {
                 user: e.rowData.user_fid,
-                name: e.rowData.username
+                name: e.rowData.name,
+                username: e.rowData.username
             });
     	}, 200);
     }
@@ -82,7 +83,8 @@ function go_to_profile(e){
 function follow_event(e){
     var method = e.source.method,
         parent = e.source.parent_row,
-        user_fid = e.source.user_fid;
+        user_fid = e.source.user_fid,
+        username = e.source.username;
         
     parent.remove(e.source);
     var actInd = Titanium.UI.createActivityIndicator({
@@ -115,6 +117,7 @@ function follow_event(e){
             follow_button.parent_row = parent;
             follow_button.button = true;
             follow_button.user_fid = user_fid;
+            follow_button.username = username;
             
             follow_button.addEventListener('click', follow_event);
             parent.remove(actInd);
@@ -125,7 +128,7 @@ function follow_event(e){
         xhr.open('POST', url);
 
         // send the data
-        xhr.send({'access_token': me.access_token, 'target': user_fid, method: 'follow'});
+        xhr.send({'access_token': me.access_token, 'target': username, method: 'follow'});
     }
     else{
         var xhr = Titanium.Network.createHTTPClient();
@@ -148,6 +151,7 @@ function follow_event(e){
             follow_button.parent_row = parent;
             follow_button.button = true;
             follow_button.user_fid = user_fid;
+            follow_button.username = username;
             
             follow_button.addEventListener('click', follow_event);
             parent.remove(actInd);
@@ -158,7 +162,7 @@ function follow_event(e){
         xhr.open('POST', url);
 
         // send the data
-        xhr.send({'access_token': me.access_token, 'target': user_fid, method: 'unfollow'});
+        xhr.send({'access_token': me.access_token, 'target': username, method: 'unfollow'});
     }
     
     setTimeout(function(){
@@ -193,46 +197,60 @@ function render_follow_table_view(data){
             color: '#333',
             text: data[i].name,
             font: {fontSize: 16, fontWeight: 'bold'},
+            top: -15,
             left: 45
         });
         
-        if (data[i].follow){
-            follow_button = Ti.UI.createButton({
-                backgroundImage: '../../../../images/follow_button.png',
-            	title:"Follow",
-            	font: {fontSize: 12, fontWeight: 'bold'},
-            	width:76,
-            	height:24,
-            	right: 3,
-            	zIndex: 2
-            });
-            follow_button.method = 'follow';
-            row.add(follow_button);
+        username = Titanium.UI.createLabel({
+            color: '#666',
+            text: data[i].username,
+            font: {fontSize: 13},
+            top: 20,
+            left: 45
+        });
+        
+        if (data[i].fid != me.fid){
+            if (data[i].follow){
+                follow_button = Ti.UI.createButton({
+                    backgroundImage: '../../../../images/follow_button.png',
+                	title:"Follow",
+                	font: {fontSize: 12, fontWeight: 'bold'},
+                	width:76,
+                	height:24,
+                	right: 3,
+                	zIndex: 2
+                });
+                follow_button.method = 'follow';
+                row.add(follow_button);
+            }
+            else{
+                follow_button = Ti.UI.createButton({
+                    backgroundImage: '../../../../images/unfollow_button.png',
+                	title:"Following",
+                	font: {fontSize: 12, fontWeight: 'bold'},
+                	width:76,
+                	height:24,
+                	right: 3,
+                	zIndex: 2
+                });
+                follow_button.method = 'unfollow';
+                row.add(follow_button);
+            }
+            follow_button.button = true;
+            follow_button.parent_row = row;
+            follow_button.user_fid = data[i].fid;
+            follow_button.username = data[i].username;
+            follow_button.addEventListener('click', follow_event);
         }
-        else{
-            follow_button = Ti.UI.createButton({
-                backgroundImage: '../../../../images/unfollow_button.png',
-            	title:"Following",
-            	font: {fontSize: 12, fontWeight: 'bold'},
-            	width:76,
-            	height:24,
-            	right: 3,
-            	zIndex: 2
-            });
-            follow_button.method = 'unfollow';
-            row.add(follow_button);
-        }
-        follow_button.button = true;
-        follow_button.parent_row = row;
-        follow_button.user_fid = data[i].fid;
-        follow_button.addEventListener('click', follow_event);
         
         row.user_fid = data[i].fid;
-        row.username = data[i].name;
+        row.name = data[i].name;
+        row.username = data[i].username;
         row.addEventListener('click', go_to_profile);
         
         row.add(profile_image);
         row.add(name);
+        row.add(username);
         
         list_view_data.push(row);
     }
@@ -285,6 +303,21 @@ function search_by_names(names){
     xhr.send({'names': names, 'source': me.fid});
 }
 
+function load_cool_kids(){
+    var xhr = Titanium.Network.createHTTPClient();
+
+    xhr.onload = function()
+    {   
+        var data = JSON.parse(this.responseData);
+        render_follow_table_view(data);
+        window_activity_cont.animate(fadeOut);
+    };
+    
+    var url = SERVER_URL + '/api/get_interesting_users/';
+    xhr.open('GET', url);
+    xhr.send();
+}
+
 function init_follow_friends(){
     if (find_type == 'twitter'){
         window_activity_cont.show();
@@ -324,6 +357,10 @@ function init_follow_friends(){
     }
     else if (find_type == 'contacts'){
 
+    }
+    else if (find_type == 'cool'){
+        window_activity_cont.show();
+        load_cool_kids();
     }
 
     var data = [ ];

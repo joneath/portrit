@@ -201,6 +201,7 @@ function update_nom_detail(index){
     }
     
     photo_options.photo_id = selected_nom.photo.id;
+    photo_options.nom = selected_nom;
     
     if (!won){
         if (me_in_votes(selected_nom.votes)){
@@ -365,14 +366,10 @@ function render_more_nom_detail(noms, dir){
 function load_more_noms(state, cat, dir, pos_to_load){
     var url = '';
     if (state == 'stream_active'){
-        url = SERVER_URL + '/api/get_nom_detail/?source=' + username + '&nav_selected=' +state + '&cat=' + cat + '&dir=' + dir + '&pos=' + pos_to_load;
-        
-        // $.getJSON('/api/get_nom_detail/', {'source': username, 'nav_selected': state, 'cat': cat, 'dir': dir, 'pos': pos_to_load}, function(data){
-        //     render_more_nom_detail(data, dir);
-        // });
+        url = SERVER_URL + '/api/get_nom_detail/?source=' + me.username + '&nav_selected=' +state + '&cat=' + cat + '&dir=' + dir + '&pos=' + pos_to_load;
     }
     else if (state == 'stream_winners'){
-        
+        url = SERVER_URL + '/api/get_nom_detail/?source=' + me.username + '&nav_selected=' +state + '&cat=' + cat + '&dir=' + dir + '&pos=' + pos_to_load;
     }
     else if (state == 'community_active'){
         
@@ -406,7 +403,6 @@ function check_detail_pagination(current, selected, len, pos){
     var dir = null;
     
     var cat = noms_in_cat[selected].nomination_category;
-    
     if (loaded_top >= 9 && selected > current && selected + load_sensitivity >= loaded_top && typeof(noms_in_cat[selected].end) == 'undefined'){
         dir = 'up';
         pos_to_load = loaded_top;
@@ -460,11 +456,12 @@ function add_profile_window(e){
 
 function open_options(e){
     var photo_id = e.source.photo_id;
+    var nom = e.source.nom;
     
     var optionsDialogOpts = {
-    	options:['Flag photo', 'Cancel'],
+    	options:['Flag photo', 'Share on Facebook', 'Share on Twitter', 'Cancel'],
     	destructive:0,
-    	cancel:1,
+    	cancel:3,
     	title:'Photo options'
     };
 
@@ -531,6 +528,15 @@ function open_options(e){
             // send the data
             xhr.send({'access_token': me.access_token,
                         'photo_id': photo_id});
+        }
+        else if (e.index == 1){
+            // Facebook Share
+            var title = me.username + ' shared a nomination on Portrit';
+            share_nom(nom, 'Facebook', title, 'detail');
+        }
+        else if (e.index == 2){
+            // Twitter Share
+            share_nom(nom, 'Twitter', '', 'detail');
         }
 	});
 	dialog.show();
@@ -1101,7 +1107,7 @@ function render_nom_detail(noms){
     var caption = '';
     if (selected_nom.caption){
         caption = selected_nom.caption;
-        caption_text_align = 'left';
+        // caption_text_align = 'left';
         caption_size = 10;
     }
     else{
@@ -1307,6 +1313,7 @@ function render_nom_detail(noms){
         bottom: 5
     });
     photo_options.photo_id = selected_nom.photo.id;
+    photo_options.nom = selected_nom;
     photo_options.addEventListener('click', open_options);
     
     photo_action_row.add(add_comment);
@@ -1527,8 +1534,8 @@ function init_detail_view(state){
     };
     
     var target_user = me.username;
-    if (user){
-        target_user = user;
+    if (username){
+        target_user = username;
     }
     
     var heading_user = target_user + '\'s';
@@ -1538,16 +1545,16 @@ function init_detail_view(state){
     
     detail_header_text = '';
     if (state == 'stream_active'){
-        detail_header_text = 'Active ' + cat + ' Photos';
+        detail_header_text = 'Active ' + cat.replace('-', ' ') + ' Photos';
     }
     else if (state == 'stream_winners'){
         detail_header_text = 'Winning Photos';
     }
     else if (state == 'community_active'){
-        detail_header_text = 'Community ' + cat + ' Photos';
+        detail_header_text = 'Community ' + cat.replace('-', ' ') + ' Photos';
     }
     else if (state == 'community_top'){
-        detail_header_text = 'Top Community ' + cat + ' Photos';
+        detail_header_text = 'Top Community ' + cat.replace('-', ' ') + ' Photos';
     }
     else if (state == 'profile_trophies'){
         detail_header_text = heading_user + ' Winning Photos';

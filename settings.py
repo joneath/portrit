@@ -16,6 +16,12 @@ MANAGERS = ADMINS
 BITLY_LOGIN = 'portrit'
 BITLY_APIKEY = 'R_554a2c395f085d017040066581d65325'
 
+POSTMARK_API_KEY    = '7e81d8b2-4429-44e1-a493-eef87d130669'
+POSTMARK_SENDER     = 'no-reply@portrit.com'
+
+TWITTER_MOBILE_CONSUMER_KEY = 'RrYAd721jXeCJsp9QqtFw'
+TWITTER_MOBILE_CONSUMER_SECRET = 'rWxNvv8pOSB0t9kgT59xVc2IUQXH1l8ESpfOst5sggw'
+
 if ENV == "LOCAL":
     DATABASE_ENGINE = ''           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
     DATABASE_NAME = ''             # Or path to database file if using sqlite3.
@@ -28,11 +34,11 @@ if ENV == "LOCAL":
     MEDIA_URL = '/site_media/'
     BASE_URL = "http://localhost:8000/"
     
-    EMAIL_USE_TLS = True
-    EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_PORT = '587'
-    EMAIL_HOST_USER = 'portritinc@gmail.com'
-    EMAIL_HOST_PASSWORD = 'eTKQK23qUT8Vaz5sH33j'
+    # EMAIL_USE_TLS = True
+    # EMAIL_HOST = 'smtp.gmail.com'
+    # EMAIL_PORT = '587'
+    # EMAIL_HOST_USER = 'portritinc@gmail.com'
+    # EMAIL_HOST_PASSWORD = 'eTKQK23qUT8Vaz5sH33j'
     SERVER_EMAIL = "no-reply@portrit.com"
     
     FACEBOOK_APP_ID = "155664697800227"
@@ -48,6 +54,8 @@ if ENV == "LOCAL":
     
     TWITTER_CONSUMER_KEY = '676tZGmZP5SDdp9h1iFnA'
     TWITTER_CONSUMER_SECRET = 'lemMxxNgnJZUQFK5mwfYzPs7JWKcmvbVtgAKssfTwA'
+    
+    POSTMARK_TEST_MODE = False
     
     try:
         connect('portrit')
@@ -92,6 +100,8 @@ elif ENV == "TEST":
     TWITTER_CONSUMER_KEY = 'yKWjljJoVQsgt4vKTx8d7A'
     TWITTER_CONSUMER_SECRET = 'wwmtVM3qGdRA8PFIiympmWKjy0hqicoLNnIjA0Arh4'
     
+    POSTMARK_TEST_MODE = False
+    
     try:
         connect('portrit', host='', port=27017)
     except:
@@ -132,13 +142,17 @@ else:
     AWS_KEY = 'AKIAIYXPXPJDU2VIKQKQ'
     AWS_SECRET_KEY = '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'
     
-    TWITTER_CONSUMER_KEY = 'RrYAd721jXeCJsp9QqtFw'
-    TWITTER_CONSUMER_SECRET = 'rWxNvv8pOSB0t9kgT59xVc2IUQXH1l8ESpfOst5sggw'
+    TWITTER_CONSUMER_KEY = 'R2QNuraQM9QIwTnuBsMQ'
+    TWITTER_CONSUMER_SECRET = 'b2eBCi8vws5ERn5n1Z40TDLGYLXoWHu3aGE4Snye3M'
+    
+    POSTMARK_TEST_MODE = False
     
     try:
         connect('portrit', host='', port=27017)
     except:
         print "Could not connect to Mongo"
+        
+EMAIL_BACKEND = 'postmark.django_backend.EmailBackend'
         
 SESSION_ENGINE = 'mongoengine.django.sessions'
     

@@ -234,6 +234,25 @@ function init_sharing(){
                 // save the access token
                 oAuthAdapter.saveAccessToken('twitter');
                 
+                alert('here')
+                
+                // save twitter access token on server
+                var token = oAuthAdapter.get_access_token()
+                var xhr = Titanium.Network.createHTTPClient();
+                xhr.onload = function()
+                {
+                	data = JSON.parse(this.responseData);
+                	user_settings_data = data;
+                	Ti.App.Properties.setString("user_settings", JSON.stringify(user_settings_data));
+                };
+                var url = SERVER_URL + '/api/save_mobile_twitter_token/';
+                xhr.open('POST', url);
+                xhr.send({
+                    'access_token': me.access_token,
+                    'twitter_access_token': token.access_token,
+                    'twitter_access_token_secret': token.access_token_secret,
+                });
+                
                 linked_text.text = 'Linked';
                 linked_text.color = '#99CB6E';
             };

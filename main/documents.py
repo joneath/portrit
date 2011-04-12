@@ -284,12 +284,27 @@ class Twitter_User(EmbeddedDocument):
     created_date = DateTimeField(default=datetime.datetime.now)
 
     access_token = StringField()
+    mobile_access_token = StringField()
     unauthed_token = StringField()
     
     meta = {
         'ordering': ['-created_date'],
         'indexes': ['access_token']
     }
+    
+    def get_access_token(self):
+        if self.access_token:
+            return {
+                'mobile': False,
+                'access_token': self.access_token
+            }
+        elif self.mobile_access_token:
+            return {
+                'mobile': True,
+                'access_token': self.mobile_access_token
+            }
+        else:
+            return None
     
 class Portrit_User(Document):
     active = BooleanField(default=True)
@@ -343,7 +358,12 @@ class Portrit_User(Document):
     def get_twitter_access_token(self):
         try:
             if self.twitter_user.active:
-                return self.twitter_user.access_token
+                if self.twitter_user.access_token:
+                    return self.twitter_user.access_token
+                elif self.twitter_user.mobile_access_token:
+                    return self.twitter_user.mobile_access_token
+                else:
+                    return None
             else:
                 return None
         except:

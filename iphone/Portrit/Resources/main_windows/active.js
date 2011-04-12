@@ -8,6 +8,7 @@ var me = JSON.parse(Ti.App.Properties.getString("me")),
     photos_cache = [ ],
     winners_noms_cache = [ ],
     notification_count = 0,
+    globals_attached = false;
     newest_nom = '',
     oldest_nom = '',
     selected_tab = 'active',
@@ -217,7 +218,11 @@ function load_more_noms(e){
         
         if (data.length > 0){
             if (selected_tab == 'photos'){
-
+                 for (var i = 0; i < data.length; i++){
+                     photos_cache.push(data[i]);
+                 }
+                 list_view_data = [ ];
+                 render_stream_photos(photos_cache);
             }
             else if (selected_tab == 'active'){
                 oldest_nom = data[data.length - 1].id;
@@ -232,12 +237,21 @@ function load_more_noms(e){
                 }
             }
             tv.setData(list_view_data);
+            if (data.length < 10 && selected_tab != 'photos'){
+                load_more_view.hide();
+            }
+            else if (data.length < 15 && selected_tab == 'photos'){
+                load_more_view.hide();
+            }
+        }
+        else{
+            load_more_view.hide();
         }
     };
 
     var url = '';
     if (selected_tab == 'photos'){
-        
+        url = SERVER_URL + '/api/get_user_stream_photos/?access_token=' + me.access_token + '&pid=' + oldest_photo;
     }
     else if (selected_tab == 'active'){
         url = SERVER_URL + '/api/get_recent_stream/?access_token=' + me.access_token + '&id=' + oldest_nom + '&dir=old';
@@ -328,7 +342,6 @@ function render_active_list_update(data){
 function add_profile_window(e){
     var w = Ti.UI.createWindow({backgroundColor:"#222", url:'user/profile.js'});
 	Titanium.UI.currentTab.open(w,{animated:true});
-	
 	setTimeout(function(){
 	    Ti.App.fireEvent('pass_user', {
             user: e.source.user,
@@ -523,17 +536,19 @@ function add_comment_to_nom(e){
 
 function open_options(e){
     var photo_id = e.source.photo_id;
+    var nom = e.source.nom;
     
     var optionsDialogOpts = {
-    	options:['Flag photo', 'Cancel'],
+    	options:['Flag photo', 'Share on Facebook', 'Share on Twitter', 'Cancel'],
     	destructive:0,
-    	cancel:1,
+    	cancel:3,
     	title:'Photo options'
     };
 
     var dialog = Titanium.UI.createOptionDialog(optionsDialogOpts);
     
     dialog.addEventListener('click',function(e){
+        // Flag Photo
         if (e.index == 0){
             var xhr = Titanium.Network.createHTTPClient();
 
@@ -595,6 +610,15 @@ function open_options(e){
             // send the data
             xhr.send({'access_token': me.access_token,
                         'photo_id': photo_id});
+        }
+        else if (e.index == 1){
+            // Facebook Share
+            var title = me.username + ' shared a nomination on Portrit';
+            share_nom(nom, 'Facebook', title);
+        }
+        else if (e.index == 2){
+            // Twitter Share
+            share_nom(nom, 'Twitter', '');
         }
 	});
 	dialog.show();
@@ -961,7 +985,7 @@ function render_nom(nom, top, row_count){
         
         nominator_name.user = nom.nominator;
         nominator_name.name = nom.nominator_name;
-        nominator_name.username = nom.usernominator_name;
+        nominator_name.username = nom.nominator_username;
         nominator_name.addEventListener('click', add_profile_window);
         
         if (nom.tagged_users.length > 0){
@@ -1111,7 +1135,7 @@ function render_nom(nom, top, row_count){
             top: 5,
             bottom: 5
         });
-        photo_options.nom_id = nom.id;
+        photo_options.nom = nom;
         photo_options.photo_id = nom.photo.id;
         photo_options.addEventListener('click', open_options);
         
@@ -1191,7 +1215,7 @@ function activate_winners_stream(){
         xhr.send();
     }
     else{
-        render_active_list_update(winners_noms_cache);
+        render_active_list_view(winners_noms_cache);
     }
 }
 
@@ -1235,8 +1259,14 @@ function render_stream_photos(data){
     	photo_in_row += 1;
     }
     tv.setData(list_view_data);
+    
+    if (data.length % 15 == 0 & data.length > 0){
+        row.height = 90;
+        load_more_view.show();
+    }
 }
 
+var oldest_photo = null;
 function activate_photo_stream(){
     list_view_data = [ ];
     
@@ -1249,6 +1279,10 @@ function activate_photo_stream(){
             photos_cache = data;
             render_stream_photos(photos_cache);
             window_activity_cont.hide();
+            
+            if (data.length > 0){
+                oldest_photo = data[data.length - 1].photo.id;
+            }
         };
 
         var url = SERVER_URL + '/api/get_user_stream_photos/?access_token=' + me.access_token;
@@ -1270,7 +1304,7 @@ function activate_active_view(){
         {
             var data = JSON.parse(this.responseData);
             update_cache(active_noms_cache, data, false);
-            render_active_list_update(active_noms_cache);
+            render_active_list_view(active_noms_cache);
             window_activity_cont.hide();
         };
         var url = SERVER_URL + '/api/get_recent_stream/?access_token=' + me.access_token;
@@ -1278,13 +1312,19 @@ function activate_active_view(){
         xhr.send();
     }
     else{
-        render_active_list_update(active_noms_cache);
+        render_active_list_view(active_noms_cache);
     }
 }
 
 function init_active_view(){
-    win.hideNavBar({animated:false});
-    win.add(tv);
+    if (!globals_attached){
+        win.hideNavBar({animated:false});
+        win.add(tv);
+    }
+    else{
+        var tabGroup = win.tabGroup;
+	    tabGroup.tabs[3].badge = null;
+    }
     
     window_activity_cont.show();
     var xhr = Titanium.Network.createHTTPClient();
@@ -1292,10 +1332,13 @@ function init_active_view(){
     {
     	var data = JSON.parse(this.responseData);
     	notification_count = data.notification_count;
+    	me.username = data.username;
+        Ti.App.Properties.setString("me", JSON.stringify(me));
+    	
     	if (notification_count > 0){
     	    var tabGroup = win.tabGroup;
     	    tabGroup.tabs[3].badge = notification_count;
-    	}
+        }
     	active_noms_cache = data.noms;
         render_active_list_view(active_noms_cache);
         window_activity_cont.hide();
@@ -1305,64 +1348,64 @@ function init_active_view(){
     xhr.send();
     
     //Pull to refresh
-    var tableHeader = Ti.UI.createView({
-    	backgroundColor:"#000",
-    	width:320,
-    	height:60
-    });
+    if (!globals_attached){
+        var tableHeader = Ti.UI.createView({
+        	backgroundColor:"#000",
+        	width:320,
+        	height:60
+        });
     
-    var arrow = Ti.UI.createView({
-    	backgroundImage:"../images/pull_arrow.png",
-    	width: 33,
-    	height: 41,
-    	bottom:10,
-    	left:20
-    });
+        var arrow = Ti.UI.createView({
+        	backgroundImage:"../images/pull_arrow.png",
+        	width: 33,
+        	height: 41,
+        	bottom:10,
+        	left:20
+        });
 
-    var statusLabel = Ti.UI.createLabel({
-    	text:"Pull to update",
-    	left:55,
-    	width:200,
-    	bottom:30,
-    	height:"auto",
-    	color:"#999",
-    	textAlign:"center",
-    	font:{fontSize:13,fontWeight:"bold"}
-    });
+        var statusLabel = Ti.UI.createLabel({
+        	text:"Pull to update",
+        	left:55,
+        	width:200,
+        	bottom:30,
+        	height:"auto",
+        	color:"#999",
+        	textAlign:"center",
+        	font:{fontSize:13,fontWeight:"bold"}
+        });
 
-    var lastUpdatedLabel = Ti.UI.createLabel({
-    	text:"Last Updated: "+formatDate(),
-    	left:55,
-    	width:200,
-    	bottom:15,
-    	height:"auto",
-    	color:"#ffffff",
-    	textAlign:"center",
-    	font:{fontSize:12}
-    });
-    var actInd = Titanium.UI.createActivityIndicator({
-    	left:20,
-    	bottom:13,
-    	width:30,
-    	height:30
-    });
+        var lastUpdatedLabel = Ti.UI.createLabel({
+        	text:"Last Updated: "+formatDate(),
+        	left:55,
+        	width:200,
+        	bottom:15,
+        	height:"auto",
+        	color:"#ffffff",
+        	textAlign:"center",
+        	font:{fontSize:12}
+        });
+        var actInd = Titanium.UI.createActivityIndicator({
+        	left:20,
+        	bottom:13,
+        	width:30,
+        	height:30
+        });
     
-    tableHeader.add(arrow);
-    tableHeader.add(statusLabel);
-    // tableHeader.add(lastUpdatedLabel);
-    tableHeader.add(actInd);
+        tableHeader.add(arrow);
+        tableHeader.add(statusLabel);
+        // tableHeader.add(lastUpdatedLabel);
+        tableHeader.add(actInd);
 
-    tv.headerPullView = tableHeader;
+        tv.headerPullView = tableHeader;
+    }
     
     var pulling = false;
     var reloading = false;
-
-    function beginReloading()
-    {
+    
+    function beginReloading(){
         var xhr = Titanium.Network.createHTTPClient();
 
-        xhr.onload = function()
-        {
+        xhr.onload = function(){
         	data = JSON.parse(this.responseData);
             // render_active_list_view(data);
             if (selected_tab != 'photos'){
@@ -1382,6 +1425,10 @@ function init_active_view(){
                 list_view_data = [ ];
                 photos_cache = data;
                 render_stream_photos(data);
+                
+                if (data.length > 0){
+                    oldest_photo = data[data.length - 1].photo.id;
+                }
             }
             endReloading();
         };
@@ -1397,13 +1444,10 @@ function init_active_view(){
             url = SERVER_URL + '/api/get_winners_stream/?access_token=' + me.access_token;
         }
         xhr.open('GET', url);
-
-        // send the data
         xhr.send();
     }
 
-    function endReloading()
-    {
+    function endReloading(){
     	// when you're done, just reset
     	tv.setContentInsets({top:0},{animated:true});
     	reloading = false;
@@ -1413,151 +1457,178 @@ function init_active_view(){
     	arrow.show();
     }
     
-    tv.addEventListener('click', function(e){
-        
-    });
+    if (!globals_attached){    
+        tv.addEventListener('click', function(e){
     
-    var countdown_interval_set = false;
-    tv.addEventListener('scroll',function(e)
-    {
-    	var offset = e.contentOffset.y;
-    	if (offset <= -65.0 && !pulling)
-    	{
-    		var t = Ti.UI.create2DMatrix();
-    		t = t.rotate(-180);
-    		pulling = true;
-    		arrow.animate({transform:t,duration:180});
-    		statusLabel.text = "Release to update...";
-    	}
-    	else if (pulling && offset > -65.0 && offset < 0)
-    	{
-    		pulling = false;
-    		var t = Ti.UI.create2DMatrix();
-    		arrow.animate({transform:t,duration:180});
-    		statusLabel.text = "Pull down to update...";
-    	}
-    	if (offset < 0 && !countdown_interval_set){
-    	    countdown_interval_set = true;
-    	    clearInterval(countdown_interval);
-    	    GetCount();
-            countdown_interval = setInterval(GetCount, 1000);
-    	}
-    	else if (offset >= 0 && countdown_interval_set){
-    	    countdown_interval_set = false;
-    	    clearInterval(countdown_interval);
-    	}
-    });
+        });
 
-    tv.addEventListener('scrollEnd',function(e)
-    {
-    	if (pulling && !reloading && e.contentOffset.y <= -65.0)
-    	{
-    		reloading = true;
-    		pulling = false;
-    		arrow.hide();
-    		actInd.show();
-    		statusLabel.text = "Reloading...";
-    		tv.setContentInsets({top:60},{animated:true});
-    		arrow.transform=Ti.UI.create2DMatrix();
-    		beginReloading();
-    	}
-    });
-    // End pull to refresh
+        var countdown_interval_set = false;
+        tv.addEventListener('scroll',function(e){
+        	var offset = e.contentOffset.y;
+        	if (offset <= -65.0 && !pulling)
+        	{
+        		var t = Ti.UI.create2DMatrix();
+        		t = t.rotate(-180);
+        		pulling = true;
+        		arrow.animate({transform:t,duration:180});
+        		statusLabel.text = "Release to update...";
+        	}
+        	else if (pulling && offset > -65.0 && offset < 0)
+        	{
+        		pulling = false;
+        		var t = Ti.UI.create2DMatrix();
+        		arrow.animate({transform:t,duration:180});
+        		statusLabel.text = "Pull down to update...";
+        	}
+        	if (offset < 0 && !countdown_interval_set){
+        	    countdown_interval_set = true;
+        	    clearInterval(countdown_interval);
+        	    GetCount();
+                countdown_interval = setInterval(GetCount, 1000);
+        	}
+        	else if (offset >= 0 && countdown_interval_set){
+        	    countdown_interval_set = false;
+        	    clearInterval(countdown_interval);
+        	}
+        });
+
+        tv.addEventListener('scrollEnd',function(e)
+        {
+        	if (pulling && !reloading && e.contentOffset.y <= -65.0)
+        	{
+        		reloading = true;
+        		pulling = false;
+        		arrow.hide();
+        		actInd.show();
+        		statusLabel.text = "Reloading...";
+        		tv.setContentInsets({top:60},{animated:true});
+        		arrow.transform=Ti.UI.create2DMatrix();
+        		beginReloading();
+        	}
+        });
+        // End pull to refresh
+
+        Ti.App.addEventListener('update_active_noms', function(eventData) {
+            selected_tab = 'active';
     
-    //Countdown
-    var countdown = Ti.UI.createLabel({
-    	text:"",
-    	left:55,
-    	width:200,
-    	bottom:10,
-    	height:"auto",
-    	color:"#fff",
-    	textAlign:"center",
-    	font:{fontSize:14,fontWeight:"bold"}
-    });
-    tableHeader.add(countdown);
+            var header_active_tab_matrix = Ti.UI.create2DMatrix();
+            header_active_tab_matrix = header_active_tab_matrix.translate(0,0);
     
-    var date = new Date();
-    var month = date.getMonth();
-    var todays_date = date.getDate();
-    var todays_year = date.getFullYear();
-    if (date.getHours() >= 23){
-        dateFuture = new Date(todays_year,month,todays_date+1,23,0,0);
+            var header_active_tab_animation = Titanium.UI.createAnimation();
+            header_active_tab_animation.transform = header_active_tab_matrix;
+            header_active_tab_animation.duration = 0;
+    
+        	header_tab_selection.animate(header_active_tab_animation);
+	
+            beginReloading();
+        });
+    
+        //Countdown
+        var countdown = Ti.UI.createLabel({
+        	text:"",
+        	left:55,
+        	width:200,
+        	bottom:10,
+        	height:"auto",
+        	color:"#fff",
+        	textAlign:"center",
+        	font:{fontSize:14,fontWeight:"bold"}
+        });
+        tableHeader.add(countdown);
+        
+        var date = new Date();
+        var month = date.getMonth();
+        var todays_date = date.getDate();
+        var todays_year = date.getFullYear();
+        if (date.getHours() >= 23){
+            dateFuture = new Date(todays_year,month,todays_date+1,23,0,0);
+        }
+        else{
+            dateFuture = new Date(todays_year,month,todays_date,23,0,0);
+        }
+        tzOffset = -8;
+        dx = dateFuture.toGMTString();
+        dx = dx.substr(0,dx.length -3);
+        tzCurrent=(dateFuture.getTimezoneOffset()/60)*-2;
+        dateFuture.setTime(Date.parse(dx))
+        dateFuture.setHours(dateFuture.getHours() + tzCurrent - tzOffset);
+
+        function GetCount(){
+        	dateNow = new Date();									//grab current date
+        	amount = dateFuture.getTime() - dateNow.getTime();		//calc milliseconds between dates
+        	delete dateNow;
+        	// time is already past
+        	if(amount <= 1){
+        	    var date = new Date();
+        	    var month = date.getMonth();
+                var todays_date = date.getDate();
+                var todays_year = date.getFullYear();
+                if (date.getHours() >= 23){
+                    dateFuture = new Date(todays_year,month,todays_date+1,23,0,0);
+                }
+                else{
+                    dateFuture = new Date(todays_year,month,todays_date,23,0,0);
+                }
+                tzOffset = -8;
+                dx = dateFuture.toGMTString();
+                dx = dx.substr(0,dx.length -3);
+                tzCurrent=(dateFuture.getTimezoneOffset()/60)*-2;
+                dateFuture.setTime(Date.parse(dx))
+                dateFuture.setHours(dateFuture.getHours() + tzCurrent - tzOffset);
+
+                // if ($('#winners_announced_cont').length == 0){
+                //     $('#cont').prepend('<div id="winners_announced_cont"><h2>Winners are being calculated. Check back in a few minutes.</h2></div>')
+                // }
+        	}
+    		days=0;hours=0;mins=0;secs=0;out="";
+
+    		amount = Math.floor(amount/1000);//kill the "milliseconds" so just secs
+
+    		days=Math.floor(amount/86400);//days
+    		amount=amount%86400;
+
+    		hours=Math.floor(amount/3600);//hours
+    		amount=amount%3600;
+
+    		mins=Math.floor(amount/60);//minutes
+    		amount=amount%60;
+
+    		secs=Math.floor(amount);//seconds
+
+            // if(days != 0){out += days +":";}
+    		if(days != 0 || hours != 0){out += hours +"h:";}
+    		if(days != 0 || hours != 0 || mins != 0){out += mins +"m:";}
+    		out += secs + 's';
+    		countdown.text = 'Time remaining ' + out;
+        }
+        GetCount();
     }
-    else{
-        dateFuture = new Date(todays_year,month,todays_date,23,0,0);
-    }
-    tzOffset = -8;
-    dx = dateFuture.toGMTString();
-    dx = dx.substr(0,dx.length -3);
-    tzCurrent=(dateFuture.getTimezoneOffset()/60)*-2;
-    dateFuture.setTime(Date.parse(dx))
-    dateFuture.setHours(dateFuture.getHours() + tzCurrent - tzOffset);
     
-    function GetCount(){
-    	dateNow = new Date();									//grab current date
-    	amount = dateFuture.getTime() - dateNow.getTime();		//calc milliseconds between dates
-    	delete dateNow;
-    	// time is already past
-    	if(amount <= 1){
-    	    var date = new Date();
-    	    var month = date.getMonth();
-            var todays_date = date.getDate();
-            var todays_year = date.getFullYear();
-            if (date.getHours() >= 23){
-                dateFuture = new Date(todays_year,month,todays_date+1,23,0,0);
-            }
-            else{
-                dateFuture = new Date(todays_year,month,todays_date,23,0,0);
-            }
-            tzOffset = -8;
-            dx = dateFuture.toGMTString();
-            dx = dx.substr(0,dx.length -3);
-            tzCurrent=(dateFuture.getTimezoneOffset()/60)*-2;
-            dateFuture.setTime(Date.parse(dx))
-            dateFuture.setHours(dateFuture.getHours() + tzCurrent - tzOffset);
-            
-            // if ($('#winners_announced_cont').length == 0){
-            //     $('#cont').prepend('<div id="winners_announced_cont"><h2>Winners are being calculated. Check back in a few minutes.</h2></div>')
-            // }
-    	}
-		days=0;hours=0;mins=0;secs=0;out="";
-
-		amount = Math.floor(amount/1000);//kill the "milliseconds" so just secs
-
-		days=Math.floor(amount/86400);//days
-		amount=amount%86400;
-
-		hours=Math.floor(amount/3600);//hours
-		amount=amount%3600;
-
-		mins=Math.floor(amount/60);//minutes
-		amount=amount%60;
-
-		secs=Math.floor(amount);//seconds
-
-        // if(days != 0){out += days +":";}
-		if(days != 0 || hours != 0){out += hours +"h:";}
-		if(days != 0 || hours != 0 || mins != 0){out += mins +"m:";}
-		out += secs + 's';
-		countdown.text = 'Time remaining ' + out;
-    }
-    GetCount();
-    
-    Ti.App.addEventListener('update_active_noms', function(eventData) {
-        selected_tab = 'active';
-        
-        var header_active_tab_matrix = Ti.UI.create2DMatrix();
-        header_active_tab_matrix = header_active_tab_matrix.translate(0,0);
-        
-        var header_active_tab_animation = Titanium.UI.createAnimation();
-        header_active_tab_animation.transform = header_active_tab_matrix;
-        header_active_tab_animation.duration = 0;
-        
-    	header_tab_selection.animate(header_active_tab_animation);
-    	
-        beginReloading();
-    });
+    globals_attached = true;
 }
 
 init_active_view();
+
+var reset = false;
+win.addEventListener('focus', function(){
+    if (reset){
+        reset = false;
+        
+        list_view_data = [ ];
+        active_noms_cache = [ ];
+        photos_cache = [ ];
+        winners_noms_cache = [ ];
+
+        me = JSON.parse(Ti.App.Properties.getString("me"));
+
+        init_active_view();
+    }
+});
+
+Ti.App.addEventListener('reset', function(eventData) {
+    tv.setData([]);
+    reset = true;
+    
+    tabGroup = win.tabGroup;
+    tabGroup.setActiveTab(0);
+});

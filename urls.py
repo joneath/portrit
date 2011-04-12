@@ -31,14 +31,12 @@ urlpatterns += patterns('',
     url(r'^logout/$', 'main.user_views.logout_user', name='logout'),
     url(r'^perm_request/$', 'main.user_views.perm_request', name='perm_request'),
     url(r'^change_user_permissions/$', 'main.user_views.change_user_permissions', name='change_user_permissions'),
-    url(r'^get_user_win_stream/$', 'main.user_views.get_user_win_stream', name='get_user_win_stream'),
-    url(r'^get_user_trophies/$', 'main.user_views.get_user_trophies', name='get_user_trophies'),
-    url(r'^get_user_nom/$', 'main.user_views.get_user_nom', name='get_user_nom'),
-    url(r'^get_top_feed/$', 'main.user_views.get_top_feed', name='get_top_feed'),
-    url(r'^get_more_recent_stream/$', 'main.user_views.get_more_recent_stream', name='get_more_recent_stream'),
+    # url(r'^get_user_win_stream/$', 'main.user_views.get_user_win_stream', name='get_user_win_stream'),
+    # url(r'^get_user_trophies/$', 'main.user_views.get_user_trophies', name='get_user_trophies'),
+    # url(r'^get_user_nom/$', 'main.user_views.get_user_nom', name='get_user_nom'),
+    # url(r'^get_top_feed/$', 'main.user_views.get_top_feed', name='get_top_feed'),
+    # url(r'^get_more_recent_stream/$', 'main.user_views.get_more_recent_stream', name='get_more_recent_stream'),
     url(r'^skip_tut/$', 'main.user_views.skip_tut', name='skip_tut'),
-    
-    url(r'^convert_twitter_bridge/$', 'main.user_views.convert_twitter_bridge', name='convert_twitter_bridge'),   
 )
 
 #Nomination Views
@@ -121,6 +119,7 @@ urlpatterns += patterns('',
     #Twitter 
     url(r'^api/auth_twitter/$', 'main.api_views.auth_twitter'),
     url(r'^api/deauth_twitter/$', 'main.api_views.deauth_twitter'),
+    url(r'^api/save_mobile_twitter_token/$', 'main.api_views.save_mobile_twitter_token'),
     url(r'^return_twitter/$', 'main.api_views.return_twitter'),
     url(r'^api/share_twitter/$', 'main.api_views.share_twitter'),
     

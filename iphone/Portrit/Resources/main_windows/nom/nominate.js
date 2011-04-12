@@ -353,13 +353,7 @@ function show_tag_window(e){
             }
         };
         
-        var url = '';
-        if (user == me.fid){
-            url = SERVER_URL + '/api/get_my_follow_data/?user=' + me.fid + '&method=following&all=True&page=' + following_page;
-        }
-        else{
-            url = SERVER_URL + '/api/get_follow_data/?source=' + me.fid + '&target=' + user + '&method=following&all=True&page=' + following_page;   
-        }
+        var url = SERVER_URL + '/api/get_follow_data/?access_token=' + me.access_token + '&target=' + user + '&method=following&all=True&page=' + following_page;   
         xhr.open('GET', url);
 
         // send the data

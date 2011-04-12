@@ -12,7 +12,6 @@ var me = JSON.parse(Ti.App.Properties.getString("me")),
     newest_nom = null,
     oldest_nom = null,
     newest_photo = '',
-    oldest_nom = '',
     selected_tab = 'active';
     
 window_activity = Titanium.UI.createActivityIndicator({
@@ -214,16 +213,24 @@ function load_more_noms(e){
     xhr.onload = function()
     {
     	var data = JSON.parse(this.responseData);
-
-        oldest_nom = data[data.length - 1].created_time;
-        for (var i = 0; i < data.length; i++){
-            noms_loaded[data[i].id] = data[i];
-            render_nom(data[i], false);
+        
+        if (data.length > 0){
+            oldest_nom = data[data.length - 1].id;
+            for (var i = 0; i < data.length; i++){
+                noms_loaded[data[i].id] = data[i];
+                render_nom(data[i], false);
+            }
+            tv.setData(list_view_data);
+            if (data.length < 10){
+                load_more_view.hide();
+            }
         }
-        tv.setData(list_view_data);
+        else{
+            load_more_view.hide();
+        }
     };
 
-    var url = SERVER_URL + '/api/get_recent_stream/?fb_user=' + me.fid + '&created_date=' + oldest_nom;
+    var url = SERVER_URL + '/api/get_recent_stream/?access_token=' + me.access_token + '&dir=old&id=' + oldest_nom;
     xhr.open('GET', url);
 
     // send the data
@@ -238,9 +245,12 @@ var load_more_view = Ti.UI.createView({
 
 var load_more_button = Ti.UI.createButton({
 	title:"Load More",
-	width:120,
-	height:40,
-	right: 135
+    font: {fontSize: 16, fontWeight: 'bold'},
+	backgroundImage: '../images/load_more_button.png',
+	width: 118,
+	height: 42,
+	bottom: 8,
+	left: 0
 });
 
 load_more_button.addEventListener('click', load_more_noms);
@@ -480,18 +490,30 @@ function add_comment_to_nom(e){
 
 function open_options(e){
     var photo_id = e.source.photo_id;
+    var nom = e.source.nom;
     
     var optionsDialogOpts = {
-    	options:['Flag photo', 'Cancel'],
+    	options:['Flag photo', 'Share on Facebook', 'Share on Twitter', 'Cancel'],
     	destructive:0,
-    	cancel:1,
+    	cancel:3,
     	title:'Photo options'
     };
 
     var dialog = Titanium.UI.createOptionDialog(optionsDialogOpts);
     
     dialog.addEventListener('click',function(e){
-        
+        if (e.index == 0){
+            flag_nom(me, nom, photo_id, win);
+        }
+        else if (e.index == 1){
+            // Facebook Share
+            var title = me.username + ' shared a nomination on Portrit';
+            share_nom(nom, 'Facebook', title);
+        }
+        else if (e.index == 2){
+            // Twitter Share
+            share_nom(nom, 'Twitter', '');
+        }
 	});
 	dialog.show();
 }
@@ -928,6 +950,7 @@ function render_nom(nom, top, row_count){
             });
             photo_options.nom_id = nom.id;
             photo_options.photo_id = nom.photo.id;
+            photo_options.nom = nom;
             photo_options.addEventListener('click', open_options);
             
             bottom_cont.add(photo_options);
@@ -964,7 +987,7 @@ function render_active_list_view(data){
         top_empty_label.hide();
         active_empty_label.hide();
         newest_nom = data[0].created_time;
-        oldest_nom = data[data.length - 1].created_time;
+        oldest_nom = data[data.length - 1].id;
         for (var i = 0; i < data.length; i++){
             render_nom(data[i], false);
         }
@@ -974,11 +997,11 @@ function render_active_list_view(data){
             }, 300);
         }
         else{
-            load_more_button.hide();
+            load_more_view.hide();
         }
     }
     else{
-        load_more_button.hide();
+        load_more_view.hide();
     }
     tv.setData(list_view_data);
 }
@@ -1397,3 +1420,24 @@ function init_community_view(){
 }
 
 init_community_view();
+
+var reset = false;
+win.addEventListener('focus', function(){
+    if (reset){
+        reset = false;
+        list_view_data = [ ];
+        trophy_data = [ ];
+        noms_loaded = { };
+        photos_cache = [ ];
+        active_cache = [ ];
+
+        me = JSON.parse(Ti.App.Properties.getString("me"));
+
+        init_community_view();
+    }
+});
+
+Ti.App.addEventListener('reset', function(eventData) {
+    tv.setData([]);
+    reset = true;
+});
