@@ -1,3 +1,36 @@
+var init_count = 0;
+Ti.App.addEventListener('pass_detail', function(eventData) {
+    if (init_count == 0){
+        init_count += 1;
+        nom_id = String(eventData.nom_id);
+        photo = eventData.photo;
+        won = eventData.won;
+        state = eventData.state;
+        cat = String(eventData.cat);
+        if (typeof(eventData.user) != 'undefined'){
+            username = String(eventData.user);
+        }
+        if (won == 1){
+            won = true;
+        }
+
+        tv = Ti.UI.createTableView({
+                backgroundColor: '#222',
+                separatorStyle: 0,
+                top: 40,
+                bottom: 90,
+                style: Titanium.UI.iPhone.TableViewStyle.PLAIN
+            });
+
+        tv.addEventListener('click', function(e){
+
+        });
+
+        win.add(tv);
+        init_detail_view(state);
+    }
+});
+
 Ti.include('../../settings.js');
 Ti.include('../../includes.js');
 
@@ -49,6 +82,35 @@ window_nav_bar.add(back_buttom);
 
 win.add(window_nav_bar);
 
+window_activity = Titanium.UI.createActivityIndicator({
+    message: 'Loading...',
+    color: '#fff',
+    height:50,
+    width:10
+});
+window_activity.show()
+
+window_activity_background = Titanium.UI.createView({
+    backgroundColor: '#000',
+    borderRadius: 5,
+    opacity: 0.8,
+    height: 120,
+    width: 120,
+    zIndex: -1
+});
+
+window_activity_cont = Titanium.UI.createView({
+    height: 'auto',
+    top: 150,
+    width: 320,
+    height: 120,
+    zIndex: 20
+});
+window_activity_cont.show();
+window_activity_cont.add(window_activity_background);
+window_activity_cont.add(window_activity);
+win.add(window_activity_cont);
+
 var detail_header = null,
     detail_header_profile_image = null,
     detail_header_nominatee_name = null,
@@ -88,7 +150,8 @@ function update_nom_detail(index){
     detail_middle_cont.backgroundColor = nom_cat_color;
     
     var nominatee_profile_img_url = 'https://graph.facebook.com/' + selected_nom.nominatee + '/picture?type=square';
-    detail_header_profile_image.image = nominatee_profile_img_url;
+    // detail_header_profile_image.image = nominatee_profile_img_url;
+    cachedImageView('profile_images', nominatee_profile_img_url, detail_header_profile_image);
     detail_header_profile_image.user = selected_nom.nominatee;
     detail_header_profile_image.name = selected_nom.nominatee_name;
     detail_header_profile_image.username = selected_nom.nominatee_username;
@@ -114,55 +177,56 @@ function update_nom_detail(index){
     // post_time.text = secondsToHms(time_diff);
     
     
-    var max_height = 320;
-    var photo_width = 0;
-	var photo_height = 0;
-    if (Ti.Platform.displayCaps.density == 'high') {
-        if (selected_nom.photo.width > Ti.Platform.displayCaps.platformWidth){
-            photo_width = Ti.Platform.displayCaps.platformWidth;
-        }
-        else{
-            photo_width = selected_nom.photo.width;
-        }
-
-        if (selected_nom.photo.height && selected_nom.photo.height > max_height){
-            if (selected_nom.photo.height > selected_nom.photo.width){
-                photo_height = max_height;
-                photo_width = photo_height * (selected_nom.photo.width / selected_nom.photo.height);
-            }
-            else{
-                photo_height = photo_width * (selected_nom.photo.height / selected_nom.photo.width);
-            }
-        }
-        else{
-            photo_height = max_height;
-        }
-        highres = true;
-    }
-    else{
-        if (photo_width < 320){
-            photo_width = selected_nom.photo.width;
-        }
-        else{
-            photo_width = 320
-        }
-
-        if (selected_nom.photo.height && selected_nom.photo.height > max_height){
-            photo_width = max_height * (selected_nom.photo.width / selected_nom.photo.height);
-            photo_height = photo_width * (selected_nom.photo.height / selected_nom.photo.width);
-        }
-        else{
-            photo_height = max_height;
-        }
-        highres = false;
-    }
+    //     var max_height = 320;
+    //     var photo_width = 0;
+    // var photo_height = 0;
+    //     if (Ti.Platform.displayCaps.density == 'high') {
+    //         if (selected_nom.photo.width > Ti.Platform.displayCaps.platformWidth){
+    //             photo_width = Ti.Platform.displayCaps.platformWidth;
+    //         }
+    //         else{
+    //             photo_width = selected_nom.photo.width;
+    //         }
+    // 
+    //         if (selected_nom.photo.height && selected_nom.photo.height > max_height){
+    //             if (selected_nom.photo.height > selected_nom.photo.width){
+    //                 photo_height = max_height;
+    //                 photo_width = photo_height * (selected_nom.photo.width / selected_nom.photo.height);
+    //             }
+    //             else{
+    //                 photo_height = photo_width * (selected_nom.photo.height / selected_nom.photo.width);
+    //             }
+    //         }
+    //         else{
+    //             photo_height = max_height;
+    //         }
+    //         highres = true;
+    //     }
+    //     else{
+    //         if (photo_width < 320){
+    //             photo_width = selected_nom.photo.width;
+    //         }
+    //         else{
+    //             photo_width = 320
+    //         }
+    // 
+    //         if (selected_nom.photo.height && selected_nom.photo.height > max_height){
+    //             photo_width = max_height * (selected_nom.photo.width / selected_nom.photo.height);
+    //             photo_height = photo_width * (selected_nom.photo.height / selected_nom.photo.width);
+    //         }
+    //         else{
+    //             photo_height = max_height;
+    //         }
+    //         highres = false;
+    //     }
     // detail_img_cont.height = photo_height;
     // scrollView.scrollToView(index);
     // detail_img.height = photo_height;
     // detail_img.width = photo_width;
     // detail_img.image = nom.photo.src;
     
-    nominator_profile_image.image = 'https://graph.facebook.com/' + selected_nom.nominator + '/picture?type=square';
+    // nominator_profile_image.image = 'https://graph.facebook.com/' + selected_nom.nominator + '/picture?type=square';
+    cachedImageView('profile_images', 'https://graph.facebook.com/' + selected_nom.nominator + '/picture?type=square', nominator_profile_image);
     nominator_profile_image.user = selected_nom.nominator;
     nominator_profile_image.name = selected_nom.nominator_name;
     nominator_profile_image.username = selected_nom.nominator_username;
@@ -250,8 +314,7 @@ function render_more_nom_detail(noms, dir){
         
         for (var i = 0; i < noms.length; i++){
             photo_thumb = Ti.UI.createImageView({
-                image: noms[i].photo.crop,
-                defaultImage: '../../images/photo_loader.png',
+                image: '../../images/photo_loader.png',
                 borderColor: '#fff',
                 backgroundColor: '#000',
                 borderWidth: 2,
@@ -260,6 +323,7 @@ function render_more_nom_detail(noms, dir){
                 left: 0,
                 hires: true
             });
+            cachedImageView('images', noms[i].photo.crop, photo_thumb);
             scroll_offset.x += 60; 
             photo_thumb.nom = noms[i];
             
@@ -274,53 +338,54 @@ function render_more_nom_detail(noms, dir){
             var highres = true;
             var photo_width = 0;
             var photo_height = 0;
-                if (Ti.Platform.displayCaps.density == 'high') {
-                    if (noms[i].photo.width > Ti.Platform.displayCaps.platformWidth){
-                        photo_width = Ti.Platform.displayCaps.platformWidth;
-                    }
-                    else{
-                        photo_width = noms[i].photo.width;
-                    }
-        
-                    if (noms[i].photo.height && noms[i].photo.height > max_height){
-                        if (noms[i].photo.height > noms[i].photo.width){
-                            photo_height = max_height;
-                            photo_width = photo_height * (noms[i].photo.width / noms[i].photo.height);
-                        }
-                        else{
-                            photo_height = photo_width * (noms[i].photo.height / noms[i].photo.width);
-                        }
-                    }
-                    else{
-                        photo_height = max_height;
-                    }
-                    highres = true;
+            if (Ti.Platform.displayCaps.density == 'high') {
+                if (noms[i].photo.width > Ti.Platform.displayCaps.platformWidth){
+                    photo_width = Ti.Platform.displayCaps.platformWidth;
                 }
                 else{
-                    if (photo_width < 320){
-                        photo_width = noms[i].photo.width;
+                    photo_width = noms[i].photo.width;
+                }
+    
+                if (noms[i].photo.height && noms[i].photo.height > max_height){
+                    if (noms[i].photo.height > noms[i].photo.width){
+                        photo_height = max_height;
+                        photo_width = photo_height * (noms[i].photo.width / noms[i].photo.height);
                     }
                     else{
-                        photo_width = 320
-                    }
-        
-                    if (noms[i].photo.height && noms[i].photo.height > max_height){
-                        photo_width = max_height * (noms[i].photo.width / noms[i].photo.height);
                         photo_height = photo_width * (noms[i].photo.height / noms[i].photo.width);
                     }
-                    else{
-                        photo_height = max_height;
-                    }
-                    highres = false;
                 }
+                else{
+                    photo_height = max_height;
+                }
+                highres = true;
+            }
+            else{
+                if (photo_width < 320){
+                    photo_width = noms[i].photo.width;
+                }
+                else{
+                    photo_width = 320;
+                }
+    
+                if (noms[i].photo.height && noms[i].photo.height > max_height){
+                    photo_width = max_height * (noms[i].photo.width / noms[i].photo.height);
+                    photo_height = photo_width * (noms[i].photo.height / noms[i].photo.width);
+                }
+                else{
+                    photo_height = max_height;
+                }
+                highres = false;
+            }
         
             detail_img = Ti.UI.createImageView({
-                image: noms[i].photo.source,
-                defaultImage: '../../images/photo_loader.png',
+                image: '../../images/photo_loader.png',
                 width: photo_width,
                 height: photo_height,
                 hires: highres
             });
+            cachedImageView('images', noms[i].photo.source, detail_img);
+            
             scroll_view_cont = Titanium.UI.createView({
                 width: 320,
                 height: 'auto'
@@ -425,7 +490,7 @@ function show_votes(e){
 	    Ti.App.fireEvent('pass_votes', {
             votes: e.source.votes
         });
-	}, 100);
+	}, 200);
 	return false;
 }
 
@@ -437,7 +502,7 @@ function show_tags(e){
 	    Ti.App.fireEvent('pass_tags', {
             tags: e.source.tags
         });
-	}, 100);
+	}, 200);
 	return false;
 }
 
@@ -451,7 +516,7 @@ function add_profile_window(e){
             name: e.source.name,
             username: e.source.username
         });
-	}, 100);
+	}, 200);
 }
 
 function open_options(e){
@@ -521,7 +586,7 @@ function open_options(e){
 
             var url = '';
 
-            url = SERVER_URL + '/api/flag/photo'
+            url = SERVER_URL + '/api/flag/photo';
 
             xhr.open('POST', url);
 
@@ -654,20 +719,29 @@ function add_comment_to_nom(e){
             if (empty_message_cont != null){
                 comments_row.remove(empty_message_cont);
         	}
-            render_comments(comments_row, current_comments);
+            render_detail_comments(comments_row, current_comments);
         }
         
 	    comment_textarea.blur();
 		comment_window.close(fadeOut);
 	});
 	
-	setTimeout(function(){
-	    comment_textarea.focus();
-	}, 50);	
+	var textarea_focus = null;
+	var textarea_focus_count = 0;
+	clearInterval(textarea_focus);
+	textarea_focus = setInterval(function(){
+	    if (textarea_focus_count < 5){
+	        comment_textarea.focus();
+    	    textarea_focus_count += 1;
+	    }
+	    else{
+	        clearInterval(textarea_focus);
+	    }
+	}, 30);
 }
 
 var comment_bottom_padding = null;
-function render_comments(cont, comments){
+function render_detail_comments(cont, comments){
     var comment_cont = null,
         commentor = null,
         comment_time = null,
@@ -686,7 +760,7 @@ function render_comments(cont, comments){
             height: 'auto',
             top: 0,
             left: 0,
-            width: 'auto',
+            width: 'auto'
         });
         
         var commentor_name_text = '';
@@ -718,7 +792,7 @@ function render_comments(cont, comments){
     	    text: '  - ' + comments[i].comment,
             color: '#666',
             top: 2,
-            left: commentor.width + 10,
+            left: 60,
             bottom: 2,
             width: 'auto',
             height: 'auto',
@@ -788,7 +862,7 @@ function get_nom_comments(cont, nom_id, first){
                 cont.remove(empty_message_cont);
                 empty_message_cont = null;
             }
-            render_comments(cont, data);
+            render_detail_comments(cont, data);
         }
         else if (empty_message_cont == null){
             render_empty_comments_message(cont);
@@ -825,7 +899,8 @@ function vote(e){
     
     noms_in_cat[selected_nom_index].votes.push({
         'vote_user': me.fid,
-        'vote_name': me.name
+        'vote_name': me.name,
+        'vote_username': me.username,
     });
     
     detail_middle_cont.votes = noms_in_cat[selected_nom_index].votes;
@@ -877,7 +952,7 @@ function photo_thumb_click(e){
         update_nom_detail(selected_nom_index);
         
         if (!won){
-	        place_text.text = getOrdinal(noms_in_cat[selected_nom_index].position+1),
+	        place_text.text = getOrdinal(noms_in_cat[selected_nom_index].position+1);
         }
         check_detail_pagination(old_index, selected_nom_index, noms_in_cat.length, noms_in_cat[selected_nom_index].position);
     }
@@ -904,8 +979,7 @@ function render_nom_detail(noms){
     
     var nominatee_profile_img_url = 'https://graph.facebook.com/' + selected_nom.nominatee + '/picture?type=square';
     detail_header_profile_image = Ti.UI.createImageView({
-		image: nominatee_profile_img_url,
-		defaultImage: '../../images/photo_loader.png',
+		image: '../../images/photo_loader.png',
 		left: 0,
 		top: 0,
 		height: 30,
@@ -913,6 +987,8 @@ function render_nom_detail(noms){
 		hires: true,
 		zIndex: 1
 	});
+	cachedImageView('profile_images', nominatee_profile_img_url, detail_header_profile_image);
+	
 	detail_header_profile_image.user = selected_nom.nominatee;
 	detail_header_profile_image.name = selected_nom.nominatee_name;
 	detail_header_profile_image.username = selected_nom.nominatee_username;
@@ -1045,14 +1121,15 @@ function render_nom_detail(noms){
     
     var nominator_profile_img_url = 'https://graph.facebook.com/' + selected_nom.nominator + '/picture?type=square';
     nominator_profile_image = Ti.UI.createImageView({
-		image: nominator_profile_img_url,
-		defaultImage: '../../images/photo_loader.png',
+		image: '../../images/photo_loader.png',
 		left: 5,
 		top: 5,
 		width: 30,
 		height: 30,
 		hires: true
 	});
+	cachedImageView('profile_images', nominator_profile_img_url, nominator_profile_image);
+	
 	nominator_profile_image.user = selected_nom.nominator;
 	nominator_profile_image.name = selected_nom.nominator_name;
 	nominator_profile_image.username = selected_nom.nominator_username;
@@ -1330,8 +1407,7 @@ function render_nom_detail(noms){
     
     for (var i = 0; i < noms.length; i++){
         photo_thumb = Ti.UI.createImageView({
-    		image: noms[i].photo.crop,
-    		defaultImage: '../../images/photo_loader.png',
+    		image: '../../images/photo_loader.png',
     		borderColor: '#fff',
             backgroundColor: '#000',
     		borderWidth: 2,
@@ -1340,6 +1416,8 @@ function render_nom_detail(noms){
     		left: 5 + (60 * i),
     		hires: true
     	});
+    	cachedImageView('images', noms[i].photo.crop, photo_thumb);
+    	
     	photo_thumb.nom = noms[i];
     	thumb_list.push(photo_thumb);
     	
@@ -1388,12 +1466,13 @@ function render_nom_detail(noms){
         }
     	
     	detail_img = Ti.UI.createImageView({
-    		image: noms[i].photo.source,
-    		defaultImage: '../../images/photo_loader.png',
+    		image: '../../images/photo_loader.png',
     		width: photo_width,
     		height: photo_height,
     		hires: highres
     	});
+    	cachedImageView('images', noms[i].photo.source, detail_img);
+    	
     	scroll_view_cont = Titanium.UI.createView({
             width: 320,
             height: 'auto'
@@ -1492,6 +1571,8 @@ function render_nom_detail(noms){
 	detail_img_cont.add(scrollView);
     
     tv.setData([section]);
+    
+    window_activity_cont.hide();
 }
 
 function find_nom_in_list(id, data){
@@ -1518,9 +1599,8 @@ function init_detail_view(state){
     var xhr = Titanium.Network.createHTTPClient();
     var url = '';
     var detail_header_text = '';
-
-    xhr.onload = function()
-    {
+    
+    xhr.onload = function(){
         var data = JSON.parse(this.responseData);
         if (nom_id){
             selected_nom = find_nom_in_list(nom_id, data);
@@ -1600,36 +1680,3 @@ function init_detail_view(state){
     // send the data
     xhr.send();
 }
-
-var init_count = 0;
-Ti.App.addEventListener('pass_detail', function(eventData) {
-    if (init_count == 0){
-        init_count += 1;
-        nom_id = String(eventData.nom_id);
-        photo = eventData.photo;
-        won = eventData.won;
-        state = eventData.state;
-        cat = String(eventData.cat);
-        if (typeof(eventData.user) != 'undefined'){
-            username = String(eventData.user);
-        }
-        if (won == 1){
-            won = true;
-        }
-
-        tv = Ti.UI.createTableView({
-                backgroundColor: '#222',
-                separatorStyle: 0,
-                top: 40,
-                bottom: 90,
-                style: Titanium.UI.iPhone.TableViewStyle.PLAIN
-            });
-
-        tv.addEventListener('click', function(e){
-
-        });
-
-        win.add(tv);
-        init_detail_view(state);
-    }
-});

@@ -5387,10 +5387,10 @@ div#latest_photos{
     
         .recent_nom_top_cont h3{
             float:                  right;
-            font-size:              24px;
+            font-size:              28px;
             font-weight:            bold;
             line-height:            50px;
-            margin-right:           10px;
+            margin-right:           15px;
         }
     
         .recent_nom_top_cont img{
@@ -6228,136 +6228,163 @@ div#all_friends {
         margin-top:         5px;
     }
     
-        #about_left_cont{
-            
+    #context_cont #context_header{
+        
+    }
+    
+        #context_cont #context_header h1{
+            margin-bottom:          0px;
         }
         
-            #about_left_cont h3{
-                color:              #6e6e6e;
-                font-size:          18px;
-            }
+    #context_main_cont h3{
+        font-size:          20px;
+        margin-left:        10px;
+    }
+    
+    #context_main_cont p{
+        margin-left:        10px;
+    }
         
-            #context_cont a{
-                color:              #99CB6E;
-            }
-            
-            #context_cont a:hover{
-                text-decoration:    underline;
-            }
+    #context_cont .context_sub_cont{
+        margin-bottom:      10px;
+    }
+    
+    #context_cont .context_sub_cont h2{
+        color:              #666;
+        font-size:          26px;
+        margin-bottom:      5px;
+    }
+    
+    #about_left_cont{
         
-        #about_right_cont{
-            float:              right;
-            width:              300px;
-            text-align:         right;
+    }
+    
+        #about_left_cont h3{
+            color:              #6e6e6e;
+            font-size:          18px;
+        }
+    
+        #context_cont a{
+            color:              #99CB6E;
         }
         
-            #find_us{
+        #context_cont a:hover{
+            text-decoration:    underline;
+        }
+    
+    #about_right_cont{
+        float:              right;
+        width:              300px;
+        text-align:         right;
+    }
+    
+        #find_us{
+            margin-left:    10px;
+            text-align:     left;
+        }
+        
+            #find_us ul{
+                list-style:     none;
                 margin-left:    10px;
-                text-align:     left;
             }
             
-                #find_us ul{
-                    list-style:     none;
-                    margin-left:    10px;
-                }
-                
-                #find_us li{
-                    margin-bottom:  10px;
-                }
-            
-                #find_us h3{
-                    font-size:      22px;
-                    margin-bottom:  10px;
-                }
-                
-                #find_us h4{
-                    font-weight:    bold;
-                    margin-bottom:  5px;
-                }
+            #find_us li{
+                margin-bottom:  10px;
+            }
         
-        #facebook_frame{
-            height:             590px;
-        }
+            #find_us h3{
+                font-size:      22px;
+                margin-bottom:  10px;
+            }
+            
+            #find_us h4{
+                font-weight:    bold;
+                margin-bottom:  5px;
+            }
     
-        #context_cont #contact_explain{
+    #facebook_frame{
+        height:             590px;
+    }
 
-        }
+    #context_cont #contact_explain{
+
+    }
+
+    #contact_nav li{
+        cursor:             pointer;
+        float:              left;
+        list-style:         none;
+        margin-right:       2px;
+        opacity:            0.7;
+        padding:            7px;
+        border-top-left-radius:     5px;
+        border-top-right-radius:    5px;
+        -moz-border-radius-topleft:         5px;
+        -moz-border-radius-topright:        5px;
+    }
+
+    #contact_form_cont{
+        border-top:         2px solid #69CCCB;
+    }
     
-        #contact_nav li{
-            cursor:             pointer;
-            float:              left;
-            list-style:         none;
-            margin-right:       2px;
-            opacity:            0.7;
-            padding:            7px;
-            border-top-left-radius:     5px;
-            border-top-right-radius:    5px;
-            -moz-border-radius-topleft:         5px;
-            -moz-border-radius-topright:        5px;
+        #contact_form_cont .invalid_data{
+            left:               5px;
+            top:                7px;
+            position:           relative;
+            height:             24px;
+            width:              24px;
+            display:            inline-block;
+            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+            background-position:    -375px -644px;
         }
-    
-        #contact_form_cont{
-            border-top:         2px solid #69CCCB;
-        }
+
+    #bug_form_cont{
+        border-top:         2px solid #99CB6E;
+    }
         
-            #contact_form_cont .invalid_data{
-                left:               5px;
-                top:                7px;
-                position:           relative;
-                height:             24px;
-                width:              24px;
-                display:            inline-block;
-                background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
-                background-position:    -375px -644px;
-            }
-    
-        #bug_form_cont{
-            border-top:         2px solid #99CB6E;
+        #bug_form_cont .invalid_data{
+            left:               5px;
+            top:                7px;
+            position:           relative;
+            height:             24px;
+            width:              24px;
+            display:            inline-block;
+            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+            background-position:    -375px -644px;
         }
-            
-            #bug_form_cont .invalid_data{
-                left:               5px;
-                top:                7px;
-                position:           relative;
-                height:             24px;
-                width:              24px;
-                display:            inline-block;
-                background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
-                background-position:    -375px -644px;
-            }
-    
-        #contact_form > div, #bug_form > div{
-            padding:            10px 0px;
-        }
-    
-        #contact_form label, #bug_form label{
-            color:              #666666;
-            float:              left;
-            margin-top:         5px;
-            width:              200px;
-        }
-    
-        #contact_form textarea, #bug_form textarea{
-            border:             1px solid #dedede;
-            color:              #333;
-            font-size:          14px;
-            padding:            5px;
-            width:              40em; 
-            height:             16em;
-        }
-    
-        #context_cont .submit_cont{
-            padding:            0px;
-            margin-left:        200px;
-        }
-    
-        #tab_contact{
-            background-color:   #69cccb;
-        }
-    
-        #tab_bug{
-            background-color:   #99cb6e;
-        }
+
+    #contact_form > div, #bug_form > div{
+        padding:            10px 0px;
+    }
+
+    #contact_form label, #bug_form label{
+        color:              #666666;
+        float:              left;
+        margin-top:         5px;
+        width:              200px;
+    }
+
+    #contact_form textarea, #bug_form textarea{
+        border:             1px solid #dedede;
+        color:              #333;
+        font-size:          14px;
+        padding:            5px;
+        width:              40em; 
+        height:             16em;
+    }
+
+    #context_cont .submit_cont{
+        padding:            0px;
+        margin-left:        200px;
+    }
+
+    #tab_contact{
+        background-color:   #69cccb;
+    }
+
+    #tab_bug{
+        background-color:   #99cb6e;
+    }
     
     #privacy_cont{
         
@@ -6375,136 +6402,137 @@ div#all_friends {
             margin-left:        30px;
         }
         
-    #settings_cont{
+        
+#settings_cont{
+    
+}
+
+    #settings_cont > h1{
+        font-size:          26px;
+        font-weight:        bold;
+        margin-bottom:      10px;
+    }
+    
+    #settings_cont > h1.half{
+        float:              left;
+        width:              450px;
+    }
+    
+    #settings_cont .sub_setting_cont{
+        border:             1px solid #BEBEBE;
+        margin-bottom:      10px;
+        border-radius:          5px;
+        -moz-border-radius:     5px;
+    }
+    
+    #settings_cont .sub_setting_cont_half{
+        float:              left;
+        border:             1px solid #BEBEBE;
+        margin-bottom:      10px;
+        width:              430px;
+        border-radius:          5px;
+        -moz-border-radius:     5px;
+    }
+    
+    #settings_cont #sharing_facebook{
+        cursor:             default;
+        opacity:            0.5;
+    }
+    
+    #settings_cont h2{
+        font-size:          20px;
+        font-weight:        bold;
+    }
+    
+        #settings_cont h2 span{
+            color:              #777;
+            float:              right;
+            font-size:          16px;
+            line-height:        20px;
+        }
+
+    #settings_cont .sub_setting_cont > div{
+        height:             50px;
+        padding:            15px;
+    }
+    
+    #settings_cont .sub_setting_cont_half > div{
+        height:             50px;
+        padding:            5px;
+    }
+    
+        #settings_cont .sub_setting_cont_half label{
+            margin-left:        10px;
+        }
+    
+    #settings_cont .sub_setting_cont .center_twin{
+        margin-top:         7px;
+    }
+    
+    #settings_cont label{
+        color:              #666;
+        font-size:          17px;
+        font-weight:        bold;
+    }
+    
+    #settings_cont label.single_line{
+        line-height:        50px;
+        margin-top:         0px;
+    }
+    
+    #settings_cont .sub_label{
+        color:              #888;
+        font-size:          14px;
+    }
+    
+    #settings_cont .setting_conf{
+        float:              right;
+        font-size:          18px;
+        line-height:        64px;
+    }
+    
+    #settings_cont .switch{
+        position:           relative;
+        cursor:             pointer;
+        float:              right;
+        margin-top:         4px;
+    }
+    
+    #settings_cont #clear_db{
+        color:              white;
+    }
+    
+    #settings_cont .sharing_cont{
         
     }
     
-        #settings_cont > h1{
-            font-size:          26px;
-            font-weight:        bold;
-            margin-bottom:      10px;
+        #settings_cont .sharing_cont label{
+            font-size:          22px;
+            line-height:        64px;
+            margin-left:        20px;
         }
         
-        #settings_cont > h1.half{
+        #settings_cont .sharing_cont img{
+            height:             64px;
             float:              left;
-            width:              450px;
         }
         
-        #settings_cont .sub_setting_cont{
-            border:             1px solid #BEBEBE;
-            margin-bottom:      10px;
-            border-radius:          5px;
-            -moz-border-radius:     5px;
-        }
-        
-        #settings_cont .sub_setting_cont_half{
-            float:              left;
-            border:             1px solid #BEBEBE;
-            margin-bottom:      10px;
-            width:              430px;
-            border-radius:          5px;
-            -moz-border-radius:     5px;
-        }
-        
-        #settings_cont #sharing_facebook{
-            cursor:             default;
-            opacity:            0.5;
-        }
-        
-        #settings_cont h2{
-            font-size:          20px;
-            font-weight:        bold;
-        }
-        
-            #settings_cont h2 span{
-                color:              #777;
-                float:              right;
-                font-size:          16px;
-                line-height:        20px;
-            }
-    
-        #settings_cont .sub_setting_cont > div{
-            height:             50px;
+        #settings_cont .sub_setting_cont_half.sharing_cont > div{
+            height:             64px;
             padding:            15px;
         }
         
-        #settings_cont .sub_setting_cont_half > div{
-            height:             50px;
-            padding:            5px;
-        }
-        
-            #settings_cont .sub_setting_cont_half label{
-                margin-left:        10px;
-            }
-        
-        #settings_cont .sub_setting_cont .center_twin{
-            margin-top:         7px;
-        }
-        
-        #settings_cont label{
-            color:              #666;
-            font-size:          17px;
-            font-weight:        bold;
-        }
-        
-        #settings_cont label.single_line{
-            line-height:        50px;
-            margin-top:         0px;
-        }
-        
-        #settings_cont .sub_label{
-            color:              #888;
-            font-size:          14px;
-        }
-        
-        #settings_cont .setting_conf{
+        #settings_cont .sharing_cont #twitter_login{
             float:              right;
-            font-size:          18px;
-            line-height:        64px;
+            margin-top:         18px;
         }
         
-        #settings_cont .switch{
-            position:           relative;
-            cursor:             pointer;
-            float:              right;
-            margin-top:         4px;
-        }
-        
-        #settings_cont #clear_db{
-            color:              white;
-        }
-        
-        #settings_cont .sharing_cont{
-            
-        }
-        
-            #settings_cont .sharing_cont label{
-                font-size:          22px;
-                line-height:        64px;
-                margin-left:        20px;
-            }
-            
-            #settings_cont .sharing_cont img{
-                height:             64px;
-                float:              left;
-            }
-            
-            #settings_cont .sub_setting_cont_half.sharing_cont > div{
-                height:             64px;
-                padding:            15px;
-            }
-            
-            #settings_cont .sharing_cont #twitter_login{
-                float:              right;
-                margin-top:         18px;
-            }
-            
-        #settings_cont .user_email_cont p{
-            color:                  #777;
-            float:                  right;
-            line-height:            50px;
-            margin-right:           5px;
-        }
+    #settings_cont .user_email_cont p{
+        color:                  #777;
+        float:                  right;
+        line-height:            50px;
+        margin-right:           5px;
+    }
         
 #publish_story_cont{
     padding:            15px;
@@ -7017,8 +7045,12 @@ div#payment_types_cont{
     overflow-y:         hidden;
     text-align:         center;
     padding-top:        5px;
+    position:           fixed;
     width:              100%;
     z-index:            10000;
+    -webkit-box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow:    0px 0px 2px 1px rgba(0, 0, 0, 0.5);
+    box-shadow:         0px 0px 2px 1px rgba(0, 0, 0, 0.5);
 }
 
     #footer a{

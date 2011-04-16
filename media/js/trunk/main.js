@@ -1046,6 +1046,41 @@ $(document).ready(function(){
         }
     }
     
+    function render_faq(){
+        var faq_html =  '<div id="context_header">' +
+                            '<h1>Frequently Asked Questions</h1>' +
+                            '<p>Ansers to your most pressing questions</p>' +
+                        '</div>' +
+                        '<div id="context_main_cont">' +
+                            '<div class="context_sub_cont">' +
+                                '<h3>What is Portrit?</h3>' +
+                                '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum sit amet lectus urna. Proin convallis varius laoreet. Vivamus semper bibendum nisl non venenatis. Nulla rutrum tempus arcu et rhoncus. Sed ac lacinia leo.</p>' +
+                                '<h3>What can I do here?</h3>' +
+                                '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum sit amet lectus urna. Proin convallis varius laoreet. Vivamus semper bibendum nisl non venenatis. Nulla rutrum tempus arcu et rhoncus. Sed ac lacinia leo.</p>' +
+                            '</div>' +
+                            '<div class="context_sub_cont">' +
+                                '<h2>Nominations</h2>' +
+                                '<h3>What is a nomination?</h3>' +
+                                '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum sit amet lectus urna. Proin convallis varius laoreet. Vivamus semper bibendum nisl non venenatis. Nulla rutrum tempus arcu et rhoncus. Sed ac lacinia leo.</p>' +
+                            '</div>' +
+                            '<div class="context_sub_cont">' +
+                                '<h2>Voting</h2>' +
+                                '<h3>Why can\'t I change my vote?</h3>' + 
+                                '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum sit amet lectus urna. Proin convallis varius laoreet. Vivamus semper bibendum nisl non venenatis. Nulla rutrum tempus arcu et rhoncus. Sed ac lacinia leo.</p>' +
+                            '</div>' +
+                            '<div class="context_sub_cont">' +
+                                '<h2>Trophies</h2>' +
+                                '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum sit amet lectus urna. Proin convallis varius laoreet. Vivamus semper bibendum nisl non venenatis. Nulla rutrum tempus arcu et rhoncus. Sed ac lacinia leo.</p>' +
+                            '</div>' +
+                        '</div>';
+                            
+        $('#context_cont').append(faq_html);
+        
+        if (typeof(_gaq) !== "undefined"){
+            _gaq.push(['_trackEvent', 'FAQ', 'Shown', '']);
+        }
+    }
+    
     function info_context_delagate(context){
         selected_user = {
             'username': null,
@@ -1076,6 +1111,10 @@ $(document).ready(function(){
         else if (context === 'settings'){
             view_active = 'settings';
             render_settings();
+        }
+        else if (context == 'faq'){
+            view_active = 'faq';
+            render_faq();
         }
     }
     
@@ -7470,7 +7509,7 @@ $(document).ready(function(){
         $('#context_overlay_cont').addClass('share_nom');
         $('#context_overlay_cont > div').append(share_nom_html);
         $('#share_nom_comment').attr('value', comment_text);
-        show_context_overlay(true);
+        show_context_overlay(true, true);
         
         attach_nom_share_handlers();
     }
@@ -8018,6 +8057,9 @@ $(document).ready(function(){
                         }
                         else if (url_vars_list[0] == 'privacy'){
                             info_context_delagate('privacy');
+                        }
+                        else if (url_vars_list[0] == 'faq'){
+                            info_context_delagate('faq');
                         }
                         else{
                             //Profile index

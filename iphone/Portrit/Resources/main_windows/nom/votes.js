@@ -1,3 +1,9 @@
+Ti.App.addEventListener('pass_votes', function(eventData) {
+    votes = eventData.votes;
+
+    init_votes();
+});
+
 Ti.include('../../settings.js');
 Ti.include('../../includes.js');
 
@@ -54,7 +60,7 @@ function add_profile_window(e){
             name: e.source.name,
             username: e.source.username
         });
-	}, 100);
+	}, 200);
 }
 
 var get_profile_image = function(user, name, username){
@@ -168,9 +174,3 @@ tv.addEventListener('click', function(e){
 
 });
 win.add(tv);
-
-Ti.App.addEventListener('pass_votes', function(eventData) {
-    votes = eventData.votes;
-    
-    init_votes();
-});

@@ -31,17 +31,14 @@ function secondsToHms(d) {
 	}
 }
 
-function formatDate()
-{
+function formatDate(){
 	var date = new Date();
 	var datestr = date.getMonth()+'/'+date.getDate()+'/'+date.getFullYear();
-	if (date.getHours()>=12)
-	{
-		datestr+=' '+(date.getHours()==12 ? date.getHours() : date.getHours()-12)+':'+date.getMinutes()+' PM';
+	if (date.getHours()>=12){
+		datestr +=' '+(date.getHours()==12 ? date.getHours() : date.getHours()-12)+':'+date.getMinutes()+' PM';
 	}
-	else
-	{
-		datestr+=' '+date.getHours()+':'+date.getMinutes()+' AM';
+	else{
+		datestr +=' '+date.getHours()+':'+date.getMinutes()+' AM';
 	}
 	return datestr;
 }
@@ -86,6 +83,78 @@ function createRandomNumber(Min, Max){
   return Math.round((Max-Min) * rand.next() + Min);
 }
 
+function get_nom_cat_color(nom_cat){
+    if (nom_cat == 'artsy'){
+        return '#689AC9';
+    }
+    if (nom_cat == 'wtf'){
+        return '#cc9999';
+    }
+    if (nom_cat == 'creepy'){
+        return '#8e8e8e';
+    }
+    if (nom_cat == 'hot'){
+        return '#CB6698';
+    }
+    if (nom_cat == 'fail'){
+        return '#F95057';
+    }
+    if (nom_cat == 'party_animal'){
+        return '#99CB6E';
+    }
+    if (nom_cat == 'cute'){
+        return '#69CCCB';
+    }
+    if (nom_cat == 'lol'){
+        return '#FAC86E';
+    }
+    if (nom_cat == 'awesome'){
+        return '#39F';
+    }
+    if (nom_cat == 'yummy'){
+        return '#cc3366';
+    }
+}
+
+function nom_cat_to_text(nom_cat){
+    if (nom_cat == 'artsy'){
+        return 'Artsy';
+    }
+    if (nom_cat == 'wtf'){
+        return 'WTF';
+    }
+    if (nom_cat == 'creepy'){
+        return 'Creepy';
+    }
+    if (nom_cat == 'hot'){
+        return 'Hot';
+    }
+    if (nom_cat == 'fail'){
+        return 'Fail';
+    }
+    if (nom_cat == 'party_animal'){
+        return 'Party Animal';
+    }
+    if (nom_cat == 'cute'){
+        return 'cute';
+    }
+    if (nom_cat == 'lol'){
+        return 'LOL';
+    }
+    if (nom_cat == 'awesome'){
+        return 'Awesome';
+    }
+    if (nom_cat == 'yummy'){
+        return 'Yummy';
+    }
+}
+
+function getOrdinal(n) {
+   var s=["th","st","nd","rd"],
+       v=n%100;
+   return n+(s[(v-20)%10]||s[v]||s[0]);
+}
+
 function share_nom(nom, method, title, from){
     var t = Titanium.UI.create2DMatrix();
 	t = t.scale(.45);
@@ -120,12 +189,13 @@ function share_nom(nom, method, title, from){
     var post_botton_location = '../images/comment_post_button.png';
     var cancel_botton_location = '../images/comment_cancel_button.png';
     var header_locations = '../images/iphone_header_blank.png';
+    
     if (typeof(from) != 'undefined'){
         post_botton_location = '../../images/comment_post_button.png';
         cancel_botton_location = '../../images/comment_cancel_button.png';
         header_locations = '../../images/iphone_header_blank.png';
     }
-    
+
     var post_button = Titanium.UI.createButton({
 	    backgroundImage: post_botton_location,
 		title:'Post',
@@ -157,7 +227,7 @@ function share_nom(nom, method, title, from){
 	    backgroundImage: header_locations,
         height: 40,
         width: 320,
-        top: 0,
+        top: 0
     });
 	
 	var share_title = Titanium.UI.createLabel({
@@ -203,9 +273,19 @@ function share_nom(nom, method, title, from){
 		comment_window.close(fadeOut);
 	});
 	
-	setTimeout(function(){
-	    comment_textarea.focus();
-	}, 75);
+	
+	var textarea_focus = null;
+	var textarea_focus_count = 0;
+	clearInterval(textarea_focus);
+	textarea_focus = setInterval(function(){
+	    if (textarea_focus_count < 5){
+	        comment_textarea.focus();
+    	    textarea_focus_count += 1;
+	    }
+	    else{
+	        clearInterval(textarea_focus);
+	    }
+	}, 30);
 }
 
 function share_on_twitter(me, nom, caption){
@@ -301,6 +381,129 @@ function flag_nom(me, nom, photo_id, win){
 
     var url = SERVER_URL + '/api/flag/photo'
     xhr.open('POST', url);
-    xhr.send({'access_token': me.access_token,
-                'photo_id': photo_id});
+    xhr.send({'access_token': me.access_token, 'photo_id': photo_id});
 }
+
+function render_comments(cont, comments){
+    var comment_cont = null;
+    var commentor = null;
+    var commentor_cont = null;
+    var comment_time = null;
+    var comment = null;
+    var commentor_name_text = '';
+        
+    for (var i = 0; i < comments.length; i++){
+    	if (comments[i].owner_id == me.fid){
+    	    commentor_name_text = 'You';
+    	}
+    	else{
+    	    commentor_name_text = comments[i].owner_username;
+    	}
+        
+        commentor = Titanium.UI.createLabel({
+            text: commentor_name_text,
+            color: '#333',
+            top: 5,
+            bottom: 2,
+            left: 10,
+            width: 'auto',
+            height: 'auto',
+            font:{fontSize:13, fontWeight: 'bold'}
+        });
+        commentor.user = comments[i].owner_id;
+        commentor.name = comments[i].owner_name;
+        commentor.username = comments[i].owner_username;
+        commentor.addEventListener('click', add_profile_window);
+        cont.add(commentor);
+
+        comment = Titanium.UI.createLabel({
+    	    text: '  - ' + comments[i].comment,
+            color: '#666',
+            top: -18,
+            left: 60,
+            width: 'auto',
+            height: 'auto',
+            font:{fontSize:13}
+        });
+        
+        cont.add(comment);
+    }
+    if (comments.length > 0){
+        photo_action_bottom_round = Titanium.UI.createView({
+            backgroundColor: '#fff',
+            height: 5,
+            width: 320
+        });
+        cont.add(photo_action_bottom_round); 
+    }
+}
+
+/* 
+	Developed by Kevin L. Hopkins (http://kevin.h-pk-ns.com)
+	You may borrow, steal, use this in any way you feel necessary but please
+	leave attribution to me as the source.  If you feel especially grateful,
+	give me a linkback from your blog, a shoutout @Devneck on Twitter, or 
+	my company profile @ http://wearefound.com.
+
+/* Expects parameters of the directory name you wish to save it under, the url of the remote image, 
+   and the Image View Object its being assigned to. */
+cachedImageView = function(imageDirectoryName, url, imageViewObject, custom_filename){
+	// Grab the filename
+	var filename = '';
+	
+	if (typeof(custom_filename) == 'undefined'){
+	    filename = url.replace(/\//g, '_').replace(/\./g, '_').replace('https:', '').replace('http:', '').replace('?', '_');
+	}
+	else{
+	    filename = custom_filename.replace(/\//g, '_').replace(/\./g, '_').replace('https:', '').replace('http:', '').replace('?', '_');
+	}
+    // filename = filename[filename.length - 1];
+
+	// Try and get the file that has been previously cached
+	var file = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, imageDirectoryName, filename);
+
+	if (file.exists()) {
+		// If it has been cached, assign the local asset path to the image view object.
+		imageViewObject.image = file.nativePath;
+		return true;
+	} else {
+		// If it hasn't been cached, grab the directory it will be stored in.
+		var g = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, imageDirectoryName);
+		if (!g.exists()) {
+			// If the directory doesn't exist, make it
+			g.createDirectory();
+		};
+        
+        // imageViewObject.defaultImage = defaultImage;
+		// Create the HTTP client to download the asset.
+		var xhr = Ti.Network.createHTTPClient();
+
+		xhr.onload = function() {
+			if (xhr.status == 200) {
+				// On successful load, take that image file we tried to grab before and 
+				// save the remote image data to it.
+				file.write(xhr.responseData);
+				// Assign the local asset path to the image view object.
+				imageViewObject.image = file.nativePath;
+			};
+		};
+
+		// Issuing a GET request to the remote URL
+		xhr.open('GET', url);
+		// Finally, sending the request out.
+		xhr.send();
+		return false;
+	};
+};
+
+image_exists = function(imageDirectoryName, filename){
+    filename = filename.replace(/\//g, '_').replace(/\./g, '_').replace('https:', '').replace('http:', '').replace('?', '_');
+	
+	var file = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, imageDirectoryName, filename);
+	if (file.exists()) {
+	    return true;
+    }
+    else{
+        return false;
+    }
+};

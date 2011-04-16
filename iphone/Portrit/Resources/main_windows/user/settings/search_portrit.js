@@ -164,13 +164,13 @@ function render_search_results(data){
             });
 
             profile_image = Ti.UI.createImageView({
-        		image: 'https://graph.facebook.com/' + data[i].fid + '/picture?type=square',
-        		defaultImage: '../../../images/photo_loader.png',
+        		image: '../../../images/photo_loader.png',
         		left: 5,
         		width: 35,
         		height: 35,
         		hires: true
         	});
+        	cachedImageView('profile_images', 'https://graph.facebook.com/' + data[i].fid + '/picture?type=square', profile_image);
 
             name = Titanium.UI.createLabel({
                 color: '#333',
@@ -236,7 +236,7 @@ function render_search_results(data){
         tv.setData(list_view_data);
     }
     else{
-        
+        tv.setData([]);
     }
 }
 

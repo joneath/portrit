@@ -203,6 +203,7 @@ class Photo(Document):
     path = StringField()
     thumbnail = StringField()
     large = StringField()
+    iphone = StringField()
     crop = StringField()
     crop_small = StringField()
     
@@ -233,6 +234,7 @@ class Photo(Document):
                     'crop': self.crop,
                     'crop_small': self.crop_small,
                     'source': self.large,
+                    'iphone': self.iphone,
                     'height': self.height,
                     'width': self.width
                 }

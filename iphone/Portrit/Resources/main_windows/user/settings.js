@@ -49,6 +49,17 @@ var fadeIn = Titanium.UI.createAnimation({
     duration: 300
 });
 
+tv = Ti.UI.createTableView({
+        backgroundColor: '#eee',
+        top: 40,
+        style:Titanium.UI.iPhone.TableViewStyle.GROUPED
+    });
+    
+tv.addEventListener('click', function(e){
+
+});
+win.add(tv);
+
 function open_email_dialog(type){
     var emailDialog = Titanium.UI.createEmailDialog();
     if (!emailDialog.isSupported()) {
@@ -92,7 +103,7 @@ function open_email_dialog(type){
     emailDialog.open();
 }
 
-function init_options(){
+var init_options = function(){
     var options_data = [ ];
     
     // Find/Follow Section
@@ -322,21 +333,7 @@ function init_options(){
 
     // send the data
     xhr.send();
-}
-
-tv = Ti.UI.createTableView({
-        backgroundColor: '#eee',
-        top: 40,
-        style:Titanium.UI.iPhone.TableViewStyle.GROUPED
-    });
-    
-tv.addEventListener('click', function(e){
-
-});
-
-win.add(tv);
-
-init_options();
+}();
 
 Ti.App.addEventListener('reset', function(eventData) {
     win.close();

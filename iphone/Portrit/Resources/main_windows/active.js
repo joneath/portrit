@@ -8,7 +8,7 @@ var me = JSON.parse(Ti.App.Properties.getString("me")),
     photos_cache = [ ],
     winners_noms_cache = [ ],
     notification_count = 0,
-    globals_attached = false;
+    globals_attached = false,
     newest_nom = '',
     oldest_nom = '',
     selected_tab = 'active',
@@ -19,13 +19,14 @@ var portrit_header_view = Titanium.UI.createView({
         left: 0,
         top: 0,
         width: 320,
-        backgroundColor: '#222'
+        backgroundColor: '#222',
+        zIndex: 10
     });
     
 var header_tab_selection = Titanium.UI.createView({
-        height: 35,
+        height: 36,
         left: 105,
-        top: 40,
+        top: 39,
         width: 110,
         backgroundImage: '../images/selected_nav_bar.png',
         zIndex: 1
@@ -69,15 +70,14 @@ window_activity_background = Titanium.UI.createView({
     backgroundColor: '#000',
     borderRadius: 5,
     opacity: 0.8,
-    height: '100%',
-    width: '100%',
+    height: 120,
+    width: 120,
     zIndex: -1
 });
 
 window_activity_cont = Titanium.UI.createView({
-    height: 'auto',
     top: 150,
-    width: 120,
+    width: 320,
     height: 120,
     zIndex: 20
 });
@@ -195,7 +195,6 @@ var portrit_label = Titanium.UI.createLabel({
         font:{fontSize:28}
     });
 
-
 portrit_header_view.add(portrit_label);
 
 portrit_header_view.add(portrit_header_active);
@@ -215,6 +214,7 @@ function load_more_noms(e){
     xhr.onload = function()
     {
     	var data = JSON.parse(this.responseData);
+        now = new Date();
         
         if (data.length > 0){
             if (selected_tab == 'photos'){
@@ -287,10 +287,10 @@ load_more_view.add(load_more_button);
 load_more_view.hide();
 
 var tv = Ti.UI.createTableView({
-            minRowHeight:50, 
             backgroundColor: '#000',
             // allowsSelection: false,
             // bottom: -60,
+            // top: 75,
             separatorStyle: 0,
             headerView: portrit_header_view,
             footerView: load_more_view,
@@ -298,6 +298,8 @@ var tv = Ti.UI.createTableView({
         });
 
 function render_active_list_view(data){
+    list_view_data = [ ];
+    now = new Date();
     if (data.length > 0){
         newest_nom = data[0].created_time;
         oldest_nom = data[data.length - 1].id;
@@ -316,28 +318,28 @@ function render_active_list_view(data){
     tv.setData(list_view_data);
 }
 
-function render_active_list_update(data){
-    var append_row_count = 0;
-    if (data.length > 0){
-        newest_nom = data[0].created_time;
-        for (var i = 0; i < data.length; i++){
-            render_nom(data[i], true, append_row_count);
-            append_row_count += 1;
-        }
-        if (list_view_data.length > 10){
-            var temp_list_data = [ ];
-            for (i = 0; i < 10; i++){
-                temp_list_data.push(list_view_data[i]);
-            }
-            list_view_data = temp_list_data;
-            oldest_nom = list_view_data[list_view_data.length - 1].id;
-        }
-        tv.setData(list_view_data);
-    }
-    else{
-        
-    }
-}
+// function render_active_list_update(data){
+//     var append_row_count = 0;
+//     if (data.length > 0){
+//         newest_nom = data[0].created_time;
+//         for (var i = 0; i < data.length; i++){
+//             render_nom(data[i], true, append_row_count);
+//             append_row_count += 1;
+//         }
+//         if (list_view_data.length > 10){
+//             var temp_list_data = [ ];
+//             for (i = 0; i < 10; i++){
+//                 temp_list_data.push(list_view_data[i]);
+//             }
+//             list_view_data = temp_list_data;
+//             oldest_nom = list_view_data[list_view_data.length - 1].id;
+//         }
+//         tv.setData(list_view_data);
+//     }
+//     else{
+//         
+//     }
+// }
 
 function add_profile_window(e){
     var w = Ti.UI.createWindow({backgroundColor:"#222", url:'user/profile.js'});
@@ -348,7 +350,7 @@ function add_profile_window(e){
             name: e.source.name,
             username: e.source.username
         });
-	}, 100);
+	}, 200);
 }
 
 function add_detail_window(e){
@@ -364,7 +366,7 @@ function add_detail_window(e){
             user: me.username,
             won: false
         });
-	}, 100);
+	}, 200);
 }
 
 function add_detail_trophy_window(e){
@@ -381,7 +383,7 @@ function add_detail_trophy_window(e){
             user: me.username,
             won: true
         });
-	}, 100);
+	}, 200);
 }
 
 function show_tags(e){
@@ -392,7 +394,7 @@ function show_tags(e){
 	    Ti.App.fireEvent('pass_tags', {
             tags: e.source.tags
         });
-	}, 100);
+	}, 200);
 	return false;
 }
 
@@ -513,11 +515,12 @@ function add_comment_to_nom(e){
             action_cont.height = action_cont.height;
             action_cont.remove(comment_cont);
             comments_cont = Titanium.UI.createView({
-                    height: 'auto',
-                    top: 0,
-                    width: 320,
-                    layout: 'vertical'
-                });
+                backgroundColor: '#fff',
+                height: 'auto',
+                top: 0,
+                width: 320,
+                layout: 'vertical'
+            });
             render_comments(comments_cont, comments);
             action_cont.add(comments_cont);
             action_cont.height = 'auto';
@@ -529,9 +532,18 @@ function add_comment_to_nom(e){
 		comment_window.close(fadeOut);
 	});
 	
-	setTimeout(function(){
-	    comment_textarea.focus();
-	}, 75);	
+	var textarea_focus = null;
+	var textarea_focus_count = 0;
+	clearInterval(textarea_focus);
+	textarea_focus = setInterval(function(){
+	    if (textarea_focus_count < 5){
+	        comment_textarea.focus();
+    	    textarea_focus_count += 1;
+	    }
+	    else{
+	        clearInterval(textarea_focus);
+	    }
+	}, 30);
 }
 
 function open_options(e){
@@ -624,154 +636,116 @@ function open_options(e){
 	dialog.show();
 }
 
-function render_comments(cont, comments){
-    var comment_cont = null,
-        commentor = null,
-        commentor_cont = null,
-        comment_time = null,
-        comment = null;
-        
-    for (var i = 0; i < comments.length; i++){
-        comment_cont = Titanium.UI.createView({
-            backgroundColor: '#fff',
-            height: 'auto',
-            width: 320,
-            zIndex: 1
-        });
-        
-        commentor_cont = Titanium.UI.createView({
-            height: 'auto',
-            top: 0,
-            left: 0,
-            width: 'auto'
-        });
-        
-        var commentor_name_text = '';
-    	if (comments[i].owner_id == me.fid){
-    	    commentor_name_text = 'You';
-    	}
-    	else{
-    	    commentor_name_text = comments[i].owner_username;
-    	}
-        
-        commentor = Titanium.UI.createLabel({
-    	    text: commentor_name_text,
-            color: '#333',
-            top: 2,
-            bottom: 2,
-            left: 10,
-            width: 'auto',
-            height: 'auto',
-            font:{fontSize:12, fontWeight: 'bold'}
-        });
-        commentor.user = comments[i].owner_id;
-        commentor.name = comments[i].owner_name;
-        commentor.username = comments[i].owner_username;
-        commentor.addEventListener('click', add_profile_window);
-        
-        commentor_cont.add(commentor);
-        
-        comment = Titanium.UI.createLabel({
-    	    text: '  - ' + comments[i].comment,
-            color: '#666',
-            top: 2,
-            left: commentor.width + 10,
-            bottom: 2,
-            width: 'auto',
-            height: 'auto',
-            font:{fontSize:12}
-        });
-        
-        comment_cont.add(commentor_cont);
-        comment_cont.add(comment);
-        cont.add(comment_cont);
-    }
-    if (comments.length > 0){
-        photo_action_bottom_round = Titanium.UI.createView({
-                backgroundColor: '#fff',
-                borderRadius: 5,
-                height: 10,
-                bottom: -5,
-                width: 320,
-                zIndex: -1
-            });
-    	comment_cont.add(photo_action_bottom_round); 
-    }
-    else{
-        photo_action_bottom_round = Titanium.UI.createView({
-                backgroundColor: '#ddd',
-                borderRadius: 5,
-                height: 10,
-                top: -5,
-                width: 320,
-                zIndex: -1
-            });
-    	cont.add(photo_action_bottom_round);
-    }
-}
+// function render_comments(cont, comments){
+//     var comment_cont = null;
+//     var commentor = null;
+//     var commentor_cont = null;
+//     var comment_time = null;
+//     var comment = null;
+//     var commentor_name_text = '';
+//         
+//     for (var i = 0; i < comments.length; i++){
+//      if (comments[i].owner_id == me.fid){
+//          commentor_name_text = 'You';
+//      }
+//      else{
+//          commentor_name_text = comments[i].owner_username;
+//      }
+//         
+//         commentor = Titanium.UI.createLabel({
+//             text: commentor_name_text,
+//             color: '#333',
+//             top: 5,
+//             bottom: 2,
+//             left: 10,
+//             width: 'auto',
+//             height: 'auto',
+//             font:{fontSize:13, fontWeight: 'bold'}
+//         });
+//         commentor.user = comments[i].owner_id;
+//         commentor.name = comments[i].owner_name;
+//         commentor.username = comments[i].owner_username;
+//         commentor.addEventListener('click', add_profile_window);
+//         cont.add(commentor);
+// 
+//         comment = Titanium.UI.createLabel({
+//          text: '  - ' + comments[i].comment,
+//             color: '#666',
+//             top: -18,
+//             left: 60,
+//             width: 'auto',
+//             height: 'auto',
+//             font:{fontSize:13}
+//         });
+//         
+//         cont.add(comment);
+//     }
+//     if (comments.length > 0){
+//         photo_action_bottom_round = Titanium.UI.createView({
+//             backgroundColor: '#fff',
+//             height: 5,
+//             width: 320
+//         });
+//         cont.add(photo_action_bottom_round); 
+//     }
+// }
+
+var row = null;
+var section = null;
+var nom_cat_underscore = '';
+var nom_cat_color = '';
+var nominatee_profile_img_url = '';
+var nominatee_profile_img = '';
+var nominator_profile_img_url = '';
+var nominator_profile_img = '';
+var nominatee_name = '';
+var nominator_name = '';
+var nominatee_name_cont = null;
+var now = new Date();
+var time = null;
+var time_diff = null;
+var nominated_for = null;
+var nominated_for_cont = null;
+var nominator_footer = null;
+var nom_detail_button = null;
+var caption = null;
+var nomination_cat_label = null;
+var photo_action_cont = null;
+var photo_action_row = null;
+var add_comment = null;
+var comments_cont = null;
+var photo_options = null;
+var post_time = null;
+var nom_header = null;
+var main_image = null;
+var photo_height = 0;
+var photo_width = 0;
+var highres = false;
 
 function render_nom(nom, top, row_count){
-    var row = null,
-        section = null,
-        nom_cat_underscore = '',
-        nom_cat_color = '',
-        nominatee_profile_img_url = '',
-        nominatee_profile_img = '',
-        nominator_profile_img_url = '',
-        nominator_profile_img = '',
-        nominatee_name = '',
-        nominator_name = '',
-        nominatee_name_cont = null,
-        now = new Date(),
-        time = null,
-        time_diff = null,
-        nominated_for = null,
-        nominated_for_cont = null,
-        nominator_footer = null,
-        nom_detail_button = null,
-        caption = null,
-        nomination_cat_label = null,
-        photo_action_cont = null,
-        photo_action_row = null,
-        add_comment = null,
-        comments_cont = null,
-        photo_options = null,
-        post_time = null,
-        nom_header = null,
-        main_image = null,
-        photo_height = 0,
-        photo_width = 0,
-        highres = false;
-    
     try{
         nom_cat_underscore = nom.nomination_category.replace(' ', '_').toLowerCase();
         nom_cat_color = get_nom_cat_color(nom_cat_underscore);
 
         nom_header = Titanium.UI.createView({
-            height:30,
-            width: 320,
-        });
-        
-        nom_header_background = Titanium.UI.createView({
-            height: '100%',
-            width: '100%',
-            opacity: 0.9,
             backgroundColor: nom_cat_color,
-            zIndex: -1
-        });
-        nom_header.add(nom_header_background);
-
+            height: 35,
+            width: 320,
+        });  
+        
         nominatee_profile_img_url = 'https://graph.facebook.com/' + nom.nominatee + '/picture?type=square';
         nominatee_profile_img = Ti.UI.createImageView({
-    		image: nominatee_profile_img_url,
-    		defaultImage: '../images/photo_loader.png',
+            // image: nominatee_profile_img_url,
+    		image: '../images/photo_loader.png',
     		left: 0,
     		top: 0,
-    		height: 30,
-    		width: 30,
+    		height: 35,
+    		width: 35,
     		hires: true,
     		zIndex: 1
     	});
+    	cachedImageView('profile_images', nominatee_profile_img_url, nominatee_profile_img);
+    	
     	nom_header.add(nominatee_profile_img);
     	
     	var nominatee_name_text = '';
@@ -786,32 +760,32 @@ function render_nom(nom, top, row_count){
     	    text: nominatee_name_text,
             textAlign: 'left',
             color: '#fff',
-            left: 5,
-            top: 7,
-            right: 5,
-            bottom: 7,
-            height: 'auto',
-            width: 'auto',
-            font:{fontSize:14, fontWeight: 'bold'}
+            // left: 5,
+            // top: 7,
+            // right: 5,
+            // bottom: 7,
+            left: 0,
+            height: 35,
+            width: 280,
+            font:{fontSize:16, fontWeight: 'bold'}
         });
         
         nomination_cat_label = Titanium.UI.createLabel({
             text: nom.nomination_category,
             color: '#fff',
-            left: 0,
-            top: 5,
+            // top: 5,
             right: 15,
-            bottom: 5,
+            // bottom: 5,
             textAlign: "right",
-            size: {width: '100%', height: 'auto'},
-            font:{fontSize: 20, fontWeight:'bold'}
+            size: {width: 280, height: 35},
+            font:{fontSize: 22, fontWeight:'bold'}
         });
         
         nominatee_name_cont = Titanium.UI.createView({
-            backgroundColor: '#222',
-            borderRadius: 5,
-            height: 20,
-            left: 35,
+            // backgroundColor: '#222',
+            // borderRadius: 5,
+            height: 35,
+            left: 40,
             width: 'auto',
             zIndex: 1
         });
@@ -835,14 +809,14 @@ function render_nom(nom, top, row_count){
         section = Titanium.UI.createTableViewSection({
             headerView: nom_header
         });
-
-        row = Ti.UI.createTableViewRow({
-                height:'auto',
-                backgroundColor:'#000',
-                selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
-        });
-
-        nominator_profile_img_url = 'https://graph.facebook.com/' + nom.nominator + '/picture?type=square';
+        // 
+        // row = Ti.UI.createTableViewRow({
+        //     className: 'nom_header',
+        //     height: 35,
+        //     selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+        // });
+        // row.add(nom_header);
+        // section.add(row);
         
         var max_height = 320;
         if (Ti.Platform.displayCaps.density == 'high') {
@@ -852,7 +826,7 @@ function render_nom(nom, top, row_count){
             else{
                 photo_width = nom.photo.width;
             }
-
+        
             if (nom.photo.height && nom.photo.height > max_height){
                 if (nom.photo.height > nom.photo.width){
                     photo_height = max_height;
@@ -874,7 +848,7 @@ function render_nom(nom, top, row_count){
             else{
                 photo_width = 320
             }
-
+        
             if (nom.photo.height && nom.photo.height > max_height){
                 photo_width = max_height * (nom.photo.width / nom.photo.height);
                 photo_height = photo_width * (nom.photo.height / nom.photo.width);
@@ -885,13 +859,21 @@ function render_nom(nom, top, row_count){
             highres = false;
         }
 
+        row = Ti.UI.createTableViewRow({
+                className: 'nom_img',
+                height: photo_height,
+                width: photo_width,
+                selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+        });
+
         main_image = Ti.UI.createImageView({
-    		image: nom.photo.source,
-    		defaultImage: '../images/photo_loader.png',
+            // image: nom.photo.source,
+    		image: '../images/photo_loader.png',
     		width: photo_width,
     		height: photo_height,
-    		hires: highres
+    		hires: true
     	});
+    	cachedImageView('images', nom.photo.source, main_image);
     	
     	if (nom.won){
     	    main_image.nom_id = nom.id;
@@ -910,116 +892,117 @@ function render_nom(nom, top, row_count){
     	}
     	row.add(main_image);
 
-    	nominator_footer = Titanium.UI.createView({
-    	    height:35,
-            bottom: 0,
-            width: 320,
-            zIndex: 1
-        });
-        
-        nominator_footer_background = Titanium.UI.createView({
-    	    height:'100%',
-            width: '100%',
-            opacity: 0.8,
-            backgroundColor: '#000',
-            zIndex: -1
-        });
-
-    	nominator_profile_img_url = 'https://graph.facebook.com/' + nom.nominator + '/picture?type=square';
-        nominator_profile_img = Ti.UI.createImageView({
-    		image: nominator_profile_img_url,
-    		defaultImage: '../images/photo_loader.png',
-    		left: 0,
-    		top: 0,
-    		hires: true,
-    		height: 35,
-    		width: 35
-    	});
-    	
-    	nominator_profile_img.user = nom.nominator;
-    	nominator_profile_img.name = nom.nominator_name;
-    	nominator_profile_img.username = nom.nominator_username;
-    	nominator_profile_img.addEventListener('click', add_profile_window);
-    	
-    	nominator_footer.add(nominator_profile_img);
-
-        nominator_name_cont = Titanium.UI.createView({
-    	    height: 'auto',
-            width: 'auto',
-            left: 40,
-            zIndex: 1,
-            layout: 'vertical'
-        });
-        
-        nominated_by = Titanium.UI.createLabel({
-    	    text: 'Nominated by ',
-            color: '#fff',
-            left: 0,
-            width: 100,
-            height: 'auto',
-            font:{fontSize:12}
-        });
-        
-        var nominator_name_text = '';
-    	if (nom.nominator == me.fid){
-    	    nominator_name_text = 'You';
-    	}
-    	else{
-    	    nominator_name_text = nom.nominator_username;
-    	}
-        
-        nominator_name = Titanium.UI.createLabel({
-    	    text: nominator_name_text,
-            color: '#fff',
-            left: 0,
-            top: -3,
-            width: 'auto',
-            height: 'auto',
-            font:{fontSize:12, fontWeight: 'bold'}
-        });
-        nominator_name_cont.add(nominated_by);
-        nominator_name_cont.add(nominator_name);
-
-        nominator_footer.add(nominator_footer_background);
-        nominator_footer.add(nominator_name_cont);
-        
-        nominator_name.user = nom.nominator;
-        nominator_name.name = nom.nominator_name;
-        nominator_name.username = nom.nominator_username;
-        nominator_name.addEventListener('click', add_profile_window);
-        
-        if (nom.tagged_users.length > 0){
-            tagged_cont = Titanium.UI.createView({
-                height: 30,
-                width: 'auto',
-                right: 3,
-            });
-            tagged_label = Titanium.UI.createLabel({
-        	    text: nom.tagged_users.length + ' Tagged',
-        	    textAlign: 'left',
-                color: '#fff',
-                left: 8,
-                right: 35,
-                font:{fontSize: 13, fontWeight: 'bold'},
-                size: {width: 'auto', height: 'auto'}
-            });
-            tagged_label.tags = nom.tagged_users;
-            tagged_cont.add(tagged_label);
-
-            disclosure = Titanium.UI.createButton({
-                style:Titanium.UI.iPhone.SystemButton.DISCLOSURE,
-            	right: 0
-            });
-            disclosure.tags = nom.tagged_users;
-            tagged_cont.add(disclosure);
-
-            tagged_cont.tags = nom.tagged_users;
-            tagged_cont.addEventListener('click', show_tags);
-            
-            nominator_footer.add(tagged_cont);
-        }
-        
-        row.add(nominator_footer);
+        // nominator_footer = Titanium.UI.createView({
+        //     height:35,
+        //     bottom: 0,
+        //     width: 320,
+        //     zIndex: 1
+        // });
+        //         
+        // nominator_footer_background = Titanium.UI.createView({
+        //     height: 35,
+        //     width: 320,
+        //     opacity: 0.8,
+        //     backgroundColor: '#000',
+        //     zIndex: -1
+        // });
+        // 
+        // nominator_profile_img_url = 'https://graph.facebook.com/' + nom.nominator + '/picture?type=square';
+        // nominator_profile_img = Ti.UI.createImageView({
+        //     // image: nominator_profile_img_url,
+        //     image: '../images/photo_loader.png',
+        //     left: 0,
+        //     hires: true,
+        //     height: 35,
+        //     width: 35
+        // });
+        // cachedImageView('profile_images', nominator_profile_img_url, nominator_profile_img);
+        // 
+        // nominator_profile_img.user = nom.nominator;
+        // nominator_profile_img.name = nom.nominator_name;
+        // nominator_profile_img.username = nom.nominator_username;
+        // nominator_profile_img.addEventListener('click', add_profile_window);
+        // 
+        // nominator_footer.add(nominator_profile_img);
+        // 
+        // nominator_name_cont = Titanium.UI.createView({
+        //     height: 20,
+        //     width: 'auto',
+        //     left: 40,
+        //     zIndex: 1,
+        //     layout: 'vertical'
+        // });
+        //         
+        // nominated_by = Titanium.UI.createLabel({
+        //     text: 'Nominated by ',
+        //     color: '#fff',
+        //     left: 0,
+        //     width: 100,
+        //     height: 12,
+        //     top: -5,
+        //     font:{fontSize:12}
+        // });
+        //         
+        // var nominator_name_text = '';
+        // if (nom.nominator == me.fid){
+        //     nominator_name_text = 'You';
+        // }
+        // else{
+        //     nominator_name_text = nom.nominator_username;
+        // }
+        //         
+        // nominator_name = Titanium.UI.createLabel({
+        //     text: nominator_name_text,
+        //     color: '#fff',
+        //     left: 0,
+        //     top: 3,
+        //     width: 'auto',
+        //     height: 12,
+        //     font:{fontSize:12, fontWeight: 'bold'}
+        // });
+        // nominator_name_cont.add(nominated_by);
+        // nominator_name_cont.add(nominator_name);
+        // 
+        // nominator_footer.add(nominator_footer_background);
+        // nominator_footer.add(nominator_name_cont);
+        // 
+        // nominator_name.user = nom.nominator;
+        // nominator_name.name = nom.nominator_name;
+        // nominator_name.username = nom.nominator_username;
+        // nominator_name.addEventListener('click', add_profile_window);
+        // 
+        // if (nom.tagged_users.length > 0){
+        //     tagged_cont = Titanium.UI.createView({
+        //         height: 30,
+        //         width: 'auto',
+        //         right: 3,
+        //     });
+        //     tagged_label = Titanium.UI.createLabel({
+        //         text: nom.tagged_users.length + ' Tagged',
+        //         textAlign: 'left',
+        //         color: '#fff',
+        //         left: 8,
+        //         right: 35,
+        //         font:{fontSize: 13, fontWeight: 'bold'},
+        //         size: {width: 'auto', height: 35}
+        //     });
+        //     tagged_label.tags = nom.tagged_users;
+        //     tagged_cont.add(tagged_label);
+        // 
+        //     disclosure = Titanium.UI.createButton({
+        //         style:Titanium.UI.iPhone.SystemButton.DISCLOSURE,
+        //         right: 0
+        //     });
+        //     disclosure.tags = nom.tagged_users;
+        //     tagged_cont.add(disclosure);
+        // 
+        //     tagged_cont.tags = nom.tagged_users;
+        //     tagged_cont.addEventListener('click', show_tags);
+        //     
+        //     nominator_footer.add(tagged_cont);
+        // }
+        // 
+        // row.add(nominator_footer);
         
         time = new Date(nom.created_time * 1000);
         time_diff = now - time;
@@ -1031,23 +1014,23 @@ function render_nom(nom, top, row_count){
             top: 5,
             right: 5,
             bottom: 5,
-            size: {width: 'auto', height: 'auto'},
+            size: {width: 'auto', height: 20},
             font:{fontSize:12}
         });
         
         post_time_background = Titanium.UI.createView({
             backgroundColor: '#000',
-            borderRadius: 5,
+            // borderRadius: 5,
             opacity: 0.8,
-            height: '100%',
+            height: 20,
             width: '100%',
             zIndex: -1
         });
         
         post_time_cont = Titanium.UI.createView({
             right: 5,
-            bottom: 40,
-            height: 'auto',
+            bottom: 5,
+            height: 20,
             width: 'auto',
             zIndex: 1
         });
@@ -1058,12 +1041,12 @@ function render_nom(nom, top, row_count){
         section.add(row);
         
         row = Ti.UI.createTableViewRow({
+                className: 'nom_footer',
                 height:'auto',
                 selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
         });
         
         photo_action_cont = Titanium.UI.createView({
-            backgroundColor: '#000',
             width: 320,
             height: 'auto',
             bottom: 10,
@@ -1074,10 +1057,11 @@ function render_nom(nom, top, row_count){
             backgroundColor: '#ddd',
             top: 0,
             width: 320,
-            height: 'auto'
+            height: 35
         });
         
         comments_cont = Titanium.UI.createView({
+                backgroundColor: '#fff',
                 height: 'auto',
                 top: 0,
                 width: 320,
@@ -1086,9 +1070,9 @@ function render_nom(nom, top, row_count){
         
         add_comment = Ti.UI.createButton({
             backgroundImage: '../images/stream_action_button.png',
-        	title:"Comment",
-        	width: 90,
-        	height: 25,
+            title:"Comment",
+            width: 90,
+            height: 25,
             left: 5,
             top: 5,
             bottom: 5,
@@ -1105,7 +1089,7 @@ function render_nom(nom, top, row_count){
         	title:"Detail",
         	width: 90,
         	height: 25,
-            left: 100,
+            left: 105,
             top: 5,
             bottom: 5,
             font: {fontSize: 12, fontWeight: 'bold'}
@@ -1152,13 +1136,7 @@ function render_nom(nom, top, row_count){
         section.add(row);
         section.created_time = nom.created_time;
 
-        if (!top){
-            list_view_data.push(section);
-        }
-    	else{
-    	    list_view_data.splice(row_count, 0, section);
-            // tv.insertRowBefore(row_count, section);
-    	}
+        list_view_data.push(section);
     }
     catch (err){
         alert(err);
@@ -1191,22 +1169,10 @@ function activate_winners_stream(){
         window_activity_cont.show();
         
         var xhr = Titanium.Network.createHTTPClient();
-        xhr.onload = function()
-        {
+        xhr.onload = function(){
             var data = JSON.parse(this.responseData);
-            if (data.length > 0){
-                if (winners_noms_cache.length > 0){
-                    update_cache(winners_noms_cache, data, false);
-                    render_active_list_update(winners_noms_cache);
-                }
-                else{
-                    winners_noms_cache = data;
-                    render_active_list_view(winners_noms_cache);
-                }
-            }
-            else{
-                
-            }
+            winners_noms_cache = data;
+            render_active_list_view(winners_noms_cache);
             window_activity_cont.hide();
         };
 
@@ -1241,14 +1207,15 @@ function render_stream_photos(data){
         }
         
         photo = Ti.UI.createImageView({
-    		image: data[i].photo.crop,
-    		defaultImage: '../images/photo_loader.png',
+            // image: data[i].photo.crop,
+    		image: '../images/photo_loader.png',
     		left: (photo_in_row * 105) + 5,
     		top: top_offset,
     		width: 100,
     		height: 75,
     		hires: true
     	});
+    	cachedImageView('images', data[i].photo.crop, photo);
     	photo.user = data[i].user_fid;
     	photo.name = data[i].name;
     	photo.username = data[i].username;
@@ -1303,7 +1270,6 @@ function activate_active_view(){
         xhr.onload = function()
         {
             var data = JSON.parse(this.responseData);
-            update_cache(active_noms_cache, data, false);
             render_active_list_view(active_noms_cache);
             window_activity_cont.hide();
         };
@@ -1347,55 +1313,59 @@ function init_active_view(){
     xhr.open('GET', url);
     xhr.send();
     
-    //Pull to refresh
+    tv.addEventListener('click', function(e){
+
+    });
+    
+    // Pull to refresh
     if (!globals_attached){
         var tableHeader = Ti.UI.createView({
-        	backgroundColor:"#000",
-        	width:320,
-        	height:60
+         backgroundColor:"#000",
+         width:320,
+         height:60
         });
     
         var arrow = Ti.UI.createView({
-        	backgroundImage:"../images/pull_arrow.png",
-        	width: 33,
-        	height: 41,
-        	bottom:10,
-        	left:20
+         backgroundImage:"../images/pull_arrow.png",
+         width: 33,
+         height: 41,
+         bottom:10,
+         left:20
         });
-
+    
         var statusLabel = Ti.UI.createLabel({
-        	text:"Pull to update",
-        	left:55,
-        	width:200,
-        	bottom:30,
-        	height:"auto",
-        	color:"#999",
-        	textAlign:"center",
-        	font:{fontSize:13,fontWeight:"bold"}
+         text:"Pull to update",
+         left:55,
+         width:200,
+         bottom:30,
+         height:"auto",
+         color:"#999",
+         textAlign:"center",
+         font:{fontSize:13,fontWeight:"bold"}
         });
-
+    
         var lastUpdatedLabel = Ti.UI.createLabel({
-        	text:"Last Updated: "+formatDate(),
-        	left:55,
-        	width:200,
-        	bottom:15,
-        	height:"auto",
-        	color:"#ffffff",
-        	textAlign:"center",
-        	font:{fontSize:12}
+         text:"Last Updated: "+formatDate(),
+         left:55,
+         width:200,
+         bottom:15,
+         height:"auto",
+         color:"#ffffff",
+         textAlign:"center",
+         font:{fontSize:12}
         });
         var actInd = Titanium.UI.createActivityIndicator({
-        	left:20,
-        	bottom:13,
-        	width:30,
-        	height:30
+         left:20,
+         bottom:13,
+         width:30,
+         height:30
         });
     
         tableHeader.add(arrow);
         tableHeader.add(statusLabel);
         // tableHeader.add(lastUpdatedLabel);
         tableHeader.add(actInd);
-
+    
         tv.headerPullView = tableHeader;
     }
     
@@ -1404,12 +1374,10 @@ function init_active_view(){
     
     function beginReloading(){
         var xhr = Titanium.Network.createHTTPClient();
-
+    
         xhr.onload = function(){
-        	data = JSON.parse(this.responseData);
-            // render_active_list_view(data);
+         data = JSON.parse(this.responseData);
             if (selected_tab != 'photos'){
-                tv.setData([]);
                 list_view_data = [ ];
                 if (selected_tab == 'active'){
                     active_noms_cache = data;
@@ -1417,11 +1385,9 @@ function init_active_view(){
                 else if (selected_tab == 'winners'){
                     winners_noms_cache = data;
                 }
-                
                 render_active_list_view(data);
             }
             else{
-                tv.setData([]);
                 list_view_data = [ ];
                 photos_cache = data;
                 render_stream_photos(data);
@@ -1446,68 +1412,62 @@ function init_active_view(){
         xhr.open('GET', url);
         xhr.send();
     }
-
+    
     function endReloading(){
-    	// when you're done, just reset
-    	tv.setContentInsets({top:0},{animated:true});
-    	reloading = false;
+     // when you're done, just reset
+     tv.setContentInsets({top:0},{animated:true});
+     reloading = false;
         // lastUpdatedLabel.text = "Last Updated: "+formatDate();
-    	statusLabel.text = "Pull down to update...";
-    	actInd.hide();
-    	arrow.show();
+     statusLabel.text = "Pull down to update...";
+     actInd.hide();
+     arrow.show();
     }
     
     if (!globals_attached){    
-        tv.addEventListener('click', function(e){
     
-        });
-
         var countdown_interval_set = false;
         tv.addEventListener('scroll',function(e){
-        	var offset = e.contentOffset.y;
-        	if (offset <= -65.0 && !pulling)
-        	{
-        		var t = Ti.UI.create2DMatrix();
-        		t = t.rotate(-180);
-        		pulling = true;
-        		arrow.animate({transform:t,duration:180});
-        		statusLabel.text = "Release to update...";
-        	}
-        	else if (pulling && offset > -65.0 && offset < 0)
-        	{
-        		pulling = false;
-        		var t = Ti.UI.create2DMatrix();
-        		arrow.animate({transform:t,duration:180});
-        		statusLabel.text = "Pull down to update...";
-        	}
-        	if (offset < 0 && !countdown_interval_set){
-        	    countdown_interval_set = true;
-        	    clearInterval(countdown_interval);
-        	    GetCount();
+         var offset = e.contentOffset.y;
+         if (offset <= -65.0 && !pulling){
+             var t = Ti.UI.create2DMatrix();
+             t = t.rotate(-180);
+             pulling = true;
+             arrow.animate({transform:t,duration:180});
+             statusLabel.text = "Release to update...";
+         }
+         else if (pulling && offset > -65.0 && offset < 0){
+             pulling = false;
+             var t = Ti.UI.create2DMatrix();
+             arrow.animate({transform:t,duration:180});
+             statusLabel.text = "Pull down to update...";
+         }
+         if (offset < 0 && !countdown_interval_set){
+             countdown_interval_set = true;
+             clearInterval(countdown_interval);
+             GetCount();
                 countdown_interval = setInterval(GetCount, 1000);
-        	}
-        	else if (offset >= 0 && countdown_interval_set){
-        	    countdown_interval_set = false;
-        	    clearInterval(countdown_interval);
-        	}
+         }
+         else if (offset >= 0 && countdown_interval_set){
+             countdown_interval_set = false;
+             clearInterval(countdown_interval);
+         }
         });
-
+    
         tv.addEventListener('scrollEnd',function(e)
         {
-        	if (pulling && !reloading && e.contentOffset.y <= -65.0)
-        	{
-        		reloading = true;
-        		pulling = false;
-        		arrow.hide();
-        		actInd.show();
-        		statusLabel.text = "Reloading...";
-        		tv.setContentInsets({top:60},{animated:true});
-        		arrow.transform=Ti.UI.create2DMatrix();
-        		beginReloading();
-        	}
+         if (pulling && !reloading && e.contentOffset.y <= -65.0){
+             reloading = true;
+             pulling = false;
+             arrow.hide();
+             actInd.show();
+             statusLabel.text = "Reloading...";
+             tv.setContentInsets({top:60},{animated:true});
+             arrow.transform=Ti.UI.create2DMatrix();
+             beginReloading();
+         }
         });
         // End pull to refresh
-
+    
         Ti.App.addEventListener('update_active_noms', function(eventData) {
             selected_tab = 'active';
     
@@ -1518,21 +1478,21 @@ function init_active_view(){
             header_active_tab_animation.transform = header_active_tab_matrix;
             header_active_tab_animation.duration = 0;
     
-        	header_tab_selection.animate(header_active_tab_animation);
-	
+            header_tab_selection.animate(header_active_tab_animation);
+     
             beginReloading();
         });
     
         //Countdown
         var countdown = Ti.UI.createLabel({
-        	text:"",
-        	left:55,
-        	width:200,
-        	bottom:10,
-        	height:"auto",
-        	color:"#fff",
-        	textAlign:"center",
-        	font:{fontSize:14,fontWeight:"bold"}
+         text:"",
+         left:55,
+         width:200,
+         bottom:10,
+         height:"auto",
+         color:"#fff",
+         textAlign:"center",
+         font:{fontSize:14,fontWeight:"bold"}
         });
         tableHeader.add(countdown);
         
@@ -1552,15 +1512,15 @@ function init_active_view(){
         tzCurrent=(dateFuture.getTimezoneOffset()/60)*-2;
         dateFuture.setTime(Date.parse(dx))
         dateFuture.setHours(dateFuture.getHours() + tzCurrent - tzOffset);
-
+    
         function GetCount(){
-        	dateNow = new Date();									//grab current date
-        	amount = dateFuture.getTime() - dateNow.getTime();		//calc milliseconds between dates
-        	delete dateNow;
-        	// time is already past
-        	if(amount <= 1){
-        	    var date = new Date();
-        	    var month = date.getMonth();
+         dateNow = new Date();                                   //grab current date
+         amount = dateFuture.getTime() - dateNow.getTime();      //calc milliseconds between dates
+         delete dateNow;
+         // time is already past
+         if(amount <= 1){
+             var date = new Date();
+             var month = date.getMonth();
                 var todays_date = date.getDate();
                 var todays_year = date.getFullYear();
                 if (date.getHours() >= 23){
@@ -1575,31 +1535,31 @@ function init_active_view(){
                 tzCurrent=(dateFuture.getTimezoneOffset()/60)*-2;
                 dateFuture.setTime(Date.parse(dx))
                 dateFuture.setHours(dateFuture.getHours() + tzCurrent - tzOffset);
-
+    
                 // if ($('#winners_announced_cont').length == 0){
                 //     $('#cont').prepend('<div id="winners_announced_cont"><h2>Winners are being calculated. Check back in a few minutes.</h2></div>')
                 // }
-        	}
-    		days=0;hours=0;mins=0;secs=0;out="";
-
-    		amount = Math.floor(amount/1000);//kill the "milliseconds" so just secs
-
-    		days=Math.floor(amount/86400);//days
-    		amount=amount%86400;
-
-    		hours=Math.floor(amount/3600);//hours
-    		amount=amount%3600;
-
-    		mins=Math.floor(amount/60);//minutes
-    		amount=amount%60;
-
-    		secs=Math.floor(amount);//seconds
-
+         }
+         days=0;hours=0;mins=0;secs=0;out="";
+    
+         amount = Math.floor(amount/1000);//kill the "milliseconds" so just secs
+    
+         days=Math.floor(amount/86400);//days
+         amount=amount%86400;
+    
+         hours=Math.floor(amount/3600);//hours
+         amount=amount%3600;
+    
+         mins=Math.floor(amount/60);//minutes
+         amount=amount%60;
+    
+         secs=Math.floor(amount);//seconds
+    
             // if(days != 0){out += days +":";}
-    		if(days != 0 || hours != 0){out += hours +"h:";}
-    		if(days != 0 || hours != 0 || mins != 0){out += mins +"m:";}
-    		out += secs + 's';
-    		countdown.text = 'Time remaining ' + out;
+         if(days != 0 || hours != 0){out += hours +"h:";}
+         if(days != 0 || hours != 0 || mins != 0){out += mins +"m:";}
+         out += secs + 's';
+         countdown.text = 'Time remaining ' + out;
         }
         GetCount();
     }
@@ -1626,7 +1586,6 @@ win.addEventListener('focus', function(){
 });
 
 Ti.App.addEventListener('reset', function(eventData) {
-    tv.setData([]);
     reset = true;
     
     tabGroup = win.tabGroup;

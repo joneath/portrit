@@ -1,3 +1,13 @@
+Ti.App.addEventListener('pass_user_follow', function(eventData) {
+    if (init_count == 0){
+        user = String(eventData.user);
+        name = String(eventData.name);
+        method = String(eventData.method);
+
+        init_follow_view();
+    }
+});
+
 Ti.include('../../settings.js');
 Ti.include('../../includes.js');
 
@@ -82,7 +92,7 @@ function go_to_profile(e){
                 name: e.rowData.name,
                 username: e.rowData.username
             });
-    	}, 100);
+    	}, 200);
     }
 }
 
@@ -191,13 +201,13 @@ function render_follow_table_view(data){
         });
         
         profile_image = Ti.UI.createImageView({
-    		image: 'https://graph.facebook.com/' + data[i].fid + '/picture?type=square',
-    		defaultImage: '../../images/photo_loader.png',
+    		image: '../../images/photo_loader.png',
     		left: 5,
     		width: 35,
     		height: 35,
     		hires: true
     	});
+    	cachedImageView('profile_images', 'https://graph.facebook.com/' + data[i].fid + '/picture?type=square', profile_image);
         
         name = Titanium.UI.createLabel({
             color: '#333',
@@ -287,13 +297,3 @@ function init_follow_view(){
     }
     init_count += 1;
 }
-
-Ti.App.addEventListener('pass_user_follow', function(eventData) {
-    if (init_count == 0){
-        user = String(eventData.user);
-        name = String(eventData.name);
-        method = String(eventData.method);
-
-        init_follow_view();
-    }
-});

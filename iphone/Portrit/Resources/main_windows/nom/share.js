@@ -1,9 +1,20 @@
+Ti.App.addEventListener('pass_nom_data', function(eventData) {
+    name = String(eventData.name);
+    user = String(eventData.user);
+    photo = eventData.photo;
+    nominations = eventData.nominations;
+    tagged_users = eventData.tagged_users;
+    new_photo = eventData.new_photo;
+});
+
 Ti.include('../../settings.js');
 Ti.include('../../includes.js');
 Ti.include('lib/oauth_adapter.js');
 
 var win = Ti.UI.currentWindow,
     tabGroup = win.tabGroup,
+    twitter_switch = null,
+    facebook_switch = null,
     tv = null,
     me = JSON.parse(Ti.App.Properties.getString("me")),
     photo_id = null,
@@ -15,12 +26,23 @@ var win = Ti.UI.currentWindow,
     button_label = null,
     list_view_data = [ ];
     
-var oAuthAdapter = new OAuthAdapter(
-        'rWxNvv8pOSB0t9kgT59xVc2IUQXH1l8ESpfOst5sggw',
-        'RrYAd721jXeCJsp9QqtFw',
-        'HMAC-SHA1');
+var window_slide_out = Titanium.UI.createAnimation({
+    curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
+    left: -320,
+    duration: 250
+});
 
-oAuthAdapter.loadAccessToken('twitter');
+var window_slide_in = Titanium.UI.createAnimation({
+    curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
+    left: 0,
+    duration: 300
+});
+
+var window_slide_back = Titanium.UI.createAnimation({
+    curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
+    left: 320,
+    duration: 250
+});
 
 window_nav_bar = Titanium.UI.createView({
     backgroundImage: '../../images/iphone_header_blank.png',
@@ -39,7 +61,7 @@ back_buttom = Titanium.UI.createButton({
 });
 
 back_buttom.addEventListener('click', function(){
-    win.close();
+    win.close({animated:true});
 });
 window_nav_bar.add(back_buttom);
 
@@ -65,6 +87,13 @@ window_nav_bar.add(header_label);
 
 win.add(window_nav_bar);
 
+var oAuthAdapter = new OAuthAdapter(
+        'rWxNvv8pOSB0t9kgT59xVc2IUQXH1l8ESpfOst5sggw',
+        'RrYAd721jXeCJsp9QqtFw',
+        'HMAC-SHA1');
+
+oAuthAdapter.loadAccessToken('twitter');
+
 var fadeTo = Titanium.UI.createAnimation({
     curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
     opacity: 0.5,
@@ -87,12 +116,11 @@ function submit_nom(e){
     var caption_text = caption.value;
     
     var xhr = Titanium.Network.createHTTPClient();
-    xhr.onload = function()
-    {   
+    xhr.onload = function(){   
         var data = JSON.parse(this.responseData);
         var nom = data[0];
         
-        if (twitter_switch.value){
+        if (twitter_switch && twitter_switch.value){
             share_on_twitter(me, nom, caption_text);
         }
         if (facebook_switch.value){
@@ -130,23 +158,47 @@ function submit_nom(e){
         // Titanium.UI.currentTab.open(w,{animated:true});
     };
     
-    var url = SERVER_URL + '/api/nominate_photo/';
-    xhr.open('POST', url);
-    
-    var send_data = {
-        'access_token': me.access_token,
-        'photo_id': photo.id,
-        'owner': user,
-        'nominations': nominations,
-        'tags': tagged_users,
-        'comment_text': caption_text,
-    };
-    
-    // send the data
-    xhr.send(send_data);
+    var url = '';
+    if (nominations != ''){
+        url = SERVER_URL + '/api/nominate_photo/';
+        var send_data = {
+            'access_token': me.access_token,
+            'photo_id': photo.id,
+            'owner': user,
+            'nominations': nominations,
+            'tags': tagged_users,
+            'comment_text': caption_text,
+        };
+        xhr.open('POST', url);
+        xhr.send(send_data);
+    }
+    else{
+        //Mark photo live
+        url = SERVER_URL + '/api/nominate_photo/';
+        var send_data = {
+            'access_token': me.access_token,
+            'photo_id': photo.id,
+            'owner': user,
+            'nominations': nominations,
+            'tags': tagged_users,
+            'comment_text': caption_text,
+        };
+    }
+
 }
 
-function init_share_nom(){
+tv = Ti.UI.createTableView({
+        backgroundColor: '#eee',
+        top: 40,
+        style:Titanium.UI.iPhone.TableViewStyle.GROUPED
+    });
+    
+tv.addEventListener('click', function(e){
+
+});
+win.add(tv);
+
+var init_share_nom = function(){
     var options_data = [ ];
     
     // Find/Follow Section
@@ -269,25 +321,4 @@ function init_share_nom(){
     options_data.push(section);
     
     tv.setData(options_data);
-}
-
-tv = Ti.UI.createTableView({
-        backgroundColor: '#eee',
-        top: 40,
-        style:Titanium.UI.iPhone.TableViewStyle.GROUPED
-    });
-    
-tv.addEventListener('click', function(e){
-
-});
-win.add(tv);
-
-init_share_nom();
-
-Ti.App.addEventListener('pass_nom_data', function(eventData) {
-    name = String(eventData.name);
-    user = String(eventData.user);
-    photo = eventData.photo;
-    nominations = eventData.nominations;
-    tagged_users = eventData.tagged_users;
-});
+}();

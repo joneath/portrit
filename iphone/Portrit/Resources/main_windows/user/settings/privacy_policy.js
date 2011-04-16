@@ -32,5 +32,5 @@ window_nav_bar.add(back);
 
 win.add(window_nav_bar);
     
-var webview = Titanium.UI.createWebView({url: SERVER_URL + '/#/context=privacy', top: 40});
+var webview = Titanium.UI.createWebView({url: SERVER_URL + '/#!/privacy/', top: 40});
 win.add(webview);

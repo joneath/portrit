@@ -10,7 +10,13 @@ Titanium.Facebook.permissions = ['read_stream','publish_stream','user_photos','u
 
 var window_slide_out = Titanium.UI.createAnimation({
     curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
-    right: 320,
+    left: -320,
+    duration: 250
+});
+
+var window_slide_back = Titanium.UI.createAnimation({
+    curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
+    left: 0,
     duration: 250
 });
 
@@ -43,15 +49,6 @@ var tab1 = Titanium.UI.createTab({
     window:win1
 });
 
-var label1 = Titanium.UI.createLabel({
- color:'#999',
- font:{fontSize:20,fontFamily:'Helvetica Neue'},
- textAlign:'center',
- width:'auto'
-});
-
-win1.add(label1);
-
 //
 // create controls tab and root window
 //
@@ -67,34 +64,17 @@ var tab2 = Titanium.UI.createTab({
     window:win2
 });
 
-var label2 = Titanium.UI.createLabel({
- color:'#999',
- font:{fontSize:20,fontFamily:'Helvetica Neue'},
- textAlign:'center',
- width:'auto'
-});
-
-win2.add(label2);
-
 var win3 = Titanium.UI.createWindow({  
     title:'Share',
-    url: 'main_windows/share.js',
+    fullscreen: true,
     backgroundColor:'#000'
 });
+win3.hideNavBar({animated:false});
 var tab3 = Titanium.UI.createTab({ 
     icon:'images/camera_button.png',
     title:'Share',
     window:win3
 });
-
-var label3 = Titanium.UI.createLabel({
- color:'#999',
- font:{fontSize:20,fontFamily:'Helvetica Neue'},
- textAlign:'center',
- width:'auto'
-});
-
-win3.add(label3);
 
 //Win 4
 var win4 = Titanium.UI.createWindow({  
@@ -109,15 +89,6 @@ var tab4 = Titanium.UI.createTab({
     window:win4
 });
 
-var label4 = Titanium.UI.createLabel({
- color:'#999',
- font:{fontSize:20,fontFamily:'Helvetica Neue'},
- textAlign:'center',
- width:'auto'
-});
-
-win4.add(label4);
-
 //Win 5
 var win5 = Titanium.UI.createWindow({  
     title:'Profile',
@@ -131,23 +102,220 @@ var tab5 = Titanium.UI.createTab({
     window:win5
 });
 
-var label5 = Titanium.UI.createLabel({
- color:'#999',
- font:{fontSize:20,fontFamily:'Helvetica Neue'},
- textAlign:'center',
- width:'auto'
-});
-
-win5.add(label5);
-
-//
 //  add tabs
-//
 tabGroup.addTab(tab1);
 tabGroup.addTab(tab2);
 tabGroup.addTab(tab3);
 tabGroup.addTab(tab4);
 tabGroup.addTab(tab5);
+
+// Camera 
+var nominate_window = null;
+function add_nominate_window(){
+    // if (!nominate_window){
+        // nominate_window = Titanium.UI.createWindow({
+        //     );
+    // }
+    
+    nominate_window = Ti.UI.createWindow({
+        backgroundColor:"#000", 
+        fullscreen: true,
+        url:'main_windows/nom/nominate.js',
+        width: 320
+    });
+	tab3.open(nominate_window,{animated:true});
+
+    // nominate_window.open(window_slide_in);
+    // setTimeout(function(){
+    //     camera_overlay.animate(window_slide_out);
+    // }, 200);
+
+    // Titanium.Media.hideCamera();
+}
+
+function pass_nominate_data(e){
+    // setTimeout(function(){
+	    Ti.App.fireEvent('pass_photo_data', {
+            user: me.fid,
+            name: me.name,
+            username: me.username,
+            photo: e.photo,
+            new_photo: e.new_photo
+        });
+    // }, 200);
+}
+
+var camera_overlay = Titanium.UI.createView({
+    height: 480,
+    width: 320,
+    left: 0,
+});
+
+var close_camera = Ti.UI.createButton({
+	title:"Close",
+    font: {fontSize: 16, fontWeight: 'bold'},
+	backgroundImage: 'images/load_more_button.png',
+	width: 118,
+	height: 42,
+    bottom: 5,
+	left: 5
+});
+camera_overlay.add(close_camera);
+
+close_camera.addEventListener('click', function(e){
+    Titanium.Media.hideCamera();
+    reset_after_camera();
+});
+
+var take_photo = Ti.UI.createButton({
+	title:"Take",
+    font: {fontSize: 16, fontWeight: 'bold'},
+	backgroundImage: 'images/load_more_button.png',
+	width: 118,
+	height: 42,
+    bottom: 5,
+    right: 5
+});
+camera_overlay.add(take_photo);
+
+var camera_listeners_attached = false;
+var take_photo_click = false;
+win3.addEventListener('focus', function(){
+    tabGroup.bottom = -50;
+    tabGroup.tabBarVisible = false;
+    // if (!camera_listeners_attached){
+    //     camera_listeners_attached = true;
+    //     camera_overlay.zIndex = 10;
+    //     take_photo.bottom = 50;
+    //     win3.add(camera_overlay);
+    //     take_photo.addEventListener('click', function(e){
+    //         var data = {
+    //             'photo': {
+    //                 'width': 640,
+    //                 'height': 960
+    //             },
+    //             'new_photo': true
+    //         };
+    //     
+    //         // Titanium.Media.hideCamera();
+    //         add_nominate_window(data);
+    //     });
+    // }
+    
+    Titanium.Media.showCamera({
+        success: cammera_success,
+        cancel: camera_cancel,
+        error: camera_error,
+        animated: false,
+        autohide: false,
+        showControls: false,
+        // saveToPhotoGallery: true,
+        mediaTypes: Ti.Media.MEDIA_TYPE_PHOTO,
+        overlay: camera_overlay
+        // allowEditing:true
+    });
+    
+    if (!camera_listeners_attached){
+        camera_listeners_attached = true;
+        
+        take_photo.addEventListener('click', function(e){
+            // Ti.Media.cameraFlashMode = Ti.Media.CAMERA_FLASH_ON
+            if (!take_photo_click){
+                take_photo_click = true;
+                Ti.Media.takePicture();
+                add_nominate_window();
+            }
+        });
+    }
+});
+
+function cammera_success(event){
+    Titanium.Media.hideCamera();
+    var image = event.media;
+    // var filename = new Date.getTime();
+    // var f = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, filename + '.png');
+    // f.write(image);
+    
+    var imageView = Titanium.UI.createImageView({
+            image:image,
+            width:640,
+            height:960
+        });
+    image = imageView.toImage();
+    var f = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, 'temp.png');
+    f.write(image);
+    
+    var data = {
+        'photo': {
+            'width': 640,
+            'height': 640
+        },
+        'new_photo': true
+    };
+    
+    pass_nominate_data(data);
+    // image.imageAsCropped({width:480,height:480,x:0,y:80});
+    
+    var xhr = Titanium.Network.createHTTPClient();
+    xhr.onload = function(e) {
+
+    };
+    var url = SERVER_URL + '/upload_photo/'
+    xhr.open('POST', url);
+    xhr.send({
+        'file': image,
+        'iphone': true,
+        'access_token': me.access_token
+    });
+    // reset_after_camera();
+    // Ti.App.fireEvent('update_active_noms', {});
+}
+
+function camera_cancel(){
+    reset_after_camera();
+}
+
+function camera_error(error){
+    var a = Titanium.UI.createAlertDialog({title:'Camera'});
+
+    if (error.code == Titanium.Media.NO_CAMERA){
+        a.setMessage('Device does not have video recording capabilities');
+    }
+    else{
+        a.setMessage('Unexpected error: ' + error.code);
+    }
+    
+    a.show();
+    reset_after_camera();
+}
+
+Ti.App.addEventListener('cancel_nominate', function(e){
+    // camera_overlay.animate(window_slide_back);
+    take_photo_click = false;
+    setTimeout(function(){
+        // nominate_window.close();
+        // nominate_window.hide()
+        Titanium.Media.showCamera({
+            success: cammera_success,
+            cancel: camera_cancel,
+            error: camera_error,
+            animated: false,
+            autohide: false,
+            showControls: false,
+            // saveToPhotoGallery: true,
+            mediaTypes: Ti.Media.MEDIA_TYPE_PHOTO,
+            overlay: camera_overlay
+            // allowEditing:true
+        });
+    }, 350);
+});
+
+function reset_after_camera(){
+    take_photo_click = false;
+    tabGroup.bottom = 0;
+    tabGroup.tabBarVisible = true;
+    tabGroup.setActiveTab(0);
+}
 
 function load_portrit(animate){
     me = JSON.parse(Ti.App.Properties.getString("me"));
@@ -221,7 +389,7 @@ function load_portrit(animate){
 function init_new_user(){
     var create_account_win = Titanium.UI.createWindow({
         left: 320,
-        width: 320,
+        width: 320
     });
     
     var logo_cont = Titanium.UI.createView({
@@ -281,7 +449,7 @@ function init_new_user(){
         paddingRight: 5,
         font: {fontSize: 18},
         hintText: 'Username',
-        returnKeyType: Titanium.UI.RETURNKEY_GO,
+        returnKeyType: Titanium.UI.RETURNKEY_GO
     });
     username.addEventListener('focus', function(){
         tv.scrollToTop(120);
@@ -401,7 +569,6 @@ function render_photos(data){
     
     for (var i = 0; i < top; i++){
         if (i % 3 == 0 && i > 0){
-            top_offset = 100;
             photo_in_row = 0;
             top_offset = 0;
             row = Ti.UI.createTableViewRow({
@@ -410,8 +577,7 @@ function render_photos(data){
             });
             img_cont = Titanium.UI.createView({
                 height: 'auto',
-                width: 320,
-                top: 5
+                width: 320
             });
             row.add(img_cont);
             
@@ -425,23 +591,19 @@ function render_photos(data){
             
             var img_cont = Titanium.UI.createView({
                 height: 'auto',
-                width: 320,
-                top: 5
+                width: 320
             });
             row.add(img_cont);
             
             photo_data.push(row);
-        }
-        if (i + 3 > top){
-            img_cont.bottom = 5;
         }
         
         var image_thumb = Ti.UI.createImageView({
     		image: data[i].photo.crop,
     		defaultImage: 'images/photo_loader.png',
             left: (photo_in_row * 105) + 5,
-            // bottom: 5,
-            // top: top_offset,
+            bottom: 5,
+            top: top_offset,
     		width: 100,
     		height: 75,
     		hires: true
@@ -489,7 +651,7 @@ var trophy_thumbs = [ ];
 if (!Titanium.Facebook.loggedIn){
     landing_win = Titanium.UI.createWindow({
         backgroundImage: 'images/background.png',
-        width: 320,
+        width: 320
     });
     Titanium.UI.iPhone.setStatusBarStyle(Titanium.UI.iPhone.StatusBar.OPAQUE_BLACK);
     
@@ -501,7 +663,7 @@ if (!Titanium.Facebook.loggedIn){
         backgroundImage: 'images/fb_login_back.png',
         height: 50,
         bottom: 0,
-        width: 320,
+        width: 320
     });
     fb_button_cont.add(fb_button);
     landing_win.add(fb_button_cont);

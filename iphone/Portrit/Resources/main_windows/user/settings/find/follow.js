@@ -1,3 +1,13 @@
+var init_request_count = 0;
+Ti.App.addEventListener('find_type', function(eventData) {
+    if (init_request_count == 0){
+        init_request_count += 1;
+        find_type = String(eventData.find_type);
+
+        init_follow_friends();
+    }
+});
+
 Ti.include('../../../../settings.js');
 Ti.include('../../../../includes.js');
 Ti.include('lib/oauth_adapter.js');
@@ -379,14 +389,3 @@ tv.addEventListener('click', function(e){
 });
 
 win.add(tv);
-
-var init_request_count = 0;
-Ti.App.addEventListener('find_type', function(eventData) {
-    if (init_request_count == 0){
-        init_request_count += 1;
-        find_type = String(eventData.find_type);
-
-        init_follow_friends();
-    }
-});
-

@@ -19,6 +19,7 @@ from settings import ENV, MEDIA_ROOT, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, NODE
                         BITLY_LOGIN, BITLY_APIKEY
 
 from portrit_fb import Portrit_FB
+from main.api_views import get_user_from_access_token
 
 from itertools import chain
 from datetime import datetime
@@ -68,8 +69,15 @@ def upload_photo(request):
     try:
         cookie = facebook.get_user_from_cookie(
             request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
-        if cookie:
-            user = Portrit_User.objects.get(fb_user__fid=int(cookie["uid"]))
+        access_token = request.POST.get('access_token')
+        from_iphone = request.POST.get('iphone')
+        if cookie or access_token:
+            user = None
+            if cookie:
+                user = Portrit_User.objects.get(fb_user__fid=int(cookie["uid"]))
+            else:
+                user = get_user_from_access_token(access_token)
+
             file = request.FILES['file']
             file_name = str(uuid.uuid4())
             
@@ -83,26 +91,34 @@ def upload_photo(request):
             large_size_name = file_name + '_720.jpg'
             crop_size_name = file_name + '_crop.jpg'
             crop_small_size_name = file_name + '_crop_small.jpg'
+            iphone_size_name = file_name + '_iphone.jpg'
             
             image = Image.open(file_loc)
             size = 130, 130
             image.thumbnail(size, Image.ANTIALIAS)
-            image.save(file_loc + '_130.jpg', 'JPEG', quality=90)
+            image.save(file_loc + '_130.jpg', 'JPEG', quality=70)
             thumb_img_size = image.size
             
             image = Image.open(file_loc)
-            size = 700, 700
-            image.thumbnail(size, Image.ANTIALIAS)
+            if from_iphone:
+                image = image.crop((0, 80, 640, 720))
+            else:                
+                size = 720, 720
+                image.thumbnail(size, Image.ANTIALIAS)
+                
             image.save(file_loc + '_720.jpg', 'JPEG', quality=90)
             large_img_size = image.size
             
+            #iphone
+            image.save(file_loc + '_iphone.jpg', 'JPEG', quality=70)
+            
             #Create crop section
             cropped_image = crop_to_size(image, (400,400), large_img_size, (200, 150))
-            cropped_image.save(file_loc + '_crop.jpg', 'JPEG', quality=90)
+            cropped_image.save(file_loc + '_crop.jpg', 'JPEG', quality=80)
             
             #Create small crop
             small_cropped_image = crop_to_size(image, (300,300), large_img_size, (100, 100))
-            small_cropped_image.save(file_loc + '_crop_small.jpg', 'JPEG', quality=90)
+            small_cropped_image.save(file_loc + '_crop_small.jpg', 'JPEG', quality=70)
             
             s = S3Bucket('cdn.portrit.com', access_key=AWS_KEY, secret_key=AWS_SECRET_KEY)
             thumbnail = open(file_loc + '_130.jpg', 'rb+')
@@ -112,6 +128,10 @@ def upload_photo(request):
             large_image = open(file_loc + '_720.jpg', 'rb+')
             s.put(large_size_name, large_image.read(), acl="public-read")
             large_image.close()
+            
+            iphone_image = open(file_loc + '_iphone.jpg', 'rb+')
+            s.put(iphone_size_name, iphone_image.read(), acl="public-read")
+            iphone_image.close()
             
             cropped_image = open(file_loc + '_crop.jpg', 'rb+')
             s.put(crop_size_name, cropped_image.read(), acl="public-read")
@@ -124,14 +144,15 @@ def upload_photo(request):
             s3_url = "http://cdn.portrit.com/"
             photo = Photo(path=file_loc, 
                         thumbnail=(s3_url+thumbnail_size_name), 
-                        large=(s3_url+large_size_name), 
+                        large=(s3_url+large_size_name),
+                        iphone=(s3_url+iphone_size_name),
                         crop=(s3_url+crop_size_name),
                         crop_small=(s3_url+crop_small_size_name),
                         width=large_img_size[0],
                         height=large_img_size[1],
                         owner=user,
                         active=True, 
-                        pending=True)
+                        pending=False)
             photo.save()
             
             data = {'id': str(photo.id), 'thumb': photo.thumbnail, 'name': file.name}
