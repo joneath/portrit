@@ -61,7 +61,14 @@ back_buttom = Titanium.UI.createButton({
 });
 
 back_buttom.addEventListener('click', function(){
-    win.close({animated:true});
+    if (typeof(new_photo) == 'undefined'){
+        win.close();
+    }
+    else{
+        var current_win = win;
+        win.close(window_slide_back);
+        Ti.App.fireEvent('cancel_share');
+    }
 });
 window_nav_bar.add(back_buttom);
 

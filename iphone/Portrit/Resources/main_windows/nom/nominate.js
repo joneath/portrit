@@ -71,7 +71,8 @@ back_buttom.addEventListener('click', function(){
         win.close();
     }
     else{
-        win.close({animated:true});
+        var current_win = Ti.UI.currentWindow;
+        current_win.animate(window_slide_back);
         Ti.App.fireEvent('cancel_nominate');
     }
 });
@@ -543,8 +544,23 @@ function post_nom(e){
 	}
 	
 	if (selected_nom_count > 0 || typeof(new_photo) != 'undefined'){
-        var w = Ti.UI.createWindow({backgroundColor:"#eee", url:'share.js'});
-    	Titanium.UI.currentTab.open(w,{animated:true});
+	    if (typeof(new_photo) == 'undefined'){
+	        var w = Ti.UI.createWindow({backgroundColor:"#eee", url:'share.js'});
+        	Titanium.UI.currentTab.open(w,{animated:true});
+	    }
+	    else{
+	        var share_window = Titanium.UI.createWindow({
+                backgroundColor:"#eee", 
+                url:'share.js',
+                left: 320,
+                width: 320
+            });
+            share_window.open();
+            setTimeout(function(){
+                share_window.animate(window_slide_in);
+                win.animate(window_slide_out);
+            }, 200);
+	    }
     	
 	    var tagged_users = '';
     	for (user in tagged_friends){

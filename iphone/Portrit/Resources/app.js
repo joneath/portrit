@@ -113,22 +113,20 @@ tabGroup.addTab(tab5);
 var nominate_window = null;
 function add_nominate_window(){
     // if (!nominate_window){
-        // nominate_window = Titanium.UI.createWindow({
-        //     );
+        nominate_window = Titanium.UI.createWindow({
+            backgroundColor:"#000", 
+            fullscreen: true,
+            url:'main_windows/nom/nominate.js',
+            left: 320,
+            width: 320
+        });
     // }
-    
-    nominate_window = Ti.UI.createWindow({
-        backgroundColor:"#000", 
-        fullscreen: true,
-        url:'main_windows/nom/nominate.js',
-        width: 320
-    });
-	tab3.open(nominate_window,{animated:true});
 
-    // nominate_window.open(window_slide_in);
-    // setTimeout(function(){
-    //     camera_overlay.animate(window_slide_out);
-    // }, 200);
+    nominate_window.open();
+    setTimeout(function(){
+        camera_overlay.animate(window_slide_out);
+        nominate_window.animate(window_slide_in);
+    }, 200);
 
     // Titanium.Media.hideCamera();
 }
@@ -290,11 +288,11 @@ function camera_error(error){
 }
 
 Ti.App.addEventListener('cancel_nominate', function(e){
-    // camera_overlay.animate(window_slide_back);
+    camera_overlay.animate(window_slide_back);
     take_photo_click = false;
     setTimeout(function(){
-        // nominate_window.close();
-        // nominate_window.hide()
+        nominate_window.close();
+        nominate_window.hide()
         Titanium.Media.showCamera({
             success: cammera_success,
             cancel: camera_cancel,
@@ -307,7 +305,7 @@ Ti.App.addEventListener('cancel_nominate', function(e){
             overlay: camera_overlay
             // allowEditing:true
         });
-    }, 350);
+    }, 250);
 });
 
 function reset_after_camera(){
@@ -315,6 +313,11 @@ function reset_after_camera(){
     tabGroup.bottom = 0;
     tabGroup.tabBarVisible = true;
     tabGroup.setActiveTab(0);
+    
+    if (nominate_window){
+        nominate_window.close();
+        nominate_window.hide()
+    }
 }
 
 function load_portrit(animate){

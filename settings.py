@@ -94,8 +94,8 @@ elif ENV == "TEST":
         ("Jonathan Eatherly", "jonathan.eatherly@gmail.com"),
     )
     
-    AWS_KEY = 'yKWjljJoVQsgt4vKTx8d7A'
-    AWS_SECRET_KEY = 'wwmtVM3qGdRA8PFIiympmWKjy0hqicoLNnIjA0Arh4'
+    AWS_KEY = 'AKIAIYXPXPJDU2VIKQKQ'
+    AWS_SECRET_KEY = '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'
     
     TWITTER_CONSUMER_KEY = 'yKWjljJoVQsgt4vKTx8d7A'
     TWITTER_CONSUMER_SECRET = 'wwmtVM3qGdRA8PFIiympmWKjy0hqicoLNnIjA0Arh4'
