@@ -730,7 +730,7 @@ function add_comment_to_nom(e){
 	var textarea_focus_count = 0;
 	clearInterval(textarea_focus);
 	textarea_focus = setInterval(function(){
-	    if (textarea_focus_count < 5){
+	    if (textarea_focus_count < 10){
 	        comment_textarea.focus();
     	    textarea_focus_count += 1;
 	    }
@@ -952,7 +952,10 @@ function photo_thumb_click(e){
         update_nom_detail(selected_nom_index);
         
         if (!won){
-	        place_text.text = getOrdinal(noms_in_cat[selected_nom_index].position+1);
+            var place = getOrdinal(noms_in_cat[selected_nom_index].position+1);
+            if (place != 'NaNth'){
+                place_text.text = place;
+            }
         }
         check_detail_pagination(old_index, selected_nom_index, noms_in_cat.length, noms_in_cat[selected_nom_index].position);
     }
@@ -1487,38 +1490,41 @@ function render_nom_detail(noms){
     	else{
     	    selected_nom_index = i;
     	    if (!won){
-    	        place_text = Titanium.UI.createLabel({
-            	    text: getOrdinal(noms[i].position+1),
-                    textAlign: 'center',
-                    color: '#fff',
-                    height: 'auto',
-                    width: 'auto',
-                    shadowColor: '#333',
-                    top: 0,
-                    shadowOffset: {x: 1, y: 1},
-                    zIndex: 1,
-                    font:{fontSize: 32, fontWeight: 'bold'}
-                });
+    	        var place = getOrdinal(noms[i].position+1);
+    	        if (place != 'NaNth'){
+    	            place_text = Titanium.UI.createLabel({
+                	    text: getOrdinal(noms[i].position+1),
+                        textAlign: 'center',
+                        color: '#fff',
+                        height: 'auto',
+                        width: 'auto',
+                        shadowColor: '#333',
+                        top: 0,
+                        shadowOffset: {x: 1, y: 1},
+                        zIndex: 1,
+                        font:{fontSize: 32, fontWeight: 'bold'}
+                    });
 
-                post_time_background = Titanium.UI.createView({
-                    backgroundColor: '#000',
-                    borderRadius: 5,
-                    opacity: 0.8,
-                    height: '100%',
-                    width: '100%',
-                    zIndex: -1
-                });
+                    post_time_background = Titanium.UI.createView({
+                        backgroundColor: '#000',
+                        borderRadius: 5,
+                        opacity: 0.8,
+                        height: '100%',
+                        width: '100%',
+                        zIndex: -1
+                    });
 
-                post_time_cont = Titanium.UI.createView({
-                    right: 5,
-                    bottom: 5,
-                    height: 40,
-                    width: 70,
-                    zIndex: 1
-                });
-                post_time_cont.add(post_time_background);
-                post_time_cont.add(place_text);   
-                detail_img_cont.add(post_time_cont);
+                    post_time_cont = Titanium.UI.createView({
+                        right: 5,
+                        bottom: 5,
+                        height: 40,
+                        width: 70,
+                        zIndex: 1
+                    });
+                    post_time_cont.add(post_time_background);
+                    post_time_cont.add(place_text);   
+                    detail_img_cont.add(post_time_cont);   
+    	        }
                 
                 vote_up.nom = noms[i];
         	    vote_down.nom = noms[i];

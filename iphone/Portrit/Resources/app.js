@@ -268,6 +268,12 @@ function cammera_success(event){
         var id = data.id;
         Ti.App.Properties.setString("upload_complete", id);
     };
+    xhr.onerror = function(e){
+        alert(t);
+    };
+    xhr.onsendstream = function(e){
+        
+    };
     var url = SERVER_URL + '/upload_photo/'
     xhr.open('POST', url);
     xhr.send({
@@ -340,7 +346,7 @@ function reset_after_camera(prev){
     
     if (nominate_window){
         nominate_window.close();
-        nominate_window.hide()
+        nominate_window.hide();
     }
 }
 

@@ -1,17 +1,5 @@
-Ti.include('../../settings.js');
-Ti.include('../../includes.js');
+var win = Ti.UI.currentWindow;
 
-var me = JSON.parse(Ti.App.Properties.getString("me")),
-    win = Ti.UI.currentWindow,
-    tabGroup = win.tabGroup,
-    tv = null,
-    user = null,
-    window_nav_bar = null,
-    back_buttom = null,
-    button_label = null,
-    user_settings_data = null,
-    name = '';
-    
 window_nav_bar = Titanium.UI.createView({
     backgroundImage: '../../images/iphone_header_blank.png',
     width: 320,
@@ -35,11 +23,11 @@ back.addEventListener('click', function(){
 window_nav_bar.add(back);
 
 var header_label = Titanium.UI.createLabel({
-        text: 'Options',
-        color: '#fff',
-        textAlign: 'center',
-        font:{fontSize:22, fontWeight: 'bold'}
-    });
+    text: 'Options',
+    color: '#fff',
+    textAlign: 'center',
+    font:{fontSize:22, fontWeight: 'bold'}
+});
 window_nav_bar.add(header_label);
 win.add(window_nav_bar);
 
@@ -49,16 +37,28 @@ var fadeIn = Titanium.UI.createAnimation({
     duration: 300
 });
 
-tv = Ti.UI.createTableView({
-        backgroundColor: '#eee',
-        top: 40,
-        style:Titanium.UI.iPhone.TableViewStyle.GROUPED
-    });
+var tv = Ti.UI.createTableView({
+    backgroundColor: '#eee',
+    top: 40,
+    style:Titanium.UI.iPhone.TableViewStyle.GROUPED
+});
     
 tv.addEventListener('click', function(e){
 
 });
 win.add(tv);
+
+Ti.include('../../settings.js');
+Ti.include('../../includes.js');
+
+var me = JSON.parse(Ti.App.Properties.getString("me")),
+    tabGroup = win.tabGroup,
+    user = null,
+    window_nav_bar = null,
+    back_buttom = null,
+    button_label = null,
+    user_settings_data = null,
+    name = '';
 
 function open_email_dialog(type){
     var emailDialog = Titanium.UI.createEmailDialog();
@@ -89,11 +89,11 @@ function open_email_dialog(type){
     {
         if (e.result == emailDialog.SENT)
         {
-            if (Ti.Platform.osname != 'android') {
-                // android doesn't give us useful result codes.
-                // it anyway shows a toast.
-                alert("message was sent");
-            }
+            // if (Ti.Platform.osname != 'android') {
+            //     // android doesn't give us useful result codes.
+            //     // it anyway shows a toast.
+            //     alert("message was sent");
+            // }
         }
         else
         {
@@ -158,12 +158,12 @@ var init_options = function(){
 	    text: 'Account',
         color: '#4c566d',
         left: 20,
-        size: {width: 'auto', height: 'auto'},
+        size: {width: 320, height: 20},
         font:{fontSize: 18, fontWeight: 'bold'}
     });
     var account_header = Titanium.UI.createView({
         height: 30,
-        width: 'auto'
+        width: 320
     });
     account_header.add(account_label);
     
@@ -206,10 +206,10 @@ var init_options = function(){
     });
     
     var row = Ti.UI.createTableViewRow({
-            color: '#333',
-            font:{fontSize: 18, fontWeight: 'bold'},
-            backgroundColor: '#fff',
-            selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+        color: '#333',
+        font:{fontSize: 18, fontWeight: 'bold'},
+        backgroundColor: '#fff',
+        selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
     });
     row.add(logout);
     section.add(row);
@@ -220,12 +220,12 @@ var init_options = function(){
 	    text: 'About',
         color: '#4c566d',
         left: 20,
-        size: {width: 'auto', height: 'auto'},
+        size: {width: 320, height: 20},
         font:{fontSize: 18, fontWeight: 'bold'}
     });
     var about_header = Titanium.UI.createView({
         height: 30,
-        width: 'auto'
+        width: 320
     });
     about_header.add(about_label);
     
@@ -320,8 +320,7 @@ var init_options = function(){
     //Load user settings data
     var xhr = Titanium.Network.createHTTPClient();
 
-    xhr.onload = function()
-    {
+    xhr.onload = function(){
     	data = JSON.parse(this.responseData);
     	user_settings_data = data;
     	Ti.App.Properties.setString("user_settings", JSON.stringify(user_settings_data));
@@ -333,7 +332,9 @@ var init_options = function(){
 
     // send the data
     xhr.send();
-}();
+};
+
+setTimeout(init_options, 100);
 
 Ti.App.addEventListener('reset', function(eventData) {
     win.close();

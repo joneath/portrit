@@ -1,14 +1,6 @@
-Ti.include('../../../settings.js');
-Ti.include('../../../includes.js');
+var win = Ti.UI.currentWindow;
+var tv = null;
 
-var me = JSON.parse(Ti.App.Properties.getString("me")),
-    win = Ti.UI.currentWindow,
-    tv = null,
-    user = null,
-    window_nav_bar = null,
-    back_buttom = null,
-    button_label = null,
-    name = '';
     
 window_nav_bar = Titanium.UI.createView({
     backgroundImage: '../../../images/iphone_header_blank.png',
@@ -32,14 +24,30 @@ back.addEventListener('click', function(){
 
 window_nav_bar.add(back);
 
-// var header_label = Titanium.UI.createLabel({
-//         text: 'Search Portrit',
-//         color: '#fff',
-//         textAlign: 'center',
-//         font:{fontSize:24}
-//     });
-// window_nav_bar.add(header_label);
 win.add(window_nav_bar);
+
+tv = Ti.UI.createTableView({
+        backgroundColor: '#eee',
+        top: 83,
+        separatorStyle: 1,
+        style: Titanium.UI.iPhone.TableViewStyle.PLAIN
+    });
+
+tv.addEventListener('click', function(e){
+
+});
+
+win.add(tv);
+
+Ti.include('../../../settings.js');
+Ti.include('../../../includes.js');
+
+var me = JSON.parse(Ti.App.Properties.getString("me")),
+    user = null,
+    window_nav_bar = null,
+    back_buttom = null,
+    button_label = null,
+    name = '';
 
 function go_to_profile(e){
     if (e.source.button == undefined){
@@ -266,16 +274,3 @@ search.addEventListener('return', function(e){
 });
 
 win.add(search)
-    
-tv = Ti.UI.createTableView({
-        backgroundColor: '#eee',
-        top: 83,
-        separatorStyle: 1,
-        style: Titanium.UI.iPhone.TableViewStyle.PLAIN
-    });
-
-tv.addEventListener('click', function(e){
-
-});
-
-win.add(tv);

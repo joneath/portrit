@@ -173,6 +173,7 @@ function close_share_nom(){
         
         setTimeout(function(){
             win.opacity = 1;
+            Ti.App.fireEvent('close_nominate_page', { });
             Ti.App.fireEvent('update_active_noms', { });
             if (user == me.fid){
                 Ti.App.fireEvent('update_my_photos', { });
@@ -385,6 +386,10 @@ var init_share_nom = function(){
     section.add(row);
     
     options_data.push(section);
+    
+    if (typeof(new_photo) != 'undefined'){
+        
+    }
     
     tv.setData(options_data);
 }();

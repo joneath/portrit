@@ -1,16 +1,5 @@
-Ti.include('../settings.js');
-Ti.include('../includes.js');
-
-var me = JSON.parse(Ti.App.Properties.getString("me")),
-    win = Ti.UI.currentWindow,
-    tv = null,
-    list_view_data = [ ],
-    notification_cache = [ ],
-    notification_count = 0,
-    newest_notification = null,
-    window_nav_bar = null,
-    clear_button = null,
-    notifications_empty_row = null;
+var win = Ti.UI.currentWindow;
+var tv = null;
 
 var window_nav_bar = Titanium.UI.createView({
     backgroundImage: '../images/iphone_header_blank.png',
@@ -29,6 +18,19 @@ var header_label = Titanium.UI.createLabel({
 window_nav_bar.add(header_label);
 win.add(window_nav_bar);
 win.hideNavBar({animated:false});
+
+Ti.include('../settings.js');
+Ti.include('../includes.js');
+
+var me = JSON.parse(Ti.App.Properties.getString("me")),
+    win = Ti.UI.currentWindow,
+    tv = null,
+    list_view_data = [ ],
+    notification_cache = [ ],
+    notification_count = 0,
+    newest_notification = null,
+    clear_button = null,
+    notifications_empty_row = null;
 
 var fadeTo = Titanium.UI.createAnimation({
     curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
@@ -133,7 +135,7 @@ function render_notifications(data){
     for (var i = 0; i < data.length; i++){
         row = Ti.UI.createTableViewRow({
                 backgroundColor: '#fff',
-                height:'auto'
+                height: 40
         });
         
         if (data[i].notification_type == 'tagged_nom'){
@@ -234,21 +236,21 @@ function render_notifications(data){
         time_label = Titanium.UI.createLabel({
                 text: secondsToHms(time_diff),
                 color: '#666',
-                textAlign: 'left',
+                textAlign: 'right',
                 font:{fontSize:10},
-                size: {width: 'auto', height: 'auto'}
+                size: {width: 320, height: 12}
             });
             
         time_view = Titanium.UI.createView({
                 right: 15,
                 bottom: 0,
-                size: {width: 'auto', height: 'auto'}
+                size: {width: 320, height: 12}
             });
         time_view.add(time_label);
         
         notification_label_cont = Titanium.UI.createView({
                 top: 0,
-                size: {width: 300, height: 'auto'}
+                size: {width: 300, height: 40}
             });
         
         notification_label = Titanium.UI.createLabel({
@@ -411,8 +413,7 @@ function load_notifications(){
     
     var xhr = Titanium.Network.createHTTPClient();
 
-    xhr.onload = function()
-    {   
+    xhr.onload = function(){   
         var data = JSON.parse(this.responseData);
         
         notifications_empty_row = Ti.UI.createTableViewRow({
@@ -433,7 +434,7 @@ function load_notifications(){
             notification_count = data.length;
             clear_button.show();
             notification_cache = data;
-            newest_notification = notification_cache[0].create_time;
+            newest_notification = notification_cache[0].notification_id;
             render_notifications(notification_cache);
         }
         else{
@@ -445,8 +446,6 @@ function load_notifications(){
     
     var url = SERVER_URL + '/api/get_active_notifications/?access_token=' + me.access_token;
     xhr.open('GET', url);
-
-    // send the data
     xhr.send();
     
     //Pull to refresh
@@ -506,8 +505,7 @@ function load_notifications(){
     {
         var xhr = Titanium.Network.createHTTPClient();
 
-        xhr.onload = function()
-        {
+        xhr.onload = function(){
         	data = JSON.parse(this.responseData);
         	if (data.length > 0){
         	    notification_count += data.length;
@@ -515,7 +513,7 @@ function load_notifications(){
         	    list_view_data = [ ];
         	    tv.editable = true;
                 update_notifications(data);
-                newest_notification = notification_cache[0].create_time;
+                newest_notification = notification_cache[0].notification_id;
                 render_notifications(notification_cache);
         	}
             endReloading();
@@ -523,15 +521,13 @@ function load_notifications(){
         
         var url = '';
         if (notification_cache.length > 0){
-            url = SERVER_URL + '/api/get_active_notifications/?access_token=' + me.access_token + '&new_date=' + newest_notification;
+            url = SERVER_URL + '/api/get_active_notifications/?access_token=' + me.access_token + '&id=' + newest_notification;
         }
         else{
             url = SERVER_URL + '/api/get_active_notifications/?access_token=' + me.access_token;
         }
         
         xhr.open('GET', url);
-
-        // send the data
         xhr.send();
     }
 
@@ -586,7 +582,6 @@ function load_notifications(){
     });
     // End pull to refresh
 }
-
 load_notifications();
 
 reset = false;

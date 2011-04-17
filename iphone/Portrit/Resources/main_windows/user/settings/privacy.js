@@ -1,15 +1,5 @@
-Ti.include('../../../settings.js');
-Ti.include('../../../includes.js');
-
-var me = JSON.parse(Ti.App.Properties.getString("me")),
-    user_settings = JSON.parse(Ti.App.Properties.getString("user_settings")),
-    win = Ti.UI.currentWindow,
-    tv = null,
-    user = null,
-    window_nav_bar = null,
-    back_buttom = null,
-    button_label = null,
-    name = '';
+var win = Ti.UI.currentWindow;
+var tv = null;
     
 window_nav_bar = Titanium.UI.createView({
     backgroundImage: '../../../images/iphone_header_blank.png',
@@ -41,6 +31,17 @@ var header_label = Titanium.UI.createLabel({
     });
 window_nav_bar.add(header_label);
 win.add(window_nav_bar);
+
+Ti.include('../../../settings.js');
+Ti.include('../../../includes.js');
+
+var me = JSON.parse(Ti.App.Properties.getString("me")),
+    user_settings = JSON.parse(Ti.App.Properties.getString("user_settings")),
+    user = null,
+    window_nav_bar = null,
+    back_buttom = null,
+    button_label = null,
+    name = '';
 
 function change_permission(method, value){
     var xhr = Titanium.Network.createHTTPClient();

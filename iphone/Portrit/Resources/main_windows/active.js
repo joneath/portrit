@@ -1,18 +1,4 @@
-Ti.include('../settings.js');
-Ti.include('../includes.js');
-
-var me = JSON.parse(Ti.App.Properties.getString("me")),
-    win = Ti.UI.currentWindow,
-    list_view_data = [ ],
-    active_noms_cache = [ ],
-    photos_cache = [ ],
-    winners_noms_cache = [ ],
-    notification_count = 0,
-    globals_attached = false,
-    newest_nom = '',
-    oldest_nom = '',
-    selected_tab = 'active',
-    countdown_interval = null;
+var win = Ti.UI.currentWindow;
 
 var portrit_header_view = Titanium.UI.createView({
         height: 75,
@@ -85,6 +71,49 @@ window_activity_cont.hide();
 window_activity_cont.add(window_activity_background);
 window_activity_cont.add(window_activity);
 win.add(window_activity_cont);
+
+var empty_row = Ti.UI.createTableViewRow({
+        height: 20,
+        selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+});
+
+var active_empty_label = Titanium.UI.createLabel({
+    text: 'No Active Nominations',
+    color: '#fff',
+    width: 320,
+    height: 20,
+    top: 150,
+    textAlign: 'center',
+    font: {fontSize: 20, fontWeight: 'bold'},
+    zIndex: 10
+});
+active_empty_label.hide();
+empty_row.add(active_empty_label);
+
+var photos_empty_label = Titanium.UI.createLabel({
+    text: 'No Stream Photos',
+    color: '#fff',
+    width: 320,
+    height: 20,
+    top: 150,
+    textAlign: 'center',
+    font: {fontSize: 20, fontWeight: 'bold'},
+    zIndex: 10
+});
+photos_empty_label.hide();
+empty_row.add(photos_empty_label);
+
+var winners_empty_label = Titanium.UI.createLabel({
+    text: 'No Recent Winners',
+    color: '#fff',
+    width: 'auto',
+    height: 'auto',
+    top: 150,
+    font: {fontSize: 20, fontWeight: 'bold'},
+    zIndex: 10
+});
+winners_empty_label.hide();
+empty_row.add(winners_empty_label);
 
 portrit_header_active.addEventListener('click', function(){
     if (selected_tab != 'active'){
@@ -208,6 +237,21 @@ portrit_header_view.add(portrit_header_winners_label);
 
 portrit_header_view.add(header_tab_selection);
 
+Ti.include('../settings.js');
+Ti.include('../includes.js');
+
+var me = JSON.parse(Ti.App.Properties.getString("me")),
+    list_view_data = [ ],
+    active_noms_cache = [ ],
+    photos_cache = [ ],
+    winners_noms_cache = [ ],
+    notification_count = 0,
+    globals_attached = false,
+    newest_nom = '',
+    oldest_nom = '',
+    selected_tab = 'active',
+    countdown_interval = null;
+
 function load_more_noms(e){
     var xhr = Titanium.Network.createHTTPClient();
 
@@ -222,7 +266,7 @@ function load_more_noms(e){
                     photos_cache.push(data[i]);
                 }
                 list_view_data = [ ];
-                render_stream_photos(photos_cache);
+                render_stream_photos(data, true);
                 oldest_photo = data[data.length - 1].photo.id;
             }
             else if (selected_tab == 'active'){
@@ -230,14 +274,15 @@ function load_more_noms(e){
                 for (var i = 0; i < data.length; i++){
                     render_nom(data[i], false);
                 }
+                tv.setData(list_view_data);
             }
             else if (selected_tab == 'winners'){
                 oldest_nom = data[data.length - 1].id;
                 for (var i = 0; i < data.length; i++){
                     render_nom(data[i], false);
                 }
+                tv.setData(list_view_data);
             }
-            tv.setData(list_view_data);
             if (data.length < 10 && selected_tab != 'photos'){
                 load_more_view.hide();
             }
@@ -537,7 +582,7 @@ function add_comment_to_nom(e){
 	var textarea_focus_count = 0;
 	clearInterval(textarea_focus);
 	textarea_focus = setInterval(function(){
-	    if (textarea_focus_count < 5){
+	    if (textarea_focus_count < 10){
 	        comment_textarea.focus();
     	    textarea_focus_count += 1;
 	    }
@@ -810,14 +855,6 @@ function render_nom(nom, top, row_count){
         section = Titanium.UI.createTableViewSection({
             headerView: nom_header
         });
-        // 
-        // row = Ti.UI.createTableViewRow({
-        //     className: 'nom_header',
-        //     height: 35,
-        //     selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
-        // });
-        // row.add(nom_header);
-        // section.add(row);
         
         var max_height = 320;
         if (Ti.Platform.displayCaps.density == 'high') {
@@ -1173,7 +1210,13 @@ function activate_winners_stream(){
         xhr.onload = function(){
             var data = JSON.parse(this.responseData);
             winners_noms_cache = data;
-            render_active_list_view(winners_noms_cache);
+            if (data.length > 0){
+                render_active_list_view(winners_noms_cache);
+            }
+            else{
+                tv.setData([empty_row]);
+                winners_empty_label.show();
+            }
             window_activity_cont.hide();
         };
 
@@ -1186,12 +1229,17 @@ function activate_winners_stream(){
     }
 }
 
-function render_stream_photos(data){
+function render_stream_photos(data, append){
     var row = null,
         photo = null,
         row_count = 0,
         top_offset = 5,
         photo_in_row = 0;
+        
+    // if (typeof(append) != 'undefined'){
+    //     top_offset = 0;
+    // }
+        
     for (var i = 0; i < data.length; i++){
         if (i % 3 == 0){
             row = Ti.UI.createTableViewRow({
@@ -1199,7 +1247,52 @@ function render_stream_photos(data){
                     backgroundColor:'#000',
                     selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
             });
-            list_view_data.push(row);
+            if (typeof(append) == 'undefined'){
+                list_view_data.push(row);
+            }
+            else{
+                tv.appendRow(row);
+            }
+            
+            if (i == 0 && typeof(append) != 'undefined'){
+                var nom = new Date();  
+                time = new Date(data[0].create_datetime * 1000);
+                time_diff = now - time;
+                time_diff /= 1000;
+                post_time = Titanium.UI.createLabel({
+            	    text: secondsToHms(time_diff),
+                    color: '#fff',
+                    left: 5,
+                    right: 5,
+                    bottom: 4,
+                    top: 4,
+                    textAlign: 'left',
+                    size: {width: 'auto', height: 20},
+                    font:{fontSize: 13}
+                });
+
+                // post_time_background = Titanium.UI.createView({
+                //     backgroundColor: '#000',
+                //     // borderRadius: 5,
+                //     opacity: 0.8,
+                //     height: 20,
+                //     width: '100%',
+                //     zIndex: -1
+                // });
+
+                post_time_cont = Titanium.UI.createView({
+                    backgroundColor: '#000',
+                    opacity: 0.8,
+                    top: 0,
+                    left: 5,
+                    height: 24,
+                    width: 'auto',
+                    zIndex: 10
+                });
+                post_time_cont.add(post_time);
+
+                row.add(post_time_cont);
+            }
             
             if (i > 0){
                 row_count += 1;
@@ -1226,10 +1319,48 @@ function render_stream_photos(data){
     	
     	photo_in_row += 1;
     }
-    tv.setData(list_view_data);
+    if (typeof(append) == 'undefined'){
+        tv.setData(list_view_data);
+    }
+    // else{
+    //     var nom = new Date();  
+    //     time = new Date(data[0].created_time * 1000);
+    //     time_diff = now - time;
+    //     time_diff /= 1000;
+    //     post_time = Titanium.UI.createLabel({
+    //      text: secondsToHms(time_diff),
+    //         color: '#fff',
+    //         left: 5,
+    //         top: 5,
+    //         right: 5,
+    //         bottom: 5,
+    //         size: {width: 'auto', height: 20},
+    //         font:{fontSize:12}
+    //     });
+    //     
+    //     // post_time_background = Titanium.UI.createView({
+    //     //     backgroundColor: '#000',
+    //     //     // borderRadius: 5,
+    //     //     opacity: 0.8,
+    //     //     height: 20,
+    //     //     width: '100%',
+    //     //     zIndex: -1
+    //     // });
+    //     
+    //     post_time_cont = Titanium.UI.createView({
+    //         top: 5,
+    //         right: 5,
+    //         height: 20,
+    //         width: 320,
+    //         zIndex: 1
+    //     });
+    //     post_time_cont.add(post_time);
+    //     
+    //     row.add(post_time_cont);
+    // }
     
     if (data.length % 15 == 0 & data.length > 0){
-        row.height = 90;
+        // row.height = 90;
         load_more_view.show();
     }
 }
@@ -1241,8 +1372,7 @@ function activate_photo_stream(){
     if (photos_cache.length == 0){
         window_activity_cont.show();
         var xhr = Titanium.Network.createHTTPClient();
-        xhr.onload = function()
-        {
+        xhr.onload = function(){
             var data = JSON.parse(this.responseData);
             photos_cache = data;
             render_stream_photos(photos_cache);
@@ -1250,6 +1380,10 @@ function activate_photo_stream(){
             
             if (data.length > 0){
                 oldest_photo = data[data.length - 1].photo.id;
+            }
+            else{
+                tv.setData([empty_row]);
+                photos_empty_label.show();
             }
         };
 
@@ -1295,8 +1429,7 @@ function init_active_view(){
     
     window_activity_cont.show();
     var xhr = Titanium.Network.createHTTPClient();
-    xhr.onload = function()
-    {
+    xhr.onload = function(){
     	var data = JSON.parse(this.responseData);
     	notification_count = data.notification_count;
     	me.username = data.username;
@@ -1307,7 +1440,14 @@ function init_active_view(){
     	    tabGroup.tabs[3].badge = notification_count;
         }
     	active_noms_cache = data.noms;
-        render_active_list_view(active_noms_cache);
+    	if (active_noms_cache.length > 0){
+    	    render_active_list_view(active_noms_cache);
+    	}
+    	else{
+    	    tv.setData([empty_row]);
+            active_empty_label.show();
+    	}
+        
         window_activity_cont.hide();
     };
     var url = SERVER_URL + '/init_app/?access_token=' + me.access_token + '&page_size=10';
@@ -1382,19 +1522,32 @@ function init_active_view(){
                 list_view_data = [ ];
                 if (selected_tab == 'active'){
                     active_noms_cache = data;
+                    if (data.length == 0){
+                        tv.setData([empty_row]);
+                        active_empty_label.show();
+                    }
                 }
                 else if (selected_tab == 'winners'){
                     winners_noms_cache = data;
+                    if (data.length == 0){
+                        tv.setData([empty_row]);
+                        winners_empty_label.show();
+                    }
                 }
-                render_active_list_view(data);
+                if (data.length > 0){
+                    render_active_list_view(data);
+                }
             }
             else{
                 list_view_data = [ ];
                 photos_cache = data;
-                render_stream_photos(data);
-                
                 if (data.length > 0){
+                    render_stream_photos(data);
                     oldest_photo = data[data.length - 1].photo.id;
+                }
+                else{
+                    tv.setData([empty_row]);
+                    photos_empty_label.show();
                 }
             }
             endReloading();

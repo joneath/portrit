@@ -1,14 +1,5 @@
-Ti.include('../../../settings.js');
-Ti.include('../../../includes.js');
-
-var me = JSON.parse(Ti.App.Properties.getString("me")),
-    win = Ti.UI.currentWindow,
-    tv = null,
-    user = null,
-    window_nav_bar = null,
-    back_buttom = null,
-    button_label = null,
-    name = '';
+var win = Ti.UI.currentWindow;
+var tv = null;
     
 window_nav_bar = Titanium.UI.createView({
     backgroundImage: '../../../images/iphone_header_blank.png',
@@ -40,6 +31,28 @@ var header_label = Titanium.UI.createLabel({
     });
 window_nav_bar.add(header_label);
 win.add(window_nav_bar);
+
+tv = Ti.UI.createTableView({
+        backgroundColor: '#eee',
+        top: 40,
+        style:Titanium.UI.iPhone.TableViewStyle.GROUPED
+    });
+
+tv.addEventListener('click', function(e){
+
+});
+
+win.add(tv);
+
+Ti.include('../../../settings.js');
+Ti.include('../../../includes.js');
+
+var me = JSON.parse(Ti.App.Properties.getString("me")),
+    user = null,
+    window_nav_bar = null,
+    back_buttom = null,
+    button_label = null,
+    name = '';
     
 function init_find_friends(){
     var data = [ ];
@@ -121,16 +134,4 @@ function init_find_friends(){
     
     tv.setData(data);
 }
-    
-tv = Ti.UI.createTableView({
-        backgroundColor: '#eee',
-        top: 40,
-        style:Titanium.UI.iPhone.TableViewStyle.GROUPED
-    });
-
-tv.addEventListener('click', function(e){
-
-});
-
-win.add(tv);
 init_find_friends();

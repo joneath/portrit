@@ -1839,16 +1839,16 @@ def get_community_top_stream(request):
 def get_active_notifications(request):
     data = [ ]
     access_token = request.GET.get('access_token')
-    new_date = request.GET.get('new_date')
+    id = request.GET.get('id')
     
     try:
         portrit_user = get_user_from_access_token(access_token)
         
-        if new_date:
-            new_date = datetime.fromtimestamp(float(new_date))
+        if id:
+            notification = Notification.objects.get(id=id)
             all_notifications = Notification.objects.filter(owner=portrit_user,
                                                             active=True, 
-                                                            created_date__gt=new_date).order_by('-created_date')
+                                                            created_date__gt=notification.created_date).order_by('-created_date')
         else:
             all_notifications = Notification.objects.filter(owner=portrit_user,
                                                             active=True).order_by('-created_date')

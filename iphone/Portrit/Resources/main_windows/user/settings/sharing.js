@@ -1,23 +1,5 @@
-Ti.include('../../../settings.js');
-Ti.include('../../../includes.js');
-Ti.include('lib/oauth_adapter.js');
-
-var me = JSON.parse(Ti.App.Properties.getString("me")),
-    user_settings = JSON.parse(Ti.App.Properties.getString("user_settings")),
-    win = Ti.UI.currentWindow,
-    tv = null,
-    user = null,
-    window_nav_bar = null,
-    back_buttom = null,
-    button_label = null,
-    name = '';
-    
-var oAuthAdapter = new OAuthAdapter(
-        'rWxNvv8pOSB0t9kgT59xVc2IUQXH1l8ESpfOst5sggw',
-        'RrYAd721jXeCJsp9QqtFw',
-        'HMAC-SHA1');
-        
-oAuthAdapter.loadAccessToken('twitter');
+var win = Ti.UI.currentWindow;
+var tv = null;
     
 window_nav_bar = Titanium.UI.createView({
     backgroundImage: '../../../images/iphone_header_blank.png',
@@ -42,13 +24,44 @@ back.addEventListener('click', function(){
 window_nav_bar.add(back);
 
 var header_label = Titanium.UI.createLabel({
-        text: 'Sharing Options',
-        color: '#fff',
-        textAlign: 'center',
-        font:{fontSize:22, fontWeight: 'bold'}
-    });
+    text: 'Sharing Options',
+    color: '#fff',
+    textAlign: 'center',
+    font:{fontSize:22, fontWeight: 'bold'}
+});
 window_nav_bar.add(header_label);
 win.add(window_nav_bar);
+
+tv = Ti.UI.createTableView({
+    backgroundColor: '#eee',
+    top: 40,
+    style:Titanium.UI.iPhone.TableViewStyle.GROUPED
+});
+
+tv.addEventListener('click', function(e){
+
+});
+
+win.add(tv);
+
+Ti.include('../../../settings.js');
+Ti.include('../../../includes.js');
+Ti.include('lib/oauth_adapter.js');
+
+var me = JSON.parse(Ti.App.Properties.getString("me")),
+    user_settings = JSON.parse(Ti.App.Properties.getString("user_settings")),
+    user = null,
+    window_nav_bar = null,
+    back_buttom = null,
+    button_label = null,
+    name = '';
+    
+var oAuthAdapter = new OAuthAdapter(
+        'rWxNvv8pOSB0t9kgT59xVc2IUQXH1l8ESpfOst5sggw',
+        'RrYAd721jXeCJsp9QqtFw',
+        'HMAC-SHA1');
+        
+oAuthAdapter.loadAccessToken('twitter');
 
 function change_permission(method, value){
     var xhr = Titanium.Network.createHTTPClient();
@@ -286,17 +299,4 @@ function init_sharing(){
     
     tv.setData(options_data);
 }
-    
-tv = Ti.UI.createTableView({
-        backgroundColor: '#eee',
-        top: 40,
-        style:Titanium.UI.iPhone.TableViewStyle.GROUPED
-    });
-
-tv.addEventListener('click', function(e){
-
-});
-
-win.add(tv);
-
 init_sharing();

@@ -1,18 +1,4 @@
-Ti.include('../settings.js');
-Ti.include('../includes.js');
-
-var me = JSON.parse(Ti.App.Properties.getString("me")),
-    win = Ti.UI.currentWindow,
-    list_view_data = [ ],
-    trophy_data = [ ],
-    noms_loaded = { },
-    photos_cache = [ ],
-    active_cache = [ ],
-    top_cache = [ ],
-    newest_nom = null,
-    oldest_nom = null,
-    newest_photo = '',
-    selected_tab = 'active';
+var win = Ti.UI.currentWindow;
     
 window_activity = Titanium.UI.createActivityIndicator({
     message: 'Loading...',
@@ -202,7 +188,21 @@ portrit_header_view.add(portrit_header_winners);
 portrit_header_view.add(portrit_header_winners_label);
 
 portrit_header_view.add(header_tab_selection);
-// win.add(portrit_header_view);
+
+Ti.include('../settings.js');
+Ti.include('../includes.js');
+
+var me = JSON.parse(Ti.App.Properties.getString("me")),
+    list_view_data = [ ],
+    trophy_data = [ ],
+    noms_loaded = { },
+    photos_cache = [ ],
+    active_cache = [ ],
+    top_cache = [ ],
+    newest_nom = null,
+    oldest_nom = null,
+    newest_photo = '',
+    selected_tab = 'active';
 
 function load_more_noms(e){
     var xhr = Titanium.Network.createHTTPClient();
@@ -489,7 +489,7 @@ function add_comment_to_nom(e){
 	var textarea_focus_count = 0;
 	clearInterval(textarea_focus);
 	textarea_focus = setInterval(function(){
-	    if (textarea_focus_count < 5){
+	    if (textarea_focus_count < 10){
 	        comment_textarea.focus();
     	    textarea_focus_count += 1;
 	    }
@@ -1024,6 +1024,7 @@ function render_active_list_view(data){
     if (data.length > 0){
         list_view_data = [ ];
         top_empty_label.hide();
+        photos_empty_label.hide();
         active_empty_label.hide();
         newest_nom = data[0].created_time;
         oldest_nom = data[data.length - 1].id;
@@ -1046,22 +1047,35 @@ function render_active_list_view(data){
 }
 
 var empty_row = Ti.UI.createTableViewRow({
-        height:'auto',
-        backgroundColor:'#000',
+        height: 20,
         selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
 });
 
 var active_empty_label = Titanium.UI.createLabel({
     text: 'No Active Nominations',
     color: '#fff',
-    width: 'auto',
-    height: 'auto',
+    width: 320,
+    height: 20,
     top: 150,
+    textAlign: 'center',
     font: {fontSize: 20, fontWeight: 'bold'},
     zIndex: 10
 });
 active_empty_label.hide();
 empty_row.add(active_empty_label);
+
+var photos_empty_label = Titanium.UI.createLabel({
+    text: 'No Community Photos',
+    color: '#fff',
+    width: 320,
+    height: 20,
+    top: 150,
+    textAlign: 'center',
+    font: {fontSize: 20, fontWeight: 'bold'},
+    zIndex: 10
+});
+photos_empty_label.hide();
+empty_row.add(photos_empty_label);
 
 var top_empty_label = Titanium.UI.createLabel({
     text: 'Top Nominations Empty',
@@ -1078,16 +1092,22 @@ empty_row.add(top_empty_label);
 function activate_photos_stream(){
     list_view_data = [ ];
     top_empty_label.hide();
+    photos_empty_label.hide();
     active_empty_label.hide();
     if (photos_cache.length == 0){
         window_activity_cont.show();
         var xhr = Titanium.Network.createHTTPClient();
 
-        xhr.onload = function()
-        {
+        xhr.onload = function(){
             var data = JSON.parse(this.responseData);
             photos_cache = data;
-            render_community_photos(photos_cache);
+            if (data.length > 0){
+                render_community_photos(photos_cache);
+            }
+            else{
+                tv.setData([empty_row]);
+                photos_empty_label.show();
+            }
             window_activity_cont.hide();
         };
 
@@ -1109,12 +1129,12 @@ function activate_photos_stream(){
 function activate_active_stream(){
     list_view_data = [ ];
     top_empty_label.hide();
+    photos_empty_label.hide();
     active_empty_label.hide();
     if (active_cache.length == 0){
         window_activity_cont.show();
         var xhr = Titanium.Network.createHTTPClient();
-        xhr.onload = function()
-        {
+        xhr.onload = function(){
             var data = JSON.parse(this.responseData);
             active_cache = data;
             if (active_cache.length > 0){
@@ -1138,6 +1158,7 @@ function activate_active_stream(){
 function activate_top_stream(){
     list_view_data = [ ];
     top_empty_label.hide();
+    photos_empty_label.hide();
     active_empty_label.hide();
     if (top_cache.length == 0){
         window_activity_cont.show();
@@ -1197,22 +1218,16 @@ function init_community_view(){
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onload = function(){
         var data = JSON.parse(this.responseData);
-        
         if (data.length > 0){
             active_cache = data;
-            if (active_cache.length > 0){
-                render_active_list_view(active_cache);
-            }
-            else{
-                tv.setData([empty_row]);
-                active_empty_label.show();
-            }
-            if (data.length == 10){
+            render_active_list_view(active_cache);
+            if (data.length >= 10){
                 load_more_view.show();
             }
         }
         else{
-            
+            tv.setData([empty_row]);
+            active_empty_label.show();
         }
         window_activity_cont.hide();
     };
@@ -1273,8 +1288,7 @@ function init_community_view(){
     var pulling = false;
     var reloading = false;
 
-    function beginReloading()
-    {
+    function beginReloading(){
         var xhr = Titanium.Network.createHTTPClient();
 
         xhr.onload = function(){
@@ -1316,8 +1330,7 @@ function init_community_view(){
         xhr.send();
     }
 
-    function endReloading()
-    {
+    function endReloading(){
     	// when you're done, just reset
     	tv.setContentInsets({top:0},{animated:true});
     	reloading = false;
@@ -1331,8 +1344,7 @@ function init_community_view(){
 
     });
 
-    tv.addEventListener('scroll',function(e)
-    {
+    tv.addEventListener('scroll',function(e){
     	var offset = e.contentOffset.y;
     	if (offset <= -65.0 && !pulling)
     	{
@@ -1361,8 +1373,7 @@ function init_community_view(){
     	}
     });
 
-    tv.addEventListener('scrollEnd',function(e)
-    {
+    tv.addEventListener('scrollEnd',function(e){
     	if (pulling && !reloading && e.contentOffset.y <= -65.0)
     	{
     		reloading = true;
