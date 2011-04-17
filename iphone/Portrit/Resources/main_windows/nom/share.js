@@ -119,54 +119,126 @@ var fadeOut = Titanium.UI.createAnimation({
     duration: 200
 });
 
-function submit_nom(e){
-    var caption_text = caption.value;
+window_activity = Titanium.UI.createActivityIndicator({
+    message: 'Saving...',
+    color: '#fff',
+    font:{fontSize:16, fontWeight: 'bold'},
+    height:50,
+    width:10
+});
+window_activity.show()
+
+window_activity_background = Titanium.UI.createView({
+    backgroundColor: '#000',
+    borderRadius: 5,
+    opacity: 0.8,
+    height: 120,
+    width: 120,
+    zIndex: -1
+});
+
+window_activity_cont = Titanium.UI.createView({
+    top: 100,
+    width: 320,
+    height: 120,
+    zIndex: 20
+});
+window_activity_cont.hide();
+window_activity_cont.add(window_activity_background);
+window_activity_cont.add(window_activity);
+win.add(window_activity_cont);
+
+function close_share_nom(){
+    var data = JSON.parse(this.responseData);
     
-    var xhr = Titanium.Network.createHTTPClient();
-    xhr.onload = function(){   
-        var data = JSON.parse(this.responseData);
-        var nom = data[0];
+    var nom = null;
+    if (typeof(new_photo) != 'undefined'){
         
+    }
+    else{
+        var nom = data[0];
         if (twitter_switch && twitter_switch.value){
             share_on_twitter(me, nom, caption_text);
         }
         if (facebook_switch.value){
             var title = me.username + ' nominated a photo on Portrit';
-            
+
             share_on_facebook(me, nom, caption_text, title);
         }
+    }
+    
+    window_activity_cont.hide();
+    if (typeof(new_photo) != 'undefined'){
+        win.close(fadeOut);
         
+        setTimeout(function(){
+            win.opacity = 1;
+            Ti.App.fireEvent('update_active_noms', { });
+            if (user == me.fid){
+                Ti.App.fireEvent('update_my_photos', { });
+            }
+            Ti.App.fireEvent('reset_after_camera', { });
+        }, 200);
+    }
+    else{
         win.close();
         tabGroup.close();
         tabGroup.opacity = 0;
         setTimeout(function(){
             tabGroup.open(fadeIn);
             setTimeout(function(){
-        	    Ti.App.fireEvent('update_active_noms', {
-                    
-                });
-                Ti.App.fireEvent('close_nominate_page', {
-                    
-                });
-                Ti.App.fireEvent('close_user_profile_page', {
-                    
-                });
+        	    Ti.App.fireEvent('update_active_noms', { });
+                Ti.App.fireEvent('close_nominate_page', { });
+                Ti.App.fireEvent('close_user_profile_page', { });
                 if (user == me.fid){
-                    Ti.App.fireEvent('update_my_photos', {
-
-                    });
+                    Ti.App.fireEvent('update_my_photos', { });
                 }
         	}, 100);
-        }, 50);
-        // win.showTabBar({animated:true});
-        // tabGroup.setActiveTab(3);
-        // tabGroup.setActiveTab(0);
-        
-        // Titanium.UI.currentTab.open(w,{animated:true});
-    };
+        }, 50); 
+    }
+
+}
+
+var upload_id = '';
+function submit_nom(e){
+    var caption_text = caption.value;
+    
+    window_activity_cont.show();
+    var xhr = Titanium.Network.createHTTPClient();
+    xhr.onload = close_share_nom;
     
     var url = '';
-    if (nominations != ''){
+    var check_upload_interval = null;
+    if (typeof(new_photo) != 'undefined'){
+        clearInterval(check_upload_interval);
+        check_upload_interval = setInterval(function(){
+            upload_id = Ti.App.Properties.getString("upload_complete");
+            if (upload_id){
+                clearInterval(check_upload_interval);
+                
+                url = SERVER_URL + '/mark_photos_live/';
+                var mark_live = Titanium.Network.createHTTPClient();
+                mark_live.onload = close_share_nom;
+                mark_live.open('POST', url);
+                mark_live.send({'photo_ids': upload_id, 'access_token': me.access_token});
+                
+                if (nominations != ''){
+                    url = SERVER_URL + '/api/nominate_photo/';
+                    var send_data = {
+                        'access_token': me.access_token,
+                        'photo_id': upload_id,
+                        'owner': user,
+                        'nominations': nominations,
+                        'tags': tagged_users,
+                        'comment_text': caption_text,
+                    };
+                    xhr.open('POST', url);
+                    xhr.send(send_data);
+                }
+            }
+        }, 100);
+    }
+    else{
         url = SERVER_URL + '/api/nominate_photo/';
         var send_data = {
             'access_token': me.access_token,
@@ -179,19 +251,6 @@ function submit_nom(e){
         xhr.open('POST', url);
         xhr.send(send_data);
     }
-    else{
-        //Mark photo live
-        url = SERVER_URL + '/api/nominate_photo/';
-        var send_data = {
-            'access_token': me.access_token,
-            'photo_id': photo.id,
-            'owner': user,
-            'nominations': nominations,
-            'tags': tagged_users,
-            'comment_text': caption_text,
-        };
-    }
-
 }
 
 tv = Ti.UI.createTableView({

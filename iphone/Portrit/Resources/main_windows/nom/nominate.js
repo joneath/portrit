@@ -186,7 +186,7 @@ var render_scafold = function(){
 	list_view_data.push(photo_row);
 	
 	var select_trophy_row = Ti.UI.createTableViewRow({
-            height:'auto',
+            height: 130,
             selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
     });
     
@@ -212,14 +212,13 @@ var render_scafold = function(){
     });
     select_trophy_row.add(photo_border_bottom);
     
-    var scroll_width = (76 * 10);
+    var scroll_width = (75 * 10);
     trophy_scroll_view = Titanium.UI.createScrollView({
     	contentWidth: scroll_width,
     	contentHeight: 130,
     	top: 0,
     	height: 130,
     	width: 320,
-        // backgroundColor: '#222',
     	backgroundImage: '../../images/trophy_box.png',
     	showVerticalScrollIndicator:false,
     	showHorizontalScrollIndicator:true
@@ -231,8 +230,8 @@ var render_scafold = function(){
         nom_cat_underscore = nom_cat_list[i].replace(' ', '_').toLowerCase();
         trophy_cont = Titanium.UI.createView({
             height: 130,
-            width: 76,
-            left: (76 * i),
+            width: 75,
+            left: (75 * i),
             top: 0
         });
         
@@ -240,7 +239,8 @@ var render_scafold = function(){
     	    text: nom_cat_list[i],
             color: '#fff',
             bottom: 8,
-            size: {width: 'auto', height: 'auto'},
+            size: {width: 75, height: 16},
+            textAlign: 'center',
             font:{fontSize:12, fontWeight: 'bold'}
         });
         trophy_cont.add(trophy_label);
@@ -278,8 +278,8 @@ var render_scafold = function(){
     max_trophy_selected_cont_background = Titanium.UI.createView({
         backgroundColor: '#000',
         opacity: .8,
-        height: '100%',
-        width: '100%',
+        height: 130,
+        width: 320,
         zIndex: -1
     });
     max_trophy_selected_cont.add(max_trophy_selected_cont_background);
@@ -288,7 +288,8 @@ var render_scafold = function(){
 	    text: '',
         color: '#fff',
         top: 40,
-        size: {width: 'auto', height: 'auto'},
+        size: {width: 320, height: 22},
+        textAlign: 'center',
         font:{fontSize:22, fontWeight: 'bold'}
     });
     max_trophy_selected_cont.add(trophy_selected_text);
@@ -297,7 +298,8 @@ var render_scafold = function(){
 	    text: 'Click Next to Continue',
         color: '#fff',
         bottom: 35,
-        size: {width: 'auto', height: 'auto'},
+        size: {width: 320, height: 16},
+        textAlign: 'center',
         font:{fontSize:16, fontWeight: 'bold'}
     });
     max_trophy_selected_cont.add(max_trophy_selected);
@@ -307,7 +309,7 @@ var render_scafold = function(){
     list_view_data.push(select_trophy_row);
     
     var nominate_action_row = Ti.UI.createTableViewRow({
-            height: 'auto',
+            height: 38,
             selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
     });
     
@@ -359,7 +361,8 @@ var render_scafold = function(){
     tag_heading_label = Titanium.UI.createLabel({
 	    text: 'No followers tagged yet.',
         color: '#fff',
-        size: {width: 'auto', height: 'auto'},
+        size: {width: 320, height: 18},
+        textAlign: 'center',
         font:{fontSize:16, fontWeight: 'bold'}
     });
     tag_heading.add(tag_heading_label);
@@ -396,7 +399,7 @@ var render_scafold = function(){
 	    tag_search.blur();
 	});
 	tag_search.addEventListener('focus', function(){
-        tag_cont.animate({bottom:175, duration:300, curve: Ti.UI.ANIMATION_CURVE_EASE_IN_OUT});
+        tag_cont.animate({bottom:170, duration:300, curve: Ti.UI.ANIMATION_CURVE_EASE_IN_OUT});
 	    return false;
 	});
 	tag_search.addEventListener('blur', function(){

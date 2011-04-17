@@ -162,7 +162,7 @@ camera_overlay.add(close_camera);
 
 close_camera.addEventListener('click', function(e){
     Titanium.Media.hideCamera();
-    reset_after_camera();
+    reset_after_camera(true);
 });
 
 var take_photo = Ti.UI.createButton({
@@ -175,6 +175,13 @@ var take_photo = Ti.UI.createButton({
     right: 5
 });
 camera_overlay.add(take_photo);
+
+var selected_tab_index = 0;
+var prev_tab_index = 0;
+tabGroup.addEventListener('focus', function(e){
+    selected_tab_index = e.index;
+    prev_tab_index = e.previousIndex;
+});
 
 var camera_listeners_attached = false;
 var take_photo_click = false;
@@ -254,9 +261,12 @@ function cammera_success(event){
     pass_nominate_data(data);
     // image.imageAsCropped({width:480,height:480,x:0,y:80});
     
+    Ti.App.Properties.setString("upload_complete", null);
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onload = function(e) {
-
+        var data = JSON.parse(this.responseData);
+        var id = data.id;
+        Ti.App.Properties.setString("upload_complete", id);
     };
     var url = SERVER_URL + '/upload_photo/'
     xhr.open('POST', url);
@@ -308,11 +318,25 @@ Ti.App.addEventListener('cancel_nominate', function(e){
     }, 250);
 });
 
-function reset_after_camera(){
+Ti.App.addEventListener('reset_after_camera', function(e){
     take_photo_click = false;
     tabGroup.bottom = 0;
     tabGroup.tabBarVisible = true;
     tabGroup.setActiveTab(0);
+});
+
+function reset_after_camera(prev){
+    Titanium.UI.iPhone.showStatusBar({animated:false});
+    
+    take_photo_click = false;
+    tabGroup.bottom = 0;
+    tabGroup.tabBarVisible = true;
+    if (typeof(prev) != 'undefined'){
+        tabGroup.setActiveTab(prev_tab_index);
+    }
+    else{
+        tabGroup.setActiveTab(0);
+    }
     
     if (nominate_window){
         nominate_window.close();

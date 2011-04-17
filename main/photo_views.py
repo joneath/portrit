@@ -152,7 +152,7 @@ def upload_photo(request):
                         height=large_img_size[1],
                         owner=user,
                         active=True, 
-                        pending=False)
+                        pending=True)
             photo.save()
             
             data = {'id': str(photo.id), 'thumb': photo.thumbnail, 'name': file.name}
@@ -166,10 +166,14 @@ def mark_photos_live(request):
     try:
         cookie = facebook.get_user_from_cookie(
             request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
-        if cookie:
+        access_token = request.POST.get('access_token')
+        if cookie or access_token:
             public_perm = request.POST.get('public_perm')
             
-            user = Portrit_User.objects.get(fb_user__fid=int(cookie["uid"]))
+            if cookie:
+                user = Portrit_User.objects.get(fb_user__fid=int(cookie["uid"]))
+            else:
+                user = get_user_from_access_token(access_token)
                 
             photo_id_list = request.POST.get('photo_ids')
             photo_id_temp_list = photo_id_list.split(',')

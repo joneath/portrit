@@ -218,11 +218,12 @@ function load_more_noms(e){
         
         if (data.length > 0){
             if (selected_tab == 'photos'){
-                 for (var i = 0; i < data.length; i++){
-                     photos_cache.push(data[i]);
-                 }
-                 list_view_data = [ ];
-                 render_stream_photos(photos_cache);
+                for (var i = 0; i < data.length; i++){
+                    photos_cache.push(data[i]);
+                }
+                list_view_data = [ ];
+                render_stream_photos(photos_cache);
+                oldest_photo = data[data.length - 1].photo.id;
             }
             else if (selected_tab == 'active'){
                 oldest_nom = data[data.length - 1].id;
