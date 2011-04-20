@@ -71,7 +71,7 @@ var Portrit = function(){
                 message = data.payload.nom_data[0].nominator_username + ' nominated your photo for ' + data.payload.nom_data[0].nomination_category;
 
                 push = { 
-                    'aliases': [data.payload.nom_data[0].nominatee],
+                    'aliases': [String(data.payload.nom_data[0].nominatee)],
                     'aps': {
                         'badge': '+1',
                         'alert': message
