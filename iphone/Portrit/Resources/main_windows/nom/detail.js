@@ -1298,51 +1298,53 @@ function render_nom_detail(noms){
     detail_row.add(detail_middle_cont);
     win.add(detail_row);
     
-    scroll_width = (noms.length * 60) + 5;
-    
-    if (scroll_width <= 320){
-        scroll_width = 321;
+    if (noms.length > 1){
+        scroll_width = (noms.length * 60) + 5;
+
+        if (scroll_width <= 320){
+            scroll_width = 321;
+        }
+
+        noms_scroll_view = Titanium.UI.createScrollView({
+        	contentWidth: scroll_width,
+        	contentHeight: 50,
+        	top: 0,
+        	height: 50,
+        	width: 320,
+        	backgroundColor: '#222',
+        	showVerticalScrollIndicator:false,
+        	showHorizontalScrollIndicator:true
+        });
+
+        var scroll_view_top_shadow = Titanium.UI.createView({
+            backgroundColor: '#000',
+            height: 2,
+            opacity: 0.2,
+            top: 0,
+            width: 320,
+            zIndex: 1
+        });
+
+        var scroll_view_bottom_shadow = Titanium.UI.createView({
+            backgroundColor: '#000',
+            height: 2,
+            opacity: 0.2,
+            bottom: 0,
+            width: 320,
+            zIndex: 1
+        });
+
+        var scroll_noms_row = Ti.UI.createTableViewRow({
+            height: 50,
+            width: 320,
+            selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+        });
+        scroll_noms_row.add(scroll_view_top_shadow);
+        scroll_noms_row.add(scroll_view_bottom_shadow);
+        scroll_noms_row.add(noms_scroll_view);
+
+        section.add(scroll_noms_row);
     }
-    
-    noms_scroll_view = Titanium.UI.createScrollView({
-    	contentWidth: scroll_width,
-    	contentHeight: 50,
-    	top: 0,
-    	height: 50,
-    	width: 320,
-    	backgroundColor: '#222',
-    	showVerticalScrollIndicator:false,
-    	showHorizontalScrollIndicator:true
-    });
-    
-    var scroll_view_top_shadow = Titanium.UI.createView({
-        backgroundColor: '#000',
-        height: 2,
-        opacity: 0.2,
-        top: 0,
-        width: 320,
-        zIndex: 1
-    });
-    
-    var scroll_view_bottom_shadow = Titanium.UI.createView({
-        backgroundColor: '#000',
-        height: 2,
-        opacity: 0.2,
-        bottom: 0,
-        width: 320,
-        zIndex: 1
-    });
-    
-    var scroll_noms_row = Ti.UI.createTableViewRow({
-        height: 50,
-        width: 320,
-        selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
-    });
-    scroll_noms_row.add(scroll_view_top_shadow);
-    scroll_noms_row.add(scroll_view_bottom_shadow);
-    scroll_noms_row.add(noms_scroll_view);
-    
-    section.add(scroll_noms_row);
     
     photo_action_cont = Ti.UI.createTableViewRow({
         height: 'auto',
@@ -1407,42 +1409,164 @@ function render_nom_detail(noms){
     
     get_nom_comments(comments_row, selected_nom.id, true);
     
-    
-    for (var i = 0; i < noms.length; i++){
-        photo_thumb = Ti.UI.createImageView({
-    		image: '../../images/photo_loader.png',
-    		borderColor: '#fff',
-            backgroundColor: '#000',
-    		borderWidth: 2,
-    		width: 55,
-    		height: 42,
-    		left: 5 + (60 * i),
-    		hires: true
-    	});
-    	cachedImageView('images', noms[i].photo.crop, photo_thumb);
+    if (noms.length > 1){
+        for (var i = 0; i < noms.length; i++){
+            photo_thumb = Ti.UI.createImageView({
+        		image: '../../images/photo_loader.png',
+        		borderColor: '#fff',
+                backgroundColor: '#000',
+        		borderWidth: 2,
+        		width: 55,
+        		height: 42,
+        		left: 5 + (60 * i),
+        		hires: true
+        	});
+        	cachedImageView('images', noms[i].photo.crop, photo_thumb);
     	
-    	photo_thumb.nom = noms[i];
-    	thumb_list.push(photo_thumb);
+        	photo_thumb.nom = noms[i];
+        	thumb_list.push(photo_thumb);
     	
-    	var max_height = 320;
+        	var max_height = 320;
+        	var highres = true;
+        	var photo_width = 0;
+        	var photo_height = 0;
+            if (Ti.Platform.displayCaps.density == 'high') {
+                if (noms[i].photo.width > Ti.Platform.displayCaps.platformWidth){
+                    photo_width = Ti.Platform.displayCaps.platformWidth;
+                }
+                else{
+                    photo_width = noms[i].photo.width;
+                }
+
+                if (noms[i].photo.height && noms[i].photo.height > max_height){
+                    if (noms[i].photo.height > noms[i].photo.width){
+                        photo_height = max_height;
+                        photo_width = photo_height * (noms[i].photo.width / noms[i].photo.height);
+                    }
+                    else{
+                        photo_height = photo_width * (noms[i].photo.height / noms[i].photo.width);
+                    }
+                }
+                else{
+                    photo_height = max_height;
+                }
+                highres = true;
+            }
+            else{
+                if (photo_width < 320){
+                    photo_width = noms[i].photo.width;
+                }
+                else{
+                    photo_width = 320
+                }
+
+                if (noms[i].photo.height && noms[i].photo.height > max_height){
+                    photo_width = max_height * (noms[i].photo.width / noms[i].photo.height);
+                    photo_height = photo_width * (noms[i].photo.height / noms[i].photo.width);
+                }
+                else{
+                    photo_height = max_height;
+                }
+                highres = false;
+            }
+    	
+        	detail_img = Ti.UI.createImageView({
+        		image: '../../images/photo_loader.png',
+        		width: photo_width,
+        		height: photo_height,
+        		hires: highres
+        	});
+        	cachedImageView('images', noms[i].photo.source, detail_img);
+    	
+        	scroll_view_cont = Titanium.UI.createView({
+                width: 320,
+                height: 'auto'
+            });
+            scroll_view_cont.add(detail_img);
+            scroll_view_cont.nom = noms[i];
+        	photo_list.push(scroll_view_cont);
+    	
+        	if (noms[i].id != selected_nom.id){
+        	    photo_thumb.opacity = 0.5;
+        	}
+        	else{
+        	    selected_nom_index = i;
+        	    if (!won){
+        	        var place = getOrdinal(noms[i].position+1);
+        	        if (place != 'NaNth'){
+        	            place_text = Titanium.UI.createLabel({
+                    	    text: getOrdinal(noms[i].position+1),
+                            textAlign: 'center',
+                            color: '#fff',
+                            height: 'auto',
+                            width: 'auto',
+                            shadowColor: '#333',
+                            top: 0,
+                            shadowOffset: {x: 1, y: 1},
+                            zIndex: 1,
+                            font:{fontSize: 32, fontWeight: 'bold'}
+                        });
+
+                        post_time_background = Titanium.UI.createView({
+                            backgroundColor: '#000',
+                            borderRadius: 5,
+                            opacity: 0.8,
+                            height: '100%',
+                            width: '100%',
+                            zIndex: -1
+                        });
+
+                        post_time_cont = Titanium.UI.createView({
+                            right: 5,
+                            bottom: 5,
+                            height: 40,
+                            width: 70,
+                            zIndex: 1
+                        });
+                        post_time_cont.add(post_time_background);
+                        post_time_cont.add(place_text);   
+                        detail_img_cont.add(post_time_cont);   
+        	        }
+                
+                    vote_up.nom = noms[i];
+            	    vote_down.nom = noms[i];
+        	    }
+        	    var scroll_pos = (i * 60) - 125;
+                if (scroll_pos < 0){
+                    scroll_pos = 0;
+                }
+                else if (scroll_pos + 320 > scroll_width){
+                    scroll_pos = scroll_width - 320;
+                }
+
+                noms_scroll_view.scrollTo(scroll_pos, 0);
+        	}
+    	
+        	photo_thumb.addEventListener('click', photo_thumb_click);
+        
+            noms_scroll_view.add(photo_thumb);
+        }
+    }
+    else{
+        var max_height = 320;
     	var highres = true;
     	var photo_width = 0;
     	var photo_height = 0;
         if (Ti.Platform.displayCaps.density == 'high') {
-            if (noms[i].photo.width > Ti.Platform.displayCaps.platformWidth){
+            if (noms[0].photo.width > Ti.Platform.displayCaps.platformWidth){
                 photo_width = Ti.Platform.displayCaps.platformWidth;
             }
             else{
-                photo_width = noms[i].photo.width;
+                photo_width = noms[0].photo.width;
             }
 
-            if (noms[i].photo.height && noms[i].photo.height > max_height){
-                if (noms[i].photo.height > noms[i].photo.width){
+            if (noms[0].photo.height && noms[0].photo.height > max_height){
+                if (noms[0].photo.height > noms[0].photo.width){
                     photo_height = max_height;
-                    photo_width = photo_height * (noms[i].photo.width / noms[i].photo.height);
+                    photo_width = photo_height * (noms[0].photo.width / noms[0].photo.height);
                 }
                 else{
-                    photo_height = photo_width * (noms[i].photo.height / noms[i].photo.width);
+                    photo_height = photo_width * (noms[0].photo.height / noms[0].photo.width);
                 }
             }
             else{
@@ -1452,30 +1576,30 @@ function render_nom_detail(noms){
         }
         else{
             if (photo_width < 320){
-                photo_width = noms[i].photo.width;
+                photo_width = noms[0].photo.width;
             }
             else{
                 photo_width = 320
             }
 
-            if (noms[i].photo.height && noms[i].photo.height > max_height){
-                photo_width = max_height * (noms[i].photo.width / noms[i].photo.height);
-                photo_height = photo_width * (noms[i].photo.height / noms[i].photo.width);
+            if (noms[0].photo.height && noms[0].photo.height > max_height){
+                photo_width = max_height * (noms[0].photo.width / noms[0].photo.height);
+                photo_height = photo_width * (noms[0].photo.height / noms[0].photo.width);
             }
             else{
                 photo_height = max_height;
             }
             highres = false;
         }
-    	
+	
     	detail_img = Ti.UI.createImageView({
     		image: '../../images/photo_loader.png',
     		width: photo_width,
     		height: photo_height,
     		hires: highres
     	});
-    	cachedImageView('images', noms[i].photo.source, detail_img);
-    	
+    	cachedImageView('images', noms[0].photo.source, detail_img);
+	
     	scroll_view_cont = Titanium.UI.createView({
             width: 320,
             height: 'auto'
@@ -1483,66 +1607,6 @@ function render_nom_detail(noms){
         scroll_view_cont.add(detail_img);
         scroll_view_cont.nom = noms[i];
     	photo_list.push(scroll_view_cont);
-    	
-    	if (noms[i].id != selected_nom.id){
-    	    photo_thumb.opacity = 0.5;
-    	}
-    	else{
-    	    selected_nom_index = i;
-    	    if (!won){
-    	        var place = getOrdinal(noms[i].position+1);
-    	        if (place != 'NaNth'){
-    	            place_text = Titanium.UI.createLabel({
-                	    text: getOrdinal(noms[i].position+1),
-                        textAlign: 'center',
-                        color: '#fff',
-                        height: 'auto',
-                        width: 'auto',
-                        shadowColor: '#333',
-                        top: 0,
-                        shadowOffset: {x: 1, y: 1},
-                        zIndex: 1,
-                        font:{fontSize: 32, fontWeight: 'bold'}
-                    });
-
-                    post_time_background = Titanium.UI.createView({
-                        backgroundColor: '#000',
-                        borderRadius: 5,
-                        opacity: 0.8,
-                        height: '100%',
-                        width: '100%',
-                        zIndex: -1
-                    });
-
-                    post_time_cont = Titanium.UI.createView({
-                        right: 5,
-                        bottom: 5,
-                        height: 40,
-                        width: 70,
-                        zIndex: 1
-                    });
-                    post_time_cont.add(post_time_background);
-                    post_time_cont.add(place_text);   
-                    detail_img_cont.add(post_time_cont);   
-    	        }
-                
-                vote_up.nom = noms[i];
-        	    vote_down.nom = noms[i];
-    	    }
-    	    var scroll_pos = (i * 60) - 125;
-            if (scroll_pos < 0){
-                scroll_pos = 0;
-            }
-            else if (scroll_pos + 320 > scroll_width){
-                scroll_pos = scroll_width - 320;
-            }
-
-            noms_scroll_view.scrollTo(scroll_pos, 0);
-    	}
-    	
-    	photo_thumb.addEventListener('click', photo_thumb_click);
-        
-        noms_scroll_view.add(photo_thumb);
     }
     
     scrollView = Titanium.UI.createScrollableView({

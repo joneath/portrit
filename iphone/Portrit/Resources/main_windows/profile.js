@@ -1825,11 +1825,12 @@ var update_follow_counts_flag = false;
 var reset = false;
 
 win.addEventListener('focus', function(){
-    if (update_profile){
+    if (update_profile && !reset){
+        update_profile = false;
+        get_user_profile_count = 0;
         list_view_data = [ ];
         tv.setData(list_view_data);
         init_profile_view();
-        update_profile = false;
     }
     if (update_follow_counts_flag){
         update_follow_counts_flag = false;
@@ -1837,10 +1838,10 @@ win.addEventListener('focus', function(){
     }
     
     if (reset){
+        reset = false;
         get_user_profile_count = 0;
         me = JSON.parse(Ti.App.Properties.getString("me"));
         
-        reset = false;
         user = me.fid
         name = me.name;
         
@@ -1854,7 +1855,6 @@ Ti.App.addEventListener('update_follow_counts', function(eventData) {
 });
 
 Ti.App.addEventListener('reset', function(eventData) {
-    
     tv.setData([]);
     reset = true;
 });

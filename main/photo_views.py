@@ -99,18 +99,15 @@ def upload_photo(request):
             image.save(file_loc + '_130.jpg', 'JPEG', quality=70)
             thumb_img_size = image.size
             
-            image = Image.open(file_loc)
-            if from_iphone:
-                image = image.crop((0, 80, 640, 720))
-            else:                
-                size = 720, 720
-                image.thumbnail(size, Image.ANTIALIAS)
+            image = Image.open(file_loc)           
+            size = 720, 720
+            image.thumbnail(size, Image.ANTIALIAS)
                 
             image.save(file_loc + '_720.jpg', 'JPEG', quality=90)
             large_img_size = image.size
             
             #iphone
-            image.save(file_loc + '_iphone.jpg', 'JPEG', quality=70)
+            image.save(file_loc + '_iphone.jpg', 'JPEG', quality=80)
             
             #Create crop section
             cropped_image = crop_to_size(image, (400,400), large_img_size, (200, 150))
@@ -169,7 +166,6 @@ def mark_photos_live(request):
         access_token = request.POST.get('access_token')
         if cookie or access_token:
             public_perm = request.POST.get('public_perm')
-            
             if cookie:
                 user = Portrit_User.objects.get(fb_user__fid=int(cookie["uid"]))
             else:
@@ -185,7 +181,7 @@ def mark_photos_live(request):
                 except Exception, err:
                     print err
             
-            if public_perm == 'true':
+            if public_perm == 'true' or public_perm == '1':
                 public_perm = True
                 
             photos = Photo.objects.filter(id__in=photo_id_list).update(set__pending=False, set__public=public_perm)
@@ -196,7 +192,7 @@ def mark_photos_live(request):
                 except Exception, err:
                     print err
             
-            data = True
+            data = {'photo': photos[0].get_photo(), 'id': str(photo_id_list[0])}
     except Exception, err:
         print err
     data = json.dumps(data)

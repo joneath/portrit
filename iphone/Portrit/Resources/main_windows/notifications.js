@@ -50,6 +50,34 @@ var fadeOut = Titanium.UI.createAnimation({
     duration: 200
 });
 
+window_activity = Titanium.UI.createActivityIndicator({
+    message: 'Loading...',
+    color: '#fff',
+    height:50,
+    width:10
+});
+window_activity.show()
+
+window_activity_background = Titanium.UI.createView({
+    backgroundColor: '#000',
+    borderRadius: 5,
+    opacity: 0.8,
+    height: 120,
+    width: 120,
+    zIndex: -1
+});
+
+window_activity_cont = Titanium.UI.createView({
+    top: 150,
+    width: 320,
+    height: 120,
+    zIndex: 20
+});
+window_activity_cont.show();
+window_activity_cont.add(window_activity_background);
+window_activity_cont.add(window_activity);
+win.add(window_activity_cont);
+
 function add_detail_window(e){
     var w = Ti.UI.createWindow({backgroundColor:"#222", url:'nom/detail.js'});
 	Titanium.UI.currentTab.open(w,{animated:true});
@@ -442,6 +470,7 @@ function load_notifications(){
             tv.editable = false;
             tv.setData([notifications_empty_row]);
         }
+        window_activity_cont.hide();
     };
     
     var url = SERVER_URL + '/api/get_active_notifications/?access_token=' + me.access_token;

@@ -215,7 +215,7 @@ function render_user_photos(data, append){
         });
 
         main_image = Ti.UI.createImageView({
-    		image: '../images/photo_loader.png',
+    		image: '../../images/photo_loader.png',
     		top: 0,
     		width: photo_width,
     		height: photo_height,
@@ -400,7 +400,7 @@ function render_trophies(data){
                 }
 
                 photo_cont = Ti.UI.createImageView({
-            		image: '../images/photo_loader.png',
+            		image: '../../images/photo_loader.png',
                     top: 5,
                     bottom: 5,
             		left: (photo_in_row_count * 105) + 5,

@@ -1,5 +1,11 @@
 Ti.include('settings.js');
 Ti.include('includes.js');
+Ti.include('urbanairship.js');
+
+UrbanAirship.key='XOeKRpIDSJmpSvVAwjRXdg';
+UrbanAirship.secret ='r7RXQj6zS2ifBGXXLVy9Ag';
+UrbanAirship.master_secret='GtOv_7dURFOvSGLWcDne0A';
+UrbanAirship.baseurl = 'https://go.urbanairship.com';
 
 // this sets the background color of the master UIView (when there are no windows/tab groups on it)
 Titanium.UI.setBackgroundColor('#000');
@@ -30,6 +36,49 @@ var me = { };
 
 // create tab group
 var tabGroup = Titanium.UI.createTabGroup({id:'tabGroup1'});
+
+var notification_view_animation_timeout = null;
+var notification_view = Titanium.UI.createView({
+    backgroundColor: '#222',
+    height: 50,
+    width: 320,
+    bottom: 48,
+    left: -350,
+    zIndex: 100
+});
+
+notification_view.addEventListener('click', function(){
+    clearTimeout(notification_view_animation_timeout);
+    tabGroup.setActiveTab(3);
+    notification_view.animate({
+        curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
+        left: -320,
+        duration: 300,
+        complete: function(){
+            notification_view.hide();
+        }
+    });
+});
+
+var notification_view_text = Ti.UI.createLabel({
+    text: '',
+    width:320,
+    height: 'auto',
+    color:'#eee',
+    textAlign:'center',
+    font:{fontSize:14,fontWeight:'bold'}
+});
+notification_view.add(notification_view_text);
+
+var notification_dropshadow_top = Titanium.UI.createView({
+    backgroundImage: 'images/upper_drop_shadow.png',
+    height: 2,
+    width: 320,
+    top: -2,
+    zIndex: 1
+});
+notification_view.add(notification_dropshadow_top);
+tabGroup.add(notification_view);
 
 //
 // create base UI tab and root window
@@ -110,25 +159,21 @@ tabGroup.addTab(tab4);
 tabGroup.addTab(tab5);
 
 // Camera 
-var nominate_window = null;
-function add_nominate_window(){
-    // if (!nominate_window){
-        nominate_window = Titanium.UI.createWindow({
-            backgroundColor:"#000", 
-            fullscreen: true,
-            url:'main_windows/nom/nominate.js',
-            left: 320,
-            width: 320
-        });
-    // }
-
-    nominate_window.open();
-    setTimeout(function(){
+function add_nominate_window(animate){
+    nominate_window = Titanium.UI.createWindow({
+        backgroundColor:"#000", 
+        url:'main_windows/nom/nominate.js',
+        left: 320,
+        width: 320
+    });
+    // nominate_window.left = 320;
+    if (typeof(animate) != 'undefined' && animate){
         camera_overlay.animate(window_slide_out);
-        nominate_window.animate(window_slide_in);
-    }, 200);
-
-    // Titanium.Media.hideCamera();
+        nominate_window.open(window_slide_in);
+    }
+    else{
+        nominate_window.open();
+    }
 }
 
 function pass_nominate_data(e){
@@ -146,19 +191,41 @@ function pass_nominate_data(e){
 var camera_overlay = Titanium.UI.createView({
     height: 480,
     width: 320,
-    left: 0,
+    left: 0
 });
 
-var close_camera = Ti.UI.createButton({
-	title:"Close",
-    font: {fontSize: 16, fontWeight: 'bold'},
-	backgroundImage: 'images/load_more_button.png',
-	width: 118,
-	height: 42,
-    bottom: 5,
-	left: 5
+var camera_overlay_top_bar = Titanium.UI.createView({
+    backgroundColor: '#000',
+    height: 60,
+    width: 320,
+    top: 0
 });
-camera_overlay.add(close_camera);
+
+var camera_overlay_bottom_bar_background = Titanium.UI.createView({
+    backgroundColor: '#000',
+    height: 80,
+    width: 320,
+    bottom: 0
+});
+
+var camera_overlay_bottom_bar = Titanium.UI.createView({
+    height: 300,
+    width: 320,
+    bottom: 0
+});
+camera_overlay_bottom_bar.add(camera_overlay_bottom_bar_background);
+camera_overlay.add(camera_overlay_top_bar);
+camera_overlay.add(camera_overlay_bottom_bar);
+
+
+var close_camera = Ti.UI.createButton({
+	backgroundImage: 'images/camera_buttons/close_button.png',
+	width: 42,
+	height: 42,
+    top: 9,
+    right: 9
+});
+camera_overlay_top_bar.add(close_camera);
 
 close_camera.addEventListener('click', function(e){
     Titanium.Media.hideCamera();
@@ -166,15 +233,258 @@ close_camera.addEventListener('click', function(e){
 });
 
 var take_photo = Ti.UI.createButton({
-	title:"Take",
-    font: {fontSize: 16, fontWeight: 'bold'},
-	backgroundImage: 'images/load_more_button.png',
-	width: 118,
-	height: 42,
+	backgroundImage: 'images/camera_buttons/snap_button.png',
+	backgroundSelectedImage: 'images/camera_buttons/snap_button_click.png',
+	width: 70,
+	height: 70,
     bottom: 5,
-    right: 5
+    left: 125
 });
-camera_overlay.add(take_photo);
+camera_overlay_bottom_bar.add(take_photo);
+
+var photo_gallery = Ti.UI.createButton({
+	backgroundImage: 'images/camera_buttons/gallery.png',
+	width: 42,
+	height: 42,
+    bottom: 16,
+    left: 16
+});
+camera_overlay_bottom_bar.add(photo_gallery);
+
+photo_gallery.addEventListener('click', function(e){
+    Titanium.UI.iPhone.showStatusBar({animated:false});
+    Titanium.Media.hideCamera();
+    Titanium.Media.openPhotoGallery({
+        success: photo_gallery_click,
+        cancel: photo_gallery_cancel,
+        mediaTypes: Ti.Media.MEDIA_TYPE_PHOTO
+    });
+    
+    add_nominate_window();
+});
+
+function photo_gallery_cancel(e){
+    Titanium.UI.iPhone.hideStatusBar({animated:false});
+    nominate_window.hide();
+    setTimeout(function(){
+        show_camera();
+    }, 350);
+}
+
+function photo_gallery_click(e){
+    take_photo_click = true;
+    camera_overlay.animate(window_slide_out);
+    nominate_window.animate(window_slide_in);
+    cammera_success(e, true);
+}
+
+function show_camera(){
+    Titanium.Media.showCamera({
+        success: cammera_success,
+        cancel: camera_cancel,
+        error: camera_error,
+        animated: false,
+        autohide: false,
+        showControls: false,
+        // saveToPhotoGallery: true,
+        mediaTypes: Ti.Media.MEDIA_TYPE_PHOTO,
+        overlay: camera_overlay
+    });
+    
+    if (flash_selected_button.button == 'on'){
+        Ti.Media.cameraFlashMode = Ti.Media.CAMERA_FLASH_ON;
+    }
+    else if (flash_selected_button.button == 'off'){
+        Ti.Media.cameraFlashMode = Ti.Media.CAMERA_FLASH_OFF;
+    }
+    else if (flash_selected_button.button == 'auto'){
+        Ti.Media.cameraFlashMode = Ti.Media.CAMERA_FLASH_AUTO;
+    }
+    
+    if (cam_selected == 'back'){            
+        Ti.Media.switchCamera(Ti.Media.CAMERA_FRONT);
+    }
+    else if (cam_selected == 'front'){
+        Ti.Media.switchCamera(Ti.Media.CAMERA_REAR);
+    }
+}
+
+var cam_selected = 'back';
+var cam_selected_button = Ti.UI.createButton({
+	backgroundImage: 'images/camera_buttons/cam_back.png',
+	width: 42,
+	height: 42,
+    bottom: 16,
+    right: 68,
+    zIndex: 10
+});
+cam_selected_button.button = 'back';
+camera_overlay_bottom_bar.add(cam_selected_button);
+
+var cam_hidden_button = Ti.UI.createButton({
+	backgroundImage: 'images/camera_buttons/cam_front.png',
+	width: 42,
+	height: 42,
+    bottom: 16,
+    right: 68,
+    zIndex: 9,
+    opacity: 0
+});
+cam_hidden_button.button = 'front';
+camera_overlay_bottom_bar.add(cam_hidden_button);
+
+cam_hidden_button.addEventListener('click', function(e){
+    var selected = e.source.button;
+    animate_cam_button(selected);
+});
+
+
+cam_selected_button.addEventListener('click', function(e){
+    // var selected = e.source.button;
+    animate_cam_button();
+});
+
+var cam_select_open = false;
+function animate_cam_button(selected){
+    if (cam_select_open){
+        cam_hidden_button.animate({
+            curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
+            bottom: 16,
+            opacity: 0,
+            duration: 250
+        });
+        cam_select_open = false;
+    }
+    else{
+        cam_hidden_button.animate({
+            curve: Ti.UI.ANIMATION_CURVE_EASE_OUT,
+            bottom: 68,
+            opacity: 1.0,
+            duration: 250
+        });
+        cam_select_open = true;
+    }
+    
+    if (typeof(selected) != 'undefined' && cam_selected != selected){
+        cam_selected = selected;
+        if (selected == 'back'){
+            cam_selected_button.backgroundImage = 'images/camera_buttons/cam_back.png';
+            cam_hidden_button.backgroundImage = 'images/camera_buttons/cam_front.png';
+            cam_hidden_button.button = 'front';
+            
+            Ti.Media.switchCamera(Ti.Media.CAMERA_FRONT);
+        }
+        else if (selected == 'front'){
+            cam_selected_button.backgroundImage = 'images/camera_buttons/cam_front.png';
+            cam_hidden_button.backgroundImage = 'images/camera_buttons/cam_back.png';
+            cam_hidden_button.button = 'back';
+            
+            Ti.Media.switchCamera(Ti.Media.CAMERA_REAR);
+        }
+    }
+}
+
+var flash_selected_button = Ti.UI.createButton({
+	backgroundImage: 'images/camera_buttons/flash_auto.png',
+	width: 42,
+	height: 42,
+    bottom: 16,
+    right: 13,
+    zIndex: 10
+});
+flash_selected_button.button = 'auto'
+camera_overlay_bottom_bar.add(flash_selected_button);
+
+flash_selected_button.addEventListener('click', function(e){
+    animate_flash_button();
+});
+
+var flash_middle_button = Ti.UI.createButton({
+	backgroundImage: 'images/camera_buttons/flash_off.png',
+	width: 42,
+	height: 42,
+    bottom: 16,
+    right: 13,
+    zIndex: 9,
+    opacity: 0
+});
+flash_middle_button.button = 'off';
+camera_overlay_bottom_bar.add(flash_middle_button);
+
+flash_middle_button.addEventListener('click', function(e){
+    var selected = e.source;
+    animate_flash_button(selected);
+});
+
+var flash_top_button = Ti.UI.createButton({
+	backgroundImage: 'images/camera_buttons/flash_on.png',
+	width: 42,
+	height: 42,
+    bottom: 16,
+    right: 13,
+    zIndex: 9,
+    opacity: 0
+});
+flash_top_button.button = 'on';
+camera_overlay_bottom_bar.add(flash_top_button);
+
+flash_top_button.addEventListener('click', function(e){
+    var selected = e.source;
+    animate_flash_button(selected);
+});
+
+var flash_select_open = false;
+function animate_flash_button(selected){
+    if (flash_select_open){
+        flash_middle_button.animate({
+            curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
+            bottom: 16,
+            opacity: 0,
+            duration: 250
+        });
+        flash_top_button.animate({
+            curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
+            bottom: 16,
+            opacity: 0,
+            duration: 250
+        });
+        flash_select_open = false;
+    }
+    else{
+        flash_middle_button.animate({
+            curve: Ti.UI.ANIMATION_CURVE_EASE_OUT,
+            bottom: 68,
+            opacity: 1.0,
+            duration: 250
+        });
+        flash_top_button.animate({
+            curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
+            bottom: 122,
+            opacity: 1.0,
+            duration: 250
+        });
+        flash_select_open = true;
+    }
+    
+    if (typeof(selected) != 'undefined' && flash_selected_button.button != selected.button){
+        var selected_img = flash_selected_button.backgroundImage;
+        var selected_button = flash_selected_button.button;
+        flash_selected_button.backgroundImage = selected.backgroundImage;
+        flash_selected_button.button = selected.button;
+        selected.backgroundImage = selected_img;
+        selected.button = selected_button;
+        
+        if (flash_selected_button.button == 'on'){
+            Ti.Media.cameraFlashMode = Ti.Media.CAMERA_FLASH_ON;
+        }
+        else if (flash_selected_button.button == 'off'){
+            Ti.Media.cameraFlashMode = Ti.Media.CAMERA_FLASH_OFF;
+        }
+        else if (flash_selected_button.button == 'auto'){
+            Ti.Media.cameraFlashMode = Ti.Media.CAMERA_FLASH_AUTO;
+        }
+    }
+}
 
 var selected_tab_index = 0;
 var prev_tab_index = 0;
@@ -185,13 +495,28 @@ tabGroup.addEventListener('focus', function(e){
 
 var camera_listeners_attached = false;
 var take_photo_click = false;
+
 win3.addEventListener('focus', function(){
     tabGroup.bottom = -50;
     tabGroup.tabBarVisible = false;
+    
+    cam_selected = 'back';
+    cam_selected_button.button = 'back';
+    cam_hidden_button.button = 'front';
+    cam_selected_button.backgroundImage = 'images/camera_buttons/cam_back.png';
+    cam_hidden_button.backgroundImage = 'images/camera_buttons/cam_front.png';
+    
+    flash_selected_button.backgroundImage = 'images/camera_buttons/flash_auto.png';
+    flash_selected_button.button = 'auto';
+    flash_middle_button.backgroundImage = 'images/camera_buttons/flash_off.png';
+    flash_middle_button.button = 'off';
+    flash_top_button.backgroundImage = 'images/camera_buttons/flash_on.png';
+    flash_top_button.button = 'on';
+    
     // if (!camera_listeners_attached){
     //     camera_listeners_attached = true;
-    //     camera_overlay.zIndex = 10;
-    //     take_photo.bottom = 50;
+    //     // camera_overlay.zIndex = 10;
+    //     // take_photo.bottom = 50;
     //     win3.add(camera_overlay);
     //     take_photo.addEventListener('click', function(e){
     //         var data = {
@@ -203,7 +528,9 @@ win3.addEventListener('focus', function(){
     //         };
     //     
     //         // Titanium.Media.hideCamera();
-    //         add_nominate_window(data);
+    //         add_nominate_window(true);
+    //         camera_overlay.animate(window_slide_out);
+    //         nominate_window.animate(window_slide_in);
     //     });
     // }
     
@@ -224,29 +551,31 @@ win3.addEventListener('focus', function(){
         camera_listeners_attached = true;
         
         take_photo.addEventListener('click', function(e){
-            // Ti.Media.cameraFlashMode = Ti.Media.CAMERA_FLASH_ON
             if (!take_photo_click){
                 take_photo_click = true;
+                Ti.App.fireEvent('clear_nom_photo', {});
+                add_nominate_window(true);
                 Ti.Media.takePicture();
-                add_nominate_window();
+                // camera_overlay.animate(window_slide_out);
+                // nominate_window.animate(window_slide_in);
             }
         });
     }
 });
 
-function cammera_success(event){
-    Titanium.Media.hideCamera();
-    var image = event.media;
-    // var filename = new Date.getTime();
-    // var f = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, filename + '.png');
-    // f.write(image);
+function cammera_success(event, gallery){
+    if (typeof(gallery) == 'undefined'){
+        Titanium.Media.hideCamera();
+    }
     
+    var image = event.media;
     var imageView = Titanium.UI.createImageView({
             image:image,
             width:640,
             height:960
         });
-    image = imageView.toImage();
+    image = imageView.toImage().imageAsCropped({width:640,height:640,x:0,y:200});
+
     var f = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, 'temp.png');
     f.write(image);
     
@@ -262,8 +591,10 @@ function cammera_success(event){
     // image.imageAsCropped({width:480,height:480,x:0,y:80});
     
     Ti.App.Properties.setString("upload_complete", null);
+    Ti.App.Properties.setString("upload_progress", 0);
+    me = JSON.parse(Ti.App.Properties.getString("me"));
     var xhr = Titanium.Network.createHTTPClient();
-    xhr.onload = function(e) {
+    xhr.onload = function(){
         var data = JSON.parse(this.responseData);
         var id = data.id;
         Ti.App.Properties.setString("upload_complete", id);
@@ -272,7 +603,7 @@ function cammera_success(event){
         alert(t);
     };
     xhr.onsendstream = function(e){
-        
+        Ti.App.Properties.setString("upload_progress", e.progress);
     };
     var url = SERVER_URL + '/upload_photo/'
     xhr.open('POST', url);
@@ -287,6 +618,7 @@ function cammera_success(event){
 
 function camera_cancel(){
     reset_after_camera();
+    Ti.App.fireEvent('close_nominate_page', { });
 }
 
 function camera_error(error){
@@ -306,9 +638,10 @@ function camera_error(error){
 Ti.App.addEventListener('cancel_nominate', function(e){
     camera_overlay.animate(window_slide_back);
     take_photo_click = false;
+
+    nominate_window.hide();
+    
     setTimeout(function(){
-        nominate_window.close();
-        nominate_window.hide()
         Titanium.Media.showCamera({
             success: cammera_success,
             cancel: camera_cancel,
@@ -321,19 +654,47 @@ Ti.App.addEventListener('cancel_nominate', function(e){
             overlay: camera_overlay
             // allowEditing:true
         });
-    }, 250);
+        
+        if (flash_selected_button.button == 'on'){
+            Ti.Media.cameraFlashMode = Ti.Media.CAMERA_FLASH_ON;
+        }
+        else if (flash_selected_button.button == 'off'){
+            Ti.Media.cameraFlashMode = Ti.Media.CAMERA_FLASH_OFF;
+        }
+        else if (flash_selected_button.button == 'auto'){
+            Ti.Media.cameraFlashMode = Ti.Media.CAMERA_FLASH_AUTO;
+        }
+        
+        if (cam_selected == 'back'){            
+            Ti.Media.switchCamera(Ti.Media.CAMERA_FRONT);
+        }
+        else if (cam_selected == 'front'){
+            Ti.Media.switchCamera(Ti.Media.CAMERA_REAR);
+        }
+        
+    }, 300);
 });
 
 Ti.App.addEventListener('reset_after_camera', function(e){
+    nominate_window.hide();
+    
     take_photo_click = false;
     tabGroup.bottom = 0;
     tabGroup.tabBarVisible = true;
     tabGroup.setActiveTab(0);
 });
 
+Ti.App.addEventListener('reset_after_camera_to_profile', function(e){
+    nominate_window.hide();
+    
+    take_photo_click = false;
+    tabGroup.bottom = 0;
+    tabGroup.tabBarVisible = true;
+    tabGroup.setActiveTab(4);
+});
+
 function reset_after_camera(prev){
     Titanium.UI.iPhone.showStatusBar({animated:false});
-    
     take_photo_click = false;
     tabGroup.bottom = 0;
     tabGroup.tabBarVisible = true;
@@ -344,16 +705,16 @@ function reset_after_camera(prev){
         tabGroup.setActiveTab(0);
     }
     
-    if (nominate_window){
-        nominate_window.close();
-        nominate_window.hide();
-    }
+    Titanium.UI.iPhone.showStatusBar({animated:false});
 }
 
 function load_portrit(animate){
     me = JSON.parse(Ti.App.Properties.getString("me"));
     me.fid = Titanium.Facebook.uid;
     me.access_token = Titanium.Facebook.accessToken;
+        
+    register_push_notifications(me.fid);
+    Titanium.UI.iPhone.appBadge = 0;
     
     if (animate){
         tabGroup.left = 320;
@@ -885,4 +1246,131 @@ if (!Titanium.Facebook.loggedIn){
 }
 else{
     load_portrit(false);
+}
+
+// Push Notifications
+function register_push_notifications(alias){
+    Ti.Network.registerForPushNotifications({
+        types: [
+            Ti.Network.NOTIFICATION_TYPE_BADGE,
+            Ti.Network.NOTIFICATION_TYPE_ALERT,
+            Ti.Network.NOTIFICATION_TYPE_SOUND
+        ],
+        success:function(e){
+            var deviceToken = e.deviceToken;
+
+            var params = {
+                tags: ['version'+Ti.App.getVersion()],
+                alias: alias
+            };
+            UrbanAirship.register(params, function(data) {
+                if (!(Ti.App.Properties.getString('push_notifications'))){
+                    var xhr = Titanium.Network.createHTTPClient();
+                    var url = SERVER_URL + '/api/push_notifications/'
+                    xhr.onload = function(){
+                        Ti.App.Properties.setString("push_notifications", true);
+                    };
+                    xhr.open('POST', url);
+                    xhr.send({
+                        'method': 'on',
+                        'access_token': me.access_token
+                    });
+                }
+            }, function(errorregistration) {
+                
+            });
+        },
+        error:function(e) {
+            Ti.API.warn("push notifications disabled: "+e);
+        },
+        callback: function(e){
+            //Received Push Notification
+            if (tabGroup.tabs[3].badge){
+                tabGroup.tabs[3].badge += 1;
+            }
+            else{
+                tabGroup.tabs[3].badge = 1;
+            }
+            render_notification(e.data.alert);
+        }
+    });
+}
+
+function render_notification(text){
+    notification_view_text.text = text;
+    notification_view.show();
+    notification_view.animate({
+        curve: Ti.UI.ANIMATION_CURVE_EASE_OUT,
+        left: 0,
+        duration: 300
+    });
+    
+    notification_view_animation_timeout = setTimeout(function(){
+        notification_view.animate({
+            curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
+            left: -320,
+            duration: 300,
+            complete: function(){
+                notification_view.hide();
+            }
+        });
+    }, 6000);
+}
+
+function isIPhone3_2_Plus()
+{
+	// add iphone specific tests
+	if (Titanium.Platform.name == 'iPhone OS')
+	{
+		var version = Titanium.Platform.version.split(".");
+		var major = parseInt(version[0]);
+		var minor = parseInt(version[1]);
+		
+		// can only test this support on a 3.2+ device
+		if (major > 3 || (major == 3 && minor > 1))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+function isiOS4Plus()
+{
+	// add iphone specific tests
+	if (Titanium.Platform.name == 'iPhone OS')
+	{
+		var version = Titanium.Platform.version.split(".");
+		var major = parseInt(version[0]);
+		
+		// can only test this support on a 3.2+ device
+		if (major >= 4)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+//Background services
+if (isiOS4Plus()){
+    // Ti.App.addEventListener('resume',function(e){
+    //  Ti.API.info("app is resuming from the background");
+    // });
+	Ti.App.addEventListener('resumed',function(e){
+        register_push_notifications(me.fid);
+        Titanium.UI.iPhone.appBadge = 0;
+        
+        var date_resumed = new Date().getTime();
+	    var date_paused = Ti.App.Properties.getString('time_paused');
+	    
+        if (date_resumed - date_paused >= (1000 * 60 * 5)){
+            Ti.App.fireEvent('reset', { });
+        }
+	});
+
+	Ti.App.addEventListener('pause',function(e){
+	    var datetime_paused = new Date().getTime();
+	    Ti.App.Properties.setString("time_paused", datetime_paused);
+	});
 }

@@ -201,6 +201,10 @@ var init_options = function(){
         'style':'wide'
     });
     Titanium.Facebook.addEventListener('logout', function(e) {
+        var file = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory,'twitter.config');
+        if (file.exists()) { file.deleteFile(); }
+        Ti.App.Properties.removeProperty("push_notifications");
+        
         var login_win = Ti.UI.createWindow({backgroundColor:"#000", url:'../../portrit.js'});
         login_win.open(fadeIn);
     });
@@ -338,4 +342,8 @@ setTimeout(init_options, 100);
 
 Ti.App.addEventListener('reset', function(eventData) {
     win.close();
+});
+
+Ti.App.addEventListener('close_settings_page', function(eventData) {
+    win.close({animated:false});
 });

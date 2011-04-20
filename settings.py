@@ -22,6 +22,11 @@ POSTMARK_SENDER     = 'no-reply@portrit.com'
 TWITTER_MOBILE_CONSUMER_KEY = 'RrYAd721jXeCJsp9QqtFw'
 TWITTER_MOBILE_CONSUMER_SECRET = 'rWxNvv8pOSB0t9kgT59xVc2IUQXH1l8ESpfOst5sggw'
 
+URBAN_KEY = 'XOeKRpIDSJmpSvVAwjRXdg'
+URBAN_SECRET = 'r7RXQj6zS2ifBGXXLVy9Ag'
+URBAN_MASTER = 'GtOv_7dURFOvSGLWcDne0A'
+URBAN_URL = 'https://go.urbanairship.com'
+
 if ENV == "LOCAL":
     DATABASE_ENGINE = ''           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
     DATABASE_NAME = ''             # Or path to database file if using sqlite3.
@@ -85,7 +90,7 @@ elif ENV == "TEST":
     FACEBOOK_APP_SECRET = "25f31ff59105385308be7fed55fa1b5e"
     
     NODE_SOCKET = 8081
-    NODE_HOST = "127.0.0.1"
+    NODE_HOST = 'localhost'
     
     CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
     

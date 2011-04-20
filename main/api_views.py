@@ -2329,9 +2329,14 @@ def save_mobile_twitter_token(request):
     try:
         portrit_user = get_user_from_access_token(access_token)
         twitter_token = 'oauth_token_secret=' + twitter_access_token_secret + '&oauth_token=' + twitter_access_token
-        portrit_user.twitter_user.active = True
-        portrit_user.twitter_user.access_token = None
-        portrit_user.twitter_user.mobile_access_token = twitter_token
+        if portrit_user.twitter_user:
+            portrit_user.twitter_user.active = True
+            portrit_user.twitter_user.access_token = None
+            portrit_user.twitter_user.mobile_access_token = twitter_token
+        else:
+            twitter_user = Twitter_User(mobile_access_token=twitter_token)
+            portrit_user.twitter_user = twitter_user
+
         portrit_user.save()
         
         data = True
@@ -2366,6 +2371,24 @@ def share_twitter(request):
         data = True
     except Exception, err:
         print err
+        
+    data = json.dumps(data) 
+    return HttpResponse(data, mimetype='application/json')
+
+@check_access_token     
+def push_notifications(request):
+    data = False
+    access_token = request.POST.get('access_token')
+    method = request.POST.get('method')
+    
+    try:
+        portrit_user = get_user_from_access_token(access_token)
+        
+        if method == 'on':
+            portrit_user.push_notifications = True;
+            portrit_user.save()
+    except:
+        pass
         
     data = json.dumps(data) 
     return HttpResponse(data, mimetype='application/json')

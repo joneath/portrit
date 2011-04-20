@@ -123,6 +123,9 @@ urlpatterns += patterns('',
     url(r'^return_twitter/$', 'main.api_views.return_twitter'),
     url(r'^api/share_twitter/$', 'main.api_views.share_twitter'),
     
+    #Push Notifications
+    url(r'^api/push_notifications/$', 'main.api_views.push_notifications'),
+    
     url(r'^api/shorten_url/$', 'main.api_views.shorten_url_request'),
 )
 

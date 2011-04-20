@@ -5545,6 +5545,7 @@ div#latest_photos{
     
         .recent_nom_comment_cont .new_comment_cont{
             margin:             5px;
+            margin-left:        0px;
         }
     
         .recent_nom_comment_cont .recent_nom_comment_heading{
@@ -5577,7 +5578,7 @@ div#latest_photos{
             font-size:              20px;
             padding:                10px;
             position:               relative;
-            width:                  613px;
+            width:                  623px;
             height:                 84px;
             z-index:                20001;
         }
@@ -6470,7 +6471,7 @@ div#all_friends {
     }
     
     #settings_cont label{
-        color:              #666;
+        color:              #555;
         font-size:          17px;
         font-weight:        bold;
     }

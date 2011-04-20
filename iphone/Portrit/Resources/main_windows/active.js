@@ -775,7 +775,7 @@ function render_nom(nom, top, row_count){
 
         nom_header = Titanium.UI.createView({
             backgroundColor: nom_cat_color,
-            height: 35,
+            height: 30,
             width: 320,
         });  
         
@@ -785,8 +785,8 @@ function render_nom(nom, top, row_count){
     		image: '../images/photo_loader.png',
     		left: 0,
     		top: 0,
-    		height: 35,
-    		width: 35,
+    		height: 30,
+    		width: 30,
     		hires: true,
     		zIndex: 1
     	});
@@ -811,7 +811,7 @@ function render_nom(nom, top, row_count){
             // right: 5,
             // bottom: 7,
             left: 0,
-            height: 35,
+            height: 30,
             width: 280,
             font:{fontSize:16, fontWeight: 'bold'}
         });
@@ -823,14 +823,14 @@ function render_nom(nom, top, row_count){
             right: 15,
             // bottom: 5,
             textAlign: "right",
-            size: {width: 280, height: 35},
+            size: {width: 280, height: 30},
             font:{fontSize: 22, fontWeight:'bold'}
         });
         
         nominatee_name_cont = Titanium.UI.createView({
             // backgroundColor: '#222',
             // borderRadius: 5,
-            height: 35,
+            height: 30,
             left: 40,
             width: 'auto',
             zIndex: 1
@@ -1554,14 +1554,14 @@ function init_active_view(){
         };
         
         var url = '';
-        if (selected_tab == 'active'){
-            url = SERVER_URL + '/api/get_recent_stream/?access_token=' + me.access_token;
-        }
-        else if (selected_tab == 'photos'){
+        if (selected_tab == 'photos'){
             url = SERVER_URL + '/api/get_user_stream_photos/?access_token=' + me.access_token;
         }
         else if (selected_tab == 'winners'){
             url = SERVER_URL + '/api/get_winners_stream/?access_token=' + me.access_token;
+        }
+        else {
+            url = SERVER_URL + '/api/get_recent_stream/?access_token=' + me.access_token;
         }
         xhr.open('GET', url);
         xhr.send();
@@ -1575,6 +1575,7 @@ function init_active_view(){
      statusLabel.text = "Pull down to update...";
      actInd.hide();
      arrow.show();
+     window_activity_cont.hide();
     }
     
     if (!globals_attached){    
@@ -1623,17 +1624,19 @@ function init_active_view(){
         // End pull to refresh
     
         Ti.App.addEventListener('update_active_noms', function(eventData) {
-            selected_tab = 'active';
-    
-            var header_active_tab_matrix = Ti.UI.create2DMatrix();
-            header_active_tab_matrix = header_active_tab_matrix.translate(0,0);
-    
-            var header_active_tab_animation = Titanium.UI.createAnimation();
-            header_active_tab_animation.transform = header_active_tab_matrix;
-            header_active_tab_animation.duration = 0;
-    
-            header_tab_selection.animate(header_active_tab_animation);
-     
+            if (selected_tab != 'active'){
+                selected_tab = 'active';
+
+                var header_active_tab_matrix = Ti.UI.create2DMatrix();
+                header_active_tab_matrix = header_active_tab_matrix.translate(0,0);
+
+                var header_active_tab_animation = Titanium.UI.createAnimation();
+                header_active_tab_animation.transform = header_active_tab_matrix;
+                header_active_tab_animation.duration = 0;
+
+                header_tab_selection.animate(header_active_tab_animation);
+            }
+            window_activity_cont.show();
             beginReloading();
         });
     

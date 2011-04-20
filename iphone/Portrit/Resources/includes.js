@@ -293,13 +293,26 @@ function share_on_twitter(me, nom, caption){
     
     var url = SERVER_URL + '/api/share_twitter/';
     share_twitter_request.open('POST', url);
-    share_twitter_request.send({'access_token': me.access_token, 'url': 'http://portrit.com/#!/nomination/' + nom.id, 'status': caption});
+    
+    if (typeof(nom['nomination_category']) == 'undefined'){
+        share_twitter_request.send({'access_token': me.access_token, 'url': 'http://portrit.com/#!/' + me.username + '/photos/' + nom.id, 'status': caption});
+    }
+    else{
+        share_twitter_request.send({'access_token': me.access_token, 'url': 'http://portrit.com/#!/nomination/' + nom.id, 'status': caption});        
+    }
 }
 
 function share_on_facebook(me, nom, caption, title){
-    var short_url_request = Titanium.Network.createHTTPClient();
-    var url_to_shorten = 'http://portrit.com/#!/nomination/' + nom.id;
+    var url_to_shorten = '';
     
+    if (typeof(nom['nomination_category']) == 'undefined'){
+        url_to_shorten = 'http://portrit.com/#!/' + me.username + '/photos/' + nom.id;
+    }
+    else{
+        url_to_shorten = 'http://portrit.com/#!/nomination/' + nom.id;
+    }
+    
+    var short_url_request = Titanium.Network.createHTTPClient();
     short_url_request.onload = function(){
         var data = JSON.parse(this.responseData);
         var url = data.url;

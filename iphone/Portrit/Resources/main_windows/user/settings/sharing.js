@@ -38,9 +38,7 @@ tv = Ti.UI.createTableView({
     style:Titanium.UI.iPhone.TableViewStyle.GROUPED
 });
 
-tv.addEventListener('click', function(e){
-
-});
+tv.addEventListener('click', function(e){ });
 
 win.add(tv);
 
@@ -66,8 +64,7 @@ oAuthAdapter.loadAccessToken('twitter');
 function change_permission(method, value){
     var xhr = Titanium.Network.createHTTPClient();
 
-    xhr.onload = function()
-    {
+    xhr.onload = function(){
     	data = JSON.parse(this.responseData);
     	user_settings_data = data;
     	Ti.App.Properties.setString("user_settings", JSON.stringify(user_settings_data));
@@ -246,8 +243,6 @@ function init_sharing(){
                 oAuthAdapter.getAccessToken('http://twitter.com/oauth/access_token');
                 // save the access token
                 oAuthAdapter.saveAccessToken('twitter');
-                
-                alert('here')
                 
                 // save twitter access token on server
                 var token = oAuthAdapter.get_access_token()

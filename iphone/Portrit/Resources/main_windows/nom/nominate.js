@@ -6,6 +6,13 @@ Ti.App.addEventListener('pass_photo_data', function(eventData) {
     photo = eventData.photo;
     new_photo = eventData.new_photo;
     
+    if (typeof(new_photo) == 'undefined'){
+        new_photo = false;
+    }
+    else{
+        new_photo = true;
+    }
+    
     init_nominate_view();
 });
 
@@ -15,13 +22,14 @@ Ti.include('../../includes.js');
 var win = Ti.UI.currentWindow,
     tv = null,
     me = JSON.parse(Ti.App.Properties.getString("me")),
+    loading_photo = true,
     photo_id = null,
     user = null,
     passed_user = null,
+    new_photo = false,
     name = '',
     username = '',
     photo = null,
-    new_photo = null,
     window_nav_bar = null,
     back_buttom = null,
     button_label = null,
@@ -46,7 +54,6 @@ var window_slide_back = Titanium.UI.createAnimation({
 });
 
 Ti.App.addEventListener('close_nominate_page', function(eventData) {
-    var win = Ti.UI.currentWindow;
     win.close();
 });
 
@@ -67,12 +74,11 @@ back_buttom = Titanium.UI.createButton({
 });
 
 back_buttom.addEventListener('click', function(){
-    if (typeof(new_photo) == 'undefined'){
+    if (!new_photo){
         win.close();
     }
     else{
-        var current_win = Ti.UI.currentWindow;
-        current_win.animate(window_slide_back);
+        win.animate(window_slide_back);
         Ti.App.fireEvent('cancel_nominate');
     }
 });
@@ -109,8 +115,9 @@ window_activity_background = Titanium.UI.createView({
 
 window_activity_cont = Titanium.UI.createView({
     top: 100,
-    width: 320,
+    width: 120,
     height: 120,
+    left: 100,
     zIndex: 20
 });
 window_activity_cont.show();
@@ -146,8 +153,10 @@ var trophy_thumbs = [ ];
 var max_height = 252;
 var main_image = null;
 var selcted_trophies_cont = null;
+var scafold_rendered = false;
 
 var render_scafold = function(){
+    scafold_rendered = true;
     Titanium.UI.iPhone.showStatusBar({animated:false});
     tv = Ti.UI.createTableView({
             backgroundColor: '#000',
@@ -455,7 +464,9 @@ var render_scafold = function(){
     list_view_data.push(nominate_action_row);
 	tv.setData(list_view_data);
 };
-setTimeout(render_scafold, 50);
+if (!scafold_rendered){
+    setTimeout(render_scafold, 50);
+}
 
 var selected_noms = { };
 var selected_trophy_count = 0;
@@ -536,92 +547,101 @@ function clear_nominations(e){
     return false;
 }
 
-function post_nom(e){	
-	var nominations = '';
-    var selected_nom_count = 0;
-	for (cat in selected_noms){
-	    if (cat){
-	        nominations += nom_cat_to_text(cat) + ',';
-	        selected_nom_count += 1;
-	    }
-	}
-	
-	if (selected_nom_count > 0 || typeof(new_photo) != 'undefined'){
-	    if (typeof(new_photo) == 'undefined'){
-	        var w = Ti.UI.createWindow({backgroundColor:"#eee", url:'share.js'});
-        	Titanium.UI.currentTab.open(w,{animated:true});
-	    }
-	    else{
-	        var share_window = Titanium.UI.createWindow({
-                backgroundColor:"#eee", 
-                url:'share.js',
-                left: 320,
-                width: 320
-            });
-            share_window.open();
-            setTimeout(function(){
-                share_window.animate(window_slide_in);
-                win.animate(window_slide_out);
-            }, 200);
-	    }
-    	
-	    var tagged_users = '';
-    	for (user in tagged_friends){
-    	    if (user){
-    	        tagged_users += user + ',';
+var share_window = null;
+function post_nom(e){
+    if (!loading_photo){
+        var nominations = '';
+        var selected_nom_count = 0;
+    	for (cat in selected_noms){
+    	    if (cat){
+    	        nominations += nom_cat_to_text(cat) + ',';
+    	        selected_nom_count += 1;
     	    }
     	}
 
-    	setTimeout(function(){
-    	    Ti.App.fireEvent('pass_nom_data', {
-                user: passed_user,
-                name: name,
-                photo: photo,
-                nominations: nominations,
-                tagged_users: tagged_users,
-                new_photo: new_photo
+    	if (selected_nom_count > 0 || new_photo){
+    	    var tagged_users = '';
+        	for (user in tagged_friends){
+        	    if (user){
+        	        tagged_users += user + ',';
+        	    }
+        	}
+        	
+    	    if (!new_photo){
+    	        var w = Ti.UI.createWindow({backgroundColor:"#eee", url:'share.js'});
+            	Titanium.UI.currentTab.open(w,{animated:true});
+    	    }
+    	    else{
+                if (!share_window){
+                    share_window = Titanium.UI.createWindow({
+                        backgroundColor: '#eee', 
+                        url: 'share.js',
+                        left: 320,
+                        width: 320
+                    });
+                    share_window.open();
+                    setTimeout(function(){
+                        share_window.animate(window_slide_in);
+                        win.animate(window_slide_out);
+                    }, 250);
+                }
+                else{
+                    share_window.animate(window_slide_in);
+                    win.animate(window_slide_out);
+                }
+    	    }
+
+        	setTimeout(function(){
+        	    Ti.App.fireEvent('pass_nom_data', {
+                    user: passed_user,
+                    name: name,
+                    photo: photo,
+                    nominations: nominations,
+                    tagged_users: tagged_users,
+                    new_photo: new_photo
+                });
+        	}, 300);
+    	}
+    	else{
+    	    var nominations_empty_message_background = Titanium.UI.createView({
+        	    backgroundColor: '#000',
+                opacity: .8,
+                borderRadius: 5,
+                height: '100%',
+                width: '100%',
+                zIndex: -1
             });
-    	}, 200);
-	}
-	else{
-	    var nominations_empty_message_background = Titanium.UI.createView({
-    	    backgroundColor: '#000',
-            opacity: .8,
-            borderRadius: 5,
-            height: '100%',
-            width: '100%',
-            zIndex: -1
-        });
-        
-	    var nominations_empty_message_cont = Titanium.UI.createView({
-            height: 'auto',
-            width: 'auto',
-            top: 150,
-            zIndex: 10
-        });
-        nominations_empty_message_cont.add(nominations_empty_message_background);
-        
-	    var nominations_empty_message = Titanium.UI.createLabel({
-    	    text: 'Please select a trophy.',
-            color: '#fff',
-            left: 10,
-            right: 10,
-            top: 10,
-            bottom: 10,
-            size: {width: 'auto', height: 'auto'},
-            font:{fontSize:16, fontWeight: 'bold'}
-        });
-        nominations_empty_message_cont.add(nominations_empty_message);
-        win.add(nominations_empty_message_cont);
-        
-        var fadeOutSlow = Titanium.UI.createAnimation({
-            curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
-            opacity: 0,
-            delay: 2000,
-            duration: 1000
-        });
-        nominations_empty_message_cont.animate(fadeOutSlow);
-	}
+
+    	    var nominations_empty_message_cont = Titanium.UI.createView({
+                height: 'auto',
+                width: 'auto',
+                top: 150,
+                zIndex: 10
+            });
+            nominations_empty_message_cont.add(nominations_empty_message_background);
+
+    	    var nominations_empty_message = Titanium.UI.createLabel({
+        	    text: 'Please select a trophy.',
+                color: '#fff',
+                left: 10,
+                right: 10,
+                top: 10,
+                bottom: 10,
+                size: {width: 'auto', height: 'auto'},
+                font:{fontSize:16, fontWeight: 'bold'}
+            });
+            nominations_empty_message_cont.add(nominations_empty_message);
+            win.add(nominations_empty_message_cont);
+
+            var fadeOutSlow = Titanium.UI.createAnimation({
+                curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
+                opacity: 0,
+                delay: 2000,
+                duration: 1000
+            });
+            nominations_empty_message_cont.animate(fadeOutSlow);
+    	}   
+    }
 }
 
 var tagged_friends_count = 0;
@@ -698,7 +718,7 @@ function render_following_list(data, append){
     		left: 3,
     		width: 25,
     		height: 25,
-    		hires: highres
+    		hires: true
     	});
     	cachedImageView('profile_images', 'https://graph.facebook.com/' + data[i].fid + '/picture?type=square', profile_image);
     	
@@ -742,28 +762,30 @@ function hide_tag_window(e){
 }
 
 function show_tag_window(e){
-    tag_cont.animate({bottom:0, duration:300, curve: Ti.UI.ANIMATION_CURVE_EASE_IN_OUT});
-    if (following_cache.length == 0){
-        var xhr = Titanium.Network.createHTTPClient();
+    if (!loading_photo){
+        tag_cont.animate({bottom:0, duration:300, curve: Ti.UI.ANIMATION_CURVE_EASE_IN_OUT});
+        if (following_cache.length == 0){
+            var xhr = Titanium.Network.createHTTPClient();
 
-        xhr.onload = function()
-        {   
-            var data = JSON.parse(this.responseData);
-            if (data.data.length > 0){
-                following_cache = data.data;
-                following_count = data.count;
-                render_following_list(following_cache);
-            }
-        };
-        
-        var url = SERVER_URL + '/api/get_follow_data/?access_token=' + me.access_token + '&target=' + user + '&method=following&all=True&page=' + following_page;   
-        xhr.open('GET', url);
+            xhr.onload = function()
+            {   
+                var data = JSON.parse(this.responseData);
+                if (data.data.length > 0){
+                    following_cache = data.data;
+                    following_count = data.count;
+                    render_following_list(following_cache);
+                }
+            };
 
-        // send the data
-        xhr.send();
-    }
-    else{
-        render_following_list(following_cache);
+            var url = SERVER_URL + '/api/get_follow_data/?access_token=' + me.access_token + '&target=' + user + '&method=following&all=True&page=' + following_page;   
+            xhr.open('GET', url);
+
+            // send the data
+            xhr.send();
+        }
+        else{
+            render_following_list(following_cache);
+        }
     }
 }
 
@@ -825,50 +847,32 @@ function search_following(e){
 }
 
 function init_nominate_view(){
-    // var photo_width = 320;
-    // var photo_height = max_height;
-    // 
-    // if (Ti.Platform.displayCaps.density == 'high') {
-    //     if (photo.width > Ti.Platform.displayCaps.platformWidth){
-    //         photo_width = Ti.Platform.displayCaps.platformWidth;
-    //     }
-    //     else{
-    //         photo_width = photo.width;
-    //     }
-    //     
-    //     if (photo.height && photo.height > max_height){
-    //         photo_width = max_height * (photo.width / photo.height);
-    //         photo_height = photo_width * (photo.height / photo.width);
-    //     }
-    //     else{
-    //         photo_height = max_height;
-    //     }
-    //     highres = true;
-    // }
-    // else{
-    //     photo_height = 320;
-    //     photo_width = 320;
-    //     highres = false;
-    // }
-    
-    if (typeof(new_photo) == 'undefined'){
-        // main_image = Ti.UI.createImageView({
-        //          image: '../../images/photo_loader.png',
-        //          width: photo_width,
-        //          height: photo_height,
-        //          hires: true
-        //      });
+    if (!new_photo){
 	    cachedImageView('images', photo.source, main_image);
 	}
 	else{
 	    var f = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, 'temp.png');
+        // main_image.hide();
 	    main_image.image = f.nativePath;
-        main_image.image = main_image.toBlob().imageAsCropped({width:640,height:640,x:0,y:80});
+        // main_image.image = main_image.toBlob().imageAsCropped({width:640,height:640,x:0,y:200});
+        // main_image.show();
 	}
     
+    loading_photo = false;
     window_activity_cont.animate(fadeOut);
+    
+    if (!new_photo){
+        share_window = Titanium.UI.createWindow({
+            backgroundColor: '#eee', 
+            url: 'share.js',
+            left: 320,
+            width: 320
+        });
+        share_window.open();
+    }
 }
 
 Ti.App.addEventListener('cancel_share', function(e){
+    share_window = null;
     win.animate(window_slide_in);
 });

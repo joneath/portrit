@@ -207,6 +207,8 @@ class Photo(Document):
     crop = StringField()
     crop_small = StringField()
     
+    local_copy = BooleanField(default=True)
+    
     height = IntField()
     width = IntField()
     
@@ -250,8 +252,12 @@ class Photo(Document):
         os.remove(self.path)
         os.remove(self.path + '_130.jpg')
         os.remove(self.path + '_720.jpg')
+        os.remove(self.path + '_iphone.jpg')
         os.remove(self.path + '_crop.jpg')
         os.remove(self.path + '_crop_small.jpg')
+        
+        self.local_copy = False
+        self.save()
     
 class FB_User(EmbeddedDocument):
     active = BooleanField(default=True)
@@ -320,6 +326,12 @@ class Portrit_User(Document):
     email_on_follow = BooleanField(default=False)
     email_on_nomination = BooleanField(default=False)
     email_on_win = BooleanField(default=False)
+    push_notifications = BooleanField(default=False)
+    
+    push_comments = BooleanField(default=True)
+    push_nominations = BooleanField(default=True)
+    push_wins = BooleanField(default=True)
+    push_follows = BooleanField(default=True)
     
     username = StringField(max_length=60)
     name = StringField(max_length=160)
@@ -333,6 +345,7 @@ class Portrit_User(Document):
     #Analytics
     web_app_first = BooleanField(default=True)
     iphone_app_first = BooleanField(default=True)
+    has_iphone = BooleanField(default=False)
     given_nomination_count = IntField(default=0)
     recieved_nomination_count = IntField(default=0)
     selfish_nomination_count = IntField(default=0)
@@ -381,7 +394,12 @@ class Portrit_User(Document):
     def get_notification_data(self):
         """Used for Node notifications"""
         data = {
-            'fid': self.fb_user.fid
+            'fid': self.fb_user.fid,
+            'push_on': self.push_notifications,
+            'push_comments': self.push_comments,
+            'push_nominations': self.push_nominations,
+            'push_wins': self.push_wins,
+            'push_follows': self.push_follows
         }
         return data
             

@@ -1,12 +1,19 @@
 var events = require('events');
 var sys = require('sys');
 var http = require('http');
+var https = require('https');
 var url = require("url");
 var net = require('net');
 var events = require("events");
 var path = require("path");
 // var nodemailer = require('nodemailer');
 var postmark = require("postmark")("7e81d8b2-4429-44e1-a493-eef87d130669");
+
+var URBAN_KEY = 'XOeKRpIDSJmpSvVAwjRXdg';
+var URBAN_SECRET = 'r7RXQj6zS2ifBGXXLVy9Ag';
+var URBAN_MASTER_SECRET = 'GtOv_7dURFOvSGLWcDne0A';
+
+var Airship = null;
 
 var Portrit = function(){
     var self = this;
@@ -47,6 +54,68 @@ var Portrit = function(){
     
     function get_cat_under(cat){
         return cat.replace(' ', '_').toLowerCase();
+    }
+    
+    function prep_push_data(friends, data){
+        var push_payload = [ ];
+        var push = { };
+        var allow_push = true;
+        var message = '';
+        for (id in friends){
+            if (id != undefined){
+                allow_push = true;
+                
+                // if (!friends[id].push_on){
+                //     allow_push = false;
+                //     continue;
+                // }
+                
+                if (data.method == 'new_comment'){
+                    // if (!friends[id].push_comments){
+                    //     allow_push = false;
+                    //     continue;
+                    // }
+                    message = data.payload.comment_sender_username + ' commented on your nomination';
+                }
+                else if (data.method == 'new_nom'){
+                    // if (!friends[id].push_nominations){
+                    //     allow_push = false;
+                    //     continue;
+                    // }
+                    message = data.payload.nom_data[0].nominator_username + ' nominated your photo for ' + data.payload.nom_data[0].nomination_category;
+                }
+                else if (data.method == 'nom_won'){
+                    // if (!friends[id].push_wins){
+                    //     allow_push = false;
+                    //     continue;
+                    // }
+                    message = 'Congratulations! Your photo won ' + data.payload.nom_cat;
+                }
+                else if (data.method == 'new_follow'){
+                    // if (!friends[id].push_follows){
+                    //     allow_push = false;
+                    //     continue;
+                    // }
+                    message = data.payload.follower_username + ' is now following you';
+                }
+                else{
+                    allow_push = false;
+                    continue;
+                }
+                
+                if (allow_push){
+                    push = { 
+                        'aliases': [id],
+                        'aps': {
+                            'badge': '+1',
+                            'alert': message
+                        }
+                    };
+                    push_payload.push(push);
+                }
+            }
+        }
+        return push_payload;
     }
     
     function get_email_html(method, data){
@@ -183,6 +252,8 @@ var Portrit = function(){
                             nomination_emitter.emit(data.payload.friends[id].fid, data.payload.friends[id].notification_id, data);
                         }
                     }
+                    data = prep_push_data(data.payload.friends, data);
+                    airship.batch_push(data);
                 }
                 else{
                     send_mail(data);
@@ -367,5 +438,194 @@ var Portrit = function(){
         request_server.listen(8080, '10.117.57.137');
     }
 }
-
 var portrit = new Portrit();
+
+var Base64 = {
+ 
+	// private property
+	_keyStr : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+ 
+	// public method for encoding
+	encode : function (input) {
+		var output = "";
+		var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+		var i = 0;
+ 
+		input = Base64._utf8_encode(input);
+ 
+		while (i < input.length) {
+ 
+			chr1 = input.charCodeAt(i++);
+			chr2 = input.charCodeAt(i++);
+			chr3 = input.charCodeAt(i++);
+ 
+			enc1 = chr1 >> 2;
+			enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+			enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+			enc4 = chr3 & 63;
+ 
+			if (isNaN(chr2)) {
+				enc3 = enc4 = 64;
+			} else if (isNaN(chr3)) {
+				enc4 = 64;
+			}
+ 
+			output = output +
+			this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) +
+			this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
+ 
+		}
+ 
+		return output;
+	},
+ 
+	// public method for decoding
+	decode : function (input) {
+		var output = "";
+		var chr1, chr2, chr3;
+		var enc1, enc2, enc3, enc4;
+		var i = 0;
+ 
+		input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+ 
+		while (i < input.length) {
+ 
+			enc1 = this._keyStr.indexOf(input.charAt(i++));
+			enc2 = this._keyStr.indexOf(input.charAt(i++));
+			enc3 = this._keyStr.indexOf(input.charAt(i++));
+			enc4 = this._keyStr.indexOf(input.charAt(i++));
+ 
+			chr1 = (enc1 << 2) | (enc2 >> 4);
+			chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+			chr3 = ((enc3 & 3) << 6) | enc4;
+ 
+			output = output + String.fromCharCode(chr1);
+ 
+			if (enc3 != 64) {
+				output = output + String.fromCharCode(chr2);
+			}
+			if (enc4 != 64) {
+				output = output + String.fromCharCode(chr3);
+			}
+ 
+		}
+ 
+		output = Base64._utf8_decode(output);
+ 
+		return output;
+ 
+	},
+ 
+	// private method for UTF-8 encoding
+	_utf8_encode : function (string) {
+		string = string.replace(/\r\n/g,"\n");
+		var utftext = "";
+ 
+		for (var n = 0; n < string.length; n++) {
+ 
+			var c = string.charCodeAt(n);
+ 
+			if (c < 128) {
+				utftext += String.fromCharCode(c);
+			}
+			else if((c > 127) && (c < 2048)) {
+				utftext += String.fromCharCode((c >> 6) | 192);
+				utftext += String.fromCharCode((c & 63) | 128);
+			}
+			else {
+				utftext += String.fromCharCode((c >> 12) | 224);
+				utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+				utftext += String.fromCharCode((c & 63) | 128);
+			}
+ 
+		}
+ 
+		return utftext;
+	},
+ 
+	// private method for UTF-8 decoding
+	_utf8_decode : function (utftext) {
+		var string = "";
+		var i = 0;
+		var c = c1 = c2 = 0;
+ 
+		while ( i < utftext.length ) {
+ 
+			c = utftext.charCodeAt(i);
+ 
+			if (c < 128) {
+				string += String.fromCharCode(c);
+				i++;
+			}
+			else if((c > 191) && (c < 224)) {
+				c2 = utftext.charCodeAt(i+1);
+				string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
+				i += 2;
+			}
+			else {
+				c2 = utftext.charCodeAt(i+1);
+				c3 = utftext.charCodeAt(i+2);
+				string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
+				i += 3;
+			}
+ 
+		}
+ 
+		return string;
+	}
+}
+
+Airship = function(){
+    var self = { };
+    
+    self.URBAN_URL = 'https://go.urbanairship.com'
+    self.UA_SERVER = 'go.urbanairship.com';
+    self.UA_BASE_URL = '/api';
+    self.DEVICE_TOKEN_URL = self.UA_BASE_URL + '/device_tokens/';
+    self.PUSH_URL = self.UA_BASE_URL + '/push/';
+    self.BATCH_PUSH_URL = self.UA_BASE_URL + '/push/batch/';
+    self.BROADCAST_URL = self.UA_BASE_URL + '/push/broadcast/';
+    self.FEEDBACK_URL = self.UA_BASE_URL + '/device_tokens/feedback/';
+
+    self.auth_string = Base64.encode(URBAN_KEY + ':' + URBAN_MASTER_SECRET);
+    
+    self._request = function(method, body, url){
+        var options = {
+            host: self.UA_SERVER,
+            path: url,
+            method: method,
+            headers: { 
+                'authorization': 'Basic ' + self.auth_string,
+                'content-type': 'application/json',
+                'content-length': body.length
+            }
+        };
+        console.log('request sent');
+        var req = https.request(options, function(res){
+            console.log(res.statusCode);
+        });
+        req.write(body);
+        req.end();
+
+        req.on('error', function(e) {
+          console.error(e);
+        });
+    }
+    
+    self.push = function(payload){
+        var body = JSON.stringify(payload);
+        self._request('POST', body, self.PUSH_URL);
+    }
+    
+    self.batch_push = function(payloads){
+        if (payloads.length > 0){
+            var body = JSON.stringify(payloads);
+            console.log(body);
+            self._request('POST', body, self.BATCH_PUSH_URL);
+        }
+    }
+    
+    return self;
+};
+
+var airship = new Airship();
