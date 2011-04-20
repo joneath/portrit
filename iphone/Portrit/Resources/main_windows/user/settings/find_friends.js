@@ -58,24 +58,24 @@ function init_find_friends(){
     var data = [ ];
     var section = Titanium.UI.createTableViewSection({ });
     
-    var row = Ti.UI.createTableViewRow({
-            hasChild: true,
-            title: 'From my contacts',
-            color: '#333',
-            font:{fontSize: 18, fontWeight: 'bold'},
-            backgroundColor: '#fff',
-    });
-    row.addEventListener('click', function(){
-        var win = Ti.UI.createWindow({backgroundColor:"#eee", url:'find/follow.js'});
-        Titanium.UI.currentTab.open(win,{animated:true});
-        
-        setTimeout(function(){
-    	    Ti.App.fireEvent('find_type', {
-                find_type: 'contacts'
-            });
-    	}, 200);
-    });
-    section.add(row);
+    // var row = Ti.UI.createTableViewRow({
+    //         hasChild: true,
+    //         title: 'From my contacts',
+    //         color: '#333',
+    //         font:{fontSize: 18, fontWeight: 'bold'},
+    //         backgroundColor: '#fff',
+    // });
+    // row.addEventListener('click', function(){
+    //     var win = Ti.UI.createWindow({backgroundColor:"#eee", url:'find/follow.js'});
+    //     Titanium.UI.currentTab.open(win,{animated:true});
+    //     
+    //     setTimeout(function(){
+    //      Ti.App.fireEvent('find_type', {
+    //             find_type: 'contacts'
+    //         });
+    //  }, 200);
+    // });
+    // section.add(row);
     
     var row = Ti.UI.createTableViewRow({
             hasChild: true,

@@ -53,10 +53,6 @@ var window_slide_back = Titanium.UI.createAnimation({
     duration: 250
 });
 
-Ti.App.addEventListener('close_nominate_page', function(eventData) {
-    win.close();
-});
-
 window_nav_bar = Titanium.UI.createView({
     backgroundImage: '../../images/iphone_header_blank.png',
     width: 320,
@@ -548,6 +544,15 @@ function clear_nominations(e){
 }
 
 var share_window = null;
+
+share_window = Titanium.UI.createWindow({
+    backgroundColor: '#eee', 
+    url: 'share.js',
+    left: 320,
+    width: 320
+});
+share_window.open();
+
 function post_nom(e){
     if (!loading_photo){
         var nominations = '';
@@ -572,23 +577,17 @@ function post_nom(e){
             	Titanium.UI.currentTab.open(w,{animated:true});
     	    }
     	    else{
-                if (!share_window){
-                    share_window = Titanium.UI.createWindow({
-                        backgroundColor: '#eee', 
-                        url: 'share.js',
-                        left: 320,
-                        width: 320
-                    });
-                    share_window.open();
-                    setTimeout(function(){
-                        share_window.animate(window_slide_in);
-                        win.animate(window_slide_out);
-                    }, 250);
-                }
-                else{
+                // if (!share_window){
+                // 
+                //     setTimeout(function(){
+                //         share_window.animate(window_slide_in);
+                //         win.animate(window_slide_out);
+                //     }, 300);
+                // }
+                // else{
                     share_window.animate(window_slide_in);
                     win.animate(window_slide_out);
-                }
+                // }
     	    }
 
         	setTimeout(function(){
@@ -869,10 +868,14 @@ function init_nominate_view(){
             width: 320
         });
         share_window.open();
+        
+        // Ti.App.addEventListener('close_nominate_page', function(eventData) {
+        //     win.close();
+        // });
     }
 }
 
 Ti.App.addEventListener('cancel_share', function(e){
-    share_window = null;
+    // share_window = null;
     win.animate(window_slide_in);
 });

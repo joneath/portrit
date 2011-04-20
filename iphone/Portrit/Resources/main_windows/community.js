@@ -781,8 +781,8 @@ function render_nom(nom, top, row_count){
                 textAlign: 'left',
                 color: '#fff',
                 left: 35,
-                height: 30,
                 width: 280,
+                height: 30,
                 font:{fontSize:16, fontWeight: 'bold'}
             });
 
@@ -791,7 +791,8 @@ function render_nom(nom, top, row_count){
                 color: '#fff',
                 right: 15,
                 textAlign: 'right',
-                size: {width: 280, height: 30},
+                width: 280,
+                height: 30,
                 font:{fontSize: 20, fontWeight:'bold'}
             });
 
@@ -966,7 +967,7 @@ function render_nom(nom, top, row_count){
                 width: 75,
                 height: 20,
                 // left: 5,
-                right: 35,
+                right: 25,
                 font:{fontSize:12, fontWeight: 'bold'}
             });
             votes_label.nom_id = nom.id;

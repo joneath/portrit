@@ -1,4 +1,4 @@
-TI_VERSION=1.6.0
+TI_VERSION=1.6.2
 TI_SDK_DIR=/Library/Application Support/Titanium/mobilesdk/osx/$(TI_VERSION)/iphone
 TI_APPID=com.portrit
 OTHER_LDFLAGS[sdk=iphoneos4*]=$(inherited) -weak_framework iAd

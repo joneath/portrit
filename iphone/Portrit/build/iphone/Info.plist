@@ -23,7 +23,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>portrit</string>
-				<string>fb126374870731237</string>
+				<string>fb155664697800227</string>
 			</array>
 		</dict>
 	</array>
@@ -38,15 +38,14 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1.0</string>
+	<string>1.0.1303333242</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+        <key>UIPrerenderedIcon</key>
+        <true/>
         <key>UISupportedInterfaceOrientations~ipad</key>
         <array>
 	<string>UIInterfaceOrientationPortrait</string>
-	<string>UIInterfaceOrientationPortraitUpsideDown</string>
-	<string>UIInterfaceOrientationLandscapeLeft</string>
-	<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
         <key>UISupportedInterfaceOrientations</key>
         <array>

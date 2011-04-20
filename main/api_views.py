@@ -939,66 +939,6 @@ def get_follow_count(request):
 
     data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
-    
-# def get_my_follow_data(request):
-#     data = {
-#         'data': [ ],
-#         'count': 0,
-#     }
-#     PAGE_SIZE = 20
-#     
-#     target = request.GET.get('user')
-#     method = request.GET.get('method')
-#     page = request.GET.get('page')
-#     all = request.GET.get('all')
-#     
-#     if not page:
-#         page = 1
-#     else:
-#         page = int(page)
-#     
-#     # try:
-#     target = FB_User.objects.get(fid=int(target))
-#     target_portrit_user = target.get_portrit_user()
-#     
-#     total_count = 0
-# 
-#     if method == 'followers':
-#         target_followers = target.get_followers()
-#         data['count'] = target_followers.count()
-#         if not all:
-#             target_followers = target_followers[PAGE_SIZE * (page - 1):PAGE_SIZE * page]
-# 
-#         for fb_user in target_followers.iterator():
-#             data['data'].append({
-#                 'fid': fb_user.fid,
-#                 'name': fb_user.get_name(),
-#                 'follow': False
-#             })
-#         
-#         from operator import itemgetter  
-#         data['data'] = sorted(data['data'], key=itemgetter('name'))
-#     
-#     elif method == 'following':
-#         target_following = target.get_following()
-#         data['count'] = target_following.count()
-#         if not all:
-#             target_following = target_following[PAGE_SIZE * (page - 1):PAGE_SIZE * page]
-# 
-#         for fb_user in target_following.iterator():
-#             data['data'].append({
-#                 'fid': fb_user.fid,
-#                 'name': fb_user.get_name(),
-#                 'follow': True
-#             })
-#         
-#         from operator import itemgetter  
-#         data['data'] = sorted(data['data'], key=itemgetter('name'))
-#     # except:
-#     #     pass
-#     
-#     data = json.dumps(data)
-#     return HttpResponse(data, mimetype='application/json')
   
 @check_access_token  
 def follow_unfollow_user(request):
@@ -1922,7 +1862,7 @@ def notification_read(request):
     if clear:
         try:
             portrit_user = get_user_from_access_token(access_token)
-            Notification.objects.filter(owner=portrit_user, active=True, read=False).update(set__read=True, set__active=False, set__pending=False)
+            Notification.objects.filter(owner=portrit_user, active=True).update(set__read=True, set__active=False, set__pending=False)
             data = True
         except Exception, err:
             print err
@@ -2011,12 +1951,20 @@ def new_comment(request):
                         friends[friend.fb_user.fid] = {'fid': friend.fb_user.fid}
 
             notification_type = Notification_Type.objects.get(name="new_comment")
+            me_to_remove = None
             for friend in friends:
+                friend_id = friend
                 friend = friends[friend]
                 if friend['fid'] != user.fid:
                     notification = Notification(owner=Portrit_User.objects.get(fb_user__fid=friend['fid']), source=portrit_user, destination=owner, nomination=nomination, notification_type=notification_type)
                     notification.save()
                     friend['notification_id'] = str(notification.id)
+                else:
+                    
+                    me_to_remove = friend_id
+                    
+            if me_to_remove:
+                del friends[me_to_remove]
                        
             node_data = {
                 'method': 'new_comment',
@@ -2190,6 +2138,46 @@ def search_by_names(request):
     
         names = names.split(',')
         users = Portrit_User.objects.filter(name__in=names)[:100]
+    
+        for user in users.iterator():
+            if user in source_following:
+                data.append({
+                    'fid': user.fb_user.fid,
+                    'name': user.name,
+                    'username': user.username,
+                    'follow': False
+                })
+            else:
+                data.append({
+                    'fid': user.fb_user.fid,
+                    'name': user.name,
+                    'username': user.username,
+                    'follow': True
+                })
+                
+        from operator import itemgetter  
+        data = sorted(data, key=itemgetter('name'))
+    except Exception, err:
+        print err
+    
+    data = json.dumps(data) 
+    return HttpResponse(data, mimetype='application/json')
+    
+def search_by_email(request):
+    data = [ ]
+    source = request.POST.get('source')
+    emails = request.POST.get('emails')
+    
+    print emails
+    try:
+        if source:
+            source = Portrit_User.objects.get(fb_user__fid=int(source))
+            source_following = source.get_following()
+        else:
+            source_following = [ ]
+    
+        emails = emails.split(',')
+        users = Portrit_User.objects.filter(email__in=emails)[:100]
     
         for user in users.iterator():
             if user in source_following:

@@ -299,8 +299,7 @@ win.add(window_activity_cont);
 function search_by_names(names){
     var xhr = Titanium.Network.createHTTPClient();
 
-    xhr.onload = function()
-    {   
+    xhr.onload = function(){   
         var data = JSON.parse(this.responseData);
         render_follow_table_view(data);
         window_activity_cont.animate(fadeOut);
@@ -308,9 +307,21 @@ function search_by_names(names){
     
     var url = SERVER_URL + '/api/search_by_names/';
     xhr.open('POST', url);
-
-    // send the data
     xhr.send({'names': names, 'source': me.fid});
+}
+
+function search_by_email(emails){
+    var xhr = Titanium.Network.createHTTPClient();
+
+    xhr.onload = function(){   
+        var data = JSON.parse(this.responseData);
+        render_follow_table_view(data);
+        window_activity_cont.animate(fadeOut);
+    };
+    
+    var url = SERVER_URL + '/api/search_by_emails/';
+    xhr.open('POST', url);
+    xhr.send({'emails': emails, 'source': me.fid});
 }
 
 function load_cool_kids(){
@@ -366,7 +377,12 @@ function init_follow_friends(){
         }
     }
     else if (find_type == 'contacts'){
-
+        // var contacts = Titanium.Contacts.getAllPeople();
+        // var emails = [ ];
+        // for (var i = 0; i < contacts.length; i++){
+        //     emails.push(contacts[i].email);
+        // }
+        // search_by_email(emails);
     }
     else if (find_type == 'cool'){
         window_activity_cont.show();

@@ -78,6 +78,7 @@ window_activity_cont.add(window_activity_background);
 window_activity_cont.add(window_activity);
 win.add(window_activity_cont);
 
+var notification_read_list = [ ];
 function add_detail_window(e){
     var w = Ti.UI.createWindow({backgroundColor:"#222", url:'nom/detail.js'});
 	Titanium.UI.currentTab.open(w,{animated:true});
@@ -90,6 +91,10 @@ function add_detail_window(e){
             won: false
         });
 	}, 200);
+	if (notification_read_list.indexOf(e.rowData.notification_id) == -1){
+	    mark_read(e.rowData.notification_id);
+	    notification_read_list.push(e.rowData.notification_id);
+	}
 }
 
 function add_detail_trophy_window(e){
@@ -106,6 +111,10 @@ function add_detail_trophy_window(e){
             won: true
         });
 	}, 200);
+    if (notification_read_list.indexOf(e.rowData.notification_id) == -1){
+	    mark_read(e.rowData.notification_id);
+	    notification_read_list.push(e.rowData.notification_id);
+	}
 }
 
 function add_profile_window(e){
@@ -120,6 +129,10 @@ function add_profile_window(e){
                 username: e.rowData.username,
             });
     	}, 200);
+        if (notification_read_list.indexOf(e.rowData.notification_id) == -1){
+    	    mark_read(e.rowData.notification_id);
+    	    notification_read_list.push(e.rowData.notification_id);
+    	}
     }
 }
 
@@ -173,6 +186,7 @@ function render_notifications(data){
             row.nom_id = data[i].nomination;
             row.photo = data[i].photo;
             row.username = data[i].source_username;
+            row.notification_id = data[i].notification_id;
         	row.addEventListener('click', add_detail_window);
         }
         else if (data[i].notification_type == 'nom_won'){
@@ -192,6 +206,7 @@ function render_notifications(data){
             row.nom_cat = data[i].nomination_category;
             row.user = data[i].destination_id;
             row.username = target_username;
+            row.notification_id = data[i].notification_id;
             
         	row.addEventListener('click', add_detail_trophy_window);
         }
@@ -202,6 +217,7 @@ function render_notifications(data){
             row.nom_id = data[i].nomination;
             row.photo = data[i].photo;
             row.username = me.username;
+            row.notification_id = data[i].notification_id;
             
         	row.addEventListener('click', add_detail_window);
         }
@@ -224,6 +240,7 @@ function render_notifications(data){
             row.nom_id = data[i].nomination;
             row.photo = data[i].photo;
             row.username = target_username;
+            row.notification_id = data[i].notification_id;
             
         	row.addEventListener('click', add_detail_window);
         }
@@ -252,6 +269,7 @@ function render_notifications(data){
             row.user = data[i].source_id;
             row.name = data[i].source_name;
             row.username = data[i].source_username;
+            row.notification_id = data[i].notification_id;
             
         	row.addEventListener('click', add_profile_window);
         }
@@ -277,9 +295,9 @@ function render_notifications(data){
         time_view.add(time_label);
         
         notification_label_cont = Titanium.UI.createView({
-                top: 0,
-                size: {width: 300, height: 40}
-            });
+            top: 0,
+            size: {width: 300, height: 40}
+        });
         
         notification_label = Titanium.UI.createLabel({
                 text: label_text,
@@ -311,6 +329,7 @@ function render_notifications(data){
             notification_label.nom_cat = data[i].nomination_category;
             notification_label.user = data[i].destination_id;
             notification_label.username = data[i].destination_username;
+            notification_label.notification_id = data[i].notification_id;
             
             row.add(time_view);
         }
@@ -326,6 +345,7 @@ function render_notifications(data){
             notification_label.user = data[i].source_id;
             notification_label.name = data[i].source_name;
             notification_label.username = data[i].source_username;
+            notification_label.notification_id = data[i].notification_id;
             if (data[i].pending){
                 notification_label.right = 120;
             }
@@ -379,11 +399,6 @@ function row_delete(e){
     var kill = true;
     
     var xhr = Titanium.Network.createHTTPClient();
-
-    // xhr.onload = function()
-    // {   
-    //     
-    // };
     
     var url = SERVER_URL + '/api/notification_read/';
     xhr.open('POST', url);
@@ -398,8 +413,17 @@ function row_delete(e){
         tv.editable = false;
         tv.setData([notifications_empty_row]);
         clear_button.hide();
-    }
+    }   
+}
+
+function mark_read(id){
+    var xhr = Titanium.Network.createHTTPClient();
     
+    var url = SERVER_URL + '/api/notification_read/';
+    xhr.open('POST', url);
+
+    // send the data
+    xhr.send({'notification_id': id, 'kill': false, 'access_token': me.access_token});
 }
 
 function load_notifications(){
@@ -434,10 +458,6 @@ function load_notifications(){
     clear_button.hide();
     clear_button.addEventListener('click', clear_notifications);
     window_nav_bar.add(clear_button);
-    
-    // Clear Notifacation badge
-    var tabGroup = win.tabGroup;
-    tabGroup.tabs[3].badge = null;
     
     var xhr = Titanium.Network.createHTTPClient();
 
@@ -530,8 +550,7 @@ function load_notifications(){
     var pulling = false;
     var reloading = false;
 
-    function beginReloading()
-    {
+    function beginReloading(){
         var xhr = Titanium.Network.createHTTPClient();
 
         xhr.onload = function(){
@@ -560,8 +579,7 @@ function load_notifications(){
         xhr.send();
     }
 
-    function endReloading()
-    {
+    function endReloading(){
     	// when you're done, just reset
     	tv.setContentInsets({top:0},{animated:true});
     	reloading = false;
@@ -575,19 +593,16 @@ function load_notifications(){
         
     });
     
-    tv.addEventListener('scroll',function(e)
-    {
+    tv.addEventListener('scroll',function(e){
     	var offset = e.contentOffset.y;
-    	if (offset <= -65.0 && !pulling)
-    	{
+    	if (offset <= -65.0 && !pulling){
     		var t = Ti.UI.create2DMatrix();
     		t = t.rotate(-180);
     		pulling = true;
     		arrow.animate({transform:t,duration:180});
     		statusLabel.text = "Release to update...";
     	}
-    	else if (pulling && offset > -65.0 && offset < 0)
-    	{
+    	else if (pulling && offset > -65.0 && offset < 0){
     		pulling = false;
     		var t = Ti.UI.create2DMatrix();
     		arrow.animate({transform:t,duration:180});
@@ -595,10 +610,8 @@ function load_notifications(){
     	}
     });
 
-    tv.addEventListener('scrollEnd',function(e)
-    {
-    	if (pulling && !reloading && e.contentOffset.y <= -65.0)
-    	{
+    tv.addEventListener('scrollEnd',function(e){
+    	if (pulling && !reloading && e.contentOffset.y <= -65.0){
     		reloading = true;
     		pulling = false;
     		arrow.hide();
@@ -615,6 +628,9 @@ load_notifications();
 
 reset = false;
 win.addEventListener('focus', function(){
+    var tabGroup = win.tabGroup;
+    tabGroup.tabs[3].badge = null;
+    
     if (reset){
         reset = false;
         list_view_data = [ ];
@@ -624,6 +640,10 @@ win.addEventListener('focus', function(){
 
         load_notifications();
     }
+});
+
+Ti.App.addEventListener('push_update', function(eventData) {
+    reset = true;
 });
 
 Ti.App.addEventListener('reset', function(eventData) {

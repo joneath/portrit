@@ -1624,6 +1624,7 @@ function init_active_view(){
         // End pull to refresh
     
         Ti.App.addEventListener('update_active_noms', function(eventData) {
+            window_activity_cont.show();
             if (selected_tab != 'active'){
                 selected_tab = 'active';
 
@@ -1636,7 +1637,6 @@ function init_active_view(){
 
                 header_tab_selection.animate(header_active_tab_animation);
             }
-            window_activity_cont.show();
             beginReloading();
         });
     

@@ -69,7 +69,7 @@ back_buttom.addEventListener('click', function(){
     }
     else{
         // var current_win = win;
-        win.close(window_slide_back);
+        win.animate(window_slide_back);
         Ti.App.fireEvent('cancel_share');
     }
 });
@@ -191,27 +191,25 @@ function close_share_nom(){
     if (new_photo){
         win.close(fadeOut);
         
-        setTimeout(function(){
+        // setTimeout(function(){
             // Ti.App.fireEvent('close_nominate_page', { });
             Ti.App.fireEvent('close_settings_page', { });
             if (nominations != ''){
-                setTimeout(function(){
-                    Ti.App.fireEvent('update_active_noms', { });
-                    if (user == me.fid){
-                        Ti.App.fireEvent('update_my_photos', { });
-                    }
-                }, 350);
                 Ti.App.fireEvent('reset_after_camera', { });
+                // setTimeout(function(){
+                Ti.App.fireEvent('update_active_noms', { });
+                if (user == me.fid){
+                    Ti.App.fireEvent('update_my_photos', { });
+                }
+                // }, 200);
             }
             else{
-                if (user == me.fid){
-                    setTimeout(function(){
-                        Ti.App.fireEvent('update_my_photos', { });
-                    }, 350);
-                }
+                Ti.App.fireEvent('update_my_photos', { });
+                // setTimeout(function(){
                 Ti.App.fireEvent('reset_after_camera_to_profile', { });
+                // }, 500);
             }
-        }, 250);
+        // }, 300);
     }
     else{
         win.close();
@@ -254,8 +252,8 @@ function submit_nom(e){
     
     caption_text = caption.value;
     window_activity_cont.show();
-    
     upload_progress_bar.show();
+    
     if (new_photo){
         clearInterval(check_upload_interval);
         check_upload_interval = setInterval(function(){
@@ -294,9 +292,11 @@ function submit_nom(e){
             }
             else{
                 progress = Ti.App.Properties.getString("upload_progress");
-                progress = parseFloat(progress);
-                progress = progress * 100;
-                upload_progress_bar.value = progress;
+                if (progress){
+                    progress = parseFloat(progress);
+                    progress = progress * 100;
+                    upload_progress_bar.value = progress;
+                }
             }
         }, 50);
     }
@@ -510,3 +510,7 @@ var init_share_nom = function(){
     
     tv.setData(options_data);
 };
+
+Ti.App.addEventListener('close_share', function(e){
+    win.close();
+});

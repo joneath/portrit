@@ -1716,7 +1716,7 @@ function init_profile_view(){
     var pulling = false;
     var reloading = false;
     
-    function beginReloading(){
+    function beginReloading(target){
         var xhr = Titanium.Network.createHTTPClient();
     
         xhr.onload = function(){
@@ -1746,7 +1746,7 @@ function init_profile_view(){
         };
         
         var url = '';
-        if (view_active == 'photos'){
+        if (view_active == 'photos' || typeof(target) != 'undefined'){
             url = SERVER_URL + '/api/get_user_profile/?access_token=' + me.access_token + '&method=photos';
         }
         else if (view_active == 'trophies'){
@@ -1827,10 +1827,30 @@ var reset = false;
 win.addEventListener('focus', function(){
     if (update_profile && !reset){
         update_profile = false;
-        get_user_profile_count = 0;
-        list_view_data = [ ];
-        tv.setData(list_view_data);
-        init_profile_view();
+        // get_user_profile_count = 0;
+        // list_view_data = [ ];
+        // tv.setData(list_view_data);
+        // init_profile_view();
+        
+        window_activity_cont.show();
+        var xhr = Titanium.Network.createHTTPClient();
+        xhr.onload = function(){
+            data = JSON.parse(this.responseData);
+            if (data.photos.length > 0){
+                list_view_data = [ ];
+                render_user_photos(data.photos);
+                newest_photo = data.photos[0].created_time;
+                oldest_photo = data.photos[data.photos.length - 1].id;
+                if (data.photos.length > 10){
+                    load_more_view.show();
+                }
+            }
+            window_activity_cont.hide();
+        };
+        
+        var url = SERVER_URL + '/api/get_user_profile/?access_token=' + me.access_token + '&method=photos';
+        xhr.open('GET', url);
+        xhr.send();
     }
     if (update_follow_counts_flag){
         update_follow_counts_flag = false;

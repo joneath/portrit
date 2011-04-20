@@ -49,6 +49,8 @@ var notification_view = Titanium.UI.createView({
 
 notification_view.addEventListener('click', function(){
     clearTimeout(notification_view_animation_timeout);
+    
+    Ti.App.fireEvent('push_update', {});
     tabGroup.setActiveTab(3);
     notification_view.animate({
         curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
@@ -680,7 +682,6 @@ Ti.App.addEventListener('reset_after_camera', function(e){
     
     take_photo_click = false;
     tabGroup.bottom = 0;
-    tabGroup.tabBarVisible = true;
     tabGroup.setActiveTab(0);
 });
 
@@ -689,7 +690,6 @@ Ti.App.addEventListener('reset_after_camera_to_profile', function(e){
     
     take_photo_click = false;
     tabGroup.bottom = 0;
-    tabGroup.tabBarVisible = true;
     tabGroup.setActiveTab(4);
 });
 

@@ -7,7 +7,7 @@ var net = require('net');
 var events = require("events");
 var path = require("path");
 // var nodemailer = require('nodemailer');
-var postmark = require("postmark")("7e81d8b2-4429-44e1-a493-eef87d130669");
+var postmark = require("./lib/postmark")("7e81d8b2-4429-44e1-a493-eef87d130669");
 
 var URBAN_KEY = 'XOeKRpIDSJmpSvVAwjRXdg';
 var URBAN_SECRET = 'r7RXQj6zS2ifBGXXLVy9Ag';
@@ -61,60 +61,85 @@ var Portrit = function(){
         var push = { };
         var allow_push = true;
         var message = '';
-        for (id in friends){
-            if (id != undefined){
-                allow_push = true;
-                
-                // if (!friends[id].push_on){
-                //     allow_push = false;
-                //     continue;
-                // }
-                
-                if (data.method == 'new_comment'){
-                    // if (!friends[id].push_comments){
+        
+        if (data.method == 'new_nom'){
+            // if (!friends[id].push_nominations){
+            //     allow_push = false;
+            //     continue;
+            // }
+            if (data.payload.nom_data[0].nominatee != data.payload.nom_data[0].nominator){
+                message = data.payload.nom_data[0].nominator_username + ' nominated your photo for ' + data.payload.nom_data[0].nomination_category;
+
+                push = { 
+                    'aliases': [data.payload.nom_data[0].nominatee],
+                    'aps': {
+                        'badge': '+1',
+                        'alert': message
+                    }
+                };
+                push_payload.push(push);   
+            }
+        }
+        else if (data.method == 'nom_won'){
+            // if (!friends[id].push_wins){
+            //     allow_push = false;
+            //     continue;
+            // }
+            message = 'Congratulations! Your photo won ' + data.payload.nomination_category;
+            
+            push = { 
+                'aliases': [data.payload.nominatee],
+                'aps': {
+                    'badge': '+1',
+                    'alert': message
+                }
+            };
+            push_payload.push(push);
+        }
+        else{
+            for (id in friends){
+                if (id != undefined){
+                    allow_push = true;
+
+                    // if (!friends[id].push_on){
                     //     allow_push = false;
                     //     continue;
                     // }
-                    message = data.payload.comment_sender_username + ' commented on your nomination';
-                }
-                else if (data.method == 'new_nom'){
-                    // if (!friends[id].push_nominations){
-                    //     allow_push = false;
-                    //     continue;
-                    // }
-                    message = data.payload.nom_data[0].nominator_username + ' nominated your photo for ' + data.payload.nom_data[0].nomination_category;
-                }
-                else if (data.method == 'nom_won'){
-                    // if (!friends[id].push_wins){
-                    //     allow_push = false;
-                    //     continue;
-                    // }
-                    message = 'Congratulations! Your photo won ' + data.payload.nom_cat;
-                }
-                else if (data.method == 'new_follow'){
-                    // if (!friends[id].push_follows){
-                    //     allow_push = false;
-                    //     continue;
-                    // }
-                    message = data.payload.follower_username + ' is now following you';
-                }
-                else{
-                    allow_push = false;
-                    continue;
-                }
-                
-                if (allow_push){
-                    push = { 
-                        'aliases': [id],
-                        'aps': {
-                            'badge': '+1',
-                            'alert': message
-                        }
-                    };
-                    push_payload.push(push);
+
+                    if (data.method == 'new_comment'){
+                        // if (!friends[id].push_comments){
+                        //     allow_push = false;
+                        //     continue;
+                        // }
+                        message = data.payload.comment_sender_username + ' commented on your nomination';
+                    }
+
+                    else if (data.method == 'new_follow'){
+                        // if (!friends[id].push_follows){
+                        //     allow_push = false;
+                        //     continue;
+                        // }
+                        message = data.payload.follower_username + ' is now following you';
+                    }
+                    else{
+                        allow_push = false;
+                        continue;
+                    }
+
+                    if (allow_push){
+                        push = { 
+                            'aliases': [id],
+                            'aps': {
+                                'badge': '+1',
+                                'alert': message
+                            }
+                        };
+                        push_payload.push(push);
+                    }
                 }
             }
         }
+
         return push_payload;
     }
     

@@ -107,6 +107,7 @@ urlpatterns += patterns('',
     url(r'^api/search/$', 'main.api_views.search'),
     url(r'^api/combined_search/$', 'main.api_views.combined_search'),
     url(r'^api/search_by_names/$', 'main.api_views.search_by_names'),
+    url(r'^api/search_by_emails/$', 'main.api_views.search_by_emails'),
     url(r'^api/search_cool_kids/$', 'main.api_views.search_cool_kids'),
     
     #Flag
