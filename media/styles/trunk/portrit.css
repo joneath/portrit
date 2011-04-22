@@ -3409,23 +3409,23 @@ div#profile_cont{
                 }
             
 .up_arrow{
-    height:                 14px;
-    width:                  36px;
+    height:                 23px;
+    width:                  47px;
     background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
-    background-position:    -174px -697px;
+    background-position:    -519px -528px;
     margin:                 0 auto;
     position:               relative;
-    top:                    30px;
+    top:                    25px;
 }
 
 .down_arrow{
-    height:                 14px;
-    width:                  36px;
+    height:                 23px;
+    width:                  47px;
     background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
-    background-position:    -175px -726px;
+    background-position:    -519px -571px;
     margin:                 0 auto;
     position:               relative;
-    top:                    30px;
+    top:                    25px;
 }
 
 /*    #profile_cont #new_photo_cont{

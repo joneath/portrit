@@ -2252,8 +2252,7 @@ def change_user_settings(request):
             value = True
         else:
             value = False
-        print method
-        print value
+
         if method == 'gps':
             portrit_user.allow_gps = value
         elif method == 'privacy':
