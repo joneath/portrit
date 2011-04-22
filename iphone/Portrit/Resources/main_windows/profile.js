@@ -93,6 +93,12 @@ window_activity_cont.add(window_activity_background);
 window_activity_cont.add(window_activity);
 win.add(window_activity_cont);
 
+function window_activity_timeout(){
+    setTimeout(function(){
+        window_activity_cont.hide();
+    }, 2000);
+}
+
 function render_active_count(count){
     var active_count = Titanium.UI.createLabel({
         backgroundColor: '#6498cf',
@@ -206,17 +212,18 @@ function render_user_photos(data, append){
         }
         
         row = Ti.UI.createTableViewRow({
-                height: photo_height + 10,
+                height: photo_height,
                 width: 320,
                 selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
         });
 
         main_image = Ti.UI.createImageView({
     		image: '../images/photo_loader.png',
-    		top: 0,
     		width: photo_width,
     		height: photo_height,
-    		hires: highres
+    		hires: highres,
+    		top: 0,
+    		bottom: 10
     	});
     	cachedImageView('images', data[i].source, main_image);
     	
@@ -463,6 +470,7 @@ function init_trophies_view(){
         xhr.open('GET', url);
         xhr.send();
         window_activity_cont.show();
+        window_activity_timeout();
     }
     else{
         tv.setData(trophy_data);
@@ -674,66 +682,7 @@ function open_options(e){
     
     dialog.addEventListener('click',function(e){
         if (e.index == 0){
-            var xhr = Titanium.Network.createHTTPClient();
-
-            xhr.onload = function()
-            {
-                var data = JSON.parse(this.responseData);
-                if (data == true){
-                    var flag_cont_background = Titanium.UI.createView({
-                	    backgroundColor: '#000',
-                        opacity: .8,
-                        borderRadius: 5,
-                        height: '100%',
-                        width: '100%',
-                        zIndex: -1
-                    });
-
-            	    var flag_cont = Titanium.UI.createView({
-                        height: 'auto',
-                        width: 'auto',
-                        top: 200,
-                        zIndex: 10
-                    });
-                    flag_cont.add(flag_cont_background);
-
-            	    var flag_message = Titanium.UI.createLabel({
-                	    text: 'Thank you for the feedback! We wil check this photo out.',
-                	    textAlign: 'center',
-                        color: '#fff',
-                        left: 10,
-                        right: 10,
-                        top: 10,
-                        bottom: 10,
-                        size: {width: 'auto', height: 'auto'},
-                        font:{fontSize:16, fontWeight: 'bold'}
-                    });
-                    flag_cont.add(flag_message);
-                    win.add(flag_cont);
-
-                    var fadeOutSlow = Titanium.UI.createAnimation({
-                        curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
-                        opacity: 0,
-                        delay: 3000,
-                        duration: 1000
-                    });
-                    flag_cont.animate(fadeOutSlow);
-                    
-                    setTimeout(function(){
-                        win.remove(flag_cont);
-                    }, 4000);
-                }
-            };
-
-            var url = '';
-
-            url = SERVER_URL + '/api/flag/photo'
-
-            xhr.open('POST', url);
-
-            // send the data
-            xhr.send({'access_token': me.access_token,
-                        'photo_id': photo_id});
+            flag_nom(me, nom, photo_id, win);
         }
         else if (e.index == 1){
             // Facebook Share
@@ -748,91 +697,24 @@ function open_options(e){
 	dialog.show();
 }
 
-// function render_comments(cont, comments){
-//     var comment_cont = null,
-//         commentor = null,
-//         commentor_cont = null,
-//         comment_time = null,
-//         comment = null;
-//         
-//     for (var i = 0; i < comments.length; i++){
-//         comment_cont = Titanium.UI.createView({
-//             backgroundColor: '#fff',
-//             height: 'auto',
-//             width: 320,
-//             zIndex: 1
-//         });
-//         
-//         commentor_cont = Titanium.UI.createView({
-//             height: 'auto',
-//             top: 0,
-//             left: 0,
-//             width: 'auto',
-//         });
-//         
-//         var commentor_name_text = '';
-//      if (comments[i].owner_id == me.fid){
-//          commentor_name_text = 'You';
-//      }
-//      else{
-//          commentor_name_text = comments[i].owner_username;
-//      }
-//         
-//         commentor = Titanium.UI.createLabel({
-//          text: commentor_name_text,
-//             color: '#333',
-//             top: 2,
-//             bottom: 2,
-//             left: 10,
-//             width: 'auto',
-//             height: 'auto',
-//             font:{fontSize:12, fontWeight: 'bold'}
-//         });
-//         commentor.user = comments[i].owner_id;
-//         commentor.name = comments[i].owner_name;
-//         commentor.username = comments[i].owner_username;
-//         commentor.addEventListener('click', add_profile_window);
-//         
-//         commentor_cont.add(commentor);
-//         
-//         comment = Titanium.UI.createLabel({
-//          text: '  - ' + comments[i].comment,
-//             color: '#666',
-//             top: 2,
-//             left: commentor.width + 10,
-//             bottom: 2,
-//             width: 'auto',
-//             height: 'auto',
-//             font:{fontSize:12}
-//         });
-//         
-//         comment_cont.add(commentor_cont);
-//         comment_cont.add(comment);
-//         cont.add(comment_cont);
-//     }
-//     if (comments.length > 0){
-//         photo_action_bottom_round = Titanium.UI.createView({
-//                 backgroundColor: '#fff',
-//                 borderRadius: 5,
-//                 height: 10,
-//                 bottom: -5,
-//                 width: 320,
-//                 zIndex: -1
-//             });
-//      comment_cont.add(photo_action_bottom_round); 
-//     }
-//     else{
-//         photo_action_bottom_round = Titanium.UI.createView({
-//                 backgroundColor: '#ddd',
-//                 borderRadius: 5,
-//                 height: 10,
-//                 top: -5,
-//                 width: 320,
-//                 zIndex: -1
-//             });
-//      cont.add(photo_action_bottom_round);
-//     }
-// }
+function get_comments(id, cont, loading){
+    var xhr = Titanium.Network.createHTTPClient();
+
+    xhr.onload = function(){
+        var data = JSON.parse(this.responseData);
+        cont.remove(loading);
+        
+        if (data.length > 0){
+            data.splice(0, 2);
+            render_comments(cont, data);
+        }
+    };
+
+    var url = SERVER_URL + '/api/get_comments/?nom_id=' + id;
+
+    xhr.open('GET', url);
+    xhr.send();
+}
 
 function render_active_view(data){
     var active_data = [ ],
@@ -956,7 +838,7 @@ function render_active_view(data){
     	    main_image.nom_id = nom.id;
         	main_image.photo = nom.photo;
         	main_image.cat = nom.nomination_category.replace(' ', '-');
-        	main_image.state = 'stream_winners';
+        	main_image.state = 'profile_trophies';
         	
         	main_image.addEventListener('click', add_detail_trophy_window);
     	}
@@ -964,7 +846,7 @@ function render_active_view(data){
     	    main_image.nom_id = nom.id;
         	main_image.photo = nom.photo;
         	main_image.cat = nom.nomination_category.replace(' ', '-');
-        	main_image.state = 'stream_active';
+        	main_image.state = 'profile_active';
         	main_image.addEventListener('click', add_detail_window);
     	}
     	row.add(main_image);
@@ -1175,7 +1057,7 @@ function render_active_view(data){
     	    nom_detail_button.nom_id = nom.id;
         	nom_detail_button.photo = nom.photo;
         	nom_detail_button.cat = nom.nomination_category.replace(' ', '-');
-        	nom_detail_button.state = 'stream_winners';
+        	nom_detail_button.state = 'profile_trophies';
         	nom_detail_button.nom_cat = nom.nomination_category;
         	
         	nom_detail_button.addEventListener('click', add_detail_trophy_window);
@@ -1184,7 +1066,7 @@ function render_active_view(data){
             nom_detail_button.nom_id = nom.id;
             nom_detail_button.photo = nom.photo;
             nom_detail_button.cat = nom.nomination_category.replace(' ', '-');
-            nom_detail_button.state = 'stream_active';
+            nom_detail_button.state = 'profile_active';
         	nom_detail_button.addEventListener('click', add_detail_window);
     	}
         
@@ -1209,6 +1091,41 @@ function render_active_view(data){
         
         row.add(photo_action_cont);        
         render_comments(comments_cont, nom.quick_comments);
+        
+        if (nom.comment_count > nom.quick_comments.length){
+            var load_more_comments = Titanium.UI.createLabel({
+        	    text: nom.comment_count - nom.quick_comments.length + ' more comments',
+                color: '#333',
+                bottom: 5,
+                size: {width: 320, height: 20},
+                textAlign: 'center',
+                font:{fontSize:14, fontWeight: 'bold'}
+            });
+            load_more_comments.nom_id = nom.id;
+            load_more_comments.comment_cont = comments_cont;
+            load_more_comments.parent = photo_action_cont;
+            
+            load_more_comments.addEventListener('click', function(e){
+                var nom_id = e.source.nom_id;
+                var comment_cont = e.source.comment_cont;
+                // var parent = e.source.parent;
+                
+                var comments_loading = Titanium.UI.createActivityIndicator({
+                    message: 'Loading...',
+                    color: '#333',
+                    height:50,
+                    width:10,
+                    style:Titanium.UI.iPhone.ActivityIndicatorStyle.DARK
+                });
+                comments_loading.show();
+                
+                comment_cont.remove(e.source);
+                comment_cont.add(comments_loading);
+                
+                get_comments(nom_id, comment_cont, comments_loading);
+            });
+            comments_cont.add(load_more_comments);
+        }
         
         section.add(row);
         section.created_time = nom.created_time;
@@ -1235,6 +1152,7 @@ function init_active_view(){
             xhr.open('GET', url);
             xhr.send();
             window_activity_cont.show();
+            window_activity_timeout();
         }
     }
     else{
@@ -1594,6 +1512,7 @@ function init_profile_view(){
     
     if (get_profile_data == 0){
         window_activity_cont.show();
+        window_activity_timeout();
         var user_profile_request = Titanium.Network.createHTTPClient();
         user_profile_request.onload = function(){   
             var data = JSON.parse(this.responseData);
@@ -1833,6 +1752,7 @@ win.addEventListener('focus', function(){
         // init_profile_view();
         
         window_activity_cont.show();
+        window_activity_timeout();
         var xhr = Titanium.Network.createHTTPClient();
         xhr.onload = function(){
             data = JSON.parse(this.responseData);

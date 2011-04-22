@@ -186,6 +186,19 @@ var init_options = function(){
     
     var row = Ti.UI.createTableViewRow({
             hasChild: true,
+            title: 'Notifications',
+            color: '#333',
+            font:{fontSize: 18, fontWeight: 'bold'},
+            backgroundColor: '#fff'
+    });
+    row.addEventListener('click', function(){
+        var win = Ti.UI.createWindow({backgroundColor:"#eee", url:'settings/notifications.js', title: 'Notifications'});
+        Titanium.UI.currentTab.open(win,{animated:true});
+    });
+    section.add(row);
+    
+    var row = Ti.UI.createTableViewRow({
+            hasChild: true,
             title: 'Privacy',
             color: '#333',
             font:{fontSize: 18, fontWeight: 'bold'},

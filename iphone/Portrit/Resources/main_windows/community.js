@@ -28,6 +28,12 @@ window_activity_cont.add(window_activity_background);
 window_activity_cont.add(window_activity);
 win.add(window_activity_cont);
 
+function window_activity_timeout(){
+    setTimeout(function(){
+        window_activity_cont.hide();
+    }, 2000);
+}
+
 var portrit_header_view = Titanium.UI.createView({
         height: 75,
         left: 0,
@@ -1097,6 +1103,7 @@ function activate_photos_stream(){
     active_empty_label.hide();
     if (photos_cache.length == 0){
         window_activity_cont.show();
+        window_activity_timeout();
         var xhr = Titanium.Network.createHTTPClient();
 
         xhr.onload = function(){
@@ -1134,6 +1141,7 @@ function activate_active_stream(){
     active_empty_label.hide();
     if (active_cache.length == 0){
         window_activity_cont.show();
+        window_activity_timeout();
         var xhr = Titanium.Network.createHTTPClient();
         xhr.onload = function(){
             var data = JSON.parse(this.responseData);
@@ -1163,6 +1171,7 @@ function activate_top_stream(){
     active_empty_label.hide();
     if (top_cache.length == 0){
         window_activity_cont.show();
+        window_activity_timeout();
         var xhr = Titanium.Network.createHTTPClient();
         xhr.onload = function()
         {
@@ -1216,6 +1225,7 @@ function init_community_view(){
     win.add(tv);
     
     window_activity_cont.show();
+    window_activity_timeout();
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onload = function(){
         var data = JSON.parse(this.responseData);
@@ -1483,6 +1493,14 @@ win.addEventListener('focus', function(){
         active_cache = [ ];
 
         me = JSON.parse(Ti.App.Properties.getString("me"));
+        
+        var header_active_tab_matrix = Ti.UI.create2DMatrix();
+        header_active_tab_matrix = header_active_tab_matrix.translate(0,0);
+        
+        var header_active_tab_animation = Titanium.UI.createAnimation();
+        header_active_tab_animation.transform = header_active_tab_matrix;
+        
+    	header_tab_selection.animate(header_active_tab_animation);
 
         init_community_view();
     }

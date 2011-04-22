@@ -1844,8 +1844,8 @@ div#nom_detail_cont{
                     
                     div#nominator_overlay_cont p{
                         color:              white;
-                        font-size:          14px;
-                        height:             18px;
+                        font-size:          16px;
+                        line-height:        50px;
                         overflow:           hidden;
                         padding-left:       5px;
                         margin-right:       10px;
@@ -3362,7 +3362,7 @@ div#profile_cont{
                 text-align:             center;
                 position:               absolute;
                 top:                    0px;
-                height:                 644px;
+                height:                 100%;
                 width:                  740px;
                 z-index:                2;
             }
@@ -5137,11 +5137,11 @@ div#latest_photos{
                     }
                     
                 .top_nom_user_cont .vote_cont{
-                    color:                  #fff;
+                    color:                  #444;
                     float:                  left;
                     width:                  65px;
                     height:                 80px;
-                    background-color:       #444;
+                    background-color:       #fff;
                     text-align:             center;
                 }
                 
@@ -5157,7 +5157,7 @@ div#latest_photos{
                     }
             
                 .top_nom_user_cont a{
-                    color:                  #fff;
+                    color:                  #444;
                     font-size:              14px;
                 }
                 

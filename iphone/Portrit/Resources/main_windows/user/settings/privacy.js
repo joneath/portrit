@@ -99,27 +99,27 @@ function init_privacy(){
         headerView: privacy_header,
         footerView: privacy_footer
     });
-    
-    var row = Ti.UI.createTableViewRow({
-            title: 'Post GPS Data',
-            color: '#333',
-            font:{fontSize: 18, fontWeight: 'bold'},
-            backgroundColor: '#fff',
-            selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
-    });
-    var gps_permission = false;
-    if (user_settings.gps){
-        gps_permission = true;
-    }
-    var gps_switch = Titanium.UI.createSwitch({
-        value: gps_permission,
-        right: 10
-    });
-    gps_switch.addEventListener('change', function(e){
-        change_permission('gps', e.value);
-    });
-    row.add(gps_switch);
-    section.add(row);
+    // 
+    // var row = Ti.UI.createTableViewRow({
+    //         title: 'Post GPS Data',
+    //         color: '#333',
+    //         font:{fontSize: 18, fontWeight: 'bold'},
+    //         backgroundColor: '#fff',
+    //         selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+    // });
+    // var gps_permission = false;
+    // if (user_settings.gps){
+    //     gps_permission = true;
+    // }
+    // var gps_switch = Titanium.UI.createSwitch({
+    //     value: gps_permission,
+    //     right: 10
+    // });
+    // gps_switch.addEventListener('change', function(e){
+    //     change_permission('gps', e.value);
+    // });
+    // row.add(gps_switch);
+    // section.add(row);
     
     var row = Ti.UI.createTableViewRow({
             title: 'Public Follows',

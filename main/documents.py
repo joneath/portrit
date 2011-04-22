@@ -125,7 +125,7 @@ class Nomination(Document):
             
     def get_comment_count(self):
         try:
-            return len(Comment.objects.filter(nomination__id=self.id, active=True))
+            return len(Comment.objects.filter(nomination=str(self.id), active=True))
         except:
             return 0
     
@@ -480,7 +480,12 @@ class Portrit_User(Document):
                 'email_on_follow': self.email_on_follow,
                 'email_on_nomination': self.email_on_nomination,
                 'email_on_win': self.email_on_win,
+                'push_on_comment': self.push_comments,
+                'push_on_nomination': self.push_nominations,
+                'push_on_wins': self.push_wins,
+                'push_on_follow': self.push_follows,
             }
+            
         except Exception, err:
             print err
             return { }

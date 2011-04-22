@@ -78,6 +78,12 @@ window_activity_cont.add(window_activity_background);
 window_activity_cont.add(window_activity);
 win.add(window_activity_cont);
 
+function window_activity_timeout(){
+    setTimeout(function(){
+        window_activity_cont.hide();
+    }, 2000);
+}
+
 var notification_read_list = [ ];
 function add_detail_window(e){
     var w = Ti.UI.createWindow({backgroundColor:"#222", url:'nom/detail.js'});
@@ -461,11 +467,13 @@ function load_notifications(){
     
     var xhr = Titanium.Network.createHTTPClient();
 
+    window_activity_timeout();
     xhr.onload = function(){   
         var data = JSON.parse(this.responseData);
         
         notifications_empty_row = Ti.UI.createTableViewRow({
-                height:'auto'
+                height:'auto',
+                selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
         });
         var notifications_empty_label = Ti.UI.createLabel({
         	text:"You Have No Updates",

@@ -71,7 +71,8 @@ back_buttom = Titanium.UI.createButton({
     left: 0,
     title: 'Back',
     font: {fontSize: 11, fontWeight: 'bold'},
-    backgroundImage: '../../images/back.png'
+    backgroundImage: '../../images/back.png',
+    zIndex: 1
 });
 
 back_buttom.addEventListener('click', function(){
@@ -453,10 +454,10 @@ function load_more_noms(state, cat, dir, pos_to_load){
         url = SERVER_URL + '/api/get_nom_detail/?nav_selected=' +state + '&cat=' + cat + '&dir=' + dir + '&pos=' + pos_to_load;
     }
     else if (state == 'profile_trophies'){
-
+        url = SERVER_URL + '/api/get_nom_detail/?source=' + me.username + '&nav_selected=' +state + '&cat=' + cat + '&dir=' + dir + '&pos=' + pos_to_load;
     }
     else if (state == 'profile_active'){
-
+        url = SERVER_URL + '/api/get_nom_detail/?source=' + me.username + '&nav_selected=' +state + '&dir=' + dir + '&pos=' + pos_to_load;
     }
     
     var xhr = Titanium.Network.createHTTPClient();
@@ -882,8 +883,6 @@ function get_nom_comments(cont, nom_id, first){
     var url = SERVER_URL + '/api/get_comments/?nom_id=' + nom_id;
 
     xhr.open('GET', url);
-
-    // send the data
     xhr.send();
 }
 
@@ -1733,17 +1732,19 @@ function init_detail_view(state){
 
     var detail_header = Titanium.UI.createView({
         height: 40,
-        width: 250,
-        left: 70
+        width: 320,
+        zIndex: 0,
     });
 
     var nom_cat_label = Titanium.UI.createLabel({
 	    text: detail_header_text,
-        textAlign: 'left',
+        textAlign: 'center',
         color: '#fff',
         opacity: 0,
         minimumFontSize: 11,
         right: 10,
+        width: 250,
+        left: 70,
         font:{fontSize: 14, fontWeight: 'bold'}
     });
     detail_header.add(nom_cat_label);

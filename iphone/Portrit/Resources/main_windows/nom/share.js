@@ -68,7 +68,6 @@ back_buttom.addEventListener('click', function(){
         win.close();
     }
     else{
-        // var current_win = win;
         win.animate(window_slide_back);
         Ti.App.fireEvent('cancel_share');
     }
@@ -155,7 +154,8 @@ function close_share_nom(){
     var data = JSON.parse(this.responseData);
     
     var nom = null;
-
+    window_activity_cont.hide();
+    
     if (!new_photo){
         var nom = data[0];
         if (twitter_switch && twitter_switch.value){
@@ -187,29 +187,22 @@ function close_share_nom(){
             }
         }
     }
-    window_activity_cont.hide();
+
     if (new_photo){
-        win.close(fadeOut);
-        
-        // setTimeout(function(){
-            // Ti.App.fireEvent('close_nominate_page', { });
-            Ti.App.fireEvent('close_settings_page', { });
-            if (nominations != ''){
-                Ti.App.fireEvent('reset_after_camera', { });
-                // setTimeout(function(){
-                Ti.App.fireEvent('update_active_noms', { });
-                if (user == me.fid){
-                    Ti.App.fireEvent('update_my_photos', { });
-                }
-                // }, 200);
-            }
-            else{
+        win.animate(fadeOut);
+
+        Ti.App.fireEvent('close_settings_page', { });
+        if (nominations != ''){
+            Ti.App.fireEvent('reset_after_camera', { });
+            Ti.App.fireEvent('update_active_noms', { });
+            if (user == me.fid){
                 Ti.App.fireEvent('update_my_photos', { });
-                // setTimeout(function(){
-                Ti.App.fireEvent('reset_after_camera_to_profile', { });
-                // }, 500);
             }
-        // }, 300);
+        }
+        else{
+            Ti.App.fireEvent('update_my_photos', { });
+            Ti.App.fireEvent('reset_after_camera_to_profile', { });
+        }
     }
     else{
         win.close();
@@ -219,7 +212,7 @@ function close_share_nom(){
             tabGroup.open(fadeIn);
             setTimeout(function(){
         	    Ti.App.fireEvent('update_active_noms', { });
-                Ti.App.fireEvent('close_nominate_page', { });
+                // Ti.App.fireEvent('close_nominate_page', { });
                 Ti.App.fireEvent('close_settings_page', { });
                 Ti.App.fireEvent('close_user_profile_page', { });
                 if (user == me.fid){
@@ -249,15 +242,17 @@ function submit_nom(e){
     var url = '';
     var check_upload_interval = null;
     var progress = 0;
+    var check_count = 0;
     
     caption_text = caption.value;
     window_activity_cont.show();
-    upload_progress_bar.show();
     
     if (new_photo){
+        upload_progress_bar.show();
         clearInterval(check_upload_interval);
         check_upload_interval = setInterval(function(){
             upload_id = Ti.App.Properties.getString("upload_complete");
+            check_count += 1;
             if (upload_id){
                 clearInterval(check_upload_interval);
                 
@@ -293,12 +288,24 @@ function submit_nom(e){
             else{
                 progress = Ti.App.Properties.getString("upload_progress");
                 if (progress){
-                    progress = parseFloat(progress);
-                    progress = progress * 100;
-                    upload_progress_bar.value = progress;
+                    try{
+                        progress = parseFloat(progress);
+                        progress = progress * 100;
+                        upload_progress_bar.value = progress;
+                    }
+                    catch (e){
+                        
+                    }
                 }
             }
-        }, 50);
+            if (check_count > 40 && (!progress || progress <= 0)){
+                clearInterval(check_upload_interval);
+                win.animate(fadeOut);
+                Ti.App.fireEvent('close_settings_page', { });
+                Ti.App.fireEvent('update_my_photos', { });
+                Ti.App.fireEvent('reset_after_camera_to_profile', { });
+            }
+        }, 200);
     }
     else{
         var xhr = Titanium.Network.createHTTPClient();
@@ -512,5 +519,11 @@ var init_share_nom = function(){
 };
 
 Ti.App.addEventListener('close_share', function(e){
+    win.hide();
+    win.close();
+});
+
+Ti.App.addEventListener('close_nom_share', function(e){
+    win.hide();
     win.close();
 });

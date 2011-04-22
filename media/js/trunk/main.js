@@ -3086,6 +3086,9 @@ $(document).ready(function(){
         if (nom.caption){
             nominator_caption = 'Caption: ' + nom.caption.replace(/(\r\n|\n|\r)/gm,"");;
         }
+        else{
+            nominator_caption = 'No caption provided';
+        }
         
         if (nom.tagged_users.length > 0){
             tagged_user_html = '<div class="tagged_users"><span>' + nom.tagged_users.length + ' Tagged</span><div class="tag" nom="' + nom.id + '"></div></div>'; 
@@ -3103,8 +3106,8 @@ $(document).ready(function(){
         $('#main_nom_cont').attr('value', nom.id);
         $('#main_nom_photo').attr('src', nom.photo.source);
         
-        $('#nominator_overlay_cont').html('<a href="/#!/' + nom.nominator_username + '/"><img class="user_img" src="https://graph.facebook.com/' + nom.nominator + '/picture?type=square"/></a>' +
-                                            '<h2>Nominated by <span class="strong"><a href="/#!/' + nom.nominator_username + '/">' + nom.nominator_username + '</a></span></h2>' +
+        $('#nominator_overlay_cont').html(//'<a href="/#!/' + nom.nominator_username + '/"><img class="user_img" src="https://graph.facebook.com/' + nom.nominator + '/picture?type=square"/></a>' +
+                                            // '<h2>Nominated by <span class="strong"><a href="/#!/' + nom.nominator_username + '/">' + nom.nominator_username + '</a></span></h2>' +
                                             '<p>' + nominator_caption + '</p>' +
                                             tagged_user_html);
         
@@ -3665,6 +3668,9 @@ $(document).ready(function(){
             if (nom.caption){
                 nominator_caption = nom.caption;
             }
+            else{
+                nominator_caption = 'No caption provided';
+            }
             
             tagged_user_html = '';
             if (nom.tagged_users.length > 0){
@@ -3691,8 +3697,8 @@ $(document).ready(function(){
                                                         '<p>' + secondsToHms(time_diff) + '</p>' +
                                                     '</div>' +
                                                     '<div id="nominator_overlay_cont">' +
-                                                        '<a href="/#!/' + nom.nominator_username + '/"><img class="user_img" src="https://graph.facebook.com/' + nom.nominator + '/picture?type=square"/></a>' +
-                                                        '<h2>Nominated by <span class="strong"><a href="/#!/' + nom.nominator_username + '/">' + nominator_name + '</a></span></h2>' +
+                                                        // '<a href="/#!/' + nom.nominator_username + '/"><img class="user_img" src="https://graph.facebook.com/' + nom.nominator + '/picture?type=square"/></a>' +
+                                                        // '<h2>Nominated by <span class="strong"><a href="/#!/' + nom.nominator_username + '/">' + nominator_name + '</a></span></h2>' +
                                                         '<p>' + nominator_caption + '</p>' +
                                                         tagged_user_html +
                                                     '</div>' +
@@ -3822,6 +3828,9 @@ $(document).ready(function(){
                 if (nom.caption){
                     nominator_caption = nom.caption;
                 }
+                else{
+                    nominator_caption = 'No caption provided';
+                }
 
                 tagged_user_html = '';
                 if (nom.tagged_users.length > 0){
@@ -3848,8 +3857,8 @@ $(document).ready(function(){
                                                             '<p>' + secondsToHms(time_diff) + '</p>' +
                                                         '</div>' +
                                                         '<div id="nominator_overlay_cont">' +
-                                                            '<a href="/#!/' + nom.nominator_username + '/"><img class="user_img" src="https://graph.facebook.com/' + nom.nominator + '/picture?type=square"/></a>' +
-                                                            '<h2>Nominated by <span class="strong"><a href="/#!/' + nom.nominator_username + '/">' + nominator_name + '</a></span></h2>' +
+                                                            // '<a href="/#!/' + nom.nominator_username + '/"><img class="user_img" src="https://graph.facebook.com/' + nom.nominator + '/picture?type=square"/></a>' +
+                                                            // '<h2>Nominated by <span class="strong"><a href="/#!/' + nom.nominator_username + '/">' + nominator_name + '</a></span></h2>' +
                                                             '<p>' + nominator_caption + '</p>' +
                                                             tagged_user_html +
                                                         '</div>' +
@@ -7119,6 +7128,9 @@ $(document).ready(function(){
         if (nom.caption){
             caption = 'Caption: ' +nom.caption;
         }
+        else{
+            caption = 'No caption provided';
+        }
         
         if (me && nom.nominator == me.id){
             nominator_name = "You";
@@ -7131,7 +7143,7 @@ $(document).ready(function(){
         if (nom.tagged_users.length > 0){
             tagged_user_html = '<div class="tagged_users"><span>' + nom.tagged_users.length + ' Tagged</span><div class="tag" nom="' + nom.id + '"></div></div>'; 
         }
-
+        
         $('.tagged_users').remove();
         $('#nominator_overlay_cont').append(tagged_user_html);
         
@@ -7147,11 +7159,11 @@ $(document).ready(function(){
         
         $('#nomination_text_cont h3').text(nom.nomination_category);
         $('#nom_trophy_icon').removeClass().addClass('trophy_img large ' + cat_underscore);//.attr('src', 'http://portrit.s3.amazonaws.com/img/trophies/large/' + cat_underscore + '.png');
-        $('#nominator_overlay_cont a').attr('href', '/#!/' + nom.nominator_username + '/');
-        $('#nominator_overlay_cont > h2 a').text(nominator_name);
+        // $('#nominator_overlay_cont a').attr('href', '/#!/' + nom.nominator_username + '/');
+        // $('#nominator_overlay_cont > h2 a').text(nominator_name);
         $('#nominator_overlay_cont p').text(caption);
-        $('#nominator_overlay_cont .user_img').attr('src', 'https://graph.facebook.com/' + nom.nominator + '/picture?type=square')
-        $('#nominatee_cont .user_img').attr('src', 'https://graph.facebook.com/' + nom.nominatee + '/picture?type=square')
+        // $('#nominator_overlay_cont .user_img').attr('src', 'https://graph.facebook.com/' + nom.nominator + '/picture?type=square');
+        $('#nominatee_cont .user_img').attr('src', 'https://graph.facebook.com/' + nom.nominatee + '/picture?type=square');
         $('#nominatee_cont a').attr('href', '/#!/' + nom.nominatee_username + '/');
         $('#nomination_text_cont span').text(name);
         $('.post_new_comment').attr('value', nom.id);

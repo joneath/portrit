@@ -72,6 +72,12 @@ window_activity_cont.add(window_activity_background);
 window_activity_cont.add(window_activity);
 win.add(window_activity_cont);
 
+function window_activity_timeout(){
+    setTimeout(function(){
+        window_activity_cont.hide();
+    }, 2000);
+}
+
 var empty_row = Ti.UI.createTableViewRow({
         height: 20,
         selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
@@ -240,17 +246,17 @@ portrit_header_view.add(header_tab_selection);
 Ti.include('../settings.js');
 Ti.include('../includes.js');
 
-var me = JSON.parse(Ti.App.Properties.getString("me")),
-    list_view_data = [ ],
-    active_noms_cache = [ ],
-    photos_cache = [ ],
-    winners_noms_cache = [ ],
-    notification_count = 0,
-    globals_attached = false,
-    newest_nom = '',
-    oldest_nom = '',
-    selected_tab = 'active',
-    countdown_interval = null;
+var me = JSON.parse(Ti.App.Properties.getString("me"));
+var list_view_data = [ ];
+var active_noms_cache = [ ];
+var photos_cache = [ ];
+var winners_noms_cache = [ ];
+var notification_count = 0;
+var globals_attached = false;
+var newest_nom = '';
+var oldest_nom = '';
+var selected_tab = 'active';
+var countdown_interval = null;
 
 function load_more_noms(e){
     var xhr = Titanium.Network.createHTTPClient();
@@ -608,66 +614,7 @@ function open_options(e){
     dialog.addEventListener('click',function(e){
         // Flag Photo
         if (e.index == 0){
-            var xhr = Titanium.Network.createHTTPClient();
-
-            xhr.onload = function()
-            {
-                var data = JSON.parse(this.responseData);
-                if (data == true){
-                    var flag_cont_background = Titanium.UI.createView({
-                	    backgroundColor: '#000',
-                        opacity: .8,
-                        borderRadius: 5,
-                        height: '100%',
-                        width: '100%',
-                        zIndex: -1
-                    });
-
-            	    var flag_cont = Titanium.UI.createView({
-                        height: 'auto',
-                        width: 'auto',
-                        top: 200,
-                        zIndex: 10
-                    });
-                    flag_cont.add(flag_cont_background);
-
-            	    var flag_message = Titanium.UI.createLabel({
-                	    text: 'Thank you for the feedback! We wil check this photo out.',
-                	    textAlign: 'center',
-                        color: '#fff',
-                        left: 10,
-                        right: 10,
-                        top: 10,
-                        bottom: 10,
-                        size: {width: 'auto', height: 'auto'},
-                        font:{fontSize:16, fontWeight: 'bold'}
-                    });
-                    flag_cont.add(flag_message);
-                    win.add(flag_cont);
-
-                    var fadeOutSlow = Titanium.UI.createAnimation({
-                        curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
-                        opacity: 0,
-                        delay: 3000,
-                        duration: 1000
-                    });
-                    flag_cont.animate(fadeOutSlow);
-                    
-                    setTimeout(function(){
-                        win.remove(flag_cont);
-                    }, 4000);
-                }
-            };
-
-            var url = '';
-
-            url = SERVER_URL + '/api/flag/photo'
-
-            xhr.open('POST', url);
-
-            // send the data
-            xhr.send({'access_token': me.access_token,
-                        'photo_id': photo_id});
+            flag_nom(me, nom, photo_id, win);
         }
         else if (e.index == 1){
             // Facebook Share
@@ -680,6 +627,25 @@ function open_options(e){
         }
 	});
 	dialog.show();
+}
+
+function get_comments(id, cont, loading){
+    var xhr = Titanium.Network.createHTTPClient();
+
+    xhr.onload = function(){
+        var data = JSON.parse(this.responseData);
+        cont.remove(loading);
+        
+        if (data.length > 0){
+            data.splice(0, 2);
+            render_comments(cont, data);
+        }
+    };
+
+    var url = SERVER_URL + '/api/get_comments/?nom_id=' + id;
+
+    xhr.open('GET', url);
+    xhr.send();
 }
 
 // function render_comments(cont, comments){
@@ -1087,6 +1053,7 @@ function render_nom(nom, top, row_count){
         photo_action_cont = Titanium.UI.createView({
             width: 320,
             height: 'auto',
+            top: 0,
             bottom: 10,
             layout: 'vertical'
         });
@@ -1171,6 +1138,41 @@ function render_nom(nom, top, row_count){
         row.add(photo_action_cont);        
         render_comments(comments_cont, nom.quick_comments);
         
+        if (nom.comment_count > nom.quick_comments.length){
+            var load_more_comments = Titanium.UI.createLabel({
+        	    text: nom.comment_count - nom.quick_comments.length + ' more comments',
+                color: '#333',
+                bottom: 5,
+                size: {width: 320, height: 20},
+                textAlign: 'center',
+                font:{fontSize:14, fontWeight: 'bold'}
+            });
+            load_more_comments.nom_id = nom.id;
+            load_more_comments.comment_cont = comments_cont;
+            load_more_comments.parent = photo_action_cont;
+            
+            load_more_comments.addEventListener('click', function(e){
+                var nom_id = e.source.nom_id;
+                var comment_cont = e.source.comment_cont;
+                // var parent = e.source.parent;
+                
+                var comments_loading = Titanium.UI.createActivityIndicator({
+                    message: 'Loading...',
+                    color: '#333',
+                    height:50,
+                    width:10,
+                    style:Titanium.UI.iPhone.ActivityIndicatorStyle.DARK
+                });
+                comments_loading.show();
+                
+                comment_cont.remove(e.source);
+                comment_cont.add(comments_loading);
+                
+                get_comments(nom_id, comment_cont, comments_loading);
+            });
+            comments_cont.add(load_more_comments);
+        }
+        
         section.add(row);
         section.created_time = nom.created_time;
 
@@ -1205,6 +1207,7 @@ function activate_winners_stream(){
     list_view_data = [ ];
     if (winners_noms_cache.length == 0){
         window_activity_cont.show();
+        window_activity_timeout();
         
         var xhr = Titanium.Network.createHTTPClient();
         xhr.onload = function(){
@@ -1214,6 +1217,8 @@ function activate_winners_stream(){
                 render_active_list_view(winners_noms_cache);
             }
             else{
+                active_empty_label.hide();
+                photos_empty_label.hide();
                 tv.setData([empty_row]);
                 winners_empty_label.show();
             }
@@ -1371,6 +1376,7 @@ function activate_photo_stream(){
     
     if (photos_cache.length == 0){
         window_activity_cont.show();
+        window_activity_timeout();
         var xhr = Titanium.Network.createHTTPClient();
         xhr.onload = function(){
             var data = JSON.parse(this.responseData);
@@ -1383,6 +1389,8 @@ function activate_photo_stream(){
             }
             else{
                 tv.setData([empty_row]);
+                active_empty_label.hide();
+                winners_empty_label.hide();
                 photos_empty_label.show();
             }
         };
@@ -1401,11 +1409,20 @@ function activate_active_view(){
     
     if (active_noms_cache.length == 0){
         window_activity_cont.show();
+        window_activity_timeout();
         var xhr = Titanium.Network.createHTTPClient();
-        xhr.onload = function()
-        {
+        xhr.onload = function(){
             var data = JSON.parse(this.responseData);
-            render_active_list_view(active_noms_cache);
+            if (data.length > 0){
+                render_active_list_view(active_noms_cache);
+            }
+            else{
+                photos_empty_label.hide();
+                winners_empty_label.hide();
+                active_empty_label.show();
+                
+                tv.setData([empty_row]);
+            }
             window_activity_cont.hide();
         };
         var url = SERVER_URL + '/api/get_recent_stream/?access_token=' + me.access_token;
@@ -1428,6 +1445,7 @@ function init_active_view(){
     }
     
     window_activity_cont.show();
+    window_activity_timeout();
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onload = function(){
     	var data = JSON.parse(this.responseData);
@@ -1445,6 +1463,8 @@ function init_active_view(){
     	}
     	else{
     	    tv.setData([empty_row]);
+            photos_empty_label.hide();
+            winners_empty_label.hide();
             active_empty_label.show();
     	}
         
@@ -1524,6 +1544,8 @@ function init_active_view(){
                     active_noms_cache = data;
                     if (data.length == 0){
                         tv.setData([empty_row]);
+                        photos_empty_label.hide();
+                        winners_empty_label.hide();
                         active_empty_label.show();
                     }
                 }
@@ -1531,6 +1553,8 @@ function init_active_view(){
                     winners_noms_cache = data;
                     if (data.length == 0){
                         tv.setData([empty_row]);
+                        active_empty_label.hide();
+                        photos_empty_label.hide();
                         winners_empty_label.show();
                     }
                 }
@@ -1547,6 +1571,9 @@ function init_active_view(){
                 }
                 else{
                     tv.setData([empty_row]);
+                    tv.setData([empty_row]);
+                    active_empty_label.hide();
+                    winners_empty_label.hide();
                     photos_empty_label.show();
                 }
             }
@@ -1625,6 +1652,7 @@ function init_active_view(){
     
         Ti.App.addEventListener('update_active_noms', function(eventData) {
             window_activity_cont.show();
+            window_activity_timeout();
             if (selected_tab != 'active'){
                 selected_tab = 'active';
 
@@ -1737,6 +1765,14 @@ win.addEventListener('focus', function(){
         winners_noms_cache = [ ];
 
         me = JSON.parse(Ti.App.Properties.getString("me"));
+        
+        var header_active_tab_matrix = Ti.UI.create2DMatrix();
+        header_active_tab_matrix = header_active_tab_matrix.translate(0,0);
+        
+        var header_active_tab_animation = Titanium.UI.createAnimation();
+        header_active_tab_animation.transform = header_active_tab_matrix;
+        
+    	header_tab_selection.animate(header_active_tab_animation);
 
         init_active_view();
     }

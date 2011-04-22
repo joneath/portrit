@@ -129,8 +129,7 @@ def sign_in_create(request):
 def check_username_availability(request):
     data = False
     username = request.POST.get('username')
-    print username
-    try: 
+    try:
         Portrit_User.objects.get(username__iexact=username)
         data = True
     except Exception, err:
@@ -191,7 +190,8 @@ def add_username(request):
                 except Exception, err:
                     print err
             
-            data = True
+            data = {'username': username, 'name': user.name}
+            print data
     except Exception, err:
         print err
     
@@ -495,17 +495,39 @@ def get_nom_detail(request):
             data = serialize_noms(data)
         
     elif nav_selected == 'profile_trophies':
-        cat = cat.replace('-', ' ');
+        if nomination:
+            cat = nomination.nomination_category
+        else:
+            cat = cat.replace('-', ' ');
+        
         data = Nomination.objects.filter(
             Q(tagged_users__in=[source]) |
             Q(nominatee=source),
             nomination_category=cat,
-            won=True).order_by('-current_vote_count', '-created_date')[:PAGE_SIZE]
+            won=True).order_by('-current_vote_count', '-created_date')
             
-        data = serialize_noms(data)
+        if dir:
+            data = paginate_data(data, dir, pos)
+
+        elif nomination:
+            data = list(data)
+            selected_index = data.index(nomination)
+            top = 10
+            bottom = 0
+
+            if selected_index - 5 > 0:
+                bottom = selected_index - 4
+
+            if selected_index + 5 > top:
+                top = selected_index + 5
+
+            data = data[bottom:top]
+            data = serialize_noms(data, bottom)
+        else:
+            data = data[:PAGE_SIZE]
+            data = serialize_noms(data)
         
     elif nav_selected == 'profile_active':
-        print source.username
         data = Nomination.objects.filter(
             Q(tagged_users__in=[source]) |
             Q(nominatee=source),
@@ -2244,6 +2266,14 @@ def change_user_settings(request):
             portrit_user.email_on_nomination = value
         elif method == 'email_win':
             portrit_user.email_on_win = value
+        elif method == 'push_comments':
+            portrit_user.push_comments = value
+        elif method == 'push_follow':
+            portrit_user.push_follows = value
+        elif method == 'push_noms':
+            portrit_user.push_nominations = value
+        elif method == 'push_wins':
+            portrit_user.push_wins = value
             
         portrit_user.save()
         data = portrit_user.get_settings()

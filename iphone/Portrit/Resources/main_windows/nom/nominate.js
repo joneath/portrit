@@ -19,21 +19,22 @@ Ti.App.addEventListener('pass_photo_data', function(eventData) {
 Ti.include('../../settings.js');
 Ti.include('../../includes.js');
 
-var win = Ti.UI.currentWindow,
-    tv = null,
-    me = JSON.parse(Ti.App.Properties.getString("me")),
-    loading_photo = true,
-    photo_id = null,
-    user = null,
-    passed_user = null,
-    new_photo = false,
-    name = '',
-    username = '',
-    photo = null,
-    window_nav_bar = null,
-    back_buttom = null,
-    button_label = null,
-    list_view_data = [ ];
+var win = Ti.UI.currentWindow;
+var tv = null;
+var me = JSON.parse(Ti.App.Properties.getString("me"));
+var loading_photo = true;
+var photo_id = null;
+var user = null;
+var passed_user = null;
+var new_photo = false;
+var name = '';
+var username = '';
+var photo = null;
+var window_nav_bar = null;
+var back_buttom = null;
+var button_label = null;
+var list_view_data = [ ];
+var share_window = null;
     
 var window_slide_out = Titanium.UI.createAnimation({
     curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
@@ -70,12 +71,14 @@ back_buttom = Titanium.UI.createButton({
 });
 
 back_buttom.addEventListener('click', function(){
-    if (!new_photo){
-        win.close();
-    }
-    else{
-        win.animate(window_slide_back);
-        Ti.App.fireEvent('cancel_nominate');
+    if (!loading_photo){
+        if (!new_photo){
+            win.close();
+        }
+        else{
+            win.animate(window_slide_back);
+            Ti.App.fireEvent('cancel_nominate');
+        }
     }
 });
 
@@ -524,7 +527,6 @@ function trophy_selected(e){
     }
 }
 
-
 function clear_nominations(e){
     max_trophy_selected_cont.zIndex = -1;
     max_trophy_selected_cont.opacity = 0;
@@ -543,15 +545,12 @@ function clear_nominations(e){
     return false;
 }
 
-var share_window = null;
-
-share_window = Titanium.UI.createWindow({
-    backgroundColor: '#eee', 
-    url: 'share.js',
-    left: 320,
-    width: 320
-});
-share_window.open();
+// var share_window = share_window = Titanium.UI.createWindow({
+//     backgroundColor: '#eee', 
+//     url: 'share.js',
+//     left: 320,
+//     width: 320
+// });
 
 function post_nom(e){
     if (!loading_photo){
@@ -846,36 +845,36 @@ function search_following(e){
 }
 
 function init_nominate_view(){
+    loading_photo = false;
+    window_activity_cont.animate(fadeOut);
+    
     if (!new_photo){
 	    cachedImageView('images', photo.source, main_image);
 	}
 	else{
 	    var f = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, 'temp.png');
-        // main_image.hide();
 	    main_image.image = f.nativePath;
-        // main_image.image = main_image.toBlob().imageAsCropped({width:640,height:640,x:0,y:200});
-        // main_image.show();
 	}
     
-    loading_photo = false;
-    window_activity_cont.animate(fadeOut);
-    
-    if (!new_photo){
-        share_window = Titanium.UI.createWindow({
-            backgroundColor: '#eee', 
-            url: 'share.js',
-            left: 320,
-            width: 320
-        });
+    share_window = Titanium.UI.createWindow({
+        backgroundColor: '#eee', 
+        url: 'share.js',
+        left: 320,
+        width: 320
+    });
+    setTimeout(function(){
         share_window.open();
-        
-        // Ti.App.addEventListener('close_nominate_page', function(eventData) {
-        //     win.close();
-        // });
-    }
+    }, 300);
 }
 
 Ti.App.addEventListener('cancel_share', function(e){
-    // share_window = null;
     win.animate(window_slide_in);
+});
+
+Ti.App.addEventListener('close_nom_share', function(e){
+    win.close();
+});
+
+Ti.App.addEventListener('close_nominate_page', function(e){
+    win.close();
 });
