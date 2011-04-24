@@ -65,7 +65,7 @@ var Portrit = function(){
         if (data.method == 'new_nom'){
             if (!friends[data.payload.nom_data[0].nominatee].push_nominations){
                 allow_push = false;
-                continue;
+                return;
             }
             if (data.payload.nom_data[0].nominatee != data.payload.nom_data[0].nominator){
                 message = data.payload.nom_data[0].nominator_username + ' nominated your photo for ' + data.payload.nom_data[0].nomination_category;
@@ -83,7 +83,7 @@ var Portrit = function(){
         else if (data.method == 'nom_won'){
             if (!friends[data.payload.nominatee].push_wins){
                 allow_push = false;
-                continue;
+                return;
             }
             message = 'Congratulations! Your photo won ' + data.payload.nomination_category;
             
