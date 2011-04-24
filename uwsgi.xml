@@ -1,7 +1,6 @@
 <uwsgi>
   <socket>127.0.0.1:3031</socket>
-  <master/>
   <processes>4</processes>
-  <env>DJANGO_SETTINGS_MODULE=portrit.settings</env>
-  <module>django.core.handlers.wsgi:WSGIHandler()</module>
+  <pythonpath>/var/www/portrit</pythonpath>
+  <module>portrit_wsgi</module>
 </uwsgi>

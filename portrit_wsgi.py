@@ -1,7 +1,7 @@
 import os
 import sys
 
-sys.path = ['/home/joneath/webapps/portrit', '/home/joneath/webapps/portrit/portrit', '/home/joneath/webapps/portrit/lib/python2.5'] + sys.path
+sys.path = ['/var/www/portrit'] + sys.path
 from django.core.handlers.wsgi import WSGIHandler
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'portrit.settings'
