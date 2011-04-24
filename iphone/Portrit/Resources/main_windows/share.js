@@ -25,35 +25,67 @@ var window_slide_in = Titanium.UI.createAnimation({
     duration: 300
 });
 
+window_activity = Titanium.UI.createActivityIndicator({
+    message: 'Preparing Camera...',
+    font: {fontSize: 16, fontWeight: 'bold'},
+    color: '#fff',
+    height:50,
+    width:10
+});
+window_activity.show()
+
+window_activity_background = Titanium.UI.createView({
+    backgroundColor: '#000',
+    borderRadius: 5,
+    opacity: 0.8,
+    height: 120,
+    width: 120,
+    zIndex: -1
+});
+
+window_activity_cont = Titanium.UI.createView({
+    top: 150,
+    width: 320,
+    height: 120,
+    zIndex: 20
+});
+// window_activity_cont.hide();
+window_activity_cont.add(window_activity_background);
+window_activity_cont.add(window_activity);
+win.add(window_activity_cont);
+
 // Camera 
+var nominate_window = null;
 function add_nominate_window(animate){
-    Ti.App.fireEvent('close_nom_share', {});
-    setTimeout(function(){
-        nominate_window = Titanium.UI.createWindow({
-            backgroundColor:"#000", 
-            url:'nom/nominate.js',
-            left: 320,
-            width: 320
-        });
-        if (typeof(animate) != 'undefined' && animate){
+    if (typeof(animate) != 'undefined' && animate){
+        Ti.App.fireEvent('close_nom_share', {});
+    }
+    
+    nominate_window = Titanium.UI.createWindow({
+        backgroundColor:"#000", 
+        url:'nom/nominate.js',
+        left: 320,
+        width: 320
+    });
+    
+    if (typeof(animate) != 'undefined' && animate){
+        setTimeout(function(){
             nominate_window.open(window_slide_in);
-        }
-        else{
-            nominate_window.open();
-        }
-    }, 300);
+        }, 300);
+    }
+    else{
+        nominate_window.open();
+    }
 }
 
 function pass_nominate_data(e){
-    // setTimeout(function(){
-	    Ti.App.fireEvent('pass_photo_data', {
-            user: me.fid,
-            name: me.name,
-            username: me.username,
-            photo: e.photo,
-            new_photo: e.new_photo
-        });
-    // }, 200);
+    Ti.App.fireEvent('pass_photo_data', {
+        user: me.fid,
+        name: me.name,
+        username: me.username,
+        photo: e.photo,
+        new_photo: e.new_photo
+    });
 }
 
 var camera_overlay = Titanium.UI.createView({
@@ -145,6 +177,15 @@ var take_photo = Ti.UI.createButton({
 });
 camera_overlay_bottom_bar.add(take_photo);
 
+take_photo.addEventListener('click', function(e){
+    if (!take_photo_click){
+        take_photo_click = true;
+        add_nominate_window(true);
+        animate_shutter();
+        Ti.Media.takePicture();
+    }
+});
+
 var photo_gallery = Ti.UI.createButton({
 	backgroundImage: '../images/camera_buttons/gallery.png',
 	width: 42,
@@ -155,20 +196,19 @@ var photo_gallery = Ti.UI.createButton({
 camera_overlay_bottom_bar.add(photo_gallery);
 
 photo_gallery.addEventListener('click', function(e){
-    Titanium.UI.iPhone.showStatusBar({animated:false});
     Titanium.Media.hideCamera();
+    Titanium.UI.iPhone.showStatusBar({animated:false});
+
+    add_nominate_window();
     Titanium.Media.openPhotoGallery({
         success: photo_gallery_click,
         cancel: photo_gallery_cancel,
         mediaTypes: Ti.Media.MEDIA_TYPE_PHOTO
     });
-    
-    add_nominate_window();
 });
 
 function photo_gallery_cancel(e){
     Titanium.UI.iPhone.hideStatusBar({animated:false});
-    nominate_window.hide();
     setTimeout(function(){
         show_camera();
     }, 350);
@@ -176,8 +216,12 @@ function photo_gallery_cancel(e){
 
 function photo_gallery_click(e){
     take_photo_click = true;
+    
     nominate_window.animate(window_slide_in);
-    cammera_success(e, true);
+
+    setTimeout(function(){
+        cammera_success(e, true);
+    }, 200);
 }
 
 function show_camera(){
@@ -188,7 +232,6 @@ function show_camera(){
         animated: false,
         autohide: false,
         showControls: false,
-        // saveToPhotoGallery: true,
         mediaTypes: Ti.Media.MEDIA_TYPE_PHOTO,
         overlay: camera_overlay
     });
@@ -435,75 +478,25 @@ win.addEventListener('focus', function(){
         overlay: camera_overlay
     });
     
-    if (!camera_listeners_attached){
-        camera_listeners_attached = true;
-        
-        take_photo.addEventListener('click', function(e){
-            if (!take_photo_click){
-                take_photo_click = true;
-                animate_shutter();
-                Ti.Media.takePicture();
-                add_nominate_window(true);
-            }
-        });
-    }
+    window_activity_cont.hide();
 });
 
+var image = null;
 function cammera_success(event, gallery){
     if (typeof(gallery) == 'undefined'){
         Titanium.Media.hideCamera();
     }
     
-    var image = event.media;
+    image = event.media;
     var imageView = Titanium.UI.createImageView({
-            image:image,
-            width:640,
-            height:960
-        });
+        image:image,
+        width:640,
+        height:960
+    });
     image = imageView.toImage().imageAsCropped({width:640,height:640,x:0,y:200});
 
     var f = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, 'temp.png');
     f.write(image);
-    
-    Ti.App.Properties.setString("upload_complete", null);
-    Ti.App.Properties.setString("upload_progress", 0);
-    
-    me = JSON.parse(Ti.App.Properties.getString("me"));
-    var xhr = Titanium.Network.createHTTPClient();
-    xhr.setRequestHeader("enctype", "multipart/form-data");
-    xhr.setRequestHeader("Content-Type", "image/png");
-    xhr.timeout = 20000;
-    
-    xhr.onload = function(){
-        try{
-            var data = JSON.parse(this.responseData);
-            var id = data.id;
-            Ti.App.Properties.setString("upload_complete", id);
-        }
-        catch(e){
-            alert(e);
-        }
-    };
-    xhr.onerror = function(e){
-        alert("Error: " + e.error);
-		alert("Error: " + e.error + "; (Http status " + this.status + ")");
-    };
-    xhr.onsendstream = function(e){
-        try{
-            Ti.App.Properties.setString("upload_progress", e.progress);
-        }
-        catch(e){
-            alert(e);
-        }
-    };
-    
-    var url = SERVER_URL + '/upload_photo/'
-    xhr.open('POST', url);
-    xhr.send({
-        'file': image,
-        'iphone': true,
-        'access_token': me.access_token
-    });
     
     var data = {
         'photo': {
@@ -512,8 +505,53 @@ function cammera_success(event, gallery){
         },
         'new_photo': true
     };
-    
     pass_nominate_data(data);
+    upload_photo(image);
+}
+
+var photo_upload = Titanium.Network.createHTTPClient();
+photo_upload.timeout = 20000;
+function upload_photo(image){
+    Ti.App.Properties.setString("upload_complete", null);
+    Ti.App.Properties.setString("upload_progress", 0);
+    Ti.App.Properties.setString("upload_ready_state", 4);
+    
+    me = JSON.parse(Ti.App.Properties.getString("me"));
+
+    photo_upload.onload = function(){
+        try{
+            var data = JSON.parse(this.responseData);
+            var id = data.id;
+            Ti.App.Properties.setString("upload_complete", id);
+        }
+        catch(e){
+            // alert(e);
+        }
+    };
+    photo_upload.onerror = function(e){
+        // alert("Error: " + e.error + "; (Http status " + this.status + ")");
+    };
+    photo_upload.onsendstream = function(e){
+        try{
+            Ti.App.Properties.setString("upload_progress", e.progress);
+        }
+        catch(e){
+            // alert(e);
+        }
+    };
+    photo_upload.onreadystatechange = function(e){
+        Ti.App.Properties.setString("upload_ready_state", photo_upload.readyState);
+    }
+    
+    var url = SERVER_URL + '/upload_photo/'
+    photo_upload.open('POST', url);
+    photo_upload.setRequestHeader("enctype", "multipart/form-data");
+    photo_upload.setRequestHeader("Content-Type", "image/png");
+    photo_upload.send({
+        'file': image,
+        'iphone': true,
+        'access_token': me.access_token
+    });
 }
 
 function camera_cancel(){
@@ -534,38 +572,17 @@ function camera_error(error){
     reset_after_camera();
 }
 
+Ti.App.addEventListener('restart_upload', function(e){
+    photo_upload.abort();
+    upload_photo(image);
+});
+
 Ti.App.addEventListener('cancel_nominate', function(e){
     take_photo_click = false;
     reset_shutter();
     
     setTimeout(function(){
-        Titanium.Media.showCamera({
-            success: cammera_success,
-            cancel: camera_cancel,
-            error: camera_error,
-            animated: false,
-            autohide: false,
-            showControls: false,
-            mediaTypes: Ti.Media.MEDIA_TYPE_PHOTO,
-            overlay: camera_overlay
-        });
-        
-        if (flash_selected_button.button == 'on'){
-            Ti.Media.cameraFlashMode = Ti.Media.CAMERA_FLASH_ON;
-        }
-        else if (flash_selected_button.button == 'off'){
-            Ti.Media.cameraFlashMode = Ti.Media.CAMERA_FLASH_OFF;
-        }
-        else if (flash_selected_button.button == 'auto'){
-            Ti.Media.cameraFlashMode = Ti.Media.CAMERA_FLASH_AUTO;
-        }
-        
-        if (cam_selected == 'back'){            
-            Ti.Media.switchCamera(Ti.Media.CAMERA_FRONT);
-        }
-        else if (cam_selected == 'front'){
-            Ti.Media.switchCamera(Ti.Media.CAMERA_REAR);
-        }
+        show_camera();
     }, 300);
 });
 
@@ -573,28 +590,12 @@ Ti.App.addEventListener('reset_after_camera', function(e){
     take_photo_click = false;
     tabGroup.bottom = 0;
     tabGroup.setActiveTab(0);
-    // tabGroup.close();
-    // 
-    // setTimeout(function(){
-    //     tabGroup.open();
-    // }, 300);
-
 });
 
 Ti.App.addEventListener('reset_after_camera_to_profile', function(e){
     take_photo_click = false;
     tabGroup.bottom = 0;
     tabGroup.setActiveTab(4);
-    // tabGroup.close();
-    // 
-    // setTimeout(function(){
-    //     tabGroup.open();
-    // }, 300);
-    // nominate_window.hide();
-    // 
-    // take_photo_click = false;
-    // tabGroup.bottom = 0;
-    // tabGroup.setActiveTab(4);
 });
 
 function reset_after_camera(prev){
@@ -603,7 +604,6 @@ function reset_after_camera(prev){
     tabGroup.bottom = 0;
     if (typeof(prev) != 'undefined'){
         var prev_tab_index = parseInt(Ti.App.Properties.getString("selected_tab_index"));
-        
         tabGroup.setActiveTab(prev_tab_index);
     }
     else{

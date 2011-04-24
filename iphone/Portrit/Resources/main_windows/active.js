@@ -46,6 +46,7 @@ var fadeIn = Titanium.UI.createAnimation({
 
 window_activity = Titanium.UI.createActivityIndicator({
     message: 'Loading...',
+    font:{fontSize:14, fontWeight:'bold'},
     color: '#fff',
     height:50,
     width:10
@@ -473,7 +474,7 @@ function add_comment_to_nom(e){
 	var t1 = Titanium.UI.create2DMatrix();
 	t1 = t1.scale(1);
 	var fadeIn = Titanium.UI.createAnimation({
-        curve: Ti.UI.ANIMATION_CURVE_EASE_OUT_IN,
+        curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
         opacity: 1,
         transform: t1,
         duration: 350
@@ -482,7 +483,7 @@ function add_comment_to_nom(e){
     var t2 = Titanium.UI.create2DMatrix();
 	t2 = t2.scale(.45);
     var fadeOut = Titanium.UI.createAnimation({
-        curve: Ti.UI.ANIMATION_CURVE_EASE_OUT_IN,
+        curve: Ti.UI.ANIMATION_CURVE_EASE_OUT,
         opacity: 0,
         transform: t2,
         duration: 350
@@ -753,8 +754,7 @@ function render_nom(nom, top, row_count){
     		top: 0,
     		height: 30,
     		width: 30,
-    		hires: true,
-    		zIndex: 1
+    		hires: true
     	});
     	cachedImageView('profile_images', nominatee_profile_img_url, nominatee_profile_img);
     	
@@ -772,30 +772,23 @@ function render_nom(nom, top, row_count){
     	    text: nominatee_name_text,
             textAlign: 'left',
             color: '#fff',
-            // left: 5,
-            // top: 7,
-            // right: 5,
-            // bottom: 7,
             left: 0,
             height: 30,
             width: 280,
-            font:{fontSize:16, fontWeight: 'bold'}
+            font:{fontSize:16, fontWeight: 'bold'},
+            zIndex: 2
         });
         
         nomination_cat_label = Titanium.UI.createLabel({
             text: nom.nomination_category,
             color: '#fff',
-            // top: 5,
             right: 15,
-            // bottom: 5,
             textAlign: "right",
             size: {width: 280, height: 30},
             font:{fontSize: 22, fontWeight:'bold'}
         });
         
         nominatee_name_cont = Titanium.UI.createView({
-            // backgroundColor: '#222',
-            // borderRadius: 5,
             height: 30,
             left: 40,
             width: 'auto',
@@ -1468,7 +1461,9 @@ function init_active_view(){
             active_empty_label.show();
     	}
         
-        window_activity_cont.hide();
+        setTimeout(function(){
+            window_activity_cont.hide();
+        }, 1000);
     };
     var url = SERVER_URL + '/init_app/?access_token=' + me.access_token + '&page_size=10';
     xhr.open('GET', url);

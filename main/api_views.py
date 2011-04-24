@@ -675,12 +675,17 @@ def nominate_photo(request):
     nominations = request.POST.get('nominations').split(',')
     tags = request.POST.get('tags').split(',')
     comment_text = request.POST.get('comment_text')
+    public = request.POST.get('public')
 
     try:
         nominator_portrit_user = get_user_from_access_token(access_token)
         nominatee_portrit_user = Portrit_User.objects.get(fb_user__fid=int(owner))
         
         photo = Photo.objects.get(id=photo_id)
+        photo.pending = False
+        if public:
+            photo.public = True
+            
         if len(photo.nominations) == 0:
             try:
                 if nominator_portrit_user == nominatee_portrit_user:

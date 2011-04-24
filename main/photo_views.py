@@ -91,7 +91,7 @@ def upload_photo(request):
             large_size_name = file_name + '_720.jpg'
             crop_size_name = file_name + '_crop.jpg'
             crop_small_size_name = file_name + '_crop_small.jpg'
-            iphone_size_name = file_name + '_iphone.jpg'
+            # iphone_size_name = file_name + '_iphone.jpg'
             
             image = Image.open(file_loc)
             size = 130, 130
@@ -107,7 +107,7 @@ def upload_photo(request):
             large_img_size = image.size
             
             #iphone
-            image.save(file_loc + '_iphone.jpg', 'JPEG', quality=80)
+            # image.save(file_loc + '_iphone.jpg', 'JPEG', quality=80)
             
             #Create crop section
             cropped_image = crop_to_size(image, (400,400), large_img_size, (200, 150))
@@ -126,9 +126,9 @@ def upload_photo(request):
             s.put(large_size_name, large_image.read(), acl="public-read")
             large_image.close()
             
-            iphone_image = open(file_loc + '_iphone.jpg', 'rb+')
-            s.put(iphone_size_name, iphone_image.read(), acl="public-read")
-            iphone_image.close()
+            # iphone_image = open(file_loc + '_iphone.jpg', 'rb+')
+            # s.put(iphone_size_name, iphone_image.read(), acl="public-read")
+            # iphone_image.close()
             
             cropped_image = open(file_loc + '_crop.jpg', 'rb+')
             s.put(crop_size_name, cropped_image.read(), acl="public-read")
@@ -142,7 +142,7 @@ def upload_photo(request):
             photo = Photo(path=file_loc, 
                         thumbnail=(s3_url+thumbnail_size_name), 
                         large=(s3_url+large_size_name),
-                        iphone=(s3_url+iphone_size_name),
+                        # iphone=(s3_url+iphone_size_name),
                         crop=(s3_url+crop_size_name),
                         crop_small=(s3_url+crop_small_size_name),
                         width=large_img_size[0],

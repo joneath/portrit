@@ -252,7 +252,6 @@ class Photo(Document):
         os.remove(self.path)
         os.remove(self.path + '_130.jpg')
         os.remove(self.path + '_720.jpg')
-        os.remove(self.path + '_iphone.jpg')
         os.remove(self.path + '_crop.jpg')
         os.remove(self.path + '_crop_small.jpg')
         

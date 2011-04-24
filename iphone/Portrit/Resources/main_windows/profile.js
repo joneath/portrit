@@ -67,6 +67,7 @@ win.add(window_nav_bar);
 
 window_activity = Titanium.UI.createActivityIndicator({
     message: 'Loading...',
+    font:{fontSize:14, fontWeight:'bold'},
     color: '#fff',
     height:50,
     width:10
@@ -165,11 +166,7 @@ function render_user_photos(data, append){
         photo_width = 0,
         highres = false;
     
-    for (var i = 0; i < data.length; i++){
-        // section = Titanium.UI.createTableViewSection({
-        //     
-        // });
-        
+    for (var i = 0; i < data.length; i++){  
         var max_height = 320;
         if (Ti.Platform.displayCaps.density == 'high') {
             if (data[i].width > Ti.Platform.displayCaps.platformWidth){
@@ -212,7 +209,7 @@ function render_user_photos(data, append){
         }
         
         row = Ti.UI.createTableViewRow({
-                height: photo_height,
+                height: 'auto',
                 width: 320,
                 selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
         });
@@ -222,13 +219,12 @@ function render_user_photos(data, append){
     		width: photo_width,
     		height: photo_height,
     		hires: highres,
-    		top: 0,
-    		bottom: 10
+    		top: 0
     	});
     	cachedImageView('images', data[i].source, main_image);
     	
     	main_image_cont = Titanium.UI.createView({
-            height: photo_width,
+            height: photo_width + 10,
             width: photo_height
         });
         main_image_cont.add(main_image);
@@ -458,6 +454,7 @@ function render_trophies(data){
 
 function init_trophies_view(){
     if (trophy_data.length == 0){
+        window_activity_cont.show();
         var xhr = Titanium.Network.createHTTPClient();
 
         xhr.onload = function(){
@@ -1141,6 +1138,9 @@ function init_active_view(){
             render_active_view(active_noms_cache);
         }
         else{
+            window_activity_cont.show();
+            window_activity_timeout();
+            
             var xhr = Titanium.Network.createHTTPClient();
             xhr.onload = function(){
             	data = JSON.parse(this.responseData);
@@ -1151,8 +1151,6 @@ function init_active_view(){
             var url = SERVER_URL + '/api/get_user_profile/?access_token=' + me.access_token + '&method=active';
             xhr.open('GET', url);
             xhr.send();
-            window_activity_cont.show();
-            window_activity_timeout();
         }
     }
     else{

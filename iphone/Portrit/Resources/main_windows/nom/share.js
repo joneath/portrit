@@ -242,7 +242,10 @@ function submit_nom(e){
     var url = '';
     var check_upload_interval = null;
     var progress = 0;
+    var prev_progress = 0;
     var check_count = 0;
+    var upload_ready_state = 0;
+    var timeout_count = 0;
     
     caption_text = caption.value;
     window_activity_cont.show();
@@ -252,21 +255,16 @@ function submit_nom(e){
         clearInterval(check_upload_interval);
         check_upload_interval = setInterval(function(){
             upload_id = Ti.App.Properties.getString("upload_complete");
-            check_count += 1;
+            upload_ready_state = Ti.App.Properties.getString("upload_ready_state");
+            
             if (upload_id){
                 clearInterval(check_upload_interval);
-                
-                url = SERVER_URL + '/mark_photos_live/';
-                var mark_live = Titanium.Network.createHTTPClient();
                 var public_post = false;
                 if (privacy_switch.value){
                     public_post = true;
                 }
                 
                 if (nominations != ''){
-                    var xhr = Titanium.Network.createHTTPClient();
-                    xhr.onload = close_share_nom;
-                    
                     url = SERVER_URL + '/api/nominate_photo/';
                     var send_data = {
                         'access_token': me.access_token,
@@ -274,16 +272,21 @@ function submit_nom(e){
                         'owner': user,
                         'nominations': nominations,
                         'tags': tagged_users,
-                        'comment_text': caption_text
+                        'comment_text': caption_text,
+                        'public': public_post
                     };
-                    xhr.open('POST', url);
-                    xhr.send(send_data);
+                    post_photo(url, send_data);
                 }
                 else{
-                    mark_live.onload = close_share_nom;
+                    url = SERVER_URL + '/mark_photos_live/';
+                    var send_data = {
+                        'photo_ids': upload_id, 
+                        'access_token': me.access_token, 
+                        'public_perm': public_post
+                    };
+                    post_photo(url, send_data);
                 }
-                mark_live.open('POST', url);
-                mark_live.send({'photo_ids': upload_id, 'access_token': me.access_token, 'public_perm': public_post});
+
             }
             else{
                 progress = Ti.App.Properties.getString("upload_progress");
@@ -298,13 +301,32 @@ function submit_nom(e){
                     }
                 }
             }
-            if (check_count > 40 && (!progress || progress <= 0)){
+            if (upload_ready_state && parseInt(upload_ready_state) < 4 && check_count > 15 && (!progress || progress <= 0)){
+                check_count = 0;
+                upload_ready_state = 0;
+                progress = 0;
+                prev_progress = 0;
+                Ti.App.fireEvent('restart_upload', { });
+            }
+            else if (check_count > 25 && progress > 0 && (progress - prev_progress == 0)){
+                if (timeout_count >= 10){
+                    check_count = 0;
+                    timeout_count = 0;
+                    Ti.App.fireEvent('restart_upload', { });
+                }
+                else{
+                    timeout_count += 1;
+                }
+            }
+            else if (check_count > 25 && (!progress || progress <= 5)){
                 clearInterval(check_upload_interval);
                 win.animate(fadeOut);
                 Ti.App.fireEvent('close_settings_page', { });
                 Ti.App.fireEvent('update_my_photos', { });
                 Ti.App.fireEvent('reset_after_camera_to_profile', { });
             }
+            check_count += 1;
+            prev_progress = progress;
         }, 200);
     }
     else{
@@ -325,6 +347,49 @@ function submit_nom(e){
     }
 }
 
+var upload_photo_request = Titanium.Network.createHTTPClient();
+function post_photo(url, data){
+    var check_photo_upload = null;
+    var upload_ready_state = 0;
+    
+    upload_photo_request.timeout = 20000;
+    upload_photo_request.onload = close_share_nom;
+    
+    upload_photo_request.onreadystatechange = function(){
+        upload_ready_state = upload_photo_request.readyState;
+    };
+    
+    upload_photo_request.open('POST', url);
+    upload_photo_request.send(data);
+    
+    var upload_tick = 0;
+    clearInterval(check_photo_upload);
+    check_photo_upload = setInterval(function(){
+        if (upload_ready_state == 4){
+            clearInterval(check_photo_upload);
+        }
+        else if (upload_tick >= 10 && upload_ready_state < 4){
+            alert('post reset');
+            clearInterval(check_photo_upload);
+            upload_photo_request.abort();
+            post_photo(url, data);
+        }
+        else if (upload_tick > 30){
+            alert('post timeout');
+            clearInterval(check_photo_upload);
+            upload_photo_request.abort();
+            
+            win.animate(fadeOut);
+            Ti.App.fireEvent('reset_after_camera', { });
+            Ti.App.fireEvent('update_active_noms', { });
+            if (user == me.fid){
+                Ti.App.fireEvent('update_my_photos', { });
+            }
+        }
+        upload_tick += 1;
+    }, 200);
+}
+
 tv = Ti.UI.createTableView({
         backgroundColor: '#eee',
         top: 40,
@@ -335,6 +400,10 @@ tv.addEventListener('click', function(e){
 
 });
 win.add(tv);
+
+// function caption_blur(e){
+//     tv.height = '100%';
+// }
 
 var init_share_nom = function(){
     var options_data = [ ];
@@ -360,11 +429,9 @@ var init_share_nom = function(){
         hintText: 'Caption'
     });
     // caption.addEventListener('focus', function(){
-    //     tv.height = 200;
+    //     
     // });
-    // caption.addEventListener('blur', function(){
-    //     tv.height = 'auto';
-    // });
+    // caption.addEventListener('blur', caption_blur);
     
     row.add(caption);
     section.add(row);

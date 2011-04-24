@@ -72,6 +72,7 @@ win.add(window_nav_bar);
 
 window_activity = Titanium.UI.createActivityIndicator({
     message: 'Loading...',
+    font:{fontSize:14, fontWeight:'bold'},
     color: '#fff',
     height:50,
     width:10
@@ -212,7 +213,7 @@ function render_user_photos(data, append){
         }
         
         row = Ti.UI.createTableViewRow({
-                height: photo_height,
+                height: 'auto',
                 width: 320,
                 selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
         });
@@ -223,12 +224,11 @@ function render_user_photos(data, append){
     		height: photo_height,
     		hires: highres,
     		top: 0,
-    		bottom: 10
     	});
     	cachedImageView('images', data[i].source, main_image);
     	
     	main_image_cont = Titanium.UI.createView({
-            height: photo_width,
+            height: photo_width + 10,
             width: photo_height
         });
         main_image_cont.add(main_image);
@@ -929,117 +929,117 @@ function render_active_view(data){
     	}
     	row.add(main_image);
 
-        nominator_footer = Titanium.UI.createView({
-            height:35,
-            bottom: 0,
-            width: 320,
-            zIndex: 1
-        });
-                
-        nominator_footer_background = Titanium.UI.createView({
-            height: 35,
-            width: 320,
-            opacity: 0.8,
-            backgroundColor: '#000',
-            zIndex: -1
-        });
-        
-        nominator_profile_img_url = 'https://graph.facebook.com/' + nom.nominator + '/picture?type=square';
-        nominator_profile_img = Ti.UI.createImageView({
-            // image: nominator_profile_img_url,
-            image: '../../images/photo_loader.png',
-            left: 0,
-            hires: true,
-            height: 35,
-            width: 35
-        });
-        cachedImageView('profile_images', nominator_profile_img_url, nominator_profile_img);
-        
-        nominator_profile_img.user = nom.nominator;
-        nominator_profile_img.name = nom.nominator_name;
-        nominator_profile_img.username = nom.nominator_username;
-        nominator_profile_img.addEventListener('click', add_profile_window);
-        
-        nominator_footer.add(nominator_profile_img);
-        
-        nominator_name_cont = Titanium.UI.createView({
-            height: 20,
-            width: 'auto',
-            left: 40,
-            zIndex: 1,
-            layout: 'vertical'
-        });
-                
-        nominated_by = Titanium.UI.createLabel({
-            text: 'Nominated by ',
-            color: '#fff',
-            left: 0,
-            width: 100,
-            height: 12,
-            top: -5,
-            font:{fontSize:12}
-        });
-                
-        var nominator_name_text = '';
-        if (nom.nominator == me.fid){
-            nominator_name_text = 'You';
-        }
-        else{
-            nominator_name_text = nom.nominator_username;
-        }
-                
-        nominator_name = Titanium.UI.createLabel({
-            text: nominator_name_text,
-            color: '#fff',
-            left: 0,
-            top: 3,
-            width: 'auto',
-            height: 12,
-            font:{fontSize:12, fontWeight: 'bold'}
-        });
-        nominator_name_cont.add(nominated_by);
-        nominator_name_cont.add(nominator_name);
-        
-        nominator_footer.add(nominator_footer_background);
-        nominator_footer.add(nominator_name_cont);
-        
-        nominator_name.user = nom.nominator;
-        nominator_name.name = nom.nominator_name;
-        nominator_name.username = nom.nominator_username;
-        nominator_name.addEventListener('click', add_profile_window);
-        
-        if (nom.tagged_users.length > 0){
-            tagged_cont = Titanium.UI.createView({
-                height: 30,
-                width: 'auto',
-                right: 3,
-            });
-            tagged_label = Titanium.UI.createLabel({
-                text: nom.tagged_users.length + ' Tagged',
-                textAlign: 'left',
-                color: '#fff',
-                left: 8,
-                right: 35,
-                font:{fontSize: 13, fontWeight: 'bold'},
-                size: {width: 'auto', height: 35}
-            });
-            tagged_label.tags = nom.tagged_users;
-            tagged_cont.add(tagged_label);
-        
-            disclosure = Titanium.UI.createButton({
-                style:Titanium.UI.iPhone.SystemButton.DISCLOSURE,
-                right: 0
-            });
-            disclosure.tags = nom.tagged_users;
-            tagged_cont.add(disclosure);
-        
-            tagged_cont.tags = nom.tagged_users;
-            tagged_cont.addEventListener('click', show_tags);
-            
-            nominator_footer.add(tagged_cont);
-        }
-        
-        row.add(nominator_footer);
+        // nominator_footer = Titanium.UI.createView({
+        //     height:35,
+        //     bottom: 0,
+        //     width: 320,
+        //     zIndex: 1
+        // });
+        //         
+        // nominator_footer_background = Titanium.UI.createView({
+        //     height: 35,
+        //     width: 320,
+        //     opacity: 0.8,
+        //     backgroundColor: '#000',
+        //     zIndex: -1
+        // });
+        // 
+        // nominator_profile_img_url = 'https://graph.facebook.com/' + nom.nominator + '/picture?type=square';
+        // nominator_profile_img = Ti.UI.createImageView({
+        //     // image: nominator_profile_img_url,
+        //     image: '../../images/photo_loader.png',
+        //     left: 0,
+        //     hires: true,
+        //     height: 35,
+        //     width: 35
+        // });
+        // cachedImageView('profile_images', nominator_profile_img_url, nominator_profile_img);
+        // 
+        // nominator_profile_img.user = nom.nominator;
+        // nominator_profile_img.name = nom.nominator_name;
+        // nominator_profile_img.username = nom.nominator_username;
+        // nominator_profile_img.addEventListener('click', add_profile_window);
+        // 
+        // nominator_footer.add(nominator_profile_img);
+        // 
+        // nominator_name_cont = Titanium.UI.createView({
+        //     height: 20,
+        //     width: 'auto',
+        //     left: 40,
+        //     zIndex: 1,
+        //     layout: 'vertical'
+        // });
+        //         
+        // nominated_by = Titanium.UI.createLabel({
+        //     text: 'Nominated by ',
+        //     color: '#fff',
+        //     left: 0,
+        //     width: 100,
+        //     height: 12,
+        //     top: -5,
+        //     font:{fontSize:12}
+        // });
+        //         
+        // var nominator_name_text = '';
+        // if (nom.nominator == me.fid){
+        //     nominator_name_text = 'You';
+        // }
+        // else{
+        //     nominator_name_text = nom.nominator_username;
+        // }
+        //         
+        // nominator_name = Titanium.UI.createLabel({
+        //     text: nominator_name_text,
+        //     color: '#fff',
+        //     left: 0,
+        //     top: 3,
+        //     width: 'auto',
+        //     height: 12,
+        //     font:{fontSize:12, fontWeight: 'bold'}
+        // });
+        // nominator_name_cont.add(nominated_by);
+        // nominator_name_cont.add(nominator_name);
+        // 
+        // nominator_footer.add(nominator_footer_background);
+        // nominator_footer.add(nominator_name_cont);
+        // 
+        // nominator_name.user = nom.nominator;
+        // nominator_name.name = nom.nominator_name;
+        // nominator_name.username = nom.nominator_username;
+        // nominator_name.addEventListener('click', add_profile_window);
+        // 
+        // if (nom.tagged_users.length > 0){
+        //     tagged_cont = Titanium.UI.createView({
+        //         height: 30,
+        //         width: 'auto',
+        //         right: 3,
+        //     });
+        //     tagged_label = Titanium.UI.createLabel({
+        //         text: nom.tagged_users.length + ' Tagged',
+        //         textAlign: 'left',
+        //         color: '#fff',
+        //         left: 8,
+        //         right: 35,
+        //         font:{fontSize: 13, fontWeight: 'bold'},
+        //         size: {width: 'auto', height: 35}
+        //     });
+        //     tagged_label.tags = nom.tagged_users;
+        //     tagged_cont.add(tagged_label);
+        // 
+        //     disclosure = Titanium.UI.createButton({
+        //         style:Titanium.UI.iPhone.SystemButton.DISCLOSURE,
+        //         right: 0
+        //     });
+        //     disclosure.tags = nom.tagged_users;
+        //     tagged_cont.add(disclosure);
+        // 
+        //     tagged_cont.tags = nom.tagged_users;
+        //     tagged_cont.addEventListener('click', show_tags);
+        //     
+        //     nominator_footer.add(tagged_cont);
+        // }
+        // 
+        // row.add(nominator_footer);
         
         time = new Date(nom.created_time * 1000);
         time_diff = now - time;
@@ -1403,18 +1403,18 @@ function init_profile_view(){
     if (get_user_profile_count == 0){
         var xhr = Titanium.Network.createHTTPClient();
         
-        user_image = Ti.UI.createImageView({
-            image: '../../images/photo_loader.png',
-            left: 10,
-            top: 10,
-            hires: true,
-            height: 80,
-            width: 80
-        });
-        profile_header.add(user_image);
+        // user_image = Ti.UI.createImageView({
+        //     image: '../../images/photo_loader.png',
+        //     left: 10,
+        //     top: 10,
+        //     hires: true,
+        //     height: 80,
+        //     width: 80
+        // });
+        // profile_header.add(user_image);
 
         xhr.onload = function(){   
-            profile_header.remove(user_image);
+            // profile_header.remove(user_image);
             user_image = Ti.UI.createImageView({
                 image: this.location,
                 defaultImage: '../../images/photo_loader.png',
