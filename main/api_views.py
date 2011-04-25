@@ -2054,17 +2054,20 @@ def flag_photo(request):
             photo.save()
         
             #Create Email, Send to Admins
-            from django.core.mail import EmailMultiAlternatives
-            subject = 'New Flagged Photo'
-            text_content = 'FROM: ' + portrit_user.username + '\n' \
-                            'PHOTO ID: ' + str(photo.id)  + '\n'
-            html_content =  '<h2>FROM: ' + portrit_user.username + '</h2>' \
-                            '<h2>PHOTO ID: ' + str(photo.id) + '</h2>' \
-                            '<img src="' + photo.large + '"/>'
+            try:
+                from django.core.mail import EmailMultiAlternatives
+                subject = 'New Flagged Photo'
+                text_content = 'FROM: ' + portrit_user.username + '\n' \
+                                'PHOTO ID: ' + str(photo.id)  + '\n'
+                html_content =  '<h2>FROM: ' + portrit_user.username + '</h2>' \
+                                '<h2>PHOTO ID: ' + str(photo.id) + '</h2>' \
+                                '<img src="' + photo.large + '"/>'
 
-            msg = EmailMultiAlternatives(subject, html_content, 'no-reply@portrit.com', ['flag@portrit.com'])
-            msg.attach_alternative(html_content, "text/html")
-            msg.send()
+                msg = EmailMultiAlternatives(subject, html_content, 'no-reply@portrit.com', ['flag@portrit.com'])
+                msg.attach_alternative(html_content, "text/html")
+                msg.send()
+            except:
+                pass
         
         data = True
     except Exception, err:

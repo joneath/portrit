@@ -20,7 +20,7 @@ else if (RUNTIME == 'test'){
     TWITTER_CONSUMER_SECRET = 'lemMxxNgnJZUQFK5mwfYzPs7JWKcmvbVtgAKssfTwA';
 }
 else{
-    SERVER_URL = 'http://192.168.1.146:8080';
+    SERVER_URL = 'http://192.168.1.126:8080';
     NODE_SERVER = 'localhost';
     NODE_PORT = 8082;
     TWITTER_CONSUMER = '676tZGmZP5SDdp9h1iFnA';

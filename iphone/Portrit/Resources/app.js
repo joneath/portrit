@@ -831,7 +831,8 @@ function init_login(){
         height: 'auto',
         color:'#eee',
         textAlign:'left',
-        left: 20,
+        left: 10,
+        right: 10,
         top: 50,
         font:{fontSize:16}
     });
@@ -843,7 +844,8 @@ function init_login(){
         height: 'auto',
         color: '#eee',
         textAlign:'left',
-        left: 20,
+        left: 10,
+        right: 10,
         top: 105,
         font:{fontSize:16}
     });
