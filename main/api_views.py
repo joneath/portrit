@@ -1958,24 +1958,24 @@ def new_comment(request):
             tagged_users = nomination.tagged_users
             
             friends = { }
-            friends[nomination.nominator.fb_user.fid] = {'fid': nomination.nominator.fb_user.fid}
-            friends[owner.fb_user.fid] = {'fid': owner.fb_user.fid}
+            friends[nomination.nominator.fb_user.fid] = nomination.nominator.get_notification_data()
+            friends[owner.fb_user.fid] = owner.nominator.get_notification_data()
                             
             #Attach target user
             for friend in all_commentors:
                 if friend.fb_user.fid != user.fid:
                     if friend.fb_user.fid != nomination.nominator.fb_user.fid:
-                        friends[friend.fb_user.fid] = {'fid': friend.fb_user.fid}
+                        friends[friend.fb_user.fid] = friend.get_notification_data()
                 
             for friend in voters:
                 if friend.fb_user.fid != user.fid:
                     if friend.fb_user.fid != nomination.nominator.fb_user.fid:
-                        friends[friend.fb_user.fid] = {'fid': friend.fb_user.fid}
+                        friends[friend.fb_user.fid] = friend.get_notification_data()
                                                 
             for friend in tagged_users:
                 if friend.fb_user.fid != user.fid:
                     if friend.fb_user.fid != nomination.nominator.fb_user.fid:
-                        friends[friend.fb_user.fid] = {'fid': friend.fb_user.fid}
+                        friends[friend.fb_user.fid] = friend.get_notification_data()
 
             notification_type = Notification_Type.objects.get(name="new_comment")
             me_to_remove = None

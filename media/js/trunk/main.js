@@ -1788,7 +1788,7 @@ $(document).ready(function(){
                             dest_name = "Your";
                         }
                         else{
-                            dest_name = 'Your';
+                            dest_name = 'your';
                         }
                     }
                     else{
