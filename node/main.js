@@ -102,6 +102,9 @@ var Portrit = function(){
                             if (data.payload.nom_owner_id == id){
                                 target = 'your';
                             }
+                            else if (data.payload.comment_sender_id == data.payload.nom_owner_id){
+                                target = 'their';
+                            }
                             else{
                                 target = data.payload.nom_owner_username + '\'s';
                             }

@@ -1987,7 +1987,6 @@ def new_comment(request):
                     notification.save()
                     friend['notification_id'] = str(notification.id)
                 else:
-                    
                     me_to_remove = friend_id
                     
             if me_to_remove:

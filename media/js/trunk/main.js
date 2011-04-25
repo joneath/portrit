@@ -3290,10 +3290,11 @@ $(document).ready(function(){
     }
     
     function render_nom_comments(comments){
-        var name = '',
-            comment_cont_html = '',
-            time = null,
-            now = null;
+        var name = '';
+        var comment_cont_html = '';
+        var time = null;
+        var now = null;
+        var source_name = '';
             
         if (comments.length > 0){
             $('#comments_empty').remove();
@@ -3303,13 +3304,18 @@ $(document).ready(function(){
                 now -= time;
                 now /= 1000
                 var time_str = secondsToHms(parseInt(now));
+                
+                source_name = comments[i].owner_username;
+                if (me && source_name == me.username){
+                    source_name = 'You';
+                }
 
                 comment_cont_html +='<div class="comment">' +
                                         '<p class="comment_time" value="' + comments[i].create_datetime + '">' + time_str + '</p>' +
                                         '<a href="/#!/' + comments[i].owner_username + '/">' +
                                             '<img class="user_photo" src="https://graph.facebook.com/' + comments[i].owner_id + '/picture?type=square"/>' +
                                         '</a>' +
-                                        '<a href="/#!/' + comments[i].owner_username + '/" class="post_username from_username">' + comments[i].owner_username +'</a>' +
+                                        '<a href="/#!/' + comments[i].owner_username + '/" class="post_username from_username">' + source_name +'</a>' +
                                         '<p>' + comments[i].comment + '</p>' +
                                     '</div>';
             }
@@ -3840,6 +3846,11 @@ $(document).ready(function(){
                         time = new Date(nom.quick_comments[j].create_datetime * 1000);
                         time_diff = now - time;
                         time_diff /= 1000;
+                        
+                        if (me && commentor_name == me.username){
+                            commentor_name = 'You';
+                        }
+                        
                         comment_html += '<div class="comment">' +
                                             '<p class="comment_time" value="' + nom.quick_comments[j].create_datetime + '">' + secondsToHms(time_diff) + '</p>' + 
                                             '<a href="#!/' + nom.quick_comments[j].owner_username + '">' +
