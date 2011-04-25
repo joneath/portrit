@@ -44,7 +44,7 @@ win.add(tv);
 
 Ti.include('../../../settings.js');
 Ti.include('../../../includes.js');
-Ti.include('lib/oauth_adapter.js');
+// Ti.include('lib/oauth_adapter.js');
 
 var me = JSON.parse(Ti.App.Properties.getString("me")),
     user_settings = JSON.parse(Ti.App.Properties.getString("user_settings")),
@@ -54,12 +54,12 @@ var me = JSON.parse(Ti.App.Properties.getString("me")),
     button_label = null,
     name = '';
     
-var oAuthAdapter = new OAuthAdapter(
-        'rWxNvv8pOSB0t9kgT59xVc2IUQXH1l8ESpfOst5sggw',
-        'RrYAd721jXeCJsp9QqtFw',
-        'HMAC-SHA1');
-        
-oAuthAdapter.loadAccessToken('twitter');
+// var oAuthAdapter = new OAuthAdapter(
+//         'rWxNvv8pOSB0t9kgT59xVc2IUQXH1l8ESpfOst5sggw',
+//         'RrYAd721jXeCJsp9QqtFw',
+//         'HMAC-SHA1');
+//         
+// oAuthAdapter.loadAccessToken('twitter');
 
 function change_permission(method, value){
     var xhr = Titanium.Network.createHTTPClient();
@@ -186,6 +186,11 @@ function init_sharing(){
                 	message: 'This will delete your Portrit account. Your personal data will be removed from the system in the next 7 days.',
                 	buttonNames: ['Cancel', 'Delete'],
                 	cancel: 0
+                });
+                delete_account_alert.addEventListener('click', function(e){
+                    if (e.index == 1){
+                        alert('delete');
+                    }
                 });
                 
                 delete_account_alert.show();

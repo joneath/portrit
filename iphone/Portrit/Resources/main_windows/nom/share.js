@@ -11,7 +11,7 @@ Ti.App.addEventListener('pass_nom_data', function(eventData) {
 
 Ti.include('../../settings.js');
 Ti.include('../../includes.js');
-Ti.include('lib/oauth_adapter.js');
+// Ti.include('lib/oauth_adapter.js');
 
 var win = Ti.UI.currentWindow,
     tabGroup = win.tabGroup,
@@ -96,12 +96,12 @@ window_nav_bar.add(header_label);
 
 win.add(window_nav_bar);
 
-var oAuthAdapter = new OAuthAdapter(
-        'rWxNvv8pOSB0t9kgT59xVc2IUQXH1l8ESpfOst5sggw',
-        'RrYAd721jXeCJsp9QqtFw',
-        'HMAC-SHA1');
-
-oAuthAdapter.loadAccessToken('twitter');
+// var oAuthAdapter = new OAuthAdapter(
+//         'rWxNvv8pOSB0t9kgT59xVc2IUQXH1l8ESpfOst5sggw',
+//         'RrYAd721jXeCJsp9QqtFw',
+//         'HMAC-SHA1');
+// 
+// oAuthAdapter.loadAccessToken('twitter');
 
 var fadeTo = Titanium.UI.createAnimation({
     curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
@@ -155,6 +155,7 @@ function close_share_nom(){
     
     var nom = null;
     window_activity_cont.hide();
+    caption.blur();
     
     if (!new_photo){
         var nom = data[0];
@@ -242,7 +243,6 @@ function submit_nom(e){
     var url = '';
     var check_upload_interval = null;
     var progress = 0;
-    var prev_progress = 0;
     var check_count = 0;
     var upload_ready_state = 0;
     var timeout_count = 0;
@@ -293,7 +293,6 @@ function submit_nom(e){
                 if (progress){
                     try{
                         progress = parseFloat(progress);
-                        progress = progress * 100;
                         upload_progress_bar.value = progress;
                     }
                     catch (e){
@@ -301,32 +300,17 @@ function submit_nom(e){
                     }
                 }
             }
-            if (upload_ready_state && parseInt(upload_ready_state) < 4 && check_count > 15 && (!progress || progress <= 0)){
-                check_count = 0;
-                upload_ready_state = 0;
-                progress = 0;
-                prev_progress = 0;
-                Ti.App.fireEvent('restart_upload', { });
-            }
-            else if (check_count > 25 && progress > 0 && (progress - prev_progress == 0)){
-                if (timeout_count >= 10){
-                    check_count = 0;
-                    timeout_count = 0;
-                    Ti.App.fireEvent('restart_upload', { });
-                }
-                else{
-                    timeout_count += 1;
-                }
-            }
-            else if (check_count > 25 && (!progress || progress <= 5)){
+            
+            if (check_count > 30 && (!progress || progress <= 5) && parseInt(upload_ready_state) < 4){
                 clearInterval(check_upload_interval);
                 win.animate(fadeOut);
-                Ti.App.fireEvent('close_settings_page', { });
-                Ti.App.fireEvent('update_my_photos', { });
-                Ti.App.fireEvent('reset_after_camera_to_profile', { });
+                setTimeout(function(){
+                    Ti.App.fireEvent('close_settings_page', { });
+                    Ti.App.fireEvent('update_my_photos', { });
+                    Ti.App.fireEvent('reset_after_camera_to_profile', { });
+                }, 300);
             }
             check_count += 1;
-            prev_progress = progress;
         }, 200);
     }
     else{
@@ -369,13 +353,11 @@ function post_photo(url, data){
             clearInterval(check_photo_upload);
         }
         else if (upload_tick >= 10 && upload_ready_state < 4){
-            alert('post reset');
             clearInterval(check_photo_upload);
             upload_photo_request.abort();
             post_photo(url, data);
         }
         else if (upload_tick > 30){
-            alert('post timeout');
             clearInterval(check_photo_upload);
             upload_photo_request.abort();
             

@@ -2409,6 +2409,8 @@ def push_notifications(request):
         if method == 'on':
             portrit_user.push_notifications = True;
             portrit_user.save()
+            
+        data = True
     except:
         pass
         
@@ -2424,6 +2426,38 @@ def shorten_url_request(request):
         data['url'] = url
     except Exception, err:
         print err
+        
+    data = json.dumps(data) 
+    return HttpResponse(data, mimetype='application/json')
+
+@check_access_token    
+def delete_account(request):
+    data = False
+    access_token = request.POST.get('access_token')
+    
+    try:
+        portrit_user = get_user_from_access_token(access_token)
+        
+        # Get all user photos
+        photos = Photo.objects.filter(owner=portrit_user).update(set__active=False)
+        
+        
+        # Get all user nominations
+        nominations = Nomination.objects.filter(nominatee=portrit_user).update(set__active=False)
+        
+        
+        # Get all user follow/following records
+        following = portrit_user.following.all().update(set__active=False)
+        followers = portrit_user.followers.all().update(set__active=False)
+        
+        Follow.objects.filter(user=portrit_user).update(set__active=False)
+        
+        portrit_user.active = False
+        portrit_user.save()
+        
+        data = True
+    except:
+        pass
         
     data = json.dumps(data) 
     return HttpResponse(data, mimetype='application/json')

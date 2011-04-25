@@ -60,18 +60,18 @@ back.addEventListener('click', function(){
 });
 window_nav_bar.add(back);
 
-var follow_all_button = Ti.UI.createButton({
-	title:"Follow All",
-	font: {fontSize: 12, fontWeight: 'bold'},
-	backgroundImage: '../../../../images/large_square_button.png',
-	width: 80,
-	height: 32,
-    right: 5,
-});
-follow_all_button.addEventListener('click', function(){
-    win.close();
-});
-window_nav_bar.add(follow_all_button);
+// var follow_all_button = Ti.UI.createButton({
+//  title:"Follow All",
+//  font: {fontSize: 12, fontWeight: 'bold'},
+//  backgroundImage: '../../../../images/large_square_button.png',
+//  width: 80,
+//  height: 32,
+//     right: 5,
+// });
+// follow_all_button.addEventListener('click', function(){
+//     win.close();
+// });
+// window_nav_bar.add(follow_all_button);
 
 win.add(window_nav_bar);
 
@@ -109,8 +109,7 @@ function follow_event(e){
     if (method == 'follow'){
         var xhr = Titanium.Network.createHTTPClient();
 
-        xhr.onload = function()
-        {   
+        xhr.onload = function(){   
             var data = JSON.parse(this.responseData);
             
             follow_button = Ti.UI.createButton({
@@ -143,8 +142,7 @@ function follow_event(e){
     else{
         var xhr = Titanium.Network.createHTTPClient();
 
-        xhr.onload = function()
-        {   
+        xhr.onload = function(){   
             var data = JSON.parse(this.responseData);
             
             follow_button = Ti.UI.createButton({
@@ -327,8 +325,7 @@ function search_by_email(emails){
 function load_cool_kids(){
     var xhr = Titanium.Network.createHTTPClient();
 
-    xhr.onload = function()
-    {   
+    xhr.onload = function(){   
         var data = JSON.parse(this.responseData);
         render_follow_table_view(data);
         window_activity_cont.animate(fadeOut);

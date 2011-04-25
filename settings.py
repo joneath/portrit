@@ -92,7 +92,16 @@ elif ENV == "TEST":
     NODE_SOCKET = 8081
     NODE_HOST = 'localhost'
     
-    CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+            'LOCATION': [
+                '127.0.0.1:11211',
+                # '172.19.26.242:11211',
+                # '172.19.26.244:11213',
+            ]
+        }
+    }
     
     ADMINS = (
         # ('Your Name', 'your_email@domain.com'),
@@ -137,7 +146,16 @@ else:
     NODE_SOCKET = 8081
     NODE_HOST = '10.117.57.137'
     
-    CACHE_BACKEND = 'memcached://10.202.90.88:11211/'
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+            'LOCATION': [
+                '10.202.90.88:11211',
+                # '172.19.26.242:11211',
+                # '172.19.26.244:11213',
+            ]
+        }
+    }
     
     ADMINS = (
         # ('Your Name', 'your_email@domain.com'),

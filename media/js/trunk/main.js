@@ -372,9 +372,10 @@ $(document).ready(function(){
                 });
             }
             $('.footer_hover').bind('click', function(){
-                setTimeout(function(){
-                    update_view(); 
-                }, 75);
+                window.location.href = $(this).attr('href');
+                init_public_view();
+                $('.footer_hover').unbind('click');
+                return false;
             });
             return;
         }
@@ -610,6 +611,16 @@ $(document).ready(function(){
        var s=["th","st","nd","rd"],
            v=n%100;
        return n+(s[(v-20)%10]||s[v]||s[0]);
+    }
+    
+    function alphaNumericCheck(value){
+        var regex=/^[0-9A-Za-z]+$/; //^[a-zA-z]+$/
+        if(regex.test(value)){
+            return true;
+        } 
+        else {
+            return false;
+        }
     }
     
     //Globals
@@ -1053,18 +1064,20 @@ $(document).ready(function(){
                         '</div>' +
                         '<div id="context_main_cont">' +
                             '<div class="context_sub_cont">' +
-                                '<h3>What is Portrit?</h3>' +
+                                '<h3>What\'s Portrit?</h3>' +
                                 '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum sit amet lectus urna. Proin convallis varius laoreet. Vivamus semper bibendum nisl non venenatis. Nulla rutrum tempus arcu et rhoncus. Sed ac lacinia leo.</p>' +
                                 '<h3>What can I do here?</h3>' +
                                 '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum sit amet lectus urna. Proin convallis varius laoreet. Vivamus semper bibendum nisl non venenatis. Nulla rutrum tempus arcu et rhoncus. Sed ac lacinia leo.</p>' +
                             '</div>' +
                             '<div class="context_sub_cont">' +
                                 '<h2>Nominations</h2>' +
-                                '<h3>What is a nomination?</h3>' +
+                                '<h3>What\'s a nomination?</h3>' +
                                 '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum sit amet lectus urna. Proin convallis varius laoreet. Vivamus semper bibendum nisl non venenatis. Nulla rutrum tempus arcu et rhoncus. Sed ac lacinia leo.</p>' +
                             '</div>' +
                             '<div class="context_sub_cont">' +
                                 '<h2>Voting</h2>' +
+                                '<h3>Can I vote on multiple nominations?</h3>' + 
+                                '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum sit amet lectus urna. Proin convallis varius laoreet. Vivamus semper bibendum nisl non venenatis. Nulla rutrum tempus arcu et rhoncus. Sed ac lacinia leo.</p>' +
                                 '<h3>Why can\'t I change my vote?</h3>' + 
                                 '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum sit amet lectus urna. Proin convallis varius laoreet. Vivamus semper bibendum nisl non venenatis. Nulla rutrum tempus arcu et rhoncus. Sed ac lacinia leo.</p>' +
                             '</div>' +
@@ -2494,7 +2507,7 @@ $(document).ready(function(){
         $('#tut_go_cont span').live('click', function(){
             var that = this;
             var username = $('#username').val();
-            if ((username != '' || username != 'Create a Username') && $('#username_taken').length == 0){
+            if ((username != '' || username != 'Create a Username') && $('#username_taken').length == 0 && alphaNumericCheck(username)){
                 $(this).text('Saving...');
                 var post_wins_to_fb = false;
                 if ($('#allow_portrit_album').hasClass('switch_on')){
@@ -2510,7 +2523,7 @@ $(document).ready(function(){
                     email_on_win = true;
                 }
                 $.post('/api/add_username/', {'username': username, 'access_token': fb_session.access_token, 'post_wins': post_wins_to_fb, 'email_notifications': email_notifications}, function(data){
-                    if (data == true){
+                    if (data != false){
                         my_username = username;
                         $('#initial_tut_cont').fadeOut(function(){
                             $(this).remove();
@@ -2597,31 +2610,62 @@ $(document).ready(function(){
                 $('#username_taken').remove();
 
                 if (value != ''){
-                    if ($('#username_load').length == 0){
-                        $('#username').parent().append('<img id="username_load" src="http://portrit.s3.amazonaws.com/img/ajax-loader-light.gif"/>');
-                    }
-                    check_username_timeout = setTimeout(function(){
-                        value = $('#username').val();
-                        $.post('/api/check_username_availability/', {'username': value}, function(data){
-                            $('#username_load').remove();
-                            if (data == true){
+                    if (alphaNumericCheck(value)){
+                        if ($('#username_load').length == 0){
+                            $('#username').parent().append('<img id="username_load" src="http://portrit.s3.amazonaws.com/img/ajax-loader-light.gif"/>');
+                        }
+                        check_username_timeout = setTimeout(function(){
+                            value = $('#username').val();
+                            if (value != '' && alphaNumericCheck(value)){
+                                $.post('/api/check_username_availability/', {'username': value}, function(data){
+                                    $('#username_load').remove();
+                                    if (data == true){
+                                        $('#username_aval').remove();
+                                        if ($('#username_taken').length == 0){
+                                            $('#username').parent().append('<div class="cross" id="username_taken"></div>');
+                                            if ($('#username_taken_text').length == 0){
+                                                $('#username').parent().append('<p id="username_taken_text">We\'re sorry, but this username is already taken.</p>');
+                                            }
+                                        }
+                                    }
+                                    else{
+                                        $('#username_taken').remove();
+                                        $('#username_taken_text').remove();
+                                        if ($('#username_aval').length == 0){
+                                            $('#username').parent().append('<div class="check" id="username_aval"></div>');
+                                        }
+                                    }
+                                });
+                            }
+                            else if (!alphaNumericCheck(value) && value != ''){
+                                $('#username_load').remove();
+                                $('#username_taken').remove();
+                                $('#username_taken_text').remove();
                                 $('#username_aval').remove();
+                                
                                 if ($('#username_taken').length == 0){
                                     $('#username').parent().append('<div class="cross" id="username_taken"></div>');
-                                    if ($('#username_taken_text').length == 0){
-                                        $('#username').parent().append('<p id="username_taken_text">We\'re sorry, but this username is already taken.</p>');
-                                    }
                                 }
                             }
                             else{
+                                $('#username_load').remove();
                                 $('#username_taken').remove();
                                 $('#username_taken_text').remove();
-                                if ($('#username_aval').length == 0){
-                                    $('#username').parent().append('<div class="check" id="username_aval"></div>');
-                                }
+                                $('#username_aval').remove();
                             }
-                        });
-                    }, 500);   
+                        }, 500);
+                    }
+                    else{
+                        $('#username_aval').remove();
+                        if ($('#username_taken').length == 0){
+                            $('#username').parent().append('<div class="cross" id="username_taken"></div>');
+                        }
+                    }
+                }
+                else{
+                    $('#username_taken').remove();
+                    $('#username_taken_text').remove();
+                    $('#username_aval').remove();
                 }
             }
         });
@@ -2639,6 +2683,7 @@ $(document).ready(function(){
                                                 '<h2 class="tut_point_num nom_cat_fail">1</h2>' +
                                                 '<div>' +
                                                     '<input id="username" value="Create a Username"/>' + 
+                                                    '<p>Only alphanumeric characters please</p>' +
                                                     '<div class="clear"></div>' +
                                                 '</div>' +
                                             '</div>' +
@@ -2650,7 +2695,7 @@ $(document).ready(function(){
                                                 '</div>' +
                                                 '<div class="clear"></div>' +
                                             '</div>' +
-                                            '<div class="tut_point">' +
+                                            '<div class="tut_point" style="margin-bottom: 30px;">' +
                                                 '<h2 class="tut_point_num nom_cat_party_animal">3</h2>' +
                                                 '<div>' +
                                                     '<h3>Build Up Your Trophy Room</h3>' + 
@@ -2679,8 +2724,8 @@ $(document).ready(function(){
                                 '</div>';
         $('body').append(initial_tut_html);
         if (!mobile || tablet){
-            if ($(window).height() < 780){
-                $('#wrapper').css('min-height', 780);
+            if ($(window).height() < 820){
+                $('#wrapper').css('min-height', 820);
             }
         }
         attach_initial_tut_handlers(tut_counts);

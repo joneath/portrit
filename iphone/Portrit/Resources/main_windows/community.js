@@ -213,6 +213,10 @@ var me = JSON.parse(Ti.App.Properties.getString("me")),
 
 function load_more_noms(e){
     var xhr = Titanium.Network.createHTTPClient();
+    
+    load_more_button.hide();
+    load_more_activity.show();
+    
     xhr.onload = function(){
     	var data = JSON.parse(this.responseData);
         
@@ -229,6 +233,8 @@ function load_more_noms(e){
         else{
             load_more_view.hide();
         }
+        load_more_button.show();
+        load_more_activity.hide();
     };
 
     var url = SERVER_URL + '/api/get_recent_stream/?access_token=' + me.access_token + '&dir=old&id=' + oldest_nom;
@@ -238,7 +244,7 @@ function load_more_noms(e){
 
 var load_more_view = Ti.UI.createView({
         height: 50,
-        width: 'auto',
+        width: 320,
         backgroundColor:'#000'
 });
 
@@ -249,12 +255,19 @@ var load_more_button = Ti.UI.createButton({
 	width: 118,
 	height: 42,
 	bottom: 8,
-	left: 0
 });
 
 load_more_button.addEventListener('click', load_more_noms);
 
 load_more_view.add(load_more_button);
+
+var load_more_activity = Titanium.UI.createActivityIndicator({
+    height:50,
+    width:10,
+});
+load_more_activity.hide();
+load_more_view.add(load_more_activity);
+
 load_more_view.hide();
 
 var tv = Ti.UI.createTableView({
@@ -1489,6 +1502,7 @@ function init_community_view(){
 init_community_view();
 
 var reset = false;
+var first_community = Ti.App.Properties.getString("first_community");
 win.addEventListener('focus', function(){
     if (reset){
         reset = false;
@@ -1509,6 +1523,78 @@ win.addEventListener('focus', function(){
     	header_tab_selection.animate(header_active_tab_animation);
 
         init_community_view();
+    }
+    
+    if (first_community){
+        first_community = null;
+        Ti.App.Properties.removeProperty("first_community");
+        
+        function close_help_text(e){
+            if (help_cont){
+                help_cont.animate({
+                    opacity: 0,
+                    duration: 300,
+                    curve: Ti.UI.ANIMATION_CURVE_EASE_OUT,
+                    complete: function(){
+                        win.remove(help_cont);
+                    }
+                });
+                help_cont = null;
+            }
+        }
+        
+        var help_cont = Ti.UI.createView({
+            width: 320,
+            height: 90,
+            bottom: 0,
+            opacity: 0,
+            zIndex: 101
+        });
+        
+        var help_cont_background = Ti.UI.createView({
+            backgroundColor: '#222',
+            opacity: 0.8,
+            width: 320,
+            height: 90,
+            zIndex: -1
+        });
+        help_cont.add(help_cont_background);
+        
+        var help_cont_header = Ti.UI.createLabel({
+            text:"Community",
+            left:10,
+            top: 10,
+            width: 'auto',
+            height: "auto",
+            color: "#eee",
+            textAlign: "left",
+            font: {fontSize:18, fontWeight: 'bold'}
+        });
+        help_cont.add(help_cont_header);
+        
+        var help_cont_label = Ti.UI.createLabel({
+            text: "Discover what\'s happening in the community.",
+            top: 35,
+            left:10,
+            right: 10,
+            width: 300,
+            height: "auto",
+            color: "#eee",
+            textAlign: "left",
+            font: {fontSize:16}
+        });
+        help_cont.add(help_cont_label);
+        
+        win.add(help_cont);
+        
+        help_cont.animate({
+            opacity: 1,
+            duration: 300,
+            curve: Ti.UI.ANIMATION_CURVE_EASE_IN
+        });
+        
+        help_cont.addEventListener('click', close_help_text);
+        setTimeout(close_help_text, 6500);
     }
 });
 

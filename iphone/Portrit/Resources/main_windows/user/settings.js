@@ -132,9 +132,7 @@ var init_options = function(){
             backgroundColor: '#fff'
     });
     row.addEventListener('click', function(){
-        Titanium.Contacts.showContacts();
-        // var win = Ti.UI.createWindow({backgroundColor:"#eee", url:'settings/invite_friends.js', title: 'Invite Friends'});
-        // Titanium.UI.currentTab.open(win,{animated:true});
+        Titanium.Contacts.showContacts({ });
     });
     section.add(row);
     
@@ -218,8 +216,7 @@ var init_options = function(){
         if (file.exists()) { file.deleteFile(); }
         Ti.App.Properties.removeProperty("push_notifications");
         
-        var login_win = Ti.UI.createWindow({backgroundColor:"#000", url:'../../portrit.js'});
-        login_win.open(fadeIn);
+        Ti.App.fireEvent('logout', { });
     });
     
     var row = Ti.UI.createTableViewRow({

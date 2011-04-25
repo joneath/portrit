@@ -63,11 +63,7 @@ var Portrit = function(){
         var message = '';
         
         if (data.method == 'new_nom'){
-            if (!friends[data.payload.nom_data[0].nominatee].push_nominations){
-                allow_push = false;
-                return;
-            }
-            if (data.payload.nom_data[0].nominatee != data.payload.nom_data[0].nominator){
+            if (data.payload.nom_data[0].nominatee != data.payload.nom_data[0].nominator && friends[data.payload.nom_data[0].nominatee].push_nominations){
                 message = data.payload.nom_data[0].nominator_username + ' nominated your photo for ' + data.payload.nom_data[0].nomination_category;
 
                 push = { 
@@ -77,24 +73,22 @@ var Portrit = function(){
                         'alert': message
                     }
                 };
-                push_payload.push(push);   
+                push_payload.push(push);
             }
         }
         else if (data.method == 'nom_won'){
-            if (!friends[data.payload.nominatee].push_wins){
-                allow_push = false;
-                return;
+            if (friends[data.payload.nominatee].push_wins){
+                message = 'Congratulations! Your photo won ' + data.payload.nomination_category;
+
+                push = { 
+                    'aliases': [data.payload.nominatee],
+                    'aps': {
+                        'badge': '+1',
+                        'alert': message
+                    }
+                };
+                push_payload.push(push);
             }
-            message = 'Congratulations! Your photo won ' + data.payload.nomination_category;
-            
-            push = { 
-                'aliases': [data.payload.nominatee],
-                'aps': {
-                    'badge': '+1',
-                    'alert': message
-                }
-            };
-            push_payload.push(push);
         }
         else{
             for (id in friends){
@@ -225,42 +219,42 @@ var Portrit = function(){
     function send_mail(data){
         var email_html = '';
         console.log('mail event');
-        // if (data.method == 'new_nom'){
-        //     email_html = get_email_html(data.method, data.payload);
-        //     postmark.send({
-        //         "From": "notifications@portrit.com", 
-        //         "To": data.payload.target_email, 
-        //         "Subject": 'Hey ' + data.payload.target_name.split(' ')[0] + ', You Have Been Nominated.',
-        //         "HtmlBody": email_html
-        //     });
-        // }
-        // else if (data.method == 'nom_won'){
-        //     email_html = get_email_html(data.method, data.payload);
-        //     postmark.send({
-        //         "From": "notifications@portrit.com", 
-        //         "To": data.payload.target_email, 
-        //         "Subject": 'Yay ' + data.payload.target_name.split(' ')[0] + ', You Just Won.',
-        //         "HtmlBody": email_html
-        //     });
-        // }
-        // else if (data.method == 'new_follow'){
-        //     email_html = get_email_html(data.method, data.payload);
-        //     postmark.send({
-        //         "From": "notifications@portrit.com", 
-        //         "To": data.payload.target_email, 
-        //         "Subject": data.payload.source_name + ' is now following you on Portrit!',
-        //         "HtmlBody": email_html
-        //     });
-        // }
-        // else if (data.method == 'welcome'){
-        //     email_html = get_email_html(data.method, data.payload);
-        //     postmark.send({
-        //         "From": "notifications@portrit.com", 
-        //         "To": data.payload.target_email, 
-        //         "Subject": 'Welcome To Portrit!',
-        //         "HtmlBody": email_html
-        //     });
-        // }
+        if (data.method == 'new_nom'){
+            email_html = get_email_html(data.method, data.payload);
+            postmark.send({
+                "From": "notifications@portrit.com", 
+                "To": data.payload.target_email, 
+                "Subject": 'Hey ' + data.payload.target_name.split(' ')[0] + ', You Have Been Nominated.',
+                "HtmlBody": email_html
+            });
+        }
+        else if (data.method == 'nom_won'){
+            email_html = get_email_html(data.method, data.payload);
+            postmark.send({
+                "From": "notifications@portrit.com", 
+                "To": data.payload.target_email, 
+                "Subject": 'Yay ' + data.payload.target_name.split(' ')[0] + ', You Just Won.',
+                "HtmlBody": email_html
+            });
+        }
+        else if (data.method == 'new_follow'){
+            email_html = get_email_html(data.method, data.payload);
+            postmark.send({
+                "From": "notifications@portrit.com", 
+                "To": data.payload.target_email, 
+                "Subject": data.payload.source_name + ' is now following you on Portrit!',
+                "HtmlBody": email_html
+            });
+        }
+        else if (data.method == 'welcome'){
+            email_html = get_email_html(data.method, data.payload);
+            postmark.send({
+                "From": "notifications@portrit.com", 
+                "To": data.payload.target_email, 
+                "Subject": 'Welcome To Portrit!',
+                "HtmlBody": email_html
+            });
+        }
         console.log(data.method);
     }
     
@@ -464,7 +458,7 @@ var Portrit = function(){
     });
     
     if (dev){
-        request_server.listen(8080, '192.168.1.126');
+        request_server.listen(8080, '192.168.1.146');
     }
     else{
         request_server.listen(8080, '10.117.57.137');

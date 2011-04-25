@@ -1,3 +1,11 @@
+Ti.include('lib/oauth_adapter.js');
+var oAuthAdapter = new OAuthAdapter(
+        'rWxNvv8pOSB0t9kgT59xVc2IUQXH1l8ESpfOst5sggw',
+        'RrYAd721jXeCJsp9QqtFw',
+        'HMAC-SHA1');
+        
+oAuthAdapter.loadAccessToken('twitter');
+
 function secondsToHms(d) {
 	d = Number(d);
 	var days = Math.floor(d / 86400);
@@ -156,144 +164,173 @@ function getOrdinal(n) {
 }
 
 function share_nom(nom, method, title, from){
-    var t = Titanium.UI.create2DMatrix();
-	t = t.scale(.45);
-    
-    var comment_window = Titanium.UI.createWindow({
-		backgroundColor:'#ddd',
-		height:245,
-		opacity: 0,
-		width:320,
-		top: 0,
-		transform:t
-	});
-	
-	var t1 = Titanium.UI.create2DMatrix();
-	t1 = t1.scale(1);
-	var fadeIn = Titanium.UI.createAnimation({
-        curve: Ti.UI.ANIMATION_CURVE_EASE_OUT_IN,
-        opacity: 1,
-        transform: t1,
-        duration: 350
-    });
-    
-    var t2 = Titanium.UI.create2DMatrix();
-	t2 = t2.scale(.45);
-    var fadeOut = Titanium.UI.createAnimation({
-        curve: Ti.UI.ANIMATION_CURVE_EASE_OUT_IN,
-        opacity: 0,
-        transform: t2,
-        duration: 350
-    });
-    
-    var post_botton_location = '../images/comment_post_button.png';
-    var cancel_botton_location = '../images/comment_cancel_button.png';
-    var header_locations = '../images/iphone_header_blank.png';
-    
-    if (typeof(from) != 'undefined'){
-        post_botton_location = '../../images/comment_post_button.png';
-        cancel_botton_location = '../../images/comment_cancel_button.png';
-        header_locations = '../../images/iphone_header_blank.png';
+    if (method != 'Twitter' || oAuthAdapter.isAuthorized()){
+        var t = Titanium.UI.create2DMatrix();
+    	t = t.scale(.45);
+
+        var comment_window = Titanium.UI.createWindow({
+    		backgroundColor:'#ddd',
+    		height:245,
+    		opacity: 0,
+    		width:320,
+    		top: 0,
+    		transform:t
+    	});
+
+    	var t1 = Titanium.UI.create2DMatrix();
+    	t1 = t1.scale(1);
+    	var fadeIn = Titanium.UI.createAnimation({
+            curve: Ti.UI.ANIMATION_CURVE_EASE_OUT_IN,
+            opacity: 1,
+            transform: t1,
+            duration: 350
+        });
+
+        var t2 = Titanium.UI.create2DMatrix();
+    	t2 = t2.scale(.45);
+        var fadeOut = Titanium.UI.createAnimation({
+            curve: Ti.UI.ANIMATION_CURVE_EASE_OUT_IN,
+            opacity: 0,
+            transform: t2,
+            duration: 350
+        });
+
+        var post_botton_location = '../images/comment_post_button.png';
+        var cancel_botton_location = '../images/comment_cancel_button.png';
+        var header_locations = '../images/iphone_header_blank.png';
+
+        if (typeof(from) != 'undefined'){
+            post_botton_location = '../../images/comment_post_button.png';
+            cancel_botton_location = '../../images/comment_cancel_button.png';
+            header_locations = '../../images/iphone_header_blank.png';
+        }
+
+        var post_button = Titanium.UI.createButton({
+    	    backgroundImage: post_botton_location,
+    		title:'Post',
+    		font: {fontSize: 16, fontWeight: 'bold'},
+    		height:32,
+    		width:96,
+    		top: 195,
+    		left: 175
+    	});
+    	comment_window.add(post_button);
+
+    	// create a button to close window
+    	var cancel_button = Titanium.UI.createButton({
+    	    backgroundImage: cancel_botton_location,
+    		title:'Cancel',
+    		font: {fontSize: 16, fontWeight: 'bold'},
+    		height:32,
+    		width:96,
+    		top: 195,
+    		left: 49
+    	});
+    	cancel_button.addEventListener('click', function(){
+    	    comment_textarea.blur();
+    		comment_window.close(fadeOut);
+    	});
+    	comment_window.add(cancel_button);
+
+    	var share_title_cont = Titanium.UI.createView({
+    	    backgroundImage: header_locations,
+            height: 40,
+            width: 320,
+            top: 0
+        });
+
+    	var share_title = Titanium.UI.createLabel({
+    	    text: 'Share on ' + method,
+    	    textAlign: 'center',
+            color: '#fff',
+            // left: 10,
+            // right: 10,
+            top: 5,
+            // bottom: 10,
+            size: {width: 'auto', height: 'auto'},
+            font:{fontSize:22, fontWeight: 'bold'}
+        });
+        share_title_cont.add(share_title);
+
+        comment_window.add(share_title_cont);
+
+    	var comment_textarea = Titanium.UI.createTextArea({
+    	    color: '#333',
+    	    width: 300,
+    	    height: 130,
+    	    font: {fontSize: 22, fontWeight: 'bold'},
+    	    top: 50,
+    	    borderRadius: 3,
+    	    suppressReturn: false
+    	});
+        comment_window.add(comment_textarea);
+
+    	comment_window.open(fadeIn);
+
+    	post_button.addEventListener('click', function(e){
+            var comment_body = comment_textarea.value;
+
+            if (method == 'Facebook'){
+                share_on_facebook(me, nom, comment_body, title);
+            }
+            else if (method == 'Twitter'){
+                share_on_twitter(me, nom, comment_body);
+            }
+
+
+    	    comment_textarea.blur();
+    		comment_window.close(fadeOut);
+    	});
+
+
+    	var textarea_focus = null;
+    	var textarea_focus_count = 0;
+    	clearInterval(textarea_focus);
+    	textarea_focus = setInterval(function(){
+    	    if (textarea_focus_count < 5){
+    	        comment_textarea.focus();
+        	    textarea_focus_count += 1;
+    	    }
+    	    else{
+    	        clearInterval(textarea_focus);
+    	    }
+    	}, 30);
     }
-
-    var post_button = Titanium.UI.createButton({
-	    backgroundImage: post_botton_location,
-		title:'Post',
-		font: {fontSize: 16, fontWeight: 'bold'},
-		height:32,
-		width:96,
-		top: 195,
-		left: 175
-	});
-	comment_window.add(post_button);
-
-	// create a button to close window
-	var cancel_button = Titanium.UI.createButton({
-	    backgroundImage: cancel_botton_location,
-		title:'Cancel',
-		font: {fontSize: 16, fontWeight: 'bold'},
-		height:32,
-		width:96,
-		top: 195,
-		left: 49
-	});
-	cancel_button.addEventListener('click', function(){
-	    comment_textarea.blur();
-		comment_window.close(fadeOut);
-	});
-	comment_window.add(cancel_button);
-	
-	var share_title_cont = Titanium.UI.createView({
-	    backgroundImage: header_locations,
-        height: 40,
-        width: 320,
-        top: 0
-    });
-	
-	var share_title = Titanium.UI.createLabel({
-	    text: 'Share on ' + method,
-	    textAlign: 'center',
-        color: '#fff',
-        // left: 10,
-        // right: 10,
-        top: 5,
-        // bottom: 10,
-        size: {width: 'auto', height: 'auto'},
-        font:{fontSize:22, fontWeight: 'bold'}
-    });
-    share_title_cont.add(share_title);
-    
-    comment_window.add(share_title_cont);
-	
-	var comment_textarea = Titanium.UI.createTextArea({
-	    color: '#333',
-	    width: 300,
-	    height: 130,
-	    font: {fontSize: 22, fontWeight: 'bold'},
-	    top: 50,
-	    borderRadius: 3,
-	    suppressReturn: false
-	});
-    comment_window.add(comment_textarea);
-
-	comment_window.open(fadeIn);
-	
-	post_button.addEventListener('click', function(e){
-        var comment_body = comment_textarea.value;
+    else if (method == 'Twitter' && oAuthAdapter.isAuthorized() == false){
+        var receivePin = function() {
+            // get the access token with the provided pin/oauth_verifier
+            oAuthAdapter.getAccessToken('http://twitter.com/oauth/access_token');
+            // save the access token
+            oAuthAdapter.saveAccessToken('twitter');
+            
+            // save twitter access token on server
+            var token = oAuthAdapter.get_access_token()
+            var xhr = Titanium.Network.createHTTPClient();
+            xhr.onload = function(){
+                share_nom(nom, method, title, from)
+            };
+            var url = SERVER_URL + '/api/save_mobile_twitter_token/';
+            xhr.open('POST', url);
+            xhr.send({
+                'access_token': me.access_token,
+                'twitter_access_token': token.access_token,
+                'twitter_access_token_secret': token.access_token_secret,
+            });
+        };
         
-        if (method == 'Facebook'){
-            share_on_facebook(me, nom, comment_body, title);
-        }
-        else if (method == 'Twitter'){
-            share_on_twitter(me, nom, comment_body);
-        }
+        var request_token = oAuthAdapter.getRequestToken('https://api.twitter.com/oauth/request_token', 'oob');
         
-        
-	    comment_textarea.blur();
-		comment_window.close(fadeOut);
-	});
-	
-	
-	var textarea_focus = null;
-	var textarea_focus_count = 0;
-	clearInterval(textarea_focus);
-	textarea_focus = setInterval(function(){
-	    if (textarea_focus_count < 5){
-	        comment_textarea.focus();
-    	    textarea_focus_count += 1;
-	    }
-	    else{
-	        clearInterval(textarea_focus);
-	    }
-	}, 30);
+        // show the authorization UI and call back the receive PIN function
+        oAuthAdapter.showAuthorizeUI('https://twitter.com/oauth/authorize?' + request_token, receivePin);
+    }
 }
 
 function share_on_twitter(me, nom, caption){
     var share_twitter_request = Titanium.Network.createHTTPClient();
-    
+
     var url = SERVER_URL + '/api/share_twitter/';
     share_twitter_request.open('POST', url);
-    
+
     if (typeof(nom['nomination_category']) == 'undefined'){
         share_twitter_request.send({'access_token': me.access_token, 'url': 'http://portrit.com/#!/' + me.username + '/photos/' + nom.id, 'status': caption});
     }
@@ -324,12 +361,12 @@ function share_on_facebook(me, nom, caption, title){
                                                             "POST",
         function(e){
             if (e.success) {
-                alert("Success!  From FB: " + e.result);
+                // alert("Success!  From FB: " + e.result);
             } else {
                 if (e.error) {
-                    alert(e.error);
+                    // alert(e.error);
                 } else {
-                    alert("Unkown result");
+                    // alert("Unkown result");
                 }
             }
         });
@@ -343,8 +380,7 @@ function share_on_facebook(me, nom, caption, title){
 function flag_nom(me, nom, photo_id, win){
     var xhr = Titanium.Network.createHTTPClient();
 
-    xhr.onload = function()
-    {
+    xhr.onload = function(){
         var data = JSON.parse(this.responseData);
         if (data == true){
             var flag_cont_background = Titanium.UI.createView({
@@ -404,6 +440,7 @@ function render_comments(cont, comments){
     var comment_time = null;
     var comment = null;
     var commentor_name_text = '';
+    var commentor_width = 0;
         
     for (var i = 0; i < comments.length; i++){
     	if (comments[i].owner_id == me.fid){
@@ -428,12 +465,14 @@ function render_comments(cont, comments){
         commentor.username = comments[i].owner_username;
         commentor.addEventListener('click', add_profile_window);
         cont.add(commentor);
+        
+        commentor_width = commentor.width + 20;
 
         comment = Titanium.UI.createLabel({
     	    text: comments[i].comment,
             color: '#666',
             top: -18,
-            left: 60,
+            left: commentor_width,
             width: 'auto',
             height: 'auto',
             font:{fontSize:13}

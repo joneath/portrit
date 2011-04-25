@@ -1315,6 +1315,9 @@ function add_follow_window(e){
 
 function load_more_photos(e){
     var user_photo_request = Titanium.Network.createHTTPClient();
+    
+    load_more_button.hide();
+    load_more_activity.show();
 
     user_photo_request.onload = function(){   
         var data = JSON.parse(this.responseData);
@@ -1330,6 +1333,8 @@ function load_more_photos(e){
         else{
             load_more_view.hide();
         }
+        load_more_button.show();
+        load_more_activity.hide();
     };
     var url = SERVER_URL + '/api/get_user_profile/?username=' + username + '&access_token=' + me.access_token + '&pid=' + oldest_photo + '&dir=old';
     user_photo_request.open('GET', url);
@@ -1367,22 +1372,29 @@ function init_profile_view(){
     
     load_more_view = Ti.UI.createView({
             height: 50,
-            width: 'auto',
+            width: 320,
             backgroundColor:'#000'
     });
 
-    var load_more_button = Ti.UI.createButton({
+    load_more_button = Ti.UI.createButton({
     	title:"Load More",
         font: {fontSize: 16, fontWeight: 'bold'},
     	backgroundImage: '../../images/load_more_button.png',
     	width: 118,
     	height: 42,
     	bottom: 8,
-    	left: 0
     });
 
-    load_more_view.add(load_more_button);
     load_more_button.addEventListener('click', load_more_photos);
+
+    load_more_view.add(load_more_button);
+
+    load_more_activity = Titanium.UI.createActivityIndicator({
+        height:50,
+        width:10,
+    });
+    load_more_activity.hide();
+    load_more_view.add(load_more_activity);
     load_more_view.hide();
 
     tv = Ti.UI.createTableView({

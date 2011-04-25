@@ -636,6 +636,7 @@ function load_notifications(){
 load_notifications();
 
 reset = false;
+var first_updates = Ti.App.Properties.getString("first_updates");
 win.addEventListener('focus', function(){
     var tabGroup = win.tabGroup;
     tabGroup.tabs[3].badge = null;
@@ -648,6 +649,78 @@ win.addEventListener('focus', function(){
         me = JSON.parse(Ti.App.Properties.getString("me"));
 
         load_notifications();
+    }
+    
+    if (first_updates){
+        first_updates = null;
+        Ti.App.Properties.removeProperty("first_updates");
+        
+        function close_help_text(e){
+            if (help_cont){
+                help_cont.animate({
+                    opacity: 0,
+                    duration: 300,
+                    curve: Ti.UI.ANIMATION_CURVE_EASE_OUT,
+                    complete: function(){
+                        win.remove(help_cont);
+                    }
+                });
+                help_cont = null;
+            }
+        }
+        
+        var help_cont = Ti.UI.createView({
+            width: 320,
+            height: 90,
+            bottom: 0,
+            opacity: 0,
+            zIndex: 101
+        });
+        
+        var help_cont_background = Ti.UI.createView({
+            backgroundColor: '#222',
+            opacity: 0.8,
+            width: 320,
+            height: 90,
+            zIndex: -1
+        });
+        help_cont.add(help_cont_background);
+        
+        var help_cont_header = Ti.UI.createLabel({
+            text:"Updates",
+            left:10,
+            top: 10,
+            width: 'auto',
+            height: "auto",
+            color: "#eee",
+            textAlign: "left",
+            font: {fontSize:18, fontWeight: 'bold'}
+        });
+        help_cont.add(help_cont_header);
+        
+        var help_cont_label = Ti.UI.createLabel({
+            text: "Keep track of your nominations.",
+            top: 35,
+            left:10,
+            right: 10,
+            width: 300,
+            height: "auto",
+            color: "#eee",
+            textAlign: "left",
+            font: {fontSize:16}
+        });
+        help_cont.add(help_cont_label);
+        
+        win.add(help_cont);
+        
+        help_cont.animate({
+            opacity: 1,
+            duration: 300,
+            curve: Ti.UI.ANIMATION_CURVE_EASE_IN
+        });
+        
+        help_cont.addEventListener('click', close_help_text);
+        setTimeout(close_help_text, 6500);
     }
 });
 

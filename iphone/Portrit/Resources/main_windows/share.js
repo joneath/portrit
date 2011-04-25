@@ -510,8 +510,11 @@ function cammera_success(event, gallery){
 }
 
 var photo_upload = Titanium.Network.createHTTPClient();
+var upload_health_interval = null;
 photo_upload.timeout = 20000;
 function upload_photo(image){
+    var check_count = 0;
+    var progress = 0;
     Ti.App.Properties.setString("upload_complete", null);
     Ti.App.Properties.setString("upload_progress", 0);
     Ti.App.Properties.setString("upload_ready_state", 4);
@@ -533,7 +536,8 @@ function upload_photo(image){
     };
     photo_upload.onsendstream = function(e){
         try{
-            Ti.App.Properties.setString("upload_progress", e.progress);
+            progress = 100 * e.progress;
+            Ti.App.Properties.setString("upload_progress", progress);
         }
         catch(e){
             // alert(e);
@@ -552,6 +556,15 @@ function upload_photo(image){
         'iphone': true,
         'access_token': me.access_token
     });
+    
+    clearInterval(upload_health_interval);
+    upload_health_interval = setInterval(function(){
+        if (check_count > 12 && photo_upload.readyState < 4 && progress <= 5){
+            photo_upload.abort();
+            upload_photo(image);
+        }
+        check_count += 1;
+    }, 200);
 }
 
 function camera_cancel(){
@@ -572,10 +585,10 @@ function camera_error(error){
     reset_after_camera();
 }
 
-Ti.App.addEventListener('restart_upload', function(e){
-    photo_upload.abort();
-    upload_photo(image);
-});
+// Ti.App.addEventListener('restart_upload', function(e){
+//     photo_upload.abort();
+//     upload_photo(image);
+// });
 
 Ti.App.addEventListener('cancel_nominate', function(e){
     take_photo_click = false;

@@ -46,6 +46,7 @@ var notification_view = Titanium.UI.createView({
     left: -350,
     zIndex: 100
 });
+notification_view.hide();
 
 notification_view.addEventListener('click', function(){
     clearTimeout(notification_view_animation_timeout);
@@ -176,16 +177,48 @@ win3.addEventListener('focus', function(){
     tabGroup.bottom = -50;
 });
 
+function check_if_username(me){
+    var xhr = Titanium.Network.createHTTPClient();
+    xhr.onload = function(){
+        var data = JSON.parse(this.responseData);
+        if (data.username){
+            me.username = data.username;
+            Ti.App.Properties.setString("me", JSON.stringify(me));
+            load_portrit(true);
+        }
+        else{
+            init_new_user()
+        }
+    };
+
+    var url = SERVER_URL + '/api/login/';
+    xhr.open('POST', url);
+    xhr.send({
+        'fb_user': me.fid,
+        'access_token': me.access_token
+    });
+}
+
 function load_portrit(animate){
     me = JSON.parse(Ti.App.Properties.getString("me"));
     me.fid = Titanium.Facebook.uid;
     me.access_token = Titanium.Facebook.accessToken;
+    
+    Ti.App.Properties.setString("first_stream", true);
+    Ti.App.Properties.setString("first_community", true);
+    Ti.App.Properties.setString("first_updates", true);
+    Ti.App.Properties.setString("first_profile", true);
+    Ti.App.Properties.setString("first_detail", true);
 
-    // if (typeof(me.username) == 'undefined'){
-    //     Ti.App.Properties.setString("me", JSON.stringify(me));
-    //     init_new_user();
-    // }
-    // else{
+    if (typeof(me.username) == 'undefined' || !me.username ||me.username == ''){
+        Ti.App.Properties.setString("me", JSON.stringify(me));
+        check_if_username(me);
+    }
+    else{
+        if (reset_app){
+            reset_app = false;
+            Ti.App.fireEvent('reset', { });
+        }
         register_push_notifications(me.fid);
         Titanium.UI.iPhone.appBadge = 0;
 
@@ -196,17 +229,54 @@ function load_portrit(animate){
         else{
             tabGroup.open();
         }
-    // }
+    }
 }
 
+function alphaNumericCheck(value){
+    var regex=/^[0-9A-Za-z]+$/; //^[a-zA-z]+$/
+    if(regex.test(value)){
+        return true;
+    } 
+    else {
+        return false;
+    }
+}
+
+var new_user_handlers_attached = false;
 function init_new_user(){
-    var create_account_win = Titanium.UI.createWindow({
-        left: 320,
-        width: 320
+    var no_tabgroup = false;
+    var go_shown = false;
+    var create_account_win = Titanium.UI.createWindow({ });
+    
+    if (!landing_tabgroup){
+        no_tabgroup = true;
+        landing_tabgroup = Titanium.UI.createTabGroup({id:'landing_tabgroup'});
+
+        create_account_win.hideNavBar({animated:false});
+
+        landing_tab = Titanium.UI.createTab({
+            window: create_account_win
+        });
+
+        landing_tab.add(create_account_win);
+        landing_tabgroup.addTab(landing_tab);
+        landing_tabgroup.bottom = -50;
+    }
+    
+    var fadeIn = Titanium.UI.createAnimation({
+        curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
+        opacity: 1.0,
+        duration: 200
+    });
+
+    var fadeOut = Titanium.UI.createAnimation({
+        curve: Ti.UI.ANIMATION_CURVE_EASE_OUT,
+        opacity: 0,
+        duration: 200
     });
     
     var logo_cont = Titanium.UI.createView({
-            height: 'auto',
+            height: 169,
             top: 20,
             bottom: 20,
             width: 320,
@@ -244,8 +314,17 @@ function init_new_user(){
 
     });
     var tv_data = [ ];
+    
+    var username_help_text = Titanium.UI.createLabel({
+	    text: 'Only alphanumeric characters please.',
+	    textAlign: 'center',
+        color: '#fff',
+        size: {width: 'auto', height: 'auto'},
+        font:{fontSize:12, fontWeight: 'bold'}
+    });
+    
     var section = Titanium.UI.createTableViewSection({
-        
+        footerView: username_help_text
     });
     
     var row = Ti.UI.createTableViewRow({
@@ -265,73 +344,158 @@ function init_new_user(){
         autocapitalization: Titanium.UI.TEXT_AUTOCAPITALIZATION_NONE,
         returnKeyType: Titanium.UI.RETURNKEY_GO
     });
-    username.addEventListener('focus', function(){
-        tv.scrollToTop(120);
-    });
-    username.addEventListener('blur', function(){
-        // tv.scrollToTop(0);
-    });
-    username.addEventListener('return', function(e){
-        if (username.value != ''){
-            var xhr = Titanium.Network.createHTTPClient();
-            xhr.onload = function(){
-                var data = JSON.parse(this.responseData);
-                if (data){
-                    create_account_win.close(window_slide_out);
-                    me.username = data.username;
-                    me.name = data.name;
-                    Ti.App.Properties.setString("me", JSON.stringify(me));
-                    load_portrit(true);
-                }
-            };
-
-            var url = SERVER_URL + '/api/add_username/';
-            xhr.open('POST', url);
-            xhr.send({
-                'username': username.value,
-                'post_wins': post_wins.value,
-                'access_token': me.access_token
-            });
-        }
-        else{
-            
-        }
-    });
-    var check_name_aval = null;
-    username.addEventListener('change', function(e){
-        if (e.value != ''){
-            clearTimeout(check_name_aval);
-            check_name_aval = setTimeout(function(){
-                username_activity.zIndex = 2;
+    
+    var create_go = Titanium.UI.createButton({
+	    backgroundImage: 'images/submit_large.png',
+		title: 'Go',
+		font: {fontSize: 20, fontWeight: 'bold'},
+		height: 38,
+		width: 320,
+        bottom: 217
+	});
+	create_go.hide();
+	create_go.opacity = 0;
+    
+    if (!new_user_handlers_attached){
+        new_user_handlers_attached = true;
+        
+        username.addEventListener('focus', function(){
+            tv.scrollToTop(120);
+        });
+        username.addEventListener('blur', function(){
+            // tv.scrollToTop(0);
+        });
+        username.addEventListener('return', function(e){
+            if (username.value != '' && alphaNumericCheck(username.value)){
                 var xhr = Titanium.Network.createHTTPClient();
                 xhr.onload = function(){
-                    username_activity.zIndex = -1;
                     var data = JSON.parse(this.responseData);
-                    if (data == true){
+                    if (data){
+                        // create_account_win.close(window_slide_out);
+                        landing_tabgroup.close(window_slide_out);
+                        me.username = data.username;
+                        me.name = data.name;
+                        Ti.App.Properties.setString("me", JSON.stringify(me));
+                        Ti.App.Properties.setString("first_stream", true);
+                        Ti.App.Properties.setString("first_community", true);
+                        Ti.App.Properties.setString("first_updates", true);
+                        Ti.App.Properties.setString("first_profile", true);
+                        Ti.App.Properties.setString("first_detail", true);
                         
-                    }
-                    else{
-                        
+                        load_portrit(true);
                     }
                 };
 
-                var url = SERVER_URL + '/api/check_username_availability/';
+                var url = SERVER_URL + '/api/add_username/';
                 xhr.open('POST', url);
                 xhr.send({
-                    'username': e.value
+                    'username': username.value,
+                    'post_wins': post_wins.value,
+                    'access_token': me.access_token
                 });
-            }, 1000);
-        }
-    });
+            }
+            else{
+
+            }
+        });
+        var check_name_aval = null;
+        username.addEventListener('change', function(e){
+            if (username.value != ''){
+                if (alphaNumericCheck(username.value)){
+                    if (!go_shown){
+                        go_shown = true;
+                        create_go.show();
+                        create_go.animate(fadeIn);
+                    }
+                    cross.opacity = 0;
+                    check.opacity = 0;
+                    username_activity.animate(fadeIn);
+                    clearTimeout(check_name_aval);
+                    check_name_aval = setTimeout(function(){
+                        var xhr = Titanium.Network.createHTTPClient();
+                        xhr.onload = function(){
+                            username_activity.animate(fadeOut);
+                            var data = JSON.parse(this.responseData);
+                            if (data == true){
+                                if (username.value != ''){
+                                    cross.animate(fadeIn);
+                                }
+                            }
+                            else{
+                                if (username.value != ''){
+                                    check.animate(fadeIn);
+                                }
+                            }
+                        };
+
+                        var url = SERVER_URL + '/api/check_username_availability/';
+                        xhr.open('POST', url);
+                        xhr.send({
+                            'username': username.value
+                        });
+                    }, 1000);
+                }
+                else{
+                    cross.animate(fadeIn);
+                }
+            }
+            else{
+                cross.opacity = 0;
+                check.opacity = 0;
+                username_activity.opacity = 0;
+                go_shown = false;
+                create_go.animate({
+                    curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
+                    opacity: 0,
+                    duration: 200,
+                    complete: function(){
+                        create_go.hide();
+                    }
+                });
+            }
+        });
+
+    	create_go.addEventListener('click', function(){
+    	    username.fireEvent('return');
+    	});
+    }
     
     username_activity = Titanium.UI.createActivityIndicator({
         height:50,
         width:10,
-        right: 10,
+        right: 25,
+        top: 57,
         zIndex: 2,
+        opacity: 0,
         style: Titanium.UI.iPhone.ActivityIndicatorStyle.DARK
     });
-    row.add(username_activity);
+    username_activity.show();
+    create_account_win.add(username_activity);
+    
+    var cross = Ti.UI.createImageView({
+		image: 'images/cross.png',
+        right: 20,
+        top: 70,
+		width: 23,
+		height: 23,
+		hires: true,
+		zIndex: 3,
+		opacity: 0,
+	});
+	create_account_win.add(cross);
+	
+	var check = Ti.UI.createImageView({
+		image: 'images/check.png',
+        right: 20,
+        top: 69,
+		width: 23,
+		height: 23,
+		hires: true,
+		zIndex: 3,
+		opacity: 0,
+	});
+	create_account_win.add(check);
+    
     row.add(username);    
     section.add(row);
     tv_data.push(section);
@@ -366,13 +530,33 @@ function init_new_user(){
     
     tv.setData(tv_data);
     create_account_win.add(tv);
-    if (typeof(landing_win) == 'undefined'){
-        create_account_win.open(window_slide_in);
+    
+	create_account_win.add(create_go);
+    
+    if (no_tabgroup){
+        landing_tabgroup.open();
     }
     else{
-        landing_win.animate(window_slide_out);
-        create_account_win.open(window_slide_in);
+        landing_tab.open(create_account_win,{animated:true});
     }
+}
+
+function add_detail_view(e){
+    var w = Ti.UI.createWindow({backgroundColor:"#222", url:'main_windows/nom/detail.js'});
+    // landing_tab.open(w,{animated:true});
+    landing_tab.open(w,{animated:true});
+    
+    setTimeout(function(){
+        Ti.App.fireEvent('pass_detail', {
+                nom_id: e.source.nom_id,
+                photo: e.source.photo,
+                state: e.source.state,
+                cat: e.source.cat,
+                user: e.source.user,
+                won: false,
+                from_landing: true
+            });
+    }, 200);
 }
 
 function render_photos(data){
@@ -384,7 +568,6 @@ function render_photos(data){
     if (data.length < top){
         top = data.length;
     }
-    
     for (var i = 0; i < top; i++){
         if (i % 3 == 0 && i > 0){
             photo_in_row = 0;
@@ -424,14 +607,24 @@ function render_photos(data){
             top: top_offset,
     		width: 100,
     		height: 75,
-    		hires: true
+    		hires: true,
+    		zIndex: 1
     	});
+    	image_thumb.user = data[i].nominatee_username;
+    	image_thumb.nom_id = data[i].id;
+    	image_thumb.photo = data[i].photo;
+    	image_thumb.state = 'community_top';
+    	image_thumb.cat = data[i].nomination_category;
+    	
+    	image_thumb.addEventListener('click', add_detail_view);
+    	
     	img_cont.add(image_thumb);
         photo_in_row += 1;
     }
     photo_cont.setData(photo_data);
 }
 
+var scroll_width = (76 * 10);
 function trophy_selected(e){
     var scroll_pos = (e.source.index * 76) - 117;
     if (scroll_pos < 0){
@@ -466,11 +659,31 @@ function trophy_selected(e){
 }
 
 var trophy_thumbs = [ ];
-if (!Titanium.Facebook.loggedIn){
+var landing_tab = null;
+var landing_tabgroup = null;
+function init_login(){
+    Ti.App.Properties.setString("me", JSON.stringify({
+        'name': '',
+        'access_token': '',
+        'username': ''
+    }));
+    
+    landing_tabgroup = Titanium.UI.createTabGroup({id:'landing_tabgroup'});
+    
     landing_win = Titanium.UI.createWindow({
         backgroundImage: 'images/background.png',
         width: 320
     });
+    landing_win.hideNavBar({animated:false});
+    
+    landing_tab = Titanium.UI.createTab({
+        window: landing_win
+    });
+    
+    landing_tab.add(landing_win);
+    landing_tabgroup.addTab(landing_tab);
+    landing_tabgroup.bottom = -50;
+    
     Titanium.UI.iPhone.setStatusBarStyle(Titanium.UI.iPhone.StatusBar.OPAQUE_BLACK);
     
     fb_button = Titanium.Facebook.createLoginButton({
@@ -494,7 +707,6 @@ if (!Titanium.Facebook.loggedIn){
     });
 	landing_win.add(logo);
 	
-	var scroll_width = (76 * 10);
     trophy_scroll_view = Titanium.UI.createScrollView({
     	contentWidth: scroll_width,
     	contentHeight: 130,
@@ -565,7 +777,7 @@ if (!Titanium.Facebook.loggedIn){
 	
 	photo_cont = Ti.UI.createTableView({ 
         backgroundColor: '#000',
-        allowsSelection: false,
+        // allowsSelection: false,
         separatorStyle: 0,
         height: 240,
         top: 40,
@@ -573,6 +785,8 @@ if (!Titanium.Facebook.loggedIn){
         style: Titanium.UI.iPhone.TableViewStyle.PLAIN
     });
     landing_win.add(photo_cont);
+    
+    photo_cont.addEventListener('click', function(){ });
     
     var drop_shadow = Titanium.UI.createView({
         backgroundImage: 'images/upper_drop_shadow.png',
@@ -583,7 +797,91 @@ if (!Titanium.Facebook.loggedIn){
     });
     landing_win.add(drop_shadow);
     
-    landing_win.open();
+    var welcome_cont = Titanium.UI.createView({
+        height: 280,
+        width: 250,
+        top: 80,
+        zIndex: 11
+    });
+    
+    var welcome_cont_background = Titanium.UI.createView({
+        backgroundColor: '#000',
+        borderRadius: 5,
+        height: 280,
+        width: 250,
+        zIndex: -1,
+        opacity: 0.9
+    });
+    welcome_cont.add(welcome_cont_background);
+    
+    var welcome_top_label = Ti.UI.createLabel({
+        text: 'Welcome to Portrit',
+        width: 250,
+        height: 'auto',
+        color:'#eee',
+        textAlign:'center',
+        top: 10,
+        font:{fontSize:18,fontWeight:'bold'}
+    });
+    welcome_cont.add(welcome_top_label);
+    
+    var welcome_top_text = Ti.UI.createLabel({
+        text: 'It\'s all about finding and sharing the best photos out there.',
+        width: 230,
+        height: 'auto',
+        color:'#eee',
+        textAlign:'left',
+        left: 20,
+        top: 50,
+        font:{fontSize:16}
+    });
+    welcome_cont.add(welcome_top_text);
+    
+    var welcome_bottom_text = Ti.UI.createLabel({
+        text: 'Get started by tapping the Login with Facebook button below.',
+        width: 230,
+        height: 'auto',
+        color: '#eee',
+        textAlign:'left',
+        left: 20,
+        top: 105,
+        font:{fontSize:16}
+    });
+    welcome_cont.add(welcome_bottom_text);
+    
+    var web_link_text = Ti.UI.createLabel({
+        text: 'Dont forget our Web App at portrit.com',
+        width: 230,
+        height: 'auto',
+        color: '#eee',
+        textAlign:'center',
+        top: 180,
+        font:{fontSize:13}
+    });
+    welcome_cont.add(web_link_text);
+    
+    welcome_go_button = Titanium.UI.createButton({
+	    backgroundImage: 'images/welcome_go_button.png',
+		title: 'Ok',
+		font: {fontSize: 20, fontWeight: 'bold'},
+		height: 41,
+		width: 112,
+        bottom: 10
+	});
+	welcome_cont.add(welcome_go_button);
+	
+	welcome_go_button.addEventListener('click', function(){
+	    welcome_cont.animate({
+	        curve: Ti.UI.ANIMATION_CURVE_EASE_OUT,
+            opacity: 0,
+            duration: 300,
+            complete: function(){
+                landing_win.remove(welcome_cont);
+            }
+	    })
+	});
+    
+    landing_win.add(welcome_cont);
     
     photo_ind = Titanium.UI.createActivityIndicator({
         height:50,
@@ -608,65 +906,84 @@ if (!Titanium.Facebook.loggedIn){
     xhr.send();
     
     
+    landing_tabgroup.open();
     // setTimeout(function(){
     //     init_new_user();
     // }, 400);
-    
-    Titanium.Facebook.addEventListener('login', function(e) {
-        // Titanium.Facebook.removeEventListener('login');
-    	if (e.success) {
-            landing_win.remove(fb_button);
-    	    me = {
-    	        'name': e.data.name,
-    	        'fid': e.data.id
-    	    };
-    	    me.access_token = Titanium.Facebook.accessToken;
-            Ti.App.Properties.setString("me", JSON.stringify(me));
-            // landing_win.close({animated:true});
-            
-            var actInd = Titanium.UI.createActivityIndicator({
-                height:50,
-                width:10,
-                message: 'Signing In',
-                color: '#fff',
-                style: Titanium.UI.iPhone.ActivityIndicatorStyle.BIG,
-                bottom: 50
-            });
-            actInd.show();
-            landing_win.add(actInd);
-            
-            var xhr = Titanium.Network.createHTTPClient();
-            xhr.onload = function(){
-                actInd.hide();
-                var data = JSON.parse(this.responseData);
-                if (data.auth == 'valid' && data['new'] == true){
-                    me.access_token = data.access_token;
-                    Ti.App.Properties.setString("me", JSON.stringify(me));
-                    init_new_user();
-                }
-                else if (data.auth == 'valid' && data['new'] == false){
-                    me.access_token = data.access_token;
-                    me.username = data.username;
-                    Ti.App.Properties.setString("me", JSON.stringify(me));
-                    landing_win.animate(window_slide_out);
-                    load_portrit(true);
-                }
-            };
+}
 
-            var url = SERVER_URL + '/api/login/';
+Titanium.Facebook.addEventListener('login', function(e) {
+    // Titanium.Facebook.removeEventListener('login');
+	if (e.success) {
+	    me = {
+	        'name': e.data.name,
+	        'fid': e.data.id
+	    };
+	    me.access_token = Titanium.Facebook.accessToken;
+        Ti.App.Properties.setString("me", JSON.stringify(me));
+        
+        window_activity = Titanium.UI.createActivityIndicator({
+            message: 'Signing In',
+            font:{fontSize:16, fontWeight:'bold'},
+            color: '#fff',
+            height:50,
+            width:10,
+            style: Titanium.UI.iPhone.ActivityIndicatorStyle.BIG
+        });
+        window_activity.show()
 
-            xhr.open('POST', url);
+        window_activity_background = Titanium.UI.createView({
+            backgroundColor: '#000',
+            borderRadius: 5,
+            opacity: 0.8,
+            height: 120,
+            width: 120,
+            zIndex: -1
+        });
 
-            // send the data
-            xhr.send({
-                'fb_user': me.fid,
-                'access_token': me.access_token
-            });
-    	}
-    	if (e.error) {
-    		alert(e.error);
-        }
-    });
+        window_activity_cont = Titanium.UI.createView({
+            top: 150,
+            width: 320,
+            height: 120,
+            zIndex: 20
+        });
+        window_activity_cont.add(window_activity_background);
+        window_activity_cont.add(window_activity);
+        landing_win.add(window_activity_cont);
+        
+        var xhr = Titanium.Network.createHTTPClient();
+        xhr.onload = function(){
+            window_activity_cont.hide();
+            var data = JSON.parse(this.responseData);
+            if (data.auth == 'valid' && data['new'] == true){
+                me.access_token = data.access_token;
+                Ti.App.Properties.setString("me", JSON.stringify(me));
+                init_new_user();
+            }
+            else if (data.auth == 'valid' && data['new'] == false){
+                me.access_token = data.access_token;
+                me.username = data.username;
+                Ti.App.Properties.setString("me", JSON.stringify(me));
+                // landing_win.animate(window_slide_out);
+                landing_tabgroup.close(window_slide_out);
+                load_portrit(true);
+            }
+        };
+
+        var url = SERVER_URL + '/api/login/';
+        xhr.open('POST', url);
+        xhr.send({
+            'fb_user': me.fid,
+            'access_token': me.access_token
+        });
+	}
+	if (e.error) {
+		alert(e.error);
+    }
+});
+
+if (!Titanium.Facebook.loggedIn){
+    init_login();
 }
 else{
     load_portrit(false);
@@ -801,3 +1118,19 @@ if (isiOS4Plus()){
 	    Ti.App.Properties.setString("time_paused", datetime_paused);
 	});
 }
+
+
+Ti.App.addEventListener('load_portrit', function(e){
+    load_portrit(true);
+});
+
+Ti.App.addEventListener('init_new_user', function(e){
+    init_new_user();
+});
+
+var reset_app = false;
+Ti.App.addEventListener('logout', function(e){
+    reset_app = true;
+    tabGroup.close(window_slide_out);
+    init_login();
+});
