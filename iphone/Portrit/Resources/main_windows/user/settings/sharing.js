@@ -190,6 +190,19 @@ function init_sharing(){
                 delete_account_alert.addEventListener('click', function(e){
                     if (e.index == 1){
                         alert('delete');
+                        var xhr = Titanium.Network.createHTTPClient();
+                        xhr.onload = function(){
+                        	var file = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory,'twitter.config');
+                            if (file.exists()) { file.deleteFile(); }
+                            Ti.App.Properties.removeProperty("push_notifications");
+
+                            Ti.App.fireEvent('logout', { });
+                        };
+                        var url = SERVER_URL + '/api/delete_account/';
+                        xhr.open('POST', url);
+                        xhr.send({
+                            'access_token': me.access_token
+                        });
                     }
                 });
                 

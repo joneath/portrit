@@ -1,6 +1,7 @@
 # from main.models import Portrit_User, FB_User, Album, Photo, Nomination, Nomination_Category
 from main.documents import *
-from import_friends import import_fb_friends
+
+from settings import ENV, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, NODE_SOCKET, NODE_HOST
 
 import facebook
 import urllib, urllib2
@@ -66,6 +67,30 @@ class Portrit_FB(object):
                                                 owner=target_portrit_user)
                     notification.save()
                     print "notification saved"
+                    
+                    node_data = {
+                        'method': 'new_follow',
+                        'secondary_method': 'new_follow_update',
+                        'payload': {
+                            'id': str(notification.id),
+                            'create_datetime': time.mktime(notification.created_date.utctimetuple()),
+                            'follower_id': self.user.fb_user.fid,
+                            'follower_name': self.user.name,
+                            'follower_username': self.user.username,
+                            'friends': {target_portrit_user.fb_user.fid: target_portrit_user.get_notification_data()},
+                            'pending': False
+                        }
+                    }
+
+                    node_data = json.dumps(node_data)
+                    try:
+                        sock = socket.socket(
+                            socket.AF_INET, socket.SOCK_STREAM)
+                        sock.connect((NODE_HOST, NODE_SOCKET))
+                        sock.send(node_data)
+                        sock.close()
+                    except:
+                        pass
                 except:
                     pass
                 

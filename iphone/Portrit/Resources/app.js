@@ -11,8 +11,8 @@ UrbanAirship.baseurl = 'https://go.urbanairship.com';
 Titanium.UI.setBackgroundColor('#000');
 
 //Facebook auth
-Titanium.Facebook.appid = "155664697800227";
-Titanium.Facebook.permissions = ['read_stream','publish_stream','user_photos','user_videos','friends_photos','friends_videos','friends_status','user_photo_video_tags','friends_photo_video_tags','offline_access','email'];
+Titanium.Facebook.appid = "126374870731237";
+Titanium.Facebook.permissions = ['publish_stream','offline_access','email'];
 
 var window_slide_out = Titanium.UI.createAnimation({
     curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
@@ -203,12 +203,6 @@ function load_portrit(animate){
     me = JSON.parse(Ti.App.Properties.getString("me"));
     me.fid = Titanium.Facebook.uid;
     me.access_token = Titanium.Facebook.accessToken;
-    
-    Ti.App.Properties.setString("first_stream", true);
-    Ti.App.Properties.setString("first_community", true);
-    Ti.App.Properties.setString("first_updates", true);
-    Ti.App.Properties.setString("first_profile", true);
-    Ti.App.Properties.setString("first_detail", true);
 
     if (typeof(me.username) == 'undefined' || !me.username ||me.username == ''){
         Ti.App.Properties.setString("me", JSON.stringify(me));

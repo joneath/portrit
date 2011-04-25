@@ -72,6 +72,7 @@ urlpatterns += patterns('',
     url(r'^api/login/$', 'main.api_views.sign_in_create'),
     url(r'^api/check_username_availability/$', 'main.api_views.check_username_availability'),
     url(r'^api/add_username/$', 'main.api_views.add_username'),
+    url(r'^api/delete_account/$', 'main.api_views.delete_account'),
     
     #Nominations
     url(r'^api/nominate_photo/$', 'main.api_views.nominate_photo'),

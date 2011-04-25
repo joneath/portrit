@@ -93,38 +93,27 @@ var Portrit = function(){
         else{
             for (id in friends){
                 if (id != undefined){
-                    allow_push = true;
-
-                    if (!friends[id].push_on){
-                        allow_push = false;
-                        continue;
-                    }
+                    allow_push = false;
 
                     if (data.method == 'new_comment'){
                         var target = '';
-                        if (!friends[id].push_comments){
-                            allow_push = false;
-                            continue;
+                        if (friends[id].push_comments){
+                            allow_push = true;
+                            if (data.payload.nom_owner_id == id){
+                                target = 'your';
+                            }
+                            else{
+                                target = data.payload.nom_owner_username + '\'s';
+                            }
+                            message = data.payload.comment_sender_username + ' commented on ' + target + ' nomination';
                         }
-                        if (data.payload.nom_owner_id == id){
-                            target = 'your';
-                        }
-                        else{
-                            target = data.payload.nom_owner_username + '\'s';
-                        }
-                        message = data.payload.comment_sender_username + ' commented on ' + target + ' nomination';
                     }
 
                     else if (data.method == 'new_follow'){
-                        if (!friends[id].push_follows){
-                            allow_push = false;
-                              continue;
-                          }
-                        message = data.payload.follower_username + ' is now following you';
-                    }
-                    else{
-                        allow_push = false;
-                        continue;
+                        if (friends[id].push_follows){
+                            allow_push = true;
+                            message = data.payload.follower_username + ' is now following you';
+                        }
                     }
 
                     if (allow_push){
@@ -187,7 +176,7 @@ var Portrit = function(){
         }
         else if (method == 'welcome'){
             template_html = '<h1 style="font-size: 28px; font-weight: bold; margin-bottom: 10px;">Hey ' + data.target_name.split(' ')[0] + ',</h1>' +
-                            '<p style="font-size: 14px;">Thanks for joining! We are all about making photos more fun between you and your friends, and also your followers! Go and nominate your friends or community photos. All you have to do is select a trophy and you are ready to go!</p>' +
+                            '<p style="font-size: 14px;">Thanks for joining! We are all about making photos more fun between you and your friends. Go and nominate some photos. All you have to do is select a trophy and you are ready to go!</p>' +
                             '<div style="-moz-border-radius: 5px; border-radius: 5px; width: 500px; height: 105px; margin: 0 auto;">' +
                                     '<h2 style="text-align: center; font-size: 24px; font-weight: bold; margin: 0px; line-height: 105px;">Welcome!</h2>' +
                                 '<div style="clear: both;"></div>' +

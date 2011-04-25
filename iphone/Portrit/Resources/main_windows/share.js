@@ -559,9 +559,14 @@ function upload_photo(image){
     
     clearInterval(upload_health_interval);
     upload_health_interval = setInterval(function(){
-        if (check_count > 12 && photo_upload.readyState < 4 && progress <= 5){
-            photo_upload.abort();
-            upload_photo(image);
+        if (check_count > 12 && progress <= 10){
+            try{
+                photo_upload.abort();
+                upload_photo(image);
+            }
+            catch (e){
+                upload_photo(image);
+            }
         }
         check_count += 1;
     }, 200);

@@ -335,7 +335,7 @@ $(document).ready(function(){
                 
             }
         }
-        FB.login(handleSessionResponse, {perms:'read_stream,publish_stream,user_photos,user_videos,friends_photos,friends_videos,friends_status,user_photo_video_tags,friends_photo_video_tags,offline_access,email'});
+        FB.login(handleSessionResponse, {perms:'publish_stream,offline_access,email'});
     }
 
     var watch_hashtag_interval = null;
@@ -700,6 +700,10 @@ $(document).ready(function(){
         // 
         // }
         // $('head').append(meta_html);
+    }
+    
+    if (mobile){
+        $('#footer').css('position', 'relative');
     }
 
     function find_friend(fid, search_array){
@@ -3808,6 +3812,11 @@ $(document).ready(function(){
             
         create_nom_cache(recent_noms);
         
+        var actions_class = '';
+        if (!me){
+            actions_class = 'off';
+        }
+        
         if (recent_noms.length > 0){
             for (var i = 0; i < recent_noms.length; i++){
                 nom = recent_noms[i]
@@ -3925,9 +3934,9 @@ $(document).ready(function(){
                                         '</div>' +
                                         '<div class="recent_nom_comment_cont" id="nom_comments_' + nom.id +'">' +
                                             '<div class="recent_nom_comment_heading" value="' + nom.id + '">' +
-                                                '<span class="add_new_comment sick large">Comment</span>' +
+                                                '<span class="add_new_comment sick large ' + actions_class + '">Comment</span>' +
                                                 '<span class="nom_detail sick large">Detail</span>' +
-                                                '<div class="flag flag_photo" nom_id="' + nom.id + '"></div>' +
+                                                '<div class="flag flag_photo ' + actions_class + '" nom_id="' + nom.id + '"></div>' +
                                                 '<div class="clear"></div>' +
                                             '</div>' +
                                             comment_html +
@@ -4461,7 +4470,7 @@ $(document).ready(function(){
                                     '</div>' +
                                     '<div id="gallery_photo_bottom_cont">' +
                                         '<p>' + secondsToHms(time_diff) + '</p>' +
-                                        '<div class="flag flag_photo ' + flag_class + '" pid="' + selected_photo.id + '" thumb="' + selected_photo.crop + '" fb_crop="' + selected_photo.crop_small + '"></div>' +
+                                        '<div class="flag flag_photo ' + flag_class + '" pid="' + selected_photo.id + '" thumb="' + selected_photo.crop + '" fb_crop="' + selected_photo.crop_small + '" owner="' + selected_user.username + '"></div>' +
                                     '</div>' +
                                 '</div>' + 
                                 '<div id="gallery_photo_cache" style="display:none;"></div>' +
@@ -4544,7 +4553,7 @@ $(document).ready(function(){
         time_diff /= 1000;
         
         $('#gallery_photo_bottom_cont > p').text(secondsToHms(time_diff));
-        $('#gallery_photo_bottom_cont > .flag').attr('pid', selected_photo.id).attr('thumb', selected_photo.crop);
+        $('#gallery_photo_bottom_cont > .flag').attr('pid', selected_photo.id).attr('thumb', selected_photo.crop).attr('fb_crop', selected_photo.crop_small);
         
         $('#gallery_prev_cont').html(prev_photo_html).attr('value', prev_photo_value);
         $('#gallery_selected_cont > img').attr('src', selected_photo.crop);
@@ -4653,7 +4662,7 @@ $(document).ready(function(){
                         });
                     }
                     for (var i = 0; i < mutual_friends_list.length; i++){
-                        $('#mutual_friends_cont').append('<div class="mutual_user" id="mutual_' + mutual_friends_list[i].fid + '" value="' + mutual_friends_list[i].fid + '"><img src="https://graph.facebook.com/' + mutual_friends_list[i].fid + '/picture?type=square"/><p>' + mutual_friends_list[i].name + '</p><div class="clear"></div></div>');
+                        $('#mutual_friends_cont').append('<div class="mutual_user" id="mutual_' + mutual_friends_list[i].fid + '" value="' + mutual_friends_list[i].fid + '"><img src="https://graph.facebook.com/' + mutual_friends_list[i].fid + '/picture?type=square"/><p>' + mutual_friends_list[i].name + '</p><span>' + mutual_friends_list[i].username + '</span><div class="clear"></div></div>');
                     }
                 });
             }
@@ -6189,22 +6198,24 @@ $(document).ready(function(){
         });
         
         $('.add_new_comment').live('click', function(){
-            $(this).addClass('off');
-            var nom_id = $(this).parent().attr('value');
-            var new_comment_html =  '<div class="new_comment_cont" style="display:none;">' +
-                                        '<div class="comment_top_head">' +
-                                            '<span class="sick large post_new_comment" value="' + nom_id + '">Post</span>' + 
-                                            '<span class="sick large cancel_new_comment">Close</span>' +
-                                        '</div>' +
-                                        '<textarea class="comment_body"></textarea>' +
-                                    '</div>';
-            if ($(this).parent().parent().find('.new_comment_cont').length == 0){
-                $(this).parent().after(new_comment_html);
-                $(this).parent().parent().find('.new_comment_cont').show();
-                $(this).parent().parent().find('.comment_body').focus();
+            if (me){
+                $(this).addClass('off');
+                var nom_id = $(this).parent().attr('value');
+                var new_comment_html =  '<div class="new_comment_cont" style="display:none;">' +
+                                            '<div class="comment_top_head">' +
+                                                '<span class="sick large post_new_comment" value="' + nom_id + '">Post</span>' + 
+                                                '<span class="sick large cancel_new_comment">Close</span>' +
+                                            '</div>' +
+                                            '<textarea class="comment_body"></textarea>' +
+                                        '</div>';
+                if ($(this).parent().parent().find('.new_comment_cont').length == 0){
+                    $(this).parent().after(new_comment_html);
+                    $(this).parent().parent().find('.new_comment_cont').show();
+                    $(this).parent().parent().find('.comment_body').focus();
 
-                if (typeof(_gaq) !== "undefined"){
-                    _gaq.push(['_trackEvent', 'Comment', 'Shown', '']);
+                    if (typeof(_gaq) !== "undefined"){
+                        _gaq.push(['_trackEvent', 'Comment', 'Shown', '']);
+                    }
                 }
             }
         });
@@ -6541,10 +6552,10 @@ $(document).ready(function(){
                 $('#mutual_friends_cont').html('');
                 for (var i = 0; i < mutual_friends_list.length; i++){
                     if (mutual_friends_list[i].active != undefined){
-                        $('#mutual_friends_cont').append('<div class="mutual_user selected" id="mutual_' + mutual_friends_list[i].fid + '" value="' + mutual_friends_list[i].fid + '"><img src="https://graph.facebook.com/' + mutual_friends_list[i].fid + '/picture?type=square"/><p>' + mutual_friends_list[i].name + '</p><div class="checked"></div><div class="clear"></div></div>');
+                        $('#mutual_friends_cont').append('<div class="mutual_user" id="mutual_' + mutual_friends_list[i].fid + '" value="' + mutual_friends_list[i].fid + '"><img src="https://graph.facebook.com/' + mutual_friends_list[i].fid + '/picture?type=square"/><p>' + mutual_friends_list[i].name + '</p><span>' + mutual_friends_list[i].username + '</span><div class="clear"></div></div>');
                     }
                     else{
-                        $('#mutual_friends_cont').append('<div class="mutual_user" id="mutual_' + mutual_friends_list[i].fid + '" value="' + mutual_friends_list[i].fid + '"><img src="https://graph.facebook.com/' + mutual_friends_list[i].fid + '/picture?type=square"/><p>' + mutual_friends_list[i].name + '</p><div class="clear"></div></div>');
+                        $('#mutual_friends_cont').append('<div class="mutual_user" id="mutual_' + mutual_friends_list[i].fid + '" value="' + mutual_friends_list[i].fid + '"><img src="https://graph.facebook.com/' + mutual_friends_list[i].fid + '/picture?type=square"/><p>' + mutual_friends_list[i].name + '</p><span>' + mutual_friends_list[i].username + '</span><div class="clear"></div></div>');
                     }
                 }
             }
@@ -6554,7 +6565,7 @@ $(document).ready(function(){
                 q = q.toLowerCase();
                 for(i=0; i< len; i++){
                     val = mutual_friends_list[i];
-                    if(val.name.toLowerCase().indexOf(q) === 0){
+                    if(val.name.toLowerCase().indexOf(q) === 0 || val.username.toLowerCase().indexOf(q) === 0){
                         ret.push(val);
                     }
                 }
@@ -6563,10 +6574,10 @@ $(document).ready(function(){
                 if (ret.length > 0){
                     for (var i = 0; i < ret.length; i++){
                         if (ret[i].active != undefined){
-                            $('#mutual_friends_cont').append('<div class="mutual_user selected" id="mutual_' + ret[i].fid + '" value="' + ret[i].fid + '"><img src="https://graph.facebook.com/' + ret[i].fid + '/picture?type=square"/><p>' + ret[i].name + '</p><div class="checked"></div><div class="clear"></div></div>');
+                            $('#mutual_friends_cont').append('<div class="mutual_user" id="mutual_' + ret[i].fid + '" value="' + ret[i].fid + '"><img src="https://graph.facebook.com/' + ret[i].fid + '/picture?type=square"/><p>' + ret[i].name + '</p><span>' + ret[i].username + '</span><div class="clear"></div></div>');
                         }
                         else{
-                            $('#mutual_friends_cont').append('<div class="mutual_user" id="mutual_' + ret[i].fid + '" value="' + ret[i].fid + '"><img src="https://graph.facebook.com/' + ret[i].fid + '/picture?type=square"/><p>' + ret[i].name + '</p><div class="clear"></div></div>');
+                            $('#mutual_friends_cont').append('<div class="mutual_user" id="mutual_' + ret[i].fid + '" value="' + ret[i].fid + '"><img src="https://graph.facebook.com/' + ret[i].fid + '/picture?type=square"/><p>' + ret[i].name + '</p><span>' + ret[i].username + '</span><div class="clear"></div></div>');
                         }
                     }
                 }
@@ -6697,8 +6708,10 @@ $(document).ready(function(){
         $('.flag_photo').live('click', function(){
             if ($(this).hasClass('off') == false){
                 var photo_id = $(this).attr('pid');
+                var owner = $(this).attr('owner');
                 var nom_id = $(this).attr('nom_id');
                 var thumb = $(this).attr('thumb');
+                var fb_crop = $(this).attr('fb_crop')
                 var nom = nom_cache[nom_id];
 
                 var flag_photo_html =   '<div id="flag_cont">' +
@@ -6802,6 +6815,7 @@ $(document).ready(function(){
                         else{
                             $(this).addClass('selected');
                             $('#share_facebook_cont').slideDown('fast');
+                            $('#facebook_caption').focus();
                         }
                     }
                     else if (value == 'twitter'){
@@ -6817,6 +6831,7 @@ $(document).ready(function(){
                             }
                             $(this).addClass('selected');
                             $('#share_twitter_cont').slideDown('fast');
+                            $('#twitter_caption').focus();
                             var test = nom;
                         }
                     }
@@ -6839,7 +6854,8 @@ $(document).ready(function(){
                         crop = nom.photo.crop_small;
                     }
                     else{
-                        
+                        url = HOST + '#!/' + owner + '/photos/' + photo_id + '/';
+                        crop = fb_crop;
                     }
                     
                     if (method == 'twitter'){
@@ -7139,7 +7155,7 @@ $(document).ready(function(){
                 });
             }
             for (var i = 0; i < mutual_friends_list.length; i++){
-                $('#mutual_friends_cont').append('<div class="mutual_user" id="mutual_' + mutual_friends_list[i].fid + '" value="' + mutual_friends_list[i].fid + '"><img src="https://graph.facebook.com/' + mutual_friends_list[i].fid + '/picture?type=square"/><p>' + mutual_friends_list[i].name + '</p><div class="clear"></div></div>');
+                $('#mutual_friends_cont').append('<div class="mutual_user" id="mutual_' + mutual_friends_list[i].fid + '" value="' + mutual_friends_list[i].fid + '"><img src="https://graph.facebook.com/' + mutual_friends_list[i].fid + '/picture?type=square"/><p>' + mutual_friends_list[i].name + '</p><span>' + mutual_friends_list[i].username + '</span><div class="clear"></div></div>');
             }
         });
     }

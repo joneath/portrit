@@ -1014,7 +1014,7 @@ def follow_unfollow_user(request):
                         'follower_id': source.fb_user.fid,
                         'follower_name': source.name,
                         'follower_username': source.username,
-                        'friends': {target.fb_user.fid: {'fid': target.fb_user.fid}},
+                        'friends': {target.fb_user.fid: target.get_notification_data()},
                         'pending': pending
                     }
                 }
@@ -2378,13 +2378,15 @@ def share_twitter(request):
     access_token = request.POST.get('access_token')
     url = request.POST.get('url')
     status = request.POST.get('status')
-    
+    print 'there'
     url = shorten_url(url)
+    print 'here'
     status = status + ' ' + url
     
     CONNECTION = httplib.HTTPSConnection(SERVER)
     try:
         portrit_user = get_user_from_access_token(access_token)
+        print portrit_user
         twitter_access_token = portrit_user.twitter_user.get_access_token()
         print twitter_access_token
         token = oauth.OAuthToken.from_string(twitter_access_token['access_token'])

@@ -1066,7 +1066,7 @@ function render_active_view(data){
         
         post_time_cont = Titanium.UI.createView({
             right: 5,
-            bottom: 40,
+            bottom: 5,
             height: 20,
             width: 'auto',
             zIndex: 1

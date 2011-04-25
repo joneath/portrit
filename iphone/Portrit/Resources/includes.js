@@ -326,55 +326,55 @@ function share_nom(nom, method, title, from){
 }
 
 function share_on_twitter(me, nom, caption){
-    var share_twitter_request = Titanium.Network.createHTTPClient();
-
-    var url = SERVER_URL + '/api/share_twitter/';
-    share_twitter_request.open('POST', url);
-
-    if (typeof(nom['nomination_category']) == 'undefined'){
-        share_twitter_request.send({'access_token': me.access_token, 'url': 'http://portrit.com/#!/' + me.username + '/photos/' + nom.id, 'status': caption});
-    }
-    else{
-        share_twitter_request.send({'access_token': me.access_token, 'url': 'http://portrit.com/#!/nomination/' + nom.id, 'status': caption});        
-    }
+    // var share_twitter_request = Titanium.Network.createHTTPClient();
+    // 
+    // var url = SERVER_URL + '/api/share_twitter/';
+    // share_twitter_request.open('POST', url);
+    // 
+    // if (typeof(nom['nomination_category']) == 'undefined'){
+    //     share_twitter_request.send({'access_token': me.access_token, 'url': 'http://portrit.com/#!/' + me.username + '/photos/' + nom.id, 'status': caption});
+    // }
+    // else{
+    //     share_twitter_request.send({'access_token': me.access_token, 'url': 'http://portrit.com/#!/nomination/' + nom.id, 'status': caption});        
+    // }
 }
 
 function share_on_facebook(me, nom, caption, title){
-    var url_to_shorten = '';
-    
-    if (typeof(nom['nomination_category']) == 'undefined'){
-        url_to_shorten = 'http://portrit.com/#!/' + me.username + '/photos/' + nom.id;
-    }
-    else{
-        url_to_shorten = 'http://portrit.com/#!/nomination/' + nom.id;
-    }
-    
-    var short_url_request = Titanium.Network.createHTTPClient();
-    short_url_request.onload = function(){
-        var data = JSON.parse(this.responseData);
-        var url = data.url;
-        Titanium.Facebook.requestWithGraphPath('me/feed', {'message': caption,
-                                                            'caption': caption,
-                                                            'link': url,
-                                                            'picture': nom.photo.crop_small,
-                                                            'name': title}, 
-                                                            "POST",
-        function(e){
-            if (e.success) {
-                // alert("Success!  From FB: " + e.result);
-            } else {
-                if (e.error) {
-                    // alert(e.error);
-                } else {
-                    // alert("Unkown result");
-                }
-            }
-        });
-    }
-    
-    var url = SERVER_URL + '/api/shorten_url/';
-    short_url_request.open('POST', url);
-    short_url_request.send({'url': url_to_shorten});
+    // var url_to_shorten = '';
+    // 
+    // if (typeof(nom['nomination_category']) == 'undefined'){
+    //     url_to_shorten = 'http://portrit.com/#!/' + me.username + '/photos/' + nom.id;
+    // }
+    // else{
+    //     url_to_shorten = 'http://portrit.com/#!/nomination/' + nom.id;
+    // }
+    // 
+    // var short_url_request = Titanium.Network.createHTTPClient();
+    // short_url_request.onload = function(){
+    //     var data = JSON.parse(this.responseData);
+    //     var url = data.url;
+    //     Titanium.Facebook.requestWithGraphPath('me/feed', {'message': caption,
+    //                                                         'caption': caption,
+    //                                                         'link': url,
+    //                                                         'picture': nom.photo.crop_small,
+    //                                                         'name': title}, 
+    //                                                         "POST",
+    //     function(e){
+    //         if (e.success) {
+    //             // alert("Success!  From FB: " + e.result);
+    //         } else {
+    //             if (e.error) {
+    //                 // alert(e.error);
+    //             } else {
+    //                 // alert("Unkown result");
+    //             }
+    //         }
+    //     });
+    // }
+    // 
+    // var url = SERVER_URL + '/api/shorten_url/';
+    // short_url_request.open('POST', url);
+    // short_url_request.send({'url': url_to_shorten});
 }
 
 function flag_nom(me, nom, photo_id, win){

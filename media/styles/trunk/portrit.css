@@ -5930,6 +5930,8 @@ div#latest_photos{
                         background-color:   inherit;
                         clear:              both;
                         cursor:             pointer;
+                        position:           relative;
+                        padding:            3px;
                     }
                     
                         #mutual_friends_cont .mutual_user.selected{
@@ -5937,21 +5939,31 @@ div#latest_photos{
                         }
                         
                         #mutual_friends_cont .mutual_user .checked{
-                            float:              right;
                             margin-top:         5px;
                             margin-right:       5px;
+                            position:           absolute;
+                            right:              0px;
+                            top:                5px;
                         }
                     
                         #mutual_friends_cont .mutual_user img{
                             float:              left;
                             height:             40px;
+                            width:              40px;
                         }
                     
                         #mutual_friends_cont .mutual_user p{
                             color:              white;
-                            float:              left;
-                            margin-top:         13px;
-                            margin-left:        10px;
+                            margin-top:         3px;
+                            margin-left:        50px;
+                        }
+                        
+                        #mutual_friends_cont .mutual_user span{
+                            display:            block;
+                            margin-left:        50px;
+                            margin-top:         3px;
+                            color:              #9E9E9E;
+                            font-size:          13px;
                         }
                         
             #new_nom_photo_stream_cont{

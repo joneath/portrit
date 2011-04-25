@@ -307,4 +307,8 @@ search.addEventListener('return', function(e){
     xhr.send();
 });
 
-win.add(search)
+win.add(search);
+
+setTimeout(function(){
+    search.focus();
+}, 250);

@@ -7,7 +7,7 @@
 #define _QUOTEME(x) #x
 #define STRING(x) _QUOTEME(x)
 
-NSString * const TI_APPLICATION_DEPLOYTYPE = @"production";
+NSString * const TI_APPLICATION_DEPLOYTYPE = @"development";
 NSString * const TI_APPLICATION_ID = @"com.portrit";
 NSString * const TI_APPLICATION_PUBLISHER = @"joneath";
 NSString * const TI_APPLICATION_URL = @"http://portrit.com";
@@ -16,10 +16,10 @@ NSString * const TI_APPLICATION_VERSION = @"1.0";
 NSString * const TI_APPLICATION_DESCRIPTION = @"No description provided";
 NSString * const TI_APPLICATION_COPYRIGHT = @"2011 by joneath";
 NSString * const TI_APPLICATION_GUID = @"2ee1dce7-9c8d-481b-a5f8-755ce8c5b799";
-BOOL const TI_APPLICATION_ANALYTICS = true;
+BOOL const TI_APPLICATION_ANALYTICS = false;
 
 #ifdef TARGET_IPHONE_SIMULATOR
-NSString * const TI_APPLICATION_RESOURCE_DIR = @"";
+NSString * const TI_APPLICATION_RESOURCE_DIR = @"/Users/joneath/Workspace/portrit/iphone/Portrit/Resources";
 #endif
 
 int main(int argc, char *argv[]) {
