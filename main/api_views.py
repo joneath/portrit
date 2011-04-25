@@ -1959,7 +1959,7 @@ def new_comment(request):
             
             friends = { }
             friends[nomination.nominator.fb_user.fid] = nomination.nominator.get_notification_data()
-            friends[owner.fb_user.fid] = owner.nominator.get_notification_data()
+            friends[owner.fb_user.fid] = owner.get_notification_data()
                             
             #Attach target user
             for friend in all_commentors:
