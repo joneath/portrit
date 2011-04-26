@@ -560,12 +560,13 @@ function upload_photo(image){
     clearInterval(upload_health_interval);
     upload_health_interval = setInterval(function(){
         if (check_count > 12 && progress <= 10){
+            clearInterval(upload_health_interval);
             try{
-                photo_upload.abort();
+                // photo_upload.abort();
                 upload_photo(image);
             }
             catch (e){
-                upload_photo(image);
+                // upload_photo(image);
             }
         }
         check_count += 1;

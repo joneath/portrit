@@ -3140,7 +3140,7 @@ $(document).ready(function(){
         }
         
         if (nom.tagged_users.length > 0){
-            tagged_user_html = '<div class="tagged_users"><span>' + nom.tagged_users.length + ' Tagged</span><div class="tag" nom="' + nom.id + '"></div></div>'; 
+            tagged_user_html = '<div class="tagged_users" nom="' + nom.id + '"><span>' + nom.tagged_users.length + ' Tagged</span><div class="tag"></div></div>'; 
         }
         
         if (public_view){
@@ -3729,7 +3729,7 @@ $(document).ready(function(){
             
             tagged_user_html = '';
             if (nom.tagged_users.length > 0){
-                tagged_user_html = '<div class="tagged_users"><span>' + nom.tagged_users.length + ' Tagged</span><div class="tag" nom="' + nom.id + '"></div></div>';
+                tagged_user_html = '<div class="tagged_users" nom="' + nom.id + '"><span>' + nom.tagged_users.length + ' Tagged</span><div class="tag"></div></div>';
             }
             
             time = new Date(nom.created_time * 1000);
@@ -3862,7 +3862,7 @@ $(document).ready(function(){
                                             '<p>' + nom.quick_comments[j].comment + '</p>' +
                                         '</div>';
                     }
-                    if (nom.more_comments){
+                    if (nom.comment_count - nom.quick_comments.length > 0){
                         more_comment_html = '<p class="load_more_comments" value="' + nom.id + '">Load more comments</p>';
                     }
                 }
@@ -3899,7 +3899,7 @@ $(document).ready(function(){
 
                 tagged_user_html = '';
                 if (nom.tagged_users.length > 0){
-                    tagged_user_html = '<div class="tagged_users"><span>' + nom.tagged_users.length + ' Tagged</span><div class="tag" nom="' + nom.id + '"></div></div>';
+                    tagged_user_html = '<div class="tagged_users" nom="' + nom.id + '"><span>' + nom.tagged_users.length + ' Tagged</span><div class="tag"></div></div>';
                 }
 
                 time = new Date(nom.created_time * 1000);
@@ -5421,28 +5421,25 @@ $(document).ready(function(){
             name = '';
             time = null;
             now = null;
-            if (friends[comments[i].comments.owner_id] != undefined){
-                name = friends[comments[i].comments.owner_id].name;
-            }
-            else if (comments[i].comments.owner_id == me.id){
+            if (comments[i].owner_id == me.id){
                 name = 'You';
             }
             else {
-                name = '';
+                name = comments[i].owner_username;
             }
             now = new Date();
-            time = new Date(comments[i].comments.create_datetime * 1000);
+            time = new Date(comments[i].create_datetime * 1000);
             now -= time;
             now /= 1000;
             var time_str = secondsToHms(parseInt(now));
 
             comment_cont_html +='<div class="comment">' +
-                                    '<p class="comment_time" value="' + comments[i].comments.create_datetime + '">' + time_str + '</p>' +
-                                    '<a href="#!/user=' + comments[i].comments.owner_id + '">' +
-                                        '<img class="user_photo" src="https://graph.facebook.com/' + comments[i].comments.owner_id + '/picture?type=square"/>' +
+                                    '<p class="comment_time" value="' + comments[i].create_datetime + '">' + time_str + '</p>' +
+                                    '<a href="#!/' + comments[i].owner_username + '">' +
+                                        '<img class="user_photo" src="https://graph.facebook.com/' + comments[i].owner_id + '/picture?type=square"/>' +
                                     '</a>' +
-                                    '<a href="#!/user=' + comments[i].comments.owner_id + '" class="post_username from_username">' + name +'</a>' +
-                                    '<p>' + comments[i].comments.comment + '</p>' +
+                                    '<a href="#!/' + comments[i].owner_username + '" class="post_username from_username">' + name +'</a>' +
+                                    '<p>' + comments[i].comment + '</p>' +
                                 '</div>';
         }
         $(cont).find('.recent_nom_comment_heading').after(comment_cont_html);
@@ -5452,8 +5449,10 @@ $(document).ready(function(){
         var nom_id = $(this).attr('value');
         var that = this;
         
-        $.getJSON('/get_nom_comments/', {'nom_id': nom_id}, function(data){
-            render_more_comments(data, $('#nom_comments_' + nom_id));
+        $.getJSON('/api/get_comments/', {'nom_id': nom_id}, function(data){
+            if (data.length > 0){
+                render_more_comments(data, $('#nom_comments_' + nom_id));
+            }
             $(that).remove();
         });
     }
@@ -6251,10 +6250,10 @@ $(document).ready(function(){
             var now = new Date().getTime();
             var comment_cont_html ='<div class="comment" style="display:none;">' +
                                         '<p class="comment_time" value="' + (now / 1000) + '">Right now</p>' +
-                                        '<a href="#!/user=' + me.id + '">' +
+                                        '<a href="#!/' + me.username + '">' +
                                             '<img class="user_photo" src="https://graph.facebook.com/' + me.id + '/picture?type=square"/>' +
                                         '</a>' +
-                                        '<a href="#!/user=' + me.id + '" class="post_username from_username">You</a>' +
+                                        '<a href="#!/' + me.username= + '" class="post_username from_username">You</a>' +
                                         '<p>' + body + '</p>' +
                                     '</div>';
             $(comment_cont).after(comment_cont_html);
@@ -6449,7 +6448,8 @@ $(document).ready(function(){
                 if (typeof(_gaq) !== "undefined"){
                     _gaq.push(['_trackEvent', 'Post Nom', 'Click', '']);
                 }
-                $('#close_overlay').click();
+                // $('#context_overlay_cont').removeClass();
+                $('#context_overlay_cont > div').html('');
                 
                 if (view_active == 'gallery'){
                     add_photo_nominated(selected_photo.id, selected_nominations);
@@ -6679,7 +6679,7 @@ $(document).ready(function(){
             
         });
         
-        $('.tag').live('click', function(){
+        $('.tagged_users').live('click', function(){
             var nom_id = $(this).attr('nom');
             var nom = nom_cache[nom_id];
             
@@ -6714,6 +6714,7 @@ $(document).ready(function(){
                 $('#context_overlay_cont > div').append(tagged_user_html);
                 show_context_overlay(true, true);
             }
+            return false;
         });
         
         $('.flag_photo').live('click', function(){
@@ -7213,7 +7214,7 @@ $(document).ready(function(){
         
         var tagged_user_html = '';
         if (nom.tagged_users.length > 0){
-            tagged_user_html = '<div class="tagged_users"><span>' + nom.tagged_users.length + ' Tagged</span><div class="tag" nom="' + nom.id + '"></div></div>'; 
+            tagged_user_html = '<div class="tagged_users" nom="' + nom.id + '"><span>' + nom.tagged_users.length + ' Tagged</span><div class="tag"></div></div>'; 
         }
         
         $('.tagged_users').remove();
@@ -7590,7 +7591,7 @@ $(document).ready(function(){
                                 '</div>' +
                             '</div>';
         
-        $('#context_overlay_cont').addClass('share_nom');
+        $('#context_overlay_cont').removeClass().addClass('share_nom');
         $('#context_overlay_cont > div').append(share_nom_html);
         $('#share_nom_comment').attr('value', comment_text);
         show_context_overlay(true, true);

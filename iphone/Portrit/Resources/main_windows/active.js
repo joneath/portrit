@@ -353,9 +353,6 @@ load_more_view.hide();
 
 var tv = Ti.UI.createTableView({
             backgroundColor: '#000',
-            // allowsSelection: false,
-            // bottom: -60,
-            // top: 75,
             separatorStyle: 0,
             headerView: portrit_header_view,
             footerView: load_more_view,

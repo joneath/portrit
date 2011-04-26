@@ -1848,7 +1848,9 @@ div#nom_detail_cont{
                         line-height:        50px;
                         overflow:           hidden;
                         padding-left:       5px;
+                        margin-left:        10px;
                         margin-right:       10px;
+                        width:              315px;
                     }
                     
                     div#nominator_overlay_cont a{
@@ -3676,7 +3678,7 @@ div#context_overlay{
     position:               absolute;
     top:                    150px;
     width:                  100%;
-    z-index:                100;
+    z-index:                999;
 }
 
     div#context_overlay_cont{
@@ -5437,6 +5439,7 @@ div#latest_photos{
         }
         
         div#nominator_overlay_cont .tagged_users{
+            cursor:             pointer;
             position:           absolute;
             right:              5px;
             top:                8px;
@@ -6140,6 +6143,9 @@ div#latest_photos{
             cursor:             pointer;
             float:              right;
             font-size:          14px;
+            color:              #555;
+            margin-right:       10px;
+            margin-top:         5px;
         }
         
         .load_more_comments:hover{
@@ -7058,7 +7064,7 @@ div#payment_types_cont{
     padding-top:        5px;
     position:           fixed;
     width:              100%;
-    z-index:            10000;
+    z-index:            1000;
     -webkit-box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.5);
     -moz-box-shadow:    0px 0px 2px 1px rgba(0, 0, 0, 0.5);
     box-shadow:         0px 0px 2px 1px rgba(0, 0, 0, 0.5);

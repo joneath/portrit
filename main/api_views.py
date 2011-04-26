@@ -2057,7 +2057,8 @@ def flag_photo(request):
                 from django.core.mail import EmailMultiAlternatives
                 subject = 'New Flagged Photo'
                 text_content = 'FROM: ' + portrit_user.username + '\n' \
-                                'PHOTO ID: ' + str(photo.id)  + '\n'
+                                'PHOTO ID: ' + str(flag_rec.id)  + '\n' \
+                                'FLAG ID: ' + str(photo.id)  + '\n'
                 html_content =  '<h2>FROM: ' + portrit_user.username + '</h2>' \
                                 '<h2>PHOTO ID: ' + str(photo.id) + '</h2>' \
                                 '<img src="' + photo.large + '"/>'

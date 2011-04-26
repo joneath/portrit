@@ -304,11 +304,7 @@ function submit_nom(e){
             if (check_count > 30 && (!progress || progress <= 5) && parseInt(upload_ready_state) < 4){
                 clearInterval(check_upload_interval);
                 win.animate(fadeOut);
-                setTimeout(function(){
-                    Ti.App.fireEvent('close_settings_page', { });
-                    Ti.App.fireEvent('update_my_photos', { });
-                    Ti.App.fireEvent('reset_after_camera_to_profile', { });
-                }, 300);
+                Ti.App.fireEvent('reset_after_camera_to_profile', { });
             }
             check_count += 1;
         }, 200);
