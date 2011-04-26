@@ -274,7 +274,8 @@ class FB_User(EmbeddedDocument):
         'ordering': ['-created_date'],
         'indexes': ['fid',
                     'access_token',
-                    'mobile_access_token']
+                    'mobile_access_token',
+                    'created_date']
     }
     
     def get_access_token(self):
@@ -296,7 +297,8 @@ class Twitter_User(EmbeddedDocument):
     
     meta = {
         'ordering': ['-created_date'],
-        'indexes': ['access_token']
+        'indexes': ['access_token',
+                    'created_date']
     }
     
     def get_access_token(self):
@@ -366,7 +368,8 @@ class Portrit_User(Document):
         'indexes': ['username',
                     'name',
                     'following',
-                    'followers']
+                    'followers',
+                    'created_date']
     }
     
     def get_twitter_access_token(self):
@@ -535,7 +538,8 @@ class Follow(Document):
         'indexes': ['active',
                     'pending',
                     'user',
-                    'pending_notification']
+                    'pending_notification',
+                    'created_date']
     }
     
 class Notification_Type(Document):
@@ -567,7 +571,10 @@ class Notification(Document):
         'indexes': ['notification_type',
                     'source',
                     'destination',
-                    'nomination']
+                    'owner',
+                    'nomination',
+                    'created_date',
+                    'active']
     }
     
     def get_nomination_id(self):

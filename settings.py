@@ -79,11 +79,6 @@ elif ENV == "TEST":
     MEDIA_URL = 'http://d3uzvcq9wwvnca.cloudfront.net/'
     MEDIA_ROOT = '/var/www/portrit/media'
     
-    EMAIL_USE_TLS = True
-    EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_PORT = '587'
-    EMAIL_HOST_USER = 'portritinc@gmail.com'
-    EMAIL_HOST_PASSWORD = 'eTKQK23qUT8Vaz5sH33j'
     SERVER_EMAIL = "no-reply@portrit.com"
     
     FACEBOOK_APP_ID = "123063501058161"
@@ -97,8 +92,6 @@ elif ENV == "TEST":
             'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
             'LOCATION': [
                 '127.0.0.1:11211',
-                # '172.19.26.242:11211',
-                # '172.19.26.244:11213',
             ]
         }
     }
@@ -122,37 +115,31 @@ elif ENV == "TEST":
         print "Could not connect to Mongo"
     
 else:
-    DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-    DATABASE_NAME = 'portrit'             # Or path to database file if using sqlite3.
-    DATABASE_USER = 'root'             # Not used with sqlite3.
+    DATABASE_ENGINE = ''           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+    DATABASE_NAME = ''             # Or path to database file if using sqlite3.
+    DATABASE_USER = ''             # Not used with sqlite3.
     DATABASE_PASSWORD = ''         # Not used with sqlite3.
-    DATABASE_HOST = '10.212.93.12'             # Set to empty string for localhost. Not used with sqlite3.
+    DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
     DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
     
     BASE_URL = "http://portrit.com"
     MEDIA_URL = 'http://d3uzvcq9wwvnca.cloudfront.net/'
     MEDIA_ROOT = '/var/www/portrit/media'
     
-    EMAIL_USE_TLS = True
-    EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_PORT = '587'
-    EMAIL_HOST_USER = 'portritinc@gmail.com'
-    EMAIL_HOST_PASSWORD = 'eTKQK23qUT8Vaz5sH33j'
     SERVER_EMAIL = "no-reply@portrit.com"
     
     FACEBOOK_APP_ID = "126374870731237"
     FACEBOOK_APP_SECRET = "d6c5a3023e9b92aa4bae8dd7581deeaf"
     
     NODE_SOCKET = 8081
-    NODE_HOST = '10.117.57.137'
+    NODE_HOST = '10.195.221.50'
     
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
             'LOCATION': [
-                '10.202.90.88:11211',
-                # '172.19.26.242:11211',
-                # '172.19.26.244:11213',
+                '10.117.73.243:11211',
+                '10.117.37.72:11211',
             ]
         }
     }
@@ -171,7 +158,7 @@ else:
     POSTMARK_TEST_MODE = False
     
     try:
-        connect('portrit', host='', port=27017)
+        connect('portrit', host='50.19.115.195', port=27019)
     except:
         print "Could not connect to Mongo"
         
