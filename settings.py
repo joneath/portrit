@@ -117,7 +117,7 @@ elif ENV == "TEST":
     POSTMARK_TEST_MODE = False
     
     try:
-        connect('portrit', host='', port=27017)
+        connect('portrit', host='50.19.115.195', port=27019)
     except:
         print "Could not connect to Mongo"
     
