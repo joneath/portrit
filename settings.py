@@ -91,7 +91,8 @@ elif ENV == "TEST":
         'default': {
             'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
             'LOCATION': [
-                '127.0.0.1:11211',
+                '10.117.73.243:11211',
+                '10.117.37.72:11211',
             ]
         }
     }
@@ -231,5 +232,4 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.admin',
     'main',
-    # 'south',
 )
