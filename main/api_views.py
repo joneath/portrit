@@ -66,7 +66,6 @@ def sign_in_create(request):
     access_token = request.POST.get('access_token')
     
     user = Portrit_User.objects.filter(fb_user__fid=int(fb_user))
-    
     if len(user) == 0:
         graph = facebook.GraphAPI(access_token)
         try:

@@ -273,7 +273,19 @@ function render_search_results(data){
         tv.setData(list_view_data);
     }
     else{
-        tv.setData([]);
+        var empty_row = row = Ti.UI.createTableViewRow({
+                height: 45
+        });
+        
+        var empty_label = Titanium.UI.createLabel({
+            color: '#333',
+            text: 'No Users Found.',
+            textAlign: 'center',
+            font: {fontSize: 16, fontWeight: 'bold'}
+        });
+        empty_row.add(empty_label);
+        
+        tv.setData([empty_row]);
     }
 }
 

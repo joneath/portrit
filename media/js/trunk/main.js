@@ -1623,15 +1623,22 @@ $(document).ready(function(){
     
     var title_notification_count = 0;
     function update_notifications(data, method){
-        var notification_html = '',
-            name = '',
-            nom_cat = '',
-            owner_text = '';
+        var notification_html = '';
+        var name = '';
+        var nom_cat = '';
+        var owner_text = '';
+        var photo_html = '';
         title_notification_count += 1;
         update_title_notification_count();
         if (typeof(data.nomination_category) != 'undefined'){
             nom_cat = data.nomination_category.replace(' ', '_').toLowerCase();
         }
+        
+        var photo_html = '';
+        if ( data.photo){
+            photo_html = '<img src="' + data[i].photo.crop_small + '"/>';
+        }
+        
         if (method == 'new_nom'){
             if (data.nominator == me.id){
                 name = 'You';
@@ -1641,7 +1648,7 @@ $(document).ready(function(){
             }
             notification_html = '<div class="notification_popup_cont color_transition nom_cat_'  + nom_cat + '" name="' + nom_cat + '" value="' + data.id + '" read="false" id="notification_' + data.notification_id + '" onclick="void(0)">' +
                                     // '<div class="new_nom_icon notification_icon"></div>'+
-                                    '<img src="' + data.photo.crop_small + '"/>' +
+                                    photo_html +
                                     '<div class="notification_text_cont white_back">' +
                                         '<p class="strong" style="">' + name +'</p>' +
                                         '<span> nominated your photo.</span>' +
@@ -1654,7 +1661,7 @@ $(document).ready(function(){
             name = data.nominator_username;
             notification_html = '<div class="notification_popup_cont color_transition nom_cat_'  + nom_cat + '" name="' + nom_cat + '" value="' + data.id + '" read="false" id="notification_' + data.notification_id + '" onclick="void(0)">' +
                                     // '<div class="tagged_nom_icon notification_icon"></div>'+
-                                    '<img src="' + data.photo.crop_small + '"/>' +
+                                    photo_html +
                                     '<div class="notification_text_cont white_back">' +
                                         '<p class="strong" style="">' + name +'</p>' +
                                         '<span> tagged you in a nomination.</span>' +
@@ -1679,7 +1686,7 @@ $(document).ready(function(){
             
             notification_html = '<div class="notification_popup_cont color_transition nom_cat_'  + nom_cat + '" name="' + nom_cat + '" value="' + data.id + '" read="false" id="notification_' + data.notification_id + '" onclick="void(0)">' +
                                     // '<div class="new_comment_icon notification_icon"></div>'+
-                                    '<img src="' + data.photo.crop_small + '"/>' +
+                                    photo_html +
                                     '<div class="notification_text_cont white_back">' +
                                         '<p class="strong" style="">' + name +'</p>' +
                                         '<span> commented on ' + owner_text + ' photo.</span>' + 
@@ -1697,7 +1704,7 @@ $(document).ready(function(){
             }
             notification_html = '<div class="notification_popup_cont color_transition nom_cat_'  + nom_cat + '" name="' + nom_cat + '" value="' + data.id + '" read="false" won="true" id="notification_' + data.notification_id + '" onclick="void(0)">' +
                                     // '<div class="nom_won_icon notification_icon"></div>'+
-                                    '<img src="' + data.photo.crop_small + '"/>' +
+                                    photo_html +
                                     '<div class="notification_text_cont white_back">' +
                                         '<p class="strong" style="">' + name +'</p>' +
                                         '<span> photo won the </span><p class="strong" style="">' + data.nomination_category + '</p><span> trophy!</span>' +
@@ -1825,10 +1832,15 @@ $(document).ready(function(){
                 now -= time;
                 now /= 1000
                 time_str = secondsToHms(parseInt(now));
+                
+                var photo_html = '';
+                if ( data[i].photo){
+                    photo_html = '<img src="' + data[i].photo.crop_small + '"/>';
+                }
+                
                 if (data[i].notification_type == 'new_nom'){
                     notification_html +='<div class="notification_popup_cont nom_cat_' + nom_cat + '" name="' + nom_cat + '" value="' + data[i].nomination + '" read="' + data[i].read + '" id="notification_' + data[i].notification_id + '" time="' + data[i].create_time +'" onclick="void(0)">' +
-                                            // '<div class="new_nom_icon notification_icon"></div>'+
-                                            '<img src="' + data[i].photo.crop_small + '"/>' +
+                                            photo_html +
                                             '<div class="notification_text_cont white_back ' + color_class + '">' +
                                                 '<p class="strong">' + source_name + '</p><span> nominated your photo.</span>' +
                                                 '<p class="time">' + time_str + '</p>' +
@@ -1840,7 +1852,7 @@ $(document).ready(function(){
                 else if (data[i].notification_type == 'new_comment'){
                     notification_html +='<div class="notification_popup_cont nom_cat_' + nom_cat + '" name="' + nom_cat + '" value="' + data[i].nomination + '" read="' + data[i].read + '" id="notification_' + data[i].notification_id + '" time="' + data[i].create_time +'" onclick="void(0)">' +
                                             // '<div class="new_comment_icon notification_icon"></div>' +
-                                            '<img src="' + data[i].photo.crop_small + '"/>' +
+                                            photo_html +
                                             '<div class="notification_text_cont white_back ' + color_class + '">' +
                                                 '<p class="strong">' + source_name + '</p><span> commented on ' + dest_name + ' photo.</span>' + 
                                                 '<p class="time">' + time_str + '</p>' +
@@ -1852,7 +1864,7 @@ $(document).ready(function(){
                 else if (data[i].notification_type == 'tagged_nom'){
                     notification_html +='<div class="notification_popup_cont nom_cat_' + nom_cat + '" name="' + nom_cat + '" value="' + data[i].nomination + '" read="' + data[i].read + '" id="notification_' + data[i].notification_id + '" time="' + data[i].create_time +'" onclick="void(0)">' +
                                             // '<div class="tagged_nom_icon notification_icon"></div>'+
-                                            '<img src="' + data[i].photo.crop_small + '"/>' +
+                                            photo_html +
                                             '<div class="notification_text_cont white_back ' + color_class + '">' +
                                                 '<p class="strong">' + source_name + '</p><span> tagged you in a nomination.</span>' +
                                                 '<p class="time">' + time_str + '</p>' +
@@ -1864,7 +1876,7 @@ $(document).ready(function(){
                 else if (data[i].notification_type == 'nom_won'){
                     notification_html +='<div class="notification_popup_cont nom_cat_' + nom_cat + '" name="' + nom_cat + '" value="' + data[i].nomination + '" read="' + data[i].read + '" id="notification_' + data[i].notification_id + '" won="true" time="' + data[i].create_time +'" onclick="void(0)">' +
                                             // '<div class="nom_won_icon notification_icon"></div>'+
-                                            '<img src="' + data[i].photo.crop_small + '"/>' +
+                                            photo_html +
                                             '<div class="notification_text_cont white_back ' + color_class + '">' +
                                                 '<p class="strong">' + dest_name + '</p><span> photo won the </span><p class="strong">' + data[i].nomination_category + '</p><span> trophy!</span>' +
                                                 '<p class="time">' + time_str + '</p>' +

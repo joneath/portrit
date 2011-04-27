@@ -593,10 +593,10 @@ function camera_error(error){
     reset_after_camera();
 }
 
-// Ti.App.addEventListener('restart_upload', function(e){
-//     photo_upload.abort();
-//     upload_photo(image);
-// });
+Ti.App.addEventListener('restart_upload', function(e){
+    photo_upload.abort();
+    upload_photo(image);
+});
 
 Ti.App.addEventListener('cancel_nominate', function(e){
     take_photo_click = false;

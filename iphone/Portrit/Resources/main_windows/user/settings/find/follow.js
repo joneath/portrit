@@ -187,82 +187,99 @@ function render_follow_table_view(data){
         name = null,
         list_view_data = [ ];
     
-    for (var i = 0; i < data.length; i++){
-        row = Ti.UI.createTableViewRow({
+    if (data.length > 0){
+        for (var i = 0; i < data.length; i++){
+            row = Ti.UI.createTableViewRow({
+                    height: 45
+            });
+
+            profile_image = Ti.UI.createImageView({
+        		image: 'https://graph.facebook.com/' + data[i].fid + '/picture?type=square',
+        		defaultImage: '../../../../images/photo_loader.png',
+        		left: 5,
+        		width: 35,
+        		height: 35,
+        		hires: true
+        	});
+
+            name = Titanium.UI.createLabel({
+                color: '#333',
+                text: data[i].name,
+                font: {fontSize: 16, fontWeight: 'bold'},
+                top: -15,
+                left: 45
+            });
+
+            username = Titanium.UI.createLabel({
+                color: '#666',
+                text: data[i].username,
+                font: {fontSize: 13},
+                top: 20,
+                left: 45
+            });
+
+            if (data[i].fid != me.fid){
+                if (data[i].follow){
+                    follow_button = Ti.UI.createButton({
+                        backgroundImage: '../../../../images/follow_button.png',
+                    	title:"Follow",
+                    	font: {fontSize: 12, fontWeight: 'bold'},
+                    	width:76,
+                    	height:24,
+                    	right: 3,
+                    	zIndex: 2
+                    });
+                    follow_button.method = 'follow';
+                    row.add(follow_button);
+                }
+                else{
+                    follow_button = Ti.UI.createButton({
+                        backgroundImage: '../../../../images/unfollow_button.png',
+                    	title:"Following",
+                    	font: {fontSize: 12, fontWeight: 'bold'},
+                    	width:76,
+                    	height:24,
+                    	right: 3,
+                    	zIndex: 2
+                    });
+                    follow_button.method = 'unfollow';
+                    row.add(follow_button);
+                }
+                follow_button.button = true;
+                follow_button.parent_row = row;
+                follow_button.user_fid = data[i].fid;
+                follow_button.username = data[i].username;
+                follow_button.addEventListener('click', follow_event);
+            }
+
+            row.user_fid = data[i].fid;
+            row.name = data[i].name;
+            row.username = data[i].username;
+            row.addEventListener('click', go_to_profile);
+
+            row.add(profile_image);
+            row.add(name);
+            row.add(username);
+
+            list_view_data.push(row);
+        }
+        tv.setData(list_view_data);
+    }
+    else{
+        var empty_row = row = Ti.UI.createTableViewRow({
                 height: 45
         });
         
-        profile_image = Ti.UI.createImageView({
-    		image: 'https://graph.facebook.com/' + data[i].fid + '/picture?type=square',
-    		defaultImage: '../../../../images/photo_loader.png',
-    		left: 5,
-    		width: 35,
-    		height: 35,
-    		hires: true
-    	});
-        
-        name = Titanium.UI.createLabel({
+        var empty_label = Titanium.UI.createLabel({
             color: '#333',
-            text: data[i].name,
-            font: {fontSize: 16, fontWeight: 'bold'},
-            top: -15,
-            left: 45
+            text: 'No Users Found.',
+            textAlign: 'center',
+            font: {fontSize: 16, fontWeight: 'bold'}
         });
+        empty_row.add(empty_label);
         
-        username = Titanium.UI.createLabel({
-            color: '#666',
-            text: data[i].username,
-            font: {fontSize: 13},
-            top: 20,
-            left: 45
-        });
-        
-        if (data[i].fid != me.fid){
-            if (data[i].follow){
-                follow_button = Ti.UI.createButton({
-                    backgroundImage: '../../../../images/follow_button.png',
-                	title:"Follow",
-                	font: {fontSize: 12, fontWeight: 'bold'},
-                	width:76,
-                	height:24,
-                	right: 3,
-                	zIndex: 2
-                });
-                follow_button.method = 'follow';
-                row.add(follow_button);
-            }
-            else{
-                follow_button = Ti.UI.createButton({
-                    backgroundImage: '../../../../images/unfollow_button.png',
-                	title:"Following",
-                	font: {fontSize: 12, fontWeight: 'bold'},
-                	width:76,
-                	height:24,
-                	right: 3,
-                	zIndex: 2
-                });
-                follow_button.method = 'unfollow';
-                row.add(follow_button);
-            }
-            follow_button.button = true;
-            follow_button.parent_row = row;
-            follow_button.user_fid = data[i].fid;
-            follow_button.username = data[i].username;
-            follow_button.addEventListener('click', follow_event);
-        }
-        
-        row.user_fid = data[i].fid;
-        row.name = data[i].name;
-        row.username = data[i].username;
-        row.addEventListener('click', go_to_profile);
-        
-        row.add(profile_image);
-        row.add(name);
-        row.add(username);
-        
-        list_view_data.push(row);
+        tv.setData([empty_row]);
     }
-    tv.setData(list_view_data);
 }
 
 window_activity = Titanium.UI.createActivityIndicator({

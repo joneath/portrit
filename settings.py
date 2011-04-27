@@ -91,8 +91,8 @@ elif ENV == "TEST":
         'default': {
             'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
             'LOCATION': [
-                '10.117.73.243:11211',
-                '10.117.37.72:11211',
+                '10.202.158.211:11211',
+                '10.112.77.189:11211',
             ]
         }
     }

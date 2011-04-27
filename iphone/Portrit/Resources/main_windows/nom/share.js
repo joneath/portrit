@@ -246,6 +246,7 @@ function submit_nom(e){
     var check_count = 0;
     var upload_ready_state = 0;
     var timeout_count = 0;
+    var restart_count = 0;
     
     caption_text = caption.value;
     window_activity_cont.show();
@@ -302,9 +303,16 @@ function submit_nom(e){
             }
             
             if (check_count > 30 && (!progress || progress <= 5) && parseInt(upload_ready_state) < 4){
-                clearInterval(check_upload_interval);
-                win.animate(fadeOut);
-                Ti.App.fireEvent('reset_after_camera_to_profile', { });
+                if (restart_count < 1){
+                    check_count = 0;
+                    restart_count += 1;
+                    Ti.App.fireEvent('restart_upload', { });
+                }
+                else{
+                    clearInterval(check_upload_interval);
+                    win.animate(fadeOut);
+                    Ti.App.fireEvent('reset_after_camera_to_profile', { });
+                }
             }
             check_count += 1;
         }, 200);

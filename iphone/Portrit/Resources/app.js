@@ -201,7 +201,7 @@ function check_if_username(me){
             load_portrit(true);
         }
         else{
-            init_new_user()
+            init_new_user(true)
         }
     };
 
@@ -251,7 +251,7 @@ function alphaNumericCheck(value){
 }
 
 var new_user_handlers_attached = false;
-function init_new_user(){
+function init_new_user(logout){
     var no_tabgroup = false;
     var go_shown = false;
     var create_account_win = Titanium.UI.createWindow({ });
@@ -540,6 +540,14 @@ function init_new_user(){
     create_account_win.add(tv);
     
 	create_account_win.add(create_go);
+	
+	if (typeof(logout) != 'undefined' && logout){
+	    fb_button = Titanium.Facebook.createLoginButton({
+            'style':'wide',
+            bottom: 30
+        });
+        create_account_win.add(fb_button);
+	}
     
     if (no_tabgroup){
         landing_tabgroup.open();
