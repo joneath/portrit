@@ -16,7 +16,7 @@ public final class PortritAppInfo implements ITiAppInfo
 	public PortritAppInfo(TiApplication app) {
 		TiProperties properties = app.getSystemProperties();
 					
-					properties.setString("ti.facebook.appid", "155664697800227");
+					properties.setString("ti.facebook.appid", "126374870731237");
 					
 					properties.setString("ti.deploytype", "development");
 	}
@@ -54,7 +54,7 @@ public final class PortritAppInfo implements ITiAppInfo
 	}
 	
 	public boolean isAnalyticsEnabled() {
-		return true;
+		return false;
 	}
 	
 	public String getGUID() {

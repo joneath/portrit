@@ -174,6 +174,7 @@ function render_notifications(data){
         left_image = '',
         target_name = '',
         target_username = '',
+        source_text = '',
         time = null,
         now = new Date(),
         time_label = null,
@@ -182,12 +183,13 @@ function render_notifications(data){
     
     for (var i = 0; i < data.length; i++){
         row = Ti.UI.createTableViewRow({
-                backgroundColor: '#fff',
-                height: 40
+            backgroundColor: '#fff',
+                
         });
         
         if (data[i].notification_type == 'tagged_nom'){
-            label_text = data[i].source_username + ' tagged you in a photo.';
+            source_text = data[i].source_username;
+            label_text = ' tagged you in a photo.';
             left_image = '../images/notification_tag.png';
             
             row.nom_id = data[i].nomination;
@@ -205,7 +207,8 @@ function render_notifications(data){
                 target_name = data[i].destination_username + '\'s';
                 target_username = data[i].destination_username;
             }
-            label_text = target_name + ' nomination won';
+            source_text = target_name;
+            label_text = ' nomination won';
             left_image = '../images/notification_trophy.png';
             
             row.nom_id = data[i].nomination;
@@ -218,7 +221,8 @@ function render_notifications(data){
         	row.addEventListener('click', add_detail_trophy_window);
         }
         else if (data[i].notification_type == 'new_nom'){
-            label_text = data[i].source_username + ' nominated your photo.';
+            source_text = data[i].source_username;
+            label_text = ' nominated your photo.';
             left_image = '../images/notification_nomination.png';
             
             row.nom_id = data[i].nomination;
@@ -241,7 +245,8 @@ function render_notifications(data){
                 target_name = data[i].destination_username + '\'s';
                 target_username = data[i].destination_username
             }
-            label_text = data[i].source_username + ' commented on ' + target_name + ' photo.';
+            source_text = data[i].source_username;
+            label_text = ' commented on ' + target_name + ' photo.';
             left_image = '../images/notification_comments.png';
             
             row.nom_id = data[i].nomination;
@@ -266,10 +271,12 @@ function render_notifications(data){
                 pending_button_bar.row = row;
                 pending_button_bar.addEventListener('click', post_follow_permission);
                 row.add(pending_button_bar);
-                label_text = data[i].source_username + ' would like to follow you.';
+                source_text = data[i].source_username;
+                label_text = ' would like to follow you.';
             }
             else{
-                label_text = data[i].source_username + ' has begun to follow you.';
+                source_text = data[i].source_username;
+                label_text = ' has begun to follow you.';
             }
             left_image = '../images/notification_following.png';
             
@@ -280,43 +287,82 @@ function render_notifications(data){
             
         	row.addEventListener('click', add_profile_window);
         }
-        row.leftImage = left_image;
+        
+        if (data[i].photo){
+            row.height = 85;
+            var thumb = Ti.UI.createImageView({
+                // image: data[i].photo.crop,
+        		image: '../images/photo_loader.png',
+        		left: 5,
+        		width: 100,
+        		height: 75,
+        		hires: true
+        	});
+        	cachedImageView('images', data[i].photo.crop, thumb);
+        	row.add(thumb);
+        }
+        else{
+            row.height = 40;
+            row.leftImage = left_image;
+        }
         
         time = new Date(data[i].create_time * 1000);
         time_diff = now - time;
         time_diff /= 1000;
         
         time_label = Titanium.UI.createLabel({
-                text: secondsToHms(time_diff),
-                color: '#666',
-                textAlign: 'right',
-                font:{fontSize:10},
-                size: {width: 320, height: 12}
-            });
+            text: secondsToHms(time_diff),
+            color: '#666',
+            textAlign: 'right',
+            font:{fontSize:10},
+            size: {width: 320, height: 12}
+        });
             
         time_view = Titanium.UI.createView({
-                right: 15,
-                bottom: 0,
-                size: {width: 320, height: 12}
-            });
+            right: 15,
+            bottom: 5,
+            size: {width: 320, height: 12}
+        });
         time_view.add(time_label);
         
         notification_label_cont = Titanium.UI.createView({
-            top: 0,
-            size: {width: 300, height: 40}
+            top: 0
         });
         
+        // source_label = Titanium.UI.createLabel({
+        //     text: source_text,
+        //     color: '#333',
+        //     textAlign: 'left',
+        //     top: 5,
+        //     left: 5,
+        //     height: 'auto',
+        //     width: 'auto',
+        //     font:{fontSize: 14, fontWeight: 'bold'}
+        // });
+        // var source_width = source_label.width + 6;
+        
         notification_label = Titanium.UI.createLabel({
-                text: label_text,
-                color: '#222',
-                textAlign: 'left',
-                left: 25,
-                right: 15,
-                top: 5, 
-                height: 'auto',
-                font:{fontSize:13}
-            });
-            
+            text: source_text + label_text,
+            color: '#333',
+            textAlign: 'left',
+            left: 10,
+            right: 5,
+            top: 5, 
+            height: 'auto',
+            font:{fontSize: 14}
+        });
+        if (data[i].photo){
+            notification_label_cont.left = 100;
+            notification_label_cont.height = 85;
+            notification_label_cont.width = 210;
+        }
+        else{
+            notification_label_cont.left = 25;
+            notification_label_cont.height = 40;
+            notification_label_cont.width = 300;
+        }
+        
+        // notification_label_cont.add(source_label);
         notification_label_cont.add(notification_label);
 
         
@@ -325,7 +371,7 @@ function render_notifications(data){
             nom_cat_color = get_nom_cat_color(nom_cat_underscore);
             nomination_category_bar = Titanium.UI.createView({
                 backgroundColor: nom_cat_color,
-                height: 40,
+                height: 85,
                 width: 10,
                 right: 0,
             });
@@ -373,8 +419,12 @@ function render_notifications(data){
 }
 
 function update_notifications(data){
+    var temp_id_dict = { };
     for (var i = 0; i < data.length; i++){
-        notification_cache.splice(0, 0, data[i]);
+        if (typeof(temp_id_dict[data[i].id]) == 'undefined'){
+            temp_id_dict[data[i].id] = true;
+            notification_cache.splice(0, 0, data[i]);
+        }
     }
     return notification_cache;
 }
@@ -438,9 +488,6 @@ function load_notifications(){
             backgroundColor: '#000',
             top: 40,
             editable: true,
-            // bottom: -50,
-            // headerView: profile_header,
-            // footerView: load_more_view,
             separatorStyle: 1,
             separatorColor: '#000',
             style: Titanium.UI.iPhone.TableViewStyle.PLAIN

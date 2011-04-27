@@ -459,7 +459,7 @@ function load_more_noms(state, cat, dir, pos_to_load){
         url = SERVER_URL + '/api/get_nom_detail/?source=' + me.username + '&nav_selected=' +state + '&cat=' + cat + '&dir=' + dir + '&pos=' + pos_to_load;
     }
     else if (state == 'community_active'){
-        
+        url = SERVER_URL + '/api/get_nom_detail/?nav_selected=' +state + '&cat=' + cat + '&dir=' + dir + '&pos=' + pos_to_load;
     }
     else if (state == 'community_top'){
         url = SERVER_URL + '/api/get_nom_detail/?nav_selected=' +state + '&cat=' + cat + '&dir=' + dir + '&pos=' + pos_to_load;

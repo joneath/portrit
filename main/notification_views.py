@@ -85,6 +85,12 @@ def get_active_notifications(user):
                 destination_username = notification.destination.username
             except:
                 pass
+                
+            photo = None
+            try:
+                photo = notification.nomination.photo.get_photo()
+            except:
+                pass
             
             data.append({
                 'notification_type': notification.notification_type.name,
@@ -100,6 +106,7 @@ def get_active_notifications(user):
                 'nomination': notification.get_nomination_id(),
                 'notification_id': str(notification.id),
                 'nomination_category': notification.get_nomination_category(),
+                'photo': photo,
             })
         
         return data

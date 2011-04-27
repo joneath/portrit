@@ -91,7 +91,9 @@ var win1 = Titanium.UI.createWindow({
     url:'main_windows/active.js',
     backgroundColor:'#000'
 });
-win1.hideNavBar({animated:false});
+if (Ti.Platform.osname != 'android'){
+    win1.hideNavBar({animated:false});
+}
 
 Titanium.UI.iPhone.setStatusBarStyle(Titanium.UI.iPhone.StatusBar.OPAQUE_BLACK);
 
@@ -109,7 +111,10 @@ var win2 = Titanium.UI.createWindow({
     url:'main_windows/community.js',
     backgroundColor:'#000'
 });
-win2.hideNavBar({animated:false});
+if (Ti.Platform.osname != 'android'){
+    win2.hideNavBar({animated:false});
+}
+
 var tab2 = Titanium.UI.createTab({  
     icon:'images/com_button.png',
     title:'Community',
@@ -122,7 +127,10 @@ var win3 = Titanium.UI.createWindow({
     fullscreen: true,
     backgroundColor:'#000'
 });
-win3.hideNavBar({animated:false});
+if (Ti.Platform.osname != 'android'){
+    win3.hideNavBar({animated:false});
+}
+
 var tab3 = Titanium.UI.createTab({ 
     icon:'images/camera_button.png',
     title:'Share',
@@ -135,7 +143,10 @@ var win4 = Titanium.UI.createWindow({
     url:'main_windows/notifications.js',
     backgroundColor:'#000'
 });
-win4.hideNavBar({animated:false});
+if (Ti.Platform.osname != 'android'){
+    win4.hideNavBar({animated:false});
+}
+
 var tab4 = Titanium.UI.createTab({  
     icon:'images/notification_button.png',
     title:'Updates',
@@ -148,7 +159,10 @@ var win5 = Titanium.UI.createWindow({
     url:'main_windows/profile.js',
     backgroundColor:'#000'
 });
-win5.hideNavBar({animated:false});
+if (Ti.Platform.osname != 'android'){
+    win5.hideNavBar({animated:false});
+}
+
 var tab5 = Titanium.UI.createTab({  
     icon:'images/profile_button.png',
     title:'Profile',
@@ -668,7 +682,9 @@ function init_login(){
         backgroundImage: 'images/background.png',
         width: 320
     });
-    landing_win.hideNavBar({animated:false});
+    if (Ti.Platform.osname != 'android'){
+        landing_win.hideNavBar({animated:false});
+    }
     
     landing_tab = Titanium.UI.createTab({
         window: landing_win

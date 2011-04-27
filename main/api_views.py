@@ -2007,6 +2007,7 @@ def new_comment(request):
                     'nom_owner_name': owner.name,
                     'nom_owner_username': owner.username,
                     'won': nomination.won,
+                    'photo': nomination.photo.get_photo(),
                     'friends': friends,
                 }
             }

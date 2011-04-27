@@ -1,11 +1,14 @@
 Logfile initialized
 [INFO] logfile = /Users/joneath/Workspace/portrit/iphone/Portrit/build.log
 [INFO] Building Portrit for Android ... one moment
-[INFO] Titanium SDK version: 1.7.0 (04/22/11 19:10 6879ca9...)
+[INFO] Titanium SDK version: 1.7.0 (04/24/11 16:14 8af1b88...)
 [DEBUG] Waiting for device to be ready ...
 [TRACE] adb devices returned 1 devices/emulators
-[DEBUG] Device connected... (waited 0 seconds)
-[DEBUG] waited 0.069389 seconds on emulator to get ready
+[TRACE] adb devices returned 1 devices/emulators
+[TRACE] adb devices returned 1 devices/emulators
+[DEBUG] Device connected... (waited 10 seconds)
+[DEBUG] waited 10.054671 seconds on emulator to get ready
+[INFO] Waiting for the Android Emulator to become available
 [DEBUG] com.portrit installed? True
 [INFO] Copying project resources..
 [INFO] Tiapp.xml unchanged, skipping class generation
@@ -14,3 +17,4 @@ Logfile initialized
 [INFO] Launching application ... Portrit
 [TRACE] Launch output: Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=com.portrit/.PortritActivity }
 
+[INFO] Android Emulator has exited

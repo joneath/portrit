@@ -415,10 +415,10 @@ div#login_cont{
             right:              0px;
             background-color:   white;
             color:              #333;
-            height:             170px;
+            height:             163px;
             text-align:         center;
             width:              340px;
-            padding-top:        30px;
+            padding-top:        37px;
             position:           absolute;
             z-index:            10000;
             border-top-right-radius:        5px;
@@ -440,7 +440,7 @@ div#login_cont{
             div#login_content div#login_right_cont h2{
                 font-size:          20px;
                 font-weight:        bold;
-                margin-bottom:      20px;
+                margin-bottom:      15px;
             }
         
             div#login_content div#login_right_cont p{
@@ -448,7 +448,7 @@ div#login_cont{
                 font-size:          13px;
                 margin:             0 auto;
                 margin-top:         15px;
-                margin-bottom:      20px;
+                margin-bottom:      15px;
             }
             
             #trophy_landing{
@@ -489,7 +489,7 @@ div#login_cont{
                 }
                 
                 #tagline_main{
-                    color:          #fff;
+                    color:          #eee;
                     font-size:      16px;
                     margin-bottom:  10px;
                 }
@@ -4388,6 +4388,16 @@ div#context_overlay{
             #stream_empty ul li p{
                 color:              #666;
             }
+            
+            #stream_empty ul li a{
+                color:              #F95057;
+            }
+            
+#follow_cont h2{
+    font-size:          24px;
+    margin-bottom:      10px;
+    text-align:         center;
+}
                 
 .stream_nav, .sub_stream_nav{
     background-color:   #cecece;
@@ -6987,7 +6997,7 @@ div#payment_types_cont{
 #clear_all_notifications{
     color:                  #666;
     position:               absolute;
-    right:                  0px;
+    right:                  10px;
     top:                    14px;
     font-size:              12px;
     cursor:                 pointer;
@@ -7164,7 +7174,7 @@ div#payment_types_cont{
             background-color:       white;
             cursor:                 default;
             display:                none;
-            height:                 335px;
+            height:                 410px;
             left:                   -120px;
             top:                    67px;
             position:               absolute;
@@ -7178,15 +7188,13 @@ div#payment_types_cont{
         }
         
         #notification_footer_popup_cont{
-            height:                 296px;
+            height:                 365px;
             overflow-y:             auto;
         }
         
             #notification_footer_popup_heading{
                 background-color:       white;
                 border-bottom:          1px solid #DEDEDE;
-                margin-left:            10px;
-                margin-right:           10px;
                 margin-top:             10px;
                 position:               relative;
                 z-index:                1000;
@@ -7206,8 +7214,15 @@ div#payment_types_cont{
             text-align:             left;
         }
         
+            .notification_popup_cont img{
+                float:                  left;
+                margin-top:             5px;
+                margin-left:            5px;
+                margin-right:           5px;
+            }
+        
             .notification_popup_cont .notification_icon{
-                float:              left;
+                float:                  left;
             }
         
             .notification_popup_cont.new_follow{

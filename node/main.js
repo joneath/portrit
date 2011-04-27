@@ -6,7 +6,6 @@ var url = require("url");
 var net = require('net');
 var events = require("events");
 var path = require("path");
-// var nodemailer = require('nodemailer');
 var postmark = require("./lib/postmark")("7e81d8b2-4429-44e1-a493-eef87d130669");
 
 var URBAN_KEY = 'XOeKRpIDSJmpSvVAwjRXdg';
@@ -145,7 +144,7 @@ var Portrit = function(){
                             '<p style="font-size: 14px;">One of your photos have been nominated for the ' + data.nom_cat + ' Trophy. You can visit your <a href="http://portrit.com/#!/nomination/' + data.nom_id + '/" style="color: #1686f7; cursor: pointer; text-decoration: none;">nomination here</a>.</p>' +
                             '<div style="-moz-border-radius: 5px; border-radius: 5px; background-color: #333; width: 500px; height: 105px; margin: 0 auto;">' +
                                 '<div style="float:left; width:100px; text-align: center;">' +
-                                    '<img src="http://portrit.s3.amazonaws.com/img/trophies/medium/' + cat_under + '.png"/>' +
+                                    '<img stlye="height: 100px;width: 50px;" src="http://portrit.s3.amazonaws.com/img/trophies/medium/' + cat_under + '.png"/>' +
                                 '</div>' +
                                 '<div>' +
                                     '<h2 style="float: left; height: 105px; width: 400px; text-align: center; font-size: 24px; font-weight: bold; margin: 0px; line-height: 105px; background-color: ' + cat_color + ';">' + data.nom_cat + ' Trophy</h2>' +
@@ -160,7 +159,7 @@ var Portrit = function(){
                             '<p style="font-size: 14px;">You have just won the ' + data.nom_cat + ' Trophy. You can visit your <a href="http://portrit.com/#!/' + data.target_username + '/trophies/" style="color: #1686f7; cursor: pointer; text-decoration: none;">trophy room here</a>.</p>' +
                             '<div style="-moz-border-radius: 5px; border-radius: 5px; background-color: #333; width: 500px; height: 105px; margin: 0 auto;">' +
                                 '<div style="float:left; width:100px; text-align: center;">' +
-                                    '<img src="http://portrit.s3.amazonaws.com/img/trophies/medium/' + cat_under + '.png"/>' +
+                                    '<img stlye="height: 100px;width: 50px;" src="http://portrit.s3.amazonaws.com/img/trophies/medium/' + cat_under + '.png"/>' +
                                 '</div>' +
                                 '<div>' +
                                     '<h2 style="float: left; height: 105px; width: 400px; text-align: center; font-size: 24px; font-weight: bold; margin: 0px; line-height: 105px; background-color: ' + cat_color + ';">' + data.nom_cat + ' Trophy</h2>' +
@@ -291,41 +290,6 @@ var Portrit = function(){
     // else{
     //     tcp_server.listen(8081, '10.117.57.137');
     // }
-    
-    // var iphone_tcp_server = net.createServer(function (stream) {
-    //     var data_stream = '';
-    //     stream.setEncoding('ascii');
-    //     stream.on('connect', function () {
-    //         console.log('socket connected');
-    //     });
-    //     stream.on('data', function (data) {
-    //         data_stream += data;
-    //         stream.end('test');
-    //         try{
-    //             var event_user = parseInt(data_stream);
-    //             nomination_emitter.removeAllListeners(event_user);
-    //             var nom_callback = function(notification_id, data){
-    //                 console.log('iphone event sent');
-    //                 if (typeof(notification_id) !== "undefined"){
-    //                     data.payload.notification_id = notification_id;
-    //                 }
-    //                 stream.end(JSON.stringify(data));
-    //             }
-    //             nomination_emitter.addListener(event_user, nom_callback);
-    //         }
-    //         catch (err){
-    //             
-    //         }
-    //         console.log(data_stream + ' recieved');
-    //     });
-    //     stream.on('end', function (){
-    //         console.log('data recieved');
-    //         console.log(data_stream);
-    // 
-    //     });
-    // });
-    // iphone_tcp_server.listen(8082, 'localhost');
-    
     
     // var websock_server = ws.createServer({
     //     websock_server: http

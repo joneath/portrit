@@ -274,6 +274,7 @@ def mark_nom_as_won(nom):
                 'nominatee_username': nom.nominatee.username,
                 'vote_count': nom.current_vote_count,
                 'won': nom.won,
+                'photo': nom.photo.get_photo(),
                 'friends': friends_to_notify,
             }
         }

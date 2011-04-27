@@ -562,7 +562,9 @@ function upload_photo(image){
         if (check_count > 12 && progress <= 10){
             clearInterval(upload_health_interval);
             try{
-                // photo_upload.abort();
+                photo_upload.abort();
+                Ti.App.Properties.setString("upload_ready_state", 0);
+                Ti.App.Properties.setString("upload_progress", 0);
                 upload_photo(image);
             }
             catch (e){

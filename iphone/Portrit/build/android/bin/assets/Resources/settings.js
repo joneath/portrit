@@ -13,6 +13,7 @@ if (RUNTIME == 'production'){
 }
 else if (RUNTIME == 'test'){
     SERVER_URL = 'http://test.portrit.com';
+    // SERVER_URL = 'http://ec2-50-19-12-184.compute-1.amazonaws.com/';
     NODE_SERVER = '';
     NODE_PORT = 8082;
     TWITTER_CONSUMER = '676tZGmZP5SDdp9h1iFnA';

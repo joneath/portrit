@@ -50,6 +50,7 @@ win.add(tv);
 
 Ti.include('../../settings.js');
 Ti.include('../../includes.js');
+Ti.include('../../urbanairship.js');
 
 var me = JSON.parse(Ti.App.Properties.getString("me")),
     tabGroup = win.tabGroup,
@@ -215,6 +216,12 @@ var init_options = function(){
         var file = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory,'twitter.config');
         if (file.exists()) { file.deleteFile(); }
         Ti.App.Properties.removeProperty("push_notifications");
+        
+        UrbanAirship.unregister({
+            complete: function(){
+                
+            }
+        });
         
         Ti.App.fireEvent('logout', { });
     });

@@ -70,28 +70,32 @@ def contact_portrit(request):
     cookie = facebook.get_user_from_cookie(
         request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
     if cookie:
-        from_email = request.POST.get('email')
-        reason = request.POST.get('reason')
-        message = request.POST.get('message')
+        try:
+            from_email = request.POST.get('email')
+            reason = request.POST.get('reason')
+            message = request.POST.get('message')
         
-        to_email_dict = {
-            '1': 'support@portrit.com',
-            '2': 'feedback@portrit.com',
-            '3': 'cheating@portrit.com',
-            '4': 'contact@portrit.com',
-            '5': 'press@portrit.com',
-            '6': 'advertise@portrit.com',
-        }
-        to_email = to_email_dict[reason]
+            to_email_dict = {
+                '1': 'support@portrit.com',
+                '2': 'feedback@portrit.com',
+                '3': 'cheating@portrit.com',
+                '4': 'contact@portrit.com',
+                '5': 'press@portrit.com',
+                '6': 'advertise@portrit.com',
+            }
+            to_email = to_email_dict[reason]
         
-        from django.core.mail import EmailMessage
-        subject = 'Contact Form'
-        html_content = message
-        msg = EmailMessage(subject, html_content, from_email, [to_email])
-        msg.send()
+            from django.core.mail import EmailMessage
+            subject = 'Contact Form'
+            html_content = message
         
-        data = simplejson.dumps(True)
-        return HttpResponse(data, mimetype='application/json')
+            msg = EmailMessage(subject, html_content, from_email, [to_email,])
+            msg.send()
+        
+            data = simplejson.dumps(True)
+            return HttpResponse(data, mimetype='application/json')
+        except Exception, err:
+            print err
         
 def submit_bug_report(request):
     cookie = facebook.get_user_from_cookie(

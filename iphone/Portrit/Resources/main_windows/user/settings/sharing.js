@@ -170,59 +170,56 @@ function init_sharing(){
             title: 'Facebook',
             color: '#333',
             font:{fontSize: 18, fontWeight: 'bold'},
-            backgroundColor: '#fff'
+            backgroundColor: '#fff',
+            selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
     });
-    row.addEventListener('click', function(){
-        var unlink_alert = Titanium.UI.createAlertDialog({
-        	title:'Unlink your Facebook?',
-        	message: 'A Facebook account is required to use Portrit. Removing this account will delete your Portrit account.',
-        	buttonNames: ['Cancel', 'Continue'],
-        	cancel: 0
-        });
-        unlink_alert.addEventListener('click', function(e){
-            if (e.index == 1){
-                var delete_account_alert = Titanium.UI.createAlertDialog({
-                	title:'Delete your Portrit account?',
-                	message: 'This will delete your Portrit account. Your personal data will be removed from the system in the next 7 days.',
-                	buttonNames: ['Cancel', 'Delete'],
-                	cancel: 0
-                });
-                delete_account_alert.addEventListener('click', function(e){
-                    if (e.index == 1){
-                        alert('delete');
-                        var xhr = Titanium.Network.createHTTPClient();
-                        xhr.onload = function(){
-                        	var file = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory,'twitter.config');
-                            if (file.exists()) { file.deleteFile(); }
-                            Ti.App.Properties.removeProperty("push_notifications");
-
-                            Ti.App.fireEvent('logout', { });
-                        };
-                        var url = SERVER_URL + '/api/delete_account/';
-                        xhr.open('POST', url);
-                        xhr.send({
-                            'access_token': me.access_token
-                        });
-                    }
-                });
-                
-                delete_account_alert.show();
-            }
-        });
-        unlink_alert.show();
-    });
+    // row.addEventListener('click', function(){
+    //     var unlink_alert = Titanium.UI.createAlertDialog({
+    //      title:'Unlink your Facebook?',
+    //      message: 'A Facebook account is required to use Portrit. Removing this account will delete your Portrit account.',
+    //      buttonNames: ['Cancel', 'Continue'],
+    //      cancel: 0
+    //     });
+    //     unlink_alert.addEventListener('click', function(e){
+    //         if (e.index == 1){
+    //             var delete_account_alert = Titanium.UI.createAlertDialog({
+    //              title:'Delete your Portrit account?',
+    //              message: 'This will delete your Portrit account. Your personal data will be removed from the system in the next 7 days.',
+    //              buttonNames: ['Cancel', 'Delete'],
+    //              cancel: 0
+    //             });
+    //             delete_account_alert.addEventListener('click', function(e){
+    //                 if (e.index == 1){
+    //                     alert('delete');
+    //                     var xhr = Titanium.Network.createHTTPClient();
+    //                     xhr.onload = function(){
+    //                      var file = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory,'twitter.config');
+    //                         if (file.exists()) { file.deleteFile(); }
+    //                         Ti.App.Properties.removeProperty("push_notifications");
+    // 
+    //                         Ti.App.fireEvent('logout', { });
+    //                     };
+    //                     var url = SERVER_URL + '/api/delete_account/';
+    //                     xhr.open('POST', url);
+    //                     xhr.send({
+    //                         'access_token': me.access_token
+    //                     });
+    //                 }
+    //             });
+    //             
+    //             delete_account_alert.show();
+    //         }
+    //     });
+    //     unlink_alert.show();
+    // });
     var linked_text = Titanium.UI.createLabel({
-	    text: 'Linked',
+         text: 'Linked',
         color: '#99CB6E',
         right: 15,
         size: {width: 'auto', height: 'auto'},
         font:{fontSize: 16}
     });
     row.add(linked_text);
-    row.addEventListener('click', function(){
-        // var win = Ti.UI.createWindow({backgroundColor:"#eee", url:'settings/find_friends.js', title: 'Find Friends'});
-        // Titanium.UI.currentTab.open(win,{animated:true});
-    });
     section.add(row);
     
     var row = Ti.UI.createTableViewRow({

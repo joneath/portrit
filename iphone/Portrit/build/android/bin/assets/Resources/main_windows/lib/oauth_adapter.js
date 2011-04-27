@@ -154,6 +154,13 @@ var OAuthAdapter = function(pConsumerSecret, pConsumerKey, pSignatureMethod)
         accessToken = null;
         accessTokenSecret = null;
     }
+    
+    this.get_access_token = function(){
+        return {
+            'access_token': accessToken,
+            'access_token_secret': accessTokenSecret,
+        }
+    }
 
     // creates a message to send to the service
     var createMessage = function(pUrl)
@@ -162,20 +169,6 @@ var OAuthAdapter = function(pConsumerSecret, pConsumerKey, pSignatureMethod)
             action: pUrl
             ,
             method: 'POST'
-            ,
-            parameters: []
-        };
-        message.parameters.push(['oauth_consumer_key', consumerKey]);
-        message.parameters.push(['oauth_signature_method', signatureMethod]);
-        return message;
-    };
-    
-    var createGETMessage = function(pUrl)
-    {
-        var message = {
-            action: pUrl
-            ,
-            method: 'GET'
             ,
             parameters: []
         };
@@ -365,49 +358,45 @@ var OAuthAdapter = function(pConsumerSecret, pConsumerKey, pSignatureMethod)
     };
 
     // TODO: remove this on a separate Twitter library
-    var send = function(pUrl, pParameters, method, callback)
+    var send = function(pUrl, pParameters, pTitle, pSuccessMessage, pErrorMessage, method)
     {
-        var requestUrl = pUrl        
+        Ti.API.debug('Sending a message to the service at [' + pUrl + '] with the following params: ' + JSON.stringify(pParameters));
+
         if (accessToken == null || accessTokenSecret == null)
         {
-        
+
             Ti.API.debug('The send status cannot be processed as the client doesn\'t have an access token. The status update will be sent as soon as the client has an access token.');
-        
+
             actionsQueue.push({
                 url: pUrl,
-                parameters: pParameters
+                parameters: pParameters,
+                title: pTitle,
+                successMessage: pSuccessMessage,
+                errorMessage: pErrorMessage
             });
             return;
         }
-        
+
         accessor.tokenSecret = accessTokenSecret;
-        requestUrl = requestUrl+"?";
-        
-        var message = createGETMessage(pUrl);
+
+        var message = createMessage(pUrl);
         message.parameters.push(['oauth_token', accessToken]);
+        for (p in pParameters) message.parameters.push(pParameters[p]);
         OAuth.setTimestampAndNonce(message);
-        OAuth.setParameter(message, "oauth_timestamp", OAuth.timestamp());
         OAuth.SignatureMethod.sign(message, accessor);
-        
+
         var parameterMap = OAuth.getParameterMap(message.parameters);
-        for (var p in parameterMap) {
-            if (p != undefined){
-                Ti.API.debug(p + ': ' + parameterMap[p]);
-                requestUrl += "&" + p + "=" + parameterMap[p];
-            }
-        }
-        
-        Ti.API.info(requestUrl);
-        
-        var client = Titanium.Network.createHTTPClient();
-        client.open(method, requestUrl);
-        if (method == 'POST'){
-            client.send(parameterMap);
-        }
-        else{
-            client.send();
-        }
-        client.onload = callback;
+        for (var p in parameterMap)
+        Ti.API.debug(p + ': ' + parameterMap[p]);
+
+        var client = Ti.Network.createHTTPClient();
+        client.open(method, pUrl, false);
+        client.send(parameterMap);
+
+        Ti.API.debug('*** sendStatus, Response: [' + client.status + '] ' + client.responseText);
+
+        return client.responseText;
+
     };
     this.send = send;
 
