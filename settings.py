@@ -84,8 +84,8 @@ elif ENV == "TEST":
     FACEBOOK_APP_ID = "123063501058161"
     FACEBOOK_APP_SECRET = "25f31ff59105385308be7fed55fa1b5e"
     
-    NODE_SOCKET = 8081
-    NODE_HOST = 'localhost'
+    NODE_SOCKET = 8080
+    NODE_HOST = '10.202.159.181'
     
     CACHES = {
         'default': {
