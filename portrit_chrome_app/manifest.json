@@ -1,7 +1,7 @@
 {
 "name": "Portrit",
 "description": "Finding the best photos between your friends.",
-"version": "1.0",
+"version": "1.0.1",
 "icons": {
 "128": "icon128_rounded.png"
 },

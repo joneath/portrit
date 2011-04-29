@@ -1689,7 +1689,7 @@ span.vote_tooltip_arrow{
     height:             10px;
     width:              12px;
     bottom:             -9px;
-    left:               104px;
+    left:               195px;
     position:           absolute;
     background-image:   url(http://portrit.s3.amazonaws.com/img/sprite.png);
     background-position:-500px -729px;
@@ -1723,7 +1723,7 @@ div#nom_detail_cont{
 
     div#nom_detail_cont .title{
         font-size:              30px;
-        height:                 34px;
+        height:                 36px;
         margin-left:            15px;
     }
     
@@ -1798,7 +1798,7 @@ div#nom_detail_cont{
             float:                  left;
             height:                 490px;
             margin-left:            10px;
-            margin-top:             10px;
+            margin-top:             5px;
             position:               relative;
             width:                  700px;
             border-top-left-radius:         5px;
@@ -1865,7 +1865,7 @@ div#nom_detail_cont{
             float:              right;
             height:             490px;
             width:              250px;
-            margin-top:         10px;
+            margin-top:         5px;
         }
         
             div#main_nom_cont_right_wrap{
@@ -1979,7 +1979,7 @@ div#nom_detail_cont{
                         margin:                 0 auto;
                         margin-top:             10px;
                         margin-bottom:          10px;
-                        opacity:                0.8;
+                        opacity:                0.9;
                     }
                 
                     div#vote_cont_right .vote.voted{
@@ -2559,6 +2559,14 @@ div#community{
                 position:               relative;
                 text-align:             center;
             }
+            
+/*            #community_right_cont h3{
+                color:                  #fff;
+                font-size:              16px;
+                margin-top:             10px;
+                position:               relative;
+                text-align:             center;
+            }*/
             
             #community_cont #community_right_cont .top_user_cont{
                 background-color:       #fff;
@@ -3685,6 +3693,7 @@ div#context_overlay{
         background-color:       white;
         color:                  #333;
         margin:                 0 auto;
+        margin-bottom:          45px;
         position:               relative;
         box-shadow:             rgba(0, 0, 0, 0.496094) 0px 0px 8px 3px;
         -webkit-box-shadow:     rgba(0, 0, 0, 0.496094) 0px 0px 8px 3px;
@@ -4499,7 +4508,7 @@ div#context_overlay{
         height:             125px;
         margin-left:        175px;
         margin-top:         25px;
-        width:              300px;
+        width:              475px;
         position:           relative;
     }
     

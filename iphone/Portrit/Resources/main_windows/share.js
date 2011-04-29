@@ -79,13 +79,15 @@ function add_nominate_window(animate){
 }
 
 function pass_nominate_data(e){
-    Ti.App.fireEvent('pass_photo_data', {
-        user: me.fid,
-        name: me.name,
-        username: me.username,
-        photo: e.photo,
-        new_photo: e.new_photo
-    });
+    setTimeout(function(){
+        Ti.App.fireEvent('pass_photo_data', {
+            user: me.fid,
+            name: me.name,
+            username: me.username,
+            photo: e.photo,
+            new_photo: e.new_photo
+        });
+    }, 200);
 }
 
 var camera_overlay = Titanium.UI.createView({

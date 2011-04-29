@@ -1521,7 +1521,8 @@ win.addEventListener('focus', function(){
         header_active_tab_animation.transform = header_active_tab_matrix;
         
     	header_tab_selection.animate(header_active_tab_animation);
-
+        
+        selected_tab = 'active';
         init_community_view();
     }
     

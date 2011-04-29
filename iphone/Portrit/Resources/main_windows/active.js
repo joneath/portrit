@@ -731,6 +731,7 @@ var nominated_for_cont = null;
 var nominator_footer = null;
 var nom_detail_button = null;
 var caption = null;
+var caption_text = '';
 var nomination_cat_label = null;
 var photo_action_cont = null;
 var photo_action_row = null;
@@ -898,20 +899,37 @@ function render_nom(nom, top, row_count){
     	}
     	row.add(main_image);
 
-        // nominator_footer = Titanium.UI.createView({
-        //     height:35,
-        //     bottom: 0,
-        //     width: 320,
-        //     zIndex: 1
-        // });
-        //         
-        // nominator_footer_background = Titanium.UI.createView({
-        //     height: 35,
-        //     width: 320,
-        //     opacity: 0.8,
-        //     backgroundColor: '#000',
-        //     zIndex: -1
-        // });
+        nominator_footer = Titanium.UI.createView({
+            height:35,
+            bottom: 0,
+            width: 320,
+            zIndex: 1
+        });
+        
+        nominator_footer_background = Titanium.UI.createView({
+            height: 35,
+            width: 320,
+            opacity: 0.8,
+            backgroundColor: '#000',
+            zIndex: -1
+        });
+        nominator_footer.add(nominator_footer_background);
+        
+        caption_text = 'No caption provided';
+        if (nom.caption){
+            caption_text = nom.caption;
+        }
+        caption = Titanium.UI.createLabel({
+            text: caption_text,
+            color: '#fff',
+            // left: 10,
+            // right: 5,
+            width: 300,
+            height: 35,
+            font:{fontSize:14}
+        });
+        nominator_footer.add(caption);
+        
         // 
         // nominator_profile_img_url = 'https://graph.facebook.com/' + nom.nominator + '/picture?type=square';
         // nominator_profile_img = Ti.UI.createImageView({
@@ -1008,7 +1026,7 @@ function render_nom(nom, top, row_count){
         //     nominator_footer.add(tagged_cont);
         // }
         // 
-        // row.add(nominator_footer);
+        row.add(nominator_footer);
         
         time = new Date(nom.created_time * 1000);
         time_diff = now - time;
@@ -1035,7 +1053,7 @@ function render_nom(nom, top, row_count){
         
         post_time_cont = Titanium.UI.createView({
             right: 5,
-            bottom: 5,
+            bottom: 40,
             height: 20,
             width: 'auto',
             zIndex: 1
@@ -1061,7 +1079,7 @@ function render_nom(nom, top, row_count){
         });
         
         photo_action_row = Titanium.UI.createView({
-            backgroundColor: '#ddd',
+            backgroundColor: '#222',
             top: 0,
             width: 320,
             height: 35
@@ -1779,6 +1797,7 @@ win.addEventListener('focus', function(){
         
     	header_tab_selection.animate(header_active_tab_animation);
 
+        selected_tab = 'active';
         init_active_view();
     }
     

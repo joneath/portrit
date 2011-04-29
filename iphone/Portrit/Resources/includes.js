@@ -466,7 +466,7 @@ function render_comments(cont, comments){
         commentor.addEventListener('click', add_profile_window);
         cont.add(commentor);
         
-        commentor_width = commentor.width + 20;
+        commentor_width = commentor.width + 14;
 
         comment = Titanium.UI.createLabel({
     	    text: comments[i].comment,

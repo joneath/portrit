@@ -759,7 +759,7 @@ function render_detail_comments(cont, comments){
         
         commentor_cont.add(commentor);
         
-        commentor_width = commentor.width + 20;
+        commentor_width = commentor.width + 14;
         
         comment = Titanium.UI.createLabel({
     	    text: comments[i].comment,
@@ -1343,7 +1343,7 @@ function render_nom_detail(noms){
     });
     
     photo_action_row = Titanium.UI.createView({
-        backgroundColor: '#ddd',
+        backgroundColor: '#222',
         width: 320,
         height: 'auto'
     });

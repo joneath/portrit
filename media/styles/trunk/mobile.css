@@ -11,8 +11,6 @@ div#wrapper{
 
 #header{
     background-color:   black;
-    background:         -webkit-gradient(linear, 0% 0%, 0% 100%, from(#333), to(#111));
-    -webkit-box-shadow: none;
     text-align:         center;
     position:           relative;
     margin:             0 auto;
@@ -22,13 +20,57 @@ div#wrapper{
 	height:				150px;
 }
 
+#public_header{
+    width:              520px;
+    height:             150px;
+}
+
+#public_header #public_logo_wrap{
+    margin-left:        15px;
+    margin-top:         40px;
+}
+
+#public_header #public_tagline_cont{
+    height:             80px;
+    border-bottom-left-radius:          0px;
+    border-bottom-right-radius:         0px;
+    -moz-border-radius-bottomleft:      0px;
+    -moz-border-radius-bottomright:     0px;
+}
+
+#public_tagline_cont .left_triangle{
+    top:                58px;
+}
+
+#public_header #search_control{
+    display:            none;
+}
+
+#public_login_wrap p{
+    display:            none;
+}
+
+#public_header #public_login_cont{
+    background-image:   none;
+    background-image:   none;
+    height:             40px;
+    width:              340px;
+    margin-right:       4px;
+    background-color:   #333;
+    border-bottom-left-radius:          5px;
+    border-bottom-right-radius:         5px;
+    -moz-border-radius-bottomleft:      5px;
+    -moz-border-radius-bottomright:     5px;
+}
+
+#public_login_cont #public_login_wrap{
+    margin-top:         0px;
+    padding-top:        8px;
+}
+
 #logo_link{
 	position:			relative;
 /*	top:				-70px;*/
-}
-
-div#login_content #login{
-    height:                 40px;
 }
 
 div#login_cont{
@@ -73,7 +115,8 @@ div#tagline_top{
     float:                  none;
     padding-bottom:         5px;
     position:               relative;
-    width:                  480px;
+    width:                  520px;
+    height:                 180px;
 }
 
 div#login_content div#login_right_cont{
@@ -151,6 +194,14 @@ div#cont{
     padding-top:        0px;
 }
 
+div#search div#search_cont{
+    width:              480px;
+}
+
+#results{
+    width:              510px;
+}
+
 div#search{
     height:             400px;
     padding-top:        150px;
@@ -159,7 +210,7 @@ div#search{
 }
 
 div#search_cont #query{
-    width:              350px;
+    width:              460px;
 }
 
 .close_img{
@@ -200,19 +251,6 @@ div#push{
 #settings_cont label{
     width:          350px;
 }
-
-div#initial_tut_top_wrap #allow_notifications_cont, div#initial_tut_top_wrap #allow_portrit_album_cont{
-    margin-left:    20px;
-    width:          480px;
-}
-
-    div#initial_tut_top_wrap #allow_notifications_cont label, div#initial_tut_top_wrap #allow_portrit_album_cont label{
-        width:          350px;
-    }
-    
-    div#initial_tut_top_wrap #allow_notifications, div#initial_tut_top_wrap #allow_portrit_album{
-        top:            -2px;
-    }
 
 div#context_cont{
     width:          480px;
@@ -275,7 +313,7 @@ div#context_cont{
     }
     
     .recent_nom_cont .recent_nom_comment_cont{
-        width:      510px;
+        width:      520px;
     }
     
     .recent_nom_comment_cont .comment_body{
@@ -383,9 +421,9 @@ div#album_cont div#trophy_cont > h2, div#album_cont div#active_cont > h2{
     margin:         0px 10px;
 }
 
-div#user_profile_right_cont > ul > li#show_upload{
+/*div#user_profile_right_cont > ul > li#show_upload{
     display:        none;
-}
+}*/
 
 #load_more_fb_albums, #hide_more_fb_albums{
     width:          100px;
@@ -490,34 +528,6 @@ div#give_feedback a{
     font-size:      18px;
 }
 
-div#right_nav #upgrade{
-    position:       absolute;
-    top:            -80px;
-    right:          0px;
-}
-
-    div#right_nav #upgrade a{
-        font-size:      17px;
-    }
-
-div.upgrade_tooltip_cont{
-    background-color:   #333;
-    color:              #99CB6E;
-    opacity:            0.9;
-    padding:            10px;
-    text-align:         center;
-    width:              200px;
-}
-
-    div.upgrade_tooltip_cont h2{
-        font-size:          20px;
-        font-weight:        bold;
-    }
-
-    div.upgrade_tooltip_cont h3{
-        font-size:          18px;
-    }
-
 #back{
     margin-left:    15px;
     margin-right:   5px;
@@ -590,9 +600,9 @@ div#active_stream_text_cont > span{
     line-height:        26px;
 }
 
-div#profile_wrap > ul{
+/*div#profile_wrap > ul{
     padding-left:       5px;
-}
+}*/
 
 .stream_nav{
     font-size:          22px;
@@ -629,7 +639,7 @@ div#profile_wrap > ul{
 }
 
 .recent_nom_photo_right_cont .recent_nom_vote_count{
-    margin-top:         0px;
+    margin-top:         20px;
 }
 
     .recent_nom_vote_count .reactivate_nom{
@@ -637,16 +647,6 @@ div#profile_wrap > ul{
         top:                0px;
         width:              99px;
     }
-
-.recent_nom_cont .recent_nom_top_cont{
-
-}
-
-.recent_nom_top_cont h3{
-    font-size:          16px;
-    margin-top:         5px;
-/*    width:              240px;*/
-}
 
 .recent_nom_vote_count h2{
     padding:            10px 5px;
@@ -658,11 +658,6 @@ div#profile_wrap > ul{
 
 .recent_nom_comment_heading h1{
     font-size:          26px;
-}
-
-.recent_nom_top_cont h2{
-    margin-top:         3px;
-    width:              200px;
 }
 
 div#title h3{
@@ -867,23 +862,39 @@ div#nom_detail_cont{
         }
     
     div#main_nom_cont_right{
-        width:          500px;
+        width:          510px;
     }
     
         div#main_nom_cont_right{
-            height:         250px;
+            height:         150px;
+            margin-top:     0px;
         }
     
         div#main_nom_cont_right_wrap{
-            height:         250px;
+            height:         150px;
+        }
+        
+        div#main_nom_cont_right_wrap div#nominatee_cont{
+            height:         150px;
+            float:          left;
+            padding:        0px;
+            width:          200px;
+        }
+        
+        div#main_nom_cont_right_wrap div#trophy_cont{
+            height:         150px;
+            float:          left;
+            width:          70px;
         }
     
         div#vote_cont{
-            margin-top:     0px;
-            position:       absolute;
-            right:          80px;
-            top:            70px;
+            float:          left;
+            width:          230px;
         }
+        
+            div#vote_cont_left.active{
+                width:          140px;
+            }
         
             #vote_tooltip{
                 left:                   -35px;
@@ -893,13 +904,17 @@ div#nom_detail_cont{
                 left:                   119px;
                 bottom:                 -8px;
             }
+            
+        div#main_nom_cont_right_wrap div#trophy_cont > div{
+            margin-top:         20px;
+        }
     
-        div#main_nom_cont_right h2{
+/*        div#main_nom_cont_right h2{
             float:          right;
             font-size:      26px;
             width:          285px;
-        }
-        
+        }*/
+/*        
         div#main_nom_cont_right_wrap div#trophy_cont{
             position:       absolute;
             height:         250px;
@@ -911,9 +926,9 @@ div#nom_detail_cont{
             div#nomination_text_cont #nom_trophy_icon{
                 bottom:         0px;
                 right:          -100px;
-            }
+            }*/
     
-    div#vote_cont_left{
+/*    div#vote_cont_left{
         margin-left:    60px;
     }
     
@@ -923,7 +938,6 @@ div#nom_detail_cont{
     
     div#nomination_text_cont{
         margin-top:     20px;
-/*        width:          130px;*/
     }
     
     div#nomination_text_cont img{
@@ -941,7 +955,7 @@ div#nom_detail_cont{
     
     div#nomination_text_cont h3{
         font-size:      32px;
-    }
+    }*/
     
     div#main_nom_bottom_cont{
         width:          520px;
@@ -1024,22 +1038,11 @@ div#album_wrap{
             width:      280px;
         }
     
-    div#active_cont .recent_nom_cont .recent_nom_comment_cont{
-        width:          380px;
-    }
-    
     div#active_cont .recent_nom_top_cont h2{
         text-align:     left;
         width:          110px;
     }
     
-#community_header h2{
-    display:        none;
-}
-
-#community_right_cont{
-    display:        none;
-}
 
 #community_cont #community_left_cont{
     margin:         0 auto;
@@ -1243,33 +1246,148 @@ div#initial_tut_wrap{
 
     div#initial_tut_top_wrap .tut_point{
         padding-bottom:     20px;
-        width:              380px;
+        width:              500px;
     }
     
-        div#initial_tut_top_wrap .tut_point h3{
-            margin-left:    65px;
-            font-size:      22px;
-        }
-        
-        div#initial_tut_top_wrap .tut_point ul{
-            margin-left:    30px;
-        }
-    
-        div#initial_tut_top_wrap .tut_point p{
-            font-size:      22px;
-            margin-left:    65px;   
-        }
-    
-    div#initial_tut_wrap #box_img{
-        right:              -10px;
+    div#initial_tut_top_wrap .tut_point > div > input{
+        width:              400px;
     }
     
-    div#initial_tut_wrap #landfill_img{
-        right:              -30px;
+    div#initial_tut_top_wrap #allow_notifications_cont, div#initial_tut_top_wrap #allow_portrit_album_cont{
+        margin-left:        0px;
+        width:              500px;
     }
+    
+    div#initial_tut_top_wrap label{
+        width:              350px;
+    }
+    
+#top_right_cont{
+    display:            none;
+}
+
+#community_cont #community_right_cont{
+    display:            none;
+}
+
+#community_cont #recent_left_cont{
+    width:              520px;
+}
+
+.stream_nav_cont{
+    width:              520px;
+    position:           relative;
+}
+
+#community_cont #recent_left_cont{
+    width:              520px;
+}
+
+#community_header > h2{
+    display:            none;
+}
+
+.community_active_cont{
+    margin:             5px;
+    padding:            5px;
+}
+
+.community_active_right_cont{
+    width:              297px;
+}
+
+.community_active_bottom .active_stat{
+    width:              105px;
+}
+
+#profile_user_header #profile_nav_cont{
+    margin-left:        145px;
+    width:              215px;
+}
+
+#profile_user_header #user_profile_image{
+    left:               -15px;
+}
+
+#profile_user_header #profile_stats_cont{
+    margin-top:         5px;
+    margin-right:       5px;
+    height:             75px;
+    width:              151px;
+}
+
+#profile_stats_cont > div{
+    width:              75px;
+    height:             75px;
+}
+
+#profile_stats_cont > div h4{
+    font-size:          16px;
+}
+
+#profile_stats_cont > div h3{
+    font-size:          36px;
+    margin-top:         0px;
+}
+
+#profile_user_context #settings_cont{
+    margin-top:         10px;
+    margin-bottom:      5px;
+    padding:            0px 10px;
+}
+
+#settings_cont .sub_setting_cont{
+    width:              500px;
+}
+
+#settings_cont .sub_setting_cont_half{
+    width:              500px;
+}
+
+div#initial_tut_top_wrap .tut_point > div{
+    margin-left:        65px;
+}
+
+#portrit_copyright div{
+    bottom:             8px;
+}
+
+#profile_user_context .recent_nom_cont{
+    width:              520px;
+}
+
+.recent_nom_cont{
+    margin-left:        0px;
+}
+
+div#tagline_top #tagline_text{
+    margin-left:        250px;
+    padding-top:        20px;
+}
+
+div#tagline_top #iphone{
+    left:               -5px;
+}
+
+div#login_content div#login_right_cont{
+    height:             120px;
+    padding-top:        15px;
+}
+
+#landing_photo_cont{
+    padding-bottom:     0px;
+}
+
+#login_points_cont{
+    display:            none;
+}
+
+#landing_photo_cont > div > div, #landing_photo_cont > div > div img{
+    width:              95px;
+    height:             95px;
+}
 
 #footer{
-    background:         -moz-linear-gradient(center top , #333333, #111111) repeat scroll 0 0 transparent;
     height:             50px;
     color:              #AEAEAE;
     font-size:          18px;
@@ -1279,5 +1397,6 @@ div#initial_tut_wrap{
     padding-top:        5px;
     padding-bottom:     5px;
     position:           relative;
+    z-index:            99;
     width:              100%;
 }

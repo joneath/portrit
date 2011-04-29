@@ -79,7 +79,8 @@ def sign_in_create(request):
             except Exception, err:
                 print err
             
-            portrit_user = Portrit_User(fb_user=fb_user, 
+            portrit_user = Portrit_User(active=False,
+                                        fb_user=fb_user, 
                                         name=profile['name'], 
                                         email=email,
                                         allow_winning_fb_album=False)
@@ -164,6 +165,7 @@ def add_username(request):
                 user.email_on_nomination = True
                 user.email_on_win = True
             
+            user.active = True
             user.save()
             
             #Send email notification

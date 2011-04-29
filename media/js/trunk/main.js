@@ -116,6 +116,10 @@ $(document).ready(function(){
         ENV = 'PRODUCTION';
         HOST = 'http://portrit.com/';
     }
+    else if (window.location.hostname == 'http://portrit-load-balancer-1655256107.us-east-1.elb.amazonaws.com' || window.location.hostname == 'portrit-load-balancer-1655256107.us-east-1.elb.amazonaws.com'){
+        ENV = 'NEW_PRODUCTION';
+        HOST = 'http://portrit-load-balancer-1655256107.us-east-1.elb.amazonaws.com';
+    }
 
     var window_href = window.location.href;
     if (window_href.indexOf('?ref=nf') > 0){
@@ -143,7 +147,7 @@ $(document).ready(function(){
                                     '<h2>Try the Web App.</h2>' +
                                     // '<p>Use your Facebook account to login into Portrit.</p>' +
                                     '<a id="login" class="fb_button fb_button_large"><span class="fb_button_text">Login with Facebook</span></a>' +
-                                    '<p style="text-align:center;">Simply click Connect with Facebook.</p>' +
+                                    '<p style="text-align:center;">Simply click Login with Facebook.</p>' +
                                 '</div>' +
                                 '<div class="clear"></div>' +
                             '</div>' +
@@ -239,7 +243,10 @@ $(document).ready(function(){
                             '</div>' +
                             '<div class="clear"></div>' +
                         '</div>';
-        $('#login_cont').append(login_html);
+                        
+        if ($('#login_content').length == 0){
+            $('#login_cont').append(login_html);   
+        }
         
         var nom_cat_list = ['hot','lol','artsy','fail','party_animal','cute','wtf','creepy','awesome','yummy'];
         var cat_text_dict = {
@@ -287,13 +294,18 @@ $(document).ready(function(){
         $('#landing_photo_cont > div').children().fadeOut('fast', function(){
             $(this).remove();
         });
-        $.getJSON('/api/get_community_top_nominations_cat/', {'cat': cat, 'page_size': 36, 'landing': true}, function(data){
+        var page_size = 36;
+        if (mobile && !tablet){
+            page_size = 20;
+        }
+        
+        $.getJSON('/api/get_community_top_nominations_cat/', {'cat': cat, 'page_size': page_size, 'landing': true}, function(data){
             clearInterval(landing_photo_timeout);
             landing_photo_timeout = setInterval(function(){
                 if ($('#landing_photo_cont > div').children().length == 0){
                     clearInterval(landing_photo_timeout);
                     var photo_html = '';
-                    var top = 36;
+                    var top = page_size;
                     var diff = 0;
                     
                     diff = top - data.length;
@@ -637,41 +649,41 @@ $(document).ready(function(){
     
     if (DetectMobileQuick() === true){
         mobile = true;
-        // close_size = 'mobile'
-        // 
-        // if (typeof(_gaq) !== "undefined"){
-        //     var meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-14.css"/>' +
-        //                     '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
-        //                     '<link rel="shortcut icon" href="http://portrit.s3.amazonaws.com/img/favicon.ico">' +
-        //                     '<link rel="apple-touch-icon" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>' +
-        //                     '<link rel="apple-touch-icon-precomposed" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>';
-        // 
-        // }
-        // else{
-        //     var meta_html = '<link rel="stylesheet" href="/site_media/styles/trunk/mobile.css"/>' +
-        //                     '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
-        //                     '<link rel="shortcut icon" href="/site_media/img/favicon.ico">' +
-        //                     '<link rel="apple-touch-icon" href="/site_media/img/icon128.png"/>' +
-        //                     '<link rel="apple-touch-icon-precomposed" href="/site_media/img/icon128.png"/>';
-        // 
-        // }
-        // $('head').append(meta_html);
+        close_size = 'mobile'
+        
+        if (typeof(_gaq) !== "undefined"){
+            var meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-14.css"/>' +
+                            '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
+                            '<link rel="shortcut icon" href="http://portrit.s3.amazonaws.com/img/favicon.ico">' +
+                            '<link rel="apple-touch-icon" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>' +
+                            '<link rel="apple-touch-icon-precomposed" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>';
+        
+        }
+        else{
+            var meta_html = '<link rel="stylesheet" href="/site_media/styles/trunk/mobile.css"/>' +
+                            '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
+                            '<link rel="shortcut icon" href="/site_media/img/favicon.ico">' +
+                            '<link rel="apple-touch-icon" href="/site_media/img/icon128.png"/>' +
+                            '<link rel="apple-touch-icon-precomposed" href="/site_media/img/icon128.png"/>';
+        
+        }
+        $('head').append(meta_html);
 
-        // var window_width = 520;
-        // $('body, html, #header, #cont, #wrapper').css({
-        //     'margin': '0 auto',
-        //     'min-width': window_width,
-        //     'width': window_width,
-        //     'max-width': window_width
-        // });
-        // 
-        // if(window.orientation != 0){
-        //     var window_width = 720;
-        //     $('#viewport_meta').attr('content', 'width=520, user-scalable=no, target-densityDpi=160');
-        // }else{
-        //     var window_width = 520;
-        //     $('#viewport_meta').attr('content', 'width=520, user-scalable=no, target-densityDpi=260');
-        // }
+        var window_width = 520;
+        $('body, html, #header, #cont, #wrapper').css({
+            'margin': '0 auto',
+            'min-width': window_width,
+            'width': window_width,
+            'max-width': window_width
+        });
+        
+        if(window.orientation != 0){
+            var window_width = 720;
+            $('#viewport_meta').attr('content', 'width=520, user-scalable=no, target-densityDpi=160');
+        }else{
+            var window_width = 520;
+            $('#viewport_meta').attr('content', 'width=520, user-scalable=no, target-densityDpi=260');
+        }
     }
     else if (DetectIpad() === true){
         close_size = 'mobile';
@@ -696,7 +708,10 @@ $(document).ready(function(){
     }
     
     if (mobile){
-        $('#footer').css('position', 'relative');
+        $('#footer').css({
+            'position': 'relative',
+            'z-index': 99
+        });        
     }
 
     function find_friend(fid, search_array){
@@ -729,7 +744,7 @@ $(document).ready(function(){
                             facebook_frame + 
                         '</div>' +
                         '<div id="about_left_cont">' +
-                            '<img src="http://portrit.s3.amazonaws.com/img/about_graphic.jpg"/>' +
+                            '<img style="width: 616px; height: 294px;" src="http://portrit.s3.amazonaws.com/img/about_graphic.jpg"/>' +
                             '<p>Portrit aims to make photo sharing more social. It\'s up to your social circle to find and award the best photos out there. No longer do you need to look through thousands of your friend\'s photos to find the best ones. On Portrit, you and your friends filter the lame photos from the awesome ones.</p>' +
                             '<p>Co-founded by Jonathan Eatherly and Jerry Lin in 2010.</p>' + 
                         '</div>' +
@@ -985,7 +1000,7 @@ $(document).ready(function(){
         var terms_html =    '<h1 id="terms_title">Terms of Use</h1>' + 
                             '<p>The following Terms of Use outline your obligations when using the Portrit website. You can also review our Privacy Policy, which outlines our obligations and practices towards handling any personal information that you may provide to us.</p>' +
                             '<h2 class="terms_sub_title">1. Acceptance of Terms</h2>' +
-                            '<p>The web pages available at portrit.com, and all linked pages ("Site"), are owned and operated by Portrit, Inc. ("Portrit"), a Oregon corporation, and is accessed by you under the Terms of Use described below ("Terms of Use").<br/><br/>Please read these terms of use carefully before using Portrit or its services. By accessing Portrit or using any part of the Site you agree to become bound by these terms and conditions. If you do not agree to all the terms and conditions, then you may not access Portrit, or use the content or any services offered. Portrit\'s acceptance is expressly conditioned upon your assent to all these terms and conditions, to the exclusion of all other terms; if these terms and conditions are considered an offer by Portrit, acceptance is expressly limited to these terms.</p>' +
+                            '<p>The web pages available at portrit.com, and all linked pages ("Site"), as well as the Portrit iOS app ("App"), are owned and operated by Portrit, Inc. ("Portrit"), a Oregon corporation, and is accessed by you under the Terms of Use described below ("Terms of Use").<br/><br/>Please read these terms of use carefully before using Portrit or its services. By accessing Portrit or using any part of the Site you agree to become bound by these terms and conditions. If you do not agree to all the terms and conditions, then you may not access Portrit, or use the content or any services offered. Portrit\'s acceptance is expressly conditioned upon your assent to all these terms and conditions, to the exclusion of all other terms; if these terms and conditions are considered an offer by Portrit, acceptance is expressly limited to these terms.</p>' +
                             '<h2 class="terms_sub_title">2. Modifications of the Terms of Use</h2>' +
                             '<p>Portrit reserves the right, at its sole discretion, to modify or replace the Terms of Use at any time. If the alterations constitute a material change to the Terms of Use, Portrit will notify you by posting an announcement on the Site. What constitutes a "material change" will be determined at Portrit\'s sole discretion, in good faith and using common sense and reasonable judgment. You shall be responsible for reviewing and becoming familiar with any such modifications. Use of the Services by you following such notification constitutes your acceptance of the terms and conditions of the Terms of Use as modified.</p>' +
                             '<h2 class="terms_sub_title">3. Description of the Service</h2>' +
@@ -1015,7 +1030,7 @@ $(document).ready(function(){
     function render_privacy(){
         var privacy_html = '<div id="privacy_cont">' +
                                 '<h1 id="privacy_title">Privacy Policy</h1>' +
-                                '<p>Portrit is founded on the principles of complete separation of user data. Portrit knows that you care about how your personal information is used and shared, and we take your privacy very seriously. Please read the following to learn more about our privacy policy. By visiting the Portrit website, you are accepting the practices outlined in this Privacy Policy.</p>' +
+                                '<p>Portrit knows that you care about how your personal information is used and shared, and we take your privacy very seriously. Please read the following to learn more about our privacy policy. By visiting the Portrit website, you are accepting the practices outlined in this Privacy Policy.</p>' +
                                 '<p>This Privacy Policy covers Portrit\'s treatment of personal information that Portrit gathers when you are on the Portrit website and when you use Portrit services. This policy does not apply to the practices of third parties that Portrit does not own or control, or to individuals that Portrit does not employ or manage.</p>' +
                                 '<h2>Information Collected by Portrit</h2>' +
                                 '<p>We only collect personal information that is relevant to the purpose of our website, which is to enable users to discover and share information with one another. This information allows us to provide you with a customized and efficient experience. We do not process this information in a way that is incompatible with this objective. We collect the following types of information from our Portrit users:</p>' +
@@ -1023,8 +1038,8 @@ $(document).ready(function(){
                                 '<p class="indent">We receive and store any information you enter on our website or provide to us in any other way. You can choose not to provide us with certain information, but then you may not be able to take advantage of many of our special features.</p>' +
                                 '<h3>Automatic Information:</h3>' +
                                 '<p class="indent">We receive and store certain types of information whenever you interact with us. Portrit and its authorized agents automatically receive and record certain "traffic data" on their server logs from your browser including your IP address, Portrit cookie information, and the page you requested. Portrit uses this traffic data to help diagnose problems with its servers, analyze trends and administer the website.</p>' +
-                                '<p class="indent">Portrit is built off of the Facebook Open Grah API and as such Portrit abides by the API giudlines as well as any user Facebook privacy policies and permissions.</p>' +
-                                '<p class="indent">We will collect data from your Facebook account to enable features like friend lists, nominating photos, votes, and winning trophies. This data is shared across your friends to allow for a consistant experience for the other users of Portrit. We only store the most basic personal information, such as name, facebook id, album ids, and photo ids. You can delete any personal data we have, including votes, comments, nominations, and trophies by going to the settings and requesting to "Remove My Content".</p>' +
+                                '<p class="indent">Portrit is built off of the Facebook Open Grah API and as such, Portrit abides by the API giudlines as well as any user Facebook privacy policies and permissions. See Facebook\'s developer guidlines here <a target="_blank" href="http://developers.facebook.com/policy/">http://developers.facebook.com/policy/</a></p>' +
+                                '<p class="indent">We will collect data from your Facebook account to enable features like email notifications, suggested users, nominating photos, votes, and winning trophies. This data is shared across the Portrit service to allow for a consistant experience for the other users of Portrit. We only store the most basic personal information, including but not limited to name, email, facebook id, and friend ids. You can delete any personal data we have, including votes, comments, nominations, uploaded photos, and trophies by going to the settings and requesting to "Remove My Account". Please allow up to 7 days for this request to be handled, in which time you will be notified that your account has been removed.</p>' +
                                 '<h2>Sharing Your Information</h2>' +
                                 '<p>Rest assured that the information gathered about who is using Portrit will be neither rented nor sold to anyone and that we will share your personal information only as described below.</p>' +
                                 '<ul>' +
@@ -1041,7 +1056,7 @@ $(document).ready(function(){
                                 '<h2>Conditions of Use</h2>' +
                                 '<p>If you decide to visit Portrit website, your visit and any possible dispute over privacy is subject to this Privacy Policy and our Terms of Use, including limitations on damages, arbitration of disputes, and application of Oregon state law.</p>' +
                                 '<h2>Effective Date of this Privacy Policy</h2>' +
-                                '<p>This Privacy Policy is effective as of January 31, 2011 and last updated January 28, 2011.</p>' +
+                                '<p>This Privacy Policy is effective as of January 31, 2011 and last updated April 27, 2011.</p>' +
                             '</div>';
                             
         $('#context_cont').append(privacy_html);
@@ -1260,9 +1275,17 @@ $(document).ready(function(){
         // }
         // else{
             //No websockets
+            var host = '';
+            if (ENV == 'NEW_PRODUCTION'){
+                host = 'http://node.portrit.com/';
+            }
+            else{
+                host = '/watch_update/';
+            }
+            
             $.ajax({
                 type: "GET",
-                url: '/watch_update/',
+                url: host,
                 data: {'user': me.id},
                 dataType: "json",
                 async: true,
@@ -2902,7 +2925,7 @@ $(document).ready(function(){
                                 '<div id="public_login_cont">' +
                                     '<div id="public_login_wrap">' +
                                         '<a id="login" class="fb_button fb_button_large"><span class="fb_button_text">Login with Facebook</span></a>' +
-                                        '<p>Simply click Connect with Facebook.</p>' +
+                                        '<p>Simply click Login with Facebook.</p>' +
                                     '</div>' +
                                 '</div>' +
                                 '<div class="clear"></div>';
@@ -3157,6 +3180,9 @@ $(document).ready(function(){
         }
         
         trophy_size = 'large';
+        if (mobile && !tablet){
+            trophy_size = 'medium';
+        }
         
         $('#nom_detail_cont .title').remove();
         $('#nom_detail_cont').prepend(title);
@@ -3536,12 +3562,28 @@ $(document).ready(function(){
         if ($('.top_user_cont').length == 0){
             if (method == 'top'){
                 $.getJSON('/api/get_top_users/', function(data){
-                    render_promoted_users(data, target);
+                    if (data.length > 0){
+                        render_promoted_users(data, target);
+                    }
+                    else{
+                        if ($('#empty_suggest_users').length == 0){
+                            var empty_html = '<h3 id="empty_suggest_users">No suggested users at the moment.</h3>';
+                            $(target).append(empty_html);
+                        }
+                    }
                 });
             }
             else if (method == 'interesting'){
                 $.getJSON('/api/get_interesting_users/', function(data){
-                    render_promoted_users(data, target);
+                    if (data.length > 0){
+                        render_promoted_users(data, target);
+                    }
+                    else{
+                        if ($('#empty_suggest_users').length == 0){
+                            var empty_html = '<h3 id="empty_suggest_users">No interesting users at the moment.</h3>';
+                            $(target).append(empty_html);   
+                        }
+                    }
                 });
             }
         }
@@ -3571,7 +3613,7 @@ $(document).ready(function(){
                                                     '<div class="clear"></div>' +
                                                 '</ul>' +
                                             '</div>' +
-                                            '<h2>Suggested People to Follow<h2>' +
+                                            '<h2>Suggested People to Follow</h2>' +
                                         '</div>' +
                                         '<div id="community_cont">' +
                                             '<div id="recent_left_cont">' +
@@ -3607,7 +3649,7 @@ $(document).ready(function(){
                                             '<div id="community_right_cont">' +
                                                 '<div id="community_public_push"></div>' +
                                                 '<div id="app_download_cont">' +
-                                                    '<h2>Download our free app.<h2>' +
+                                                    '<h2>Download our free app.</h2>' +
                                                 '</div>' +
                                                 '<div id="community_interesting_people">' +
                                                     '<h1>Interesting People</h1>' +
@@ -4860,7 +4902,7 @@ $(document).ready(function(){
                 empty_text = 'You have no photos.';
             }
             else{
-                empty_text = selected_user.name + ' has no photos.';
+                empty_text = selected_user.username + ' has no photos.';
             }
             $('#profile_user_context').append('<div id="cont_empty"><h2>' + empty_text + '</h2></div>')
         }
@@ -5095,7 +5137,7 @@ $(document).ready(function(){
                         empty_text = 'You have no active nominations.';
                     }
                     else{
-                        empty_text = selected_user.name + ' has no active nominations.';
+                        empty_text = selected_user.username + ' has no active nominations.';
                     }
                     $('#recent_left_cont').append('<div id="cont_empty"><h2>' + empty_text + '</h2></div>');                    
                 }
@@ -5216,6 +5258,71 @@ $(document).ready(function(){
                             '</div>' +
                             '<div class="clear"></div>' +
                         '</div>';
+                        
+        if (mobile && !tablet){
+            setttings_html = '<div id="settings_cont">' +
+                                '<h1>Settings</h1>' +
+                                '<div class="sub_setting_cont">' +
+                                    '<div style="border-bottom: 1px solid #bebebe;">' +
+                                        '<div id="allow_public_follows" value="privacy" class="switch ' + allow_public_follows_checked_class + '"></div>' +
+                                        '<div class="center_twin">' +
+                                            '<label for="allow_public_follows">Allow anyone to follow you: </label>' +
+                                            '<p class="sub_label">Turning this off will require you to accept new followers.</p>' +
+                                        '</div>' +
+                                        '<div class="clear"></div>' +
+                                    '</div>' +
+                                    '<div>' +
+                                        '<div id="allow_portrit_album" value="post_wins" class="switch ' + allow_portrit_album_checked_class + '"></div>' +
+                                        '<div class="center_twin">' +
+                                            '<label for="allow_portrit_album">Allow Portrit to post winning trophies back to Facebook: </label>' +
+                                            '<p class="sub_label">This will create a Portrit Trophies photo album on your Facebook.</p>' +
+                                        '</div>' +
+                                        '<div class="clear"></div>' +
+                                    '</div>' +
+                                '</div>' +
+                                '<h1 class="half" style="width: 500px;">Linked Accounts</h1>' +
+                                '<div class="sub_setting_cont_half sharing_cont" style="float: right;">' +
+                                    '<div style="border-bottom: 1px solid #bebebe;">' +
+                                        '<img src="http://portrit.s3.amazonaws.com/img/f_logo.png"/>' +
+                                        '<label for="sharing_facebook">Facebook: </label>' +
+                                        '<div id="sharing_facebook" style="margin-top: 10px;" value="sharing_facebook" class="switch switch_on"></div>' +
+                                        '<div class="clear"></div>' +
+                                    '</div>' +
+                                    '<div>' +
+                                        '<img src="http://portrit.s3.amazonaws.com/img/twitter_logo.png"/>' +
+                                        '<label for="sharing_twitter">Twitter: </label>' +
+                                        '<div id="twitter_login"></div>' +
+                                        '<div id="sharing_twitter" style="margin-top: 10px;" value="sharing_twitter" class="switch ' + twitter_switch + '"></div>' +
+                                        '<div class="clear"></div>' +
+                                    '</div>' +
+                                '</div>' +
+                                '<h1 class="half">Email Notifications</h1>' +
+                                '<div class="sub_setting_cont_half" style="border: 1px solid #dedede">' +
+                                    '<div class="user_email_cont">' +
+                                        '<label class="single_line" for="email_on_follow">Email Address: </label>' +
+                                        '<p>' + email + '</p>' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div class="sub_setting_cont_half">' +
+                                    '<div style="border-bottom: 1px solid #bebebe;">' +
+                                        '<div id="email_on_follow" value="email_follow" class="switch ' + email_on_follow_check_class + '"></div>' +
+                                        '<label class="single_line" for="email_on_follow">Notify on new follow:</label>' +
+                                        '<div class="clear"></div>' +
+                                    '</div>' +
+                                    '<div style="border-bottom: 1px solid #bebebe;">' +
+                                        '<div id="email_on_nomination" value="email_nomination" class="switch ' + email_on_nomination_check_class + '"></div>' +
+                                        '<label class="single_line" for="email_on_nomination">Notify on new nomination:</label>' +
+                                        '<div class="clear"></div>' +
+                                    '</div>' +
+                                    '<div>' +
+                                        '<div id="email_on_win" value="email_win" class="switch ' + email_on_win_check_class + '"></div>' +
+                                        '<label class="single_line" for="email_on_win">Notify on winning nomination:</label>' +
+                                        '<div class="clear"></div>' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div class="clear"></div>' +
+                            '</div>';
+        }
                             
         $('#profile_user_context').append(setttings_html);
         
@@ -7360,7 +7467,12 @@ $(document).ready(function(){
         }
         
         $('#nomination_text_cont h3').text(nom.nomination_category);
-        $('#nom_trophy_icon').removeClass().addClass('trophy_img large ' + cat_underscore);//.attr('src', 'http://portrit.s3.amazonaws.com/img/trophies/large/' + cat_underscore + '.png');
+        if (!mobile || tablet){
+            $('#nom_trophy_icon').removeClass().addClass('trophy_img large ' + cat_underscore);//.attr('src', 'http://portrit.s3.amazonaws.com/img/trophies/large/' + cat_underscore + '.png');
+        }
+        else{
+            $('#nom_trophy_icon').removeClass().addClass('trophy_img medium ' + cat_underscore);//.attr('src', 'http://portrit.s3.amazonaws.com/img/trophies/large/' + cat_underscore + '.png');
+        }
         // $('#nominator_overlay_cont a').attr('href', '/#!/' + nom.nominator_username + '/');
         // $('#nominator_overlay_cont > h2 a').text(nominator_name);
         $('#nominator_overlay_cont p').text(caption);

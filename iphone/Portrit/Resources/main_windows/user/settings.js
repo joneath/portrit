@@ -217,10 +217,8 @@ var init_options = function(){
         if (file.exists()) { file.deleteFile(); }
         Ti.App.Properties.removeProperty("push_notifications");
         
-        UrbanAirship.unregister({
-            complete: function(){
-                
-            }
+        UrbanAirship.unregister(function(){
+            
         });
         
         Ti.App.fireEvent('logout', { });
@@ -256,7 +254,7 @@ var init_options = function(){
     
     var row = Ti.UI.createTableViewRow({
             hasChild: true,
-            title: 'Portrit on the Tubes',
+            title: 'Portrit on the tubes',
             color: '#333',
             font:{fontSize: 18, fontWeight: 'bold'},
             backgroundColor: '#fff'

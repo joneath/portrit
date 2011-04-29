@@ -1010,7 +1010,7 @@ function render_active_view(data){
         });
         
         photo_action_row = Titanium.UI.createView({
-            backgroundColor: '#ddd',
+            backgroundColor: '#222',
             top: 0,
             width: 320,
             height: 35
