@@ -253,6 +253,11 @@ div#wrapper{
         width:              60px;
         margin-top:         15px;
         margin-left:        25px;
+        opacity:            0.9;
+    }
+    
+    #public_header #search_control:hover{
+        opacity:            1.0;
     }
     
     #public_header #public_login_cont{
@@ -724,6 +729,10 @@ div#right_nav{
         opacity:            0.9;
         height:             60px;
         width:              60px;
+    }
+    
+    .nav_icon:hover{
+        opacity:            1.0;
     }
     
         #back{
@@ -1815,6 +1824,19 @@ div#nom_detail_cont{
                 vertical-align:     middle;
                 text-align:         center;
             }
+            
+                div#main_nom_cont_left_wrap #nom_place{
+                    position:           absolute;
+                    bottom:             60px;
+                    right:              10px;
+                    color:              white;
+                    background:         rgba(0, 0, 0, .7);
+                    padding:            10px;
+                    font-size:          26px;
+                    font-weight:        bold;
+                    border-radius:          5px;
+                    -moz-border-radius:     5px;
+                }
         
                 div#main_nom_cont_left_wrap #main_nom_photo{
                     max-height:         490px;
@@ -2490,8 +2512,8 @@ div#community{
             #recent_left_cont .community_photo_cont{
                 background-color:       #dedede;
                 cursor:                 pointer;
-                float:                  left;
-                margin:                 10px;
+                display:                inline-block;
+                margin:                 5px;
                 position:               relative;
                 height:                 150px;
                 width:                  200px;
@@ -2533,6 +2555,13 @@ div#community{
             border-bottom-right-radius:      10px;
             -moz-border-radius-bottomright:  10px;
         }
+        
+            #community_cont #community_right_cont #empty_suggest_users{
+                color:                  white;
+                text-align:             center;
+                font-size:              16px;
+                margin-top:             20px;
+            }
         
             #community_right_cont #community_public_push{
                 background-color:       #fff;
@@ -2604,6 +2633,11 @@ div#community{
                     color:                  #444;
                     font-size:              14px;
                 }
+                
+#photo_list_cont{
+    text-align:             center;
+    padding:                10px 0px;
+}
         
 .top_nom_cat{
     margin-top:             10px;
@@ -4497,10 +4531,8 @@ div#context_overlay{
             width:              97px;
             left:               25px;
             text-align:         center;
-            border-bottom-left-radius:          0px;
-            border-bottom-right-radius:         0px;
-            -moz-border-radius-bottomleft:      0px;
-            -moz-border-radius-bottomright:     0px;
+            border-radius:          0px;
+            -moz-border-radius:     0px;
         }
     
     #profile_user_header #profile_nav_cont{

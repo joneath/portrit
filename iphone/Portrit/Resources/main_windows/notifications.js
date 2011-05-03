@@ -97,7 +97,7 @@ function add_detail_window(e){
             user: e.rowData.username,
             won: false
         });
-	}, 200);
+	}, 250);
 	if (notification_read_list.indexOf(e.rowData.notification_id) == -1){
 	    mark_read(e.rowData.notification_id);
 	    notification_read_list.push(e.rowData.notification_id);
@@ -117,7 +117,7 @@ function add_detail_trophy_window(e){
             user: e.rowData.username,
             won: true
         });
-	}, 200);
+	}, 250);
     if (notification_read_list.indexOf(e.rowData.notification_id) == -1){
 	    mark_read(e.rowData.notification_id);
 	    notification_read_list.push(e.rowData.notification_id);
@@ -135,7 +135,7 @@ function add_profile_window(e){
                 name: e.source.name,
                 username: e.rowData.username,
             });
-    	}, 200);
+    	}, 250);
         if (notification_read_list.indexOf(e.rowData.notification_id) == -1){
     	    mark_read(e.rowData.notification_id);
     	    notification_read_list.push(e.rowData.notification_id);
@@ -261,15 +261,17 @@ function render_notifications(data){
                 var pending_button_bar = Titanium.UI.createButtonBar({
                 	labels:['Deny', 'Accept'],
                 	backgroundColor:'#336699',
-                    right: 10,
+                    right: 15,
                 	style:Titanium.UI.iPhone.SystemButtonStyle.BAR,
                 	height:25,
-                	width:100
+                	width:100,
+                	zIndex: 100
                 });
                 pending_button_bar.button = true;
                 pending_button_bar.notification_id = data[i].notification_id;
                 pending_button_bar.row = row;
                 pending_button_bar.addEventListener('click', post_follow_permission);
+                row.button = true;
                 row.add(pending_button_bar);
                 source_text = data[i].source_username;
                 label_text = ' would like to follow you.';
@@ -616,20 +618,13 @@ function load_notifications(){
         	    clear_button.show();
         	    list_view_data = [ ];
         	    tv.editable = true;
-                update_notifications(data);
-                newest_notification = notification_cache[0].notification_id;
+        	    notification_cache = data;
                 render_notifications(notification_cache);
         	}
             endReloading();
         };
         
-        var url = '';
-        if (notification_cache.length > 0){
-            url = SERVER_URL + '/api/get_active_notifications/?access_token=' + me.access_token + '&id=' + newest_notification;
-        }
-        else{
-            url = SERVER_URL + '/api/get_active_notifications/?access_token=' + me.access_token;
-        }
+        var url = SERVER_URL + '/api/get_active_notifications/?access_token=' + me.access_token;
         
         xhr.open('GET', url);
         xhr.send();

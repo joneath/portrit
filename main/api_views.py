@@ -85,8 +85,11 @@ def sign_in_create(request):
                                         email=email,
                                         allow_winning_fb_album=False)
             portrit_user.save()
-            portrit = Portrit_FB(graph, portrit_user, access_token)
-            portrit.load_user_friends(True)
+            try:
+                portrit = Portrit_FB(graph, portrit_user, access_token)
+                portrit.load_user_friends(True)
+            except:
+                pass
             
             data = {'auth': 'valid',
                     'new': True,
@@ -723,6 +726,7 @@ def nominate_photo(request):
                     nomination = Nomination(nomination_category=nom_cat.title)
                     if comment_text != "":
                         nomination.caption = comment_text
+                        
                     nomination.nominatee = nominatee_portrit_user
                     nomination.nominator = nominator_portrit_user
                     nomination.photo = photo
@@ -1377,6 +1381,7 @@ def get_user_profile(request):
         page_size = int(page_size)
     
     try:
+        portrit_user = None
         if username and username != 'null':
             portrit_user = Portrit_User.objects.get(username=username)
             user = portrit_user.fb_user
@@ -1388,14 +1393,15 @@ def get_user_profile(request):
             else:
                 source_portrit_user = None
                 source = None
-        else:
+        elif access_token:
             portrit_user = get_user_from_access_token(access_token)
             user = portrit_user.fb_user
             
         # Set user data
-        data['user']['fid'] = user.fid
-        data['user']['name'] = portrit_user.name
-        data['user']['username'] = portrit_user.username
+        if portrit_user:
+            data['user']['fid'] = user.fid
+            data['user']['name'] = portrit_user.name
+            data['user']['username'] = portrit_user.username
 
         if method == 'active':
             user_active_noms = Nomination.objects.filter(Q(nominatee=portrit_user) | Q(tagged_users__in=[portrit_user]), active=True, won=False)
@@ -2050,10 +2056,9 @@ def flag_photo(request):
             
             if len(photo.flags) >= 3 and not photo.validated:
                 photo.active = False
-                Nomination.objects.filter(photo__id=photo.id).update(set__active=False)
+                Nomination.objects.filter(photo=photo).update(set__active=False)
                 
             photo.save()
-        
             #Create Email, Send to Admins
             try:
                 from django.core.mail import EmailMultiAlternatives
@@ -2091,7 +2096,7 @@ def search(request):
         else:
             source_following = [ ]
             
-        users = Portrit_User.objects.filter(name__icontains=q)[:40]
+        users = Portrit_User.objects.filter(Q(name__icontains=q) | Q(username__icontains=q))[:40]
         for user in users:
             if user in source_following:
                 data.append({

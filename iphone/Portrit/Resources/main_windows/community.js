@@ -1042,7 +1042,7 @@ function render_nom(nom, append){
             }
         }
         catch (err){
-            alert(err);
+            // alert(err);
         }
 }
 

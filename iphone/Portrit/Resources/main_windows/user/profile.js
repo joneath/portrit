@@ -222,7 +222,7 @@ function render_user_photos(data, append){
     		image: '../../images/photo_loader.png',
     		width: photo_width,
     		height: photo_height,
-    		hires: highres,
+    		hires: true,
     		top: 0,
     	});
     	cachedImageView('images', data[i].source, main_image);
@@ -1091,7 +1091,7 @@ function render_active_view(data){
         });
         
         photo_action_row = Titanium.UI.createView({
-            backgroundColor: '#222',
+            backgroundColor: '#fff',
             top: 0,
             width: 320,
             height: 35
@@ -1204,6 +1204,15 @@ function render_active_view(data){
             });
             comments_cont.add(load_more_comments);
         }
+        
+        photo_action_row_shadow = Titanium.UI.createView({
+            backgroundImage: '../../images/action_bar_shadow.png',
+            top: 35,
+            width: 320,
+            height: 8,
+            zIndex: 100
+        });
+        row.add(photo_action_row_shadow);
         
         section.add(row);
         section.created_time = nom.created_time;

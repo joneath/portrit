@@ -61,6 +61,9 @@ var Portrit = function(){
         var allow_push = true;
         var message = '';
         
+        console.log(friends);
+        console.log(data.method);
+        
         if (data.method == 'new_nom'){
             if (data.payload.nom_data[0].nominatee != data.payload.nom_data[0].nominator && friends[data.payload.nom_data[0].nominatee].push_nominations){
                 message = data.payload.nom_data[0].nominator_username + ' nominated your photo for ' + data.payload.nom_data[0].nomination_category;
@@ -73,6 +76,25 @@ var Portrit = function(){
                     }
                 };
                 push_payload.push(push);
+            }
+            
+            for (id in friends){
+                if (id != undefined){
+                    allow_push = false;
+                    
+                    if (friends[id].push_on && friends[id].push_nominations && id != data.payload.nom_data[0].nominatee && id != data.payload.nom_data[0].nominator){
+                        message = data.payload.nom_data[0].nominator_username + ' tagged you in a photo for ' + data.payload.nom_data[0].nomination_category;
+
+                        push = { 
+                            'aliases': [String(id)],
+                            'aps': {
+                                'badge': '+1',
+                                'alert': message
+                            }
+                        };
+                        push_payload.push(push);
+                    }
+                }
             }
         }
         else if (data.method == 'nom_won'){
@@ -414,7 +436,7 @@ var Portrit = function(){
     });
     
     if (dev){
-        request_server.listen(8080, '192.168.1.126');
+        request_server.listen(8080, '192.168.1.146');
     }
     else{
         request_server.listen(8080, '10.117.57.137');

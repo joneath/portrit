@@ -7,11 +7,11 @@
     </deployment-targets>
 <id>com.portrit</id>
 <name>Portrit</name>
-<version>1.0</version>
-<publisher>joneath</publisher>
+<version>1.0.0</version>
+<publisher>Portrit</publisher>
 <url>http://portrit.com</url>
 <description>No description provided</description>
-<copyright>2011 by joneath</copyright>
+<copyright>2011 by Portrit</copyright>
 <icon>appicon.png</icon>
     <persistent-wifi>false</persistent-wifi>
     <prerendered-icon>true</prerendered-icon>

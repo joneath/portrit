@@ -60,10 +60,16 @@ $(document).ready(function(){
             if (view_active == 'nom_detail'){
                 $('.next_photo_img').click();
             }
+            else if (view_active == 'gallery'){
+                $('#gallery_next').click();
+            }
         }
         else if (keycode === 37){ //Left Key
             if (view_active == 'nom_detail'){
                 $('.prev_photo_img').click();
+            }
+            else if (view_active == 'gallery'){
+                $('#gallery_prev').click();
             }
         }
         else if (keycode === 27){ //Escape
@@ -3074,6 +3080,7 @@ $(document).ready(function(){
         var vote_class = '';
         var vote_tooltip_text = 'Already voted';
         var title = '';
+        var place = '';
         var tagged_user_html = '';
         var won = false;
         var action_botton_class = '';
@@ -3089,6 +3096,7 @@ $(document).ready(function(){
             
         if (state == 'stream_active'){
             title = '<h1 class="title" state="' + state + '" cat="' + nom_cat + '">Active <span class="nom_cat_' + nom_cat_under + '_text">' + nom_cat + '</span> Photos</h1>';
+            place = '<h2 id="nom_place">' + getGetOrdinal(nom.position + 1) + '</h2>';
         }
         else if (state == 'stream_winners'){
             won = true;
@@ -3099,9 +3107,11 @@ $(document).ready(function(){
         }
         else if (state == 'community_active'){
             title = '<h1 class="title" state="' + state + '" cat="' + nom_cat + '">Community <span class="nom_cat_' + nom_cat_under + '_text">' + nom_cat + '</span> Photos</h1>';
+            place = '<h2 id="nom_place">' + getGetOrdinal(nom.position + 1) + '</h2>';
         }
         else if (state == 'community_top'){
             title = '<h1 class="title" state="' + state + '" cat="' + nom_cat + '">Top Community <span class="nom_cat_' + nom_cat_under + '_text">' + nom_cat + '</span> Photos</h1>';
+            place = '<h2 id="nom_place">' + getGetOrdinal(nom.position + 1) + '</h2>';
         }
         else if (state == 'profile_trophies'){
             won = true;
@@ -3116,7 +3126,6 @@ $(document).ready(function(){
         }
         else{
             title = '<h1 class="title" state="' + state + '" cat="' + nom_cat + '"><a href="/#!/' + nom.nominatee_username + '/">' + nom.nominatee_username + '\'s</a> Photo</h1>';
-            
         }
         
         if (data.length > 1){
@@ -3189,6 +3198,8 @@ $(document).ready(function(){
         
         $('#main_nom_cont').attr('value', nom.id);
         $('#main_nom_photo').attr('src', nom.photo.source);
+        
+        $('#main_nom_cont_left_wrap').append(place);
         
         $('#nominator_overlay_cont').html(//'<a href="/#!/' + nom.nominator_username + '/"><img class="user_img" src="https://graph.facebook.com/' + nom.nominator + '/picture?type=square"/></a>' +
                                             // '<h2>Nominated by <span class="strong"><a href="/#!/' + nom.nominator_username + '/">' + nom.nominator_username + '</a></span></h2>' +
@@ -3411,13 +3422,14 @@ $(document).ready(function(){
         var community_top = 15;
         var blanks = community_top - data.length;
         
+        $('#recent_left_cont').append('<div id="photo_list_cont"></div>');
         for (var i = 0; i < data.length; i++){
             photo_list_html =  '<div class="community_photo_cont" pid="' + data[i].photo.id + '" name="' + data[i].username + '">' +
                                             '<img src="' + data[i].photo.crop + '" owner="' + data[i].username + '" pid="' + data[i].photo.id +'"/>' +
                                     '</div>';
-            $('#recent_left_cont').append(photo_list_html);
+            $('#photo_list_cont').append(photo_list_html);
         }
-        $('#recent_left_cont').append('<p class="tooltip"></p>');
+        $('#photo_list_cont').append('<p class="tooltip"></p><div class="clear"></div>');
         
         // if (typeof(append) == 'undefined'){
         //     for (var i = 0; i < blanks; i++){
@@ -4297,7 +4309,7 @@ $(document).ready(function(){
                     
                     top_nom_html =  '<div class="top_nom_wrap" name="' + nom.nominatee_username + '">' +
                                         '<p class="vote_count nom_cat_' + nom_cat_underscore + '">' + getGetOrdinal(i + 1) + '</p>' +
-                                        '<a href="/#!/' + nom.nominatee_username + '/">' + 
+                                        '<a class="top_nom_username" href="/#!/' + nom.nominatee_username + '/" name="' + nom.nominatee_username +'">' + 
                                             user_thumbnail +
                                         '</a>' +
                                         '<div class="top_nom_clip_cont" value="' + nom.id + '">' +
@@ -5064,6 +5076,11 @@ $(document).ready(function(){
             'pid': pid,
             'page_size': 20
         };
+        
+        if (!me || me.id != selected_user.fid){
+            vars.username = selected_user.username;
+        }
+        
         if (dir == 'old'){
             $.getJSON('/api/get_user_profile/', vars, function(data){
                 if (data.photos.length > 0){
@@ -6112,6 +6129,14 @@ $(document).ready(function(){
                 else if (view_name == 'profile_settings'){
                     window.location.href = '#!/' + selected_user.username + '/settings/';
                 }
+            }
+        });
+        
+        $('.top_nom_wrap').live('mouseover mouseout', function(event) {
+            if (event.type == 'mouseover') {
+                show_tooltip(this);
+            } else {
+                hide_tooltip(this);
             }
         });
         
@@ -7483,6 +7508,8 @@ $(document).ready(function(){
         $('.post_new_comment').attr('value', nom.id);
         $('.flag_photo').attr('pid', nom.photo.id);
         $('.flag_photo').attr('thumb', nom.photo.crop);
+        
+        $('#nom_place').text(getGetOrdinal(nom.position + 1));
         
         var winning_text = '';
         if (nom.won){

@@ -54,6 +54,64 @@ window_activity_cont.add(window_activity_background);
 window_activity_cont.add(window_activity);
 win.add(window_activity_cont);
 
+saving_activity = Titanium.UI.createActivityIndicator({
+    message: 'Saving photo...',
+    font: {fontSize: 16, fontWeight: 'bold'},
+    color: '#fff',
+    height:50,
+    width:10,
+    top: 150
+});
+saving_activity.show()
+
+saving_activity_background = Titanium.UI.createView({
+    backgroundColor: '#000',
+    borderRadius: 5,
+    opacity: 0.6,
+    height: 480,
+    width: 320,
+    zIndex: -1
+});
+
+saving_activity_cont = Titanium.UI.createView({
+    width: 320,
+    height: 480,
+    zIndex: 20,
+    opacity: 0
+});
+saving_activity_cont.hide();
+saving_activity_cont.add(saving_activity_background);
+saving_activity_cont.add(saving_activity);
+
+preparing_activity = Titanium.UI.createActivityIndicator({
+    message: 'Preparing photo...',
+    font: {fontSize: 16, fontWeight: 'bold'},
+    color: '#fff',
+    height:50,
+    width:10,
+    top: 150
+});
+preparing_activity.show()
+
+preparing_activity_background = Titanium.UI.createView({
+    backgroundColor: '#000',
+    borderRadius: 5,
+    opacity: 0.6,
+    height: 480,
+    width: 320,
+    zIndex: -1
+});
+
+preparing_activity_cont = Titanium.UI.createView({
+    width: 320,
+    height: 480,
+    zIndex: 20
+});
+preparing_activity_cont.hide();
+preparing_activity_cont.add(preparing_activity_background);
+preparing_activity_cont.add(preparing_activity);
+win.add(preparing_activity_cont);
+
 // Camera 
 var nominate_window = null;
 function add_nominate_window(animate){
@@ -71,7 +129,7 @@ function add_nominate_window(animate){
     if (typeof(animate) != 'undefined' && animate){
         setTimeout(function(){
             nominate_window.open(window_slide_in);
-        }, 300);
+        }, 200);
     }
     else{
         nominate_window.open();
@@ -95,6 +153,7 @@ var camera_overlay = Titanium.UI.createView({
     width: 320,
     left: 0
 });
+camera_overlay.hide();
 
 var top_shutter = Titanium.UI.createView({
     backgroundColor: '#000',
@@ -112,6 +171,7 @@ var bottom_shutter = Titanium.UI.createView({
 
 camera_overlay.add(top_shutter);
 camera_overlay.add(bottom_shutter);
+camera_overlay.add(saving_activity_cont);
 
 function animate_shutter(){
     top_shutter.animate({
@@ -141,7 +201,7 @@ var camera_overlay_top_bar = Titanium.UI.createView({
 
 var camera_overlay_bottom_bar_background = Titanium.UI.createView({
     backgroundColor: '#000',
-    height: 80,
+    height: 100,
     width: 320,
     bottom: 0
 });
@@ -174,7 +234,7 @@ var take_photo = Ti.UI.createButton({
 	backgroundSelectedImage: '../images/camera_buttons/snap_button_click.png',
 	width: 70,
 	height: 70,
-    bottom: 5,
+    bottom: 15,
     left: 125
 });
 camera_overlay_bottom_bar.add(take_photo);
@@ -182,9 +242,17 @@ camera_overlay_bottom_bar.add(take_photo);
 take_photo.addEventListener('click', function(e){
     if (!take_photo_click){
         take_photo_click = true;
-        add_nominate_window(true);
+        // add_nominate_window(true);
         animate_shutter();
         Ti.Media.takePicture();
+        setTimeout(function(){
+            saving_activity_cont.show();
+            saving_activity_cont.animate({
+                opacity: 1.0,
+                curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
+                duration: 300
+            });
+        }, 200);
     }
 });
 
@@ -192,7 +260,7 @@ var photo_gallery = Ti.UI.createButton({
 	backgroundImage: '../images/camera_buttons/gallery.png',
 	width: 42,
 	height: 42,
-    bottom: 16,
+    bottom: 26,
     left: 16
 });
 camera_overlay_bottom_bar.add(photo_gallery);
@@ -201,15 +269,19 @@ photo_gallery.addEventListener('click', function(e){
     Titanium.Media.hideCamera();
     Titanium.UI.iPhone.showStatusBar({animated:false});
 
-    add_nominate_window();
+    // add_nominate_window();
     Titanium.Media.openPhotoGallery({
         success: photo_gallery_click,
         cancel: photo_gallery_cancel,
         mediaTypes: Ti.Media.MEDIA_TYPE_PHOTO
     });
+    setTimeout(function(){
+        preparing_activity_cont.show();
+    }, 300);
 });
 
 function photo_gallery_cancel(e){
+    preparing_activity_cont.hide();
     Titanium.UI.iPhone.hideStatusBar({animated:false});
     setTimeout(function(){
         show_camera();
@@ -218,15 +290,16 @@ function photo_gallery_cancel(e){
 
 function photo_gallery_click(e){
     take_photo_click = true;
-    
-    nominate_window.animate(window_slide_in);
-
-    setTimeout(function(){
-        cammera_success(e, true);
-    }, 200);
+    preparing_activity_cont.show();
+    cammera_success(e, true);
 }
 
+var cameraTransform = Ti.UI.create2DMatrix();
+cameraTransform = cameraTransform.scale(1);
 function show_camera(){
+    preparing_activity_cont.hide();
+    saving_activity_cont.hide();
+    saving_activity_cont.opacity = 0;
     Titanium.Media.showCamera({
         success: cammera_success,
         cancel: camera_cancel,
@@ -235,7 +308,8 @@ function show_camera(){
         autohide: false,
         showControls: false,
         mediaTypes: Ti.Media.MEDIA_TYPE_PHOTO,
-        overlay: camera_overlay
+        overlay: camera_overlay,
+        transform:cameraTransform
     });
     
     if (flash_selected_button.button == 'on'){
@@ -254,6 +328,10 @@ function show_camera(){
     else if (cam_selected == 'front'){
         Ti.Media.switchCamera(Ti.Media.CAMERA_REAR);
     }
+    
+    setTimeout(function(){
+        camera_overlay.show();
+    }, 1100);
 }
 
 var cam_selected = 'back';
@@ -261,7 +339,7 @@ var cam_selected_button = Ti.UI.createButton({
 	backgroundImage: '../images/camera_buttons/cam_back.png',
 	width: 42,
 	height: 42,
-    bottom: 16,
+    bottom: 26,
     right: 68,
     zIndex: 10
 });
@@ -272,7 +350,7 @@ var cam_hidden_button = Ti.UI.createButton({
 	backgroundImage: '../images/camera_buttons/cam_front.png',
 	width: 42,
 	height: 42,
-    bottom: 16,
+    bottom: 26,
     right: 68,
     zIndex: 9,
     opacity: 0
@@ -285,7 +363,6 @@ cam_hidden_button.addEventListener('click', function(e){
     animate_cam_button(selected);
 });
 
-
 cam_selected_button.addEventListener('click', function(e){
     // var selected = e.source.button;
     animate_cam_button();
@@ -296,7 +373,7 @@ function animate_cam_button(selected){
     if (cam_select_open){
         cam_hidden_button.animate({
             curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
-            bottom: 16,
+            bottom: 26,
             opacity: 0,
             duration: 250
         });
@@ -305,7 +382,7 @@ function animate_cam_button(selected){
     else{
         cam_hidden_button.animate({
             curve: Ti.UI.ANIMATION_CURVE_EASE_OUT,
-            bottom: 68,
+            bottom: 78,
             opacity: 1.0,
             duration: 250
         });
@@ -335,7 +412,7 @@ var flash_selected_button = Ti.UI.createButton({
 	backgroundImage: '../images/camera_buttons/flash_auto.png',
 	width: 42,
 	height: 42,
-    bottom: 16,
+    bottom: 26,
     right: 13,
     zIndex: 10
 });
@@ -350,7 +427,7 @@ var flash_middle_button = Ti.UI.createButton({
 	backgroundImage: '../images/camera_buttons/flash_off.png',
 	width: 42,
 	height: 42,
-    bottom: 16,
+    bottom: 26,
     right: 13,
     zIndex: 9,
     opacity: 0
@@ -367,7 +444,7 @@ var flash_top_button = Ti.UI.createButton({
 	backgroundImage: '../images/camera_buttons/flash_on.png',
 	width: 42,
 	height: 42,
-    bottom: 16,
+    bottom: 26,
     right: 13,
     zIndex: 9,
     opacity: 0
@@ -385,13 +462,13 @@ function animate_flash_button(selected){
     if (flash_select_open){
         flash_middle_button.animate({
             curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
-            bottom: 16,
+            bottom: 26,
             opacity: 0,
             duration: 250
         });
         flash_top_button.animate({
             curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
-            bottom: 16,
+            bottom: 26,
             opacity: 0,
             duration: 250
         });
@@ -400,13 +477,13 @@ function animate_flash_button(selected){
     else{
         flash_middle_button.animate({
             curve: Ti.UI.ANIMATION_CURVE_EASE_OUT,
-            bottom: 68,
+            bottom: 78,
             opacity: 1.0,
             duration: 250
         });
         flash_top_button.animate({
             curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
-            bottom: 122,
+            bottom: 132,
             opacity: 1.0,
             duration: 250
         });
@@ -433,12 +510,20 @@ function animate_flash_button(selected){
     }
 }
 
+if (Titanium.Platform.model !='iPhone 4' && Titanium.Platform.model !='iPad'){
+    cam_selected_button.hide();
+    cam_hidden_button.hide();
+    flash_selected_button.hide();
+    flash_middle_button.hide();
+    flash_top_button.hide();
+}
+
 var camera_listeners_attached = false;
 var take_photo_click = false;
 
 win.addEventListener('focus', function(){
-    reset_shutter();
     tabGroup.bottom = -50;
+    take_photo_click = false;
     
     cam_selected = 'back';
     cam_selected_button.button = 'back';
@@ -453,33 +538,13 @@ win.addEventListener('focus', function(){
     flash_top_button.backgroundImage = '../images/camera_buttons/flash_on.png';
     flash_top_button.button = 'on';
     
-    // if (!camera_listeners_attached){
-    //     camera_listeners_attached = true;
-    //     win.add(camera_overlay);
-    //     take_photo.addEventListener('click', function(e){
-    //         var data = {
-    //             'photo': {
-    //                 'width': 640,
-    //                 'height': 960
-    //             },
-    //             'new_photo': true
-    //         };
-    //         animate_shutter();
-    //         // add_nominate_window(true);
-    //     });
-    // }
+    saving_activity_cont.hide();
+    saving_activity_cont.opacity = 0;
+    reset_shutter();
+    show_camera();
     
-    Titanium.Media.showCamera({
-        success: cammera_success,
-        cancel: camera_cancel,
-        error: camera_error,
-        animated: false,
-        autohide: false,
-        showControls: false,
-        mediaTypes: Ti.Media.MEDIA_TYPE_PHOTO,
-        overlay: camera_overlay
-    });
-    
+    camera_overlay.show();
+    take_photo_click = false;
     window_activity_cont.hide();
 });
 
@@ -488,14 +553,43 @@ function cammera_success(event, gallery){
     if (typeof(gallery) == 'undefined'){
         Titanium.Media.hideCamera();
     }
+    var nom_window = Ti.UI.createWindow({backgroundColor:"#000", url:'nom/nominate.js'});
+    Titanium.UI.currentTab.open(nom_window,{animated:true});
     
     image = event.media;
     var imageView = Titanium.UI.createImageView({
         image:image,
-        width:640,
-        height:960
+        width:'auto',
+        height:'auto'
     });
-    image = imageView.toImage().imageAsCropped({width:640,height:640,x:0,y:200});
+    
+    //Portrit
+    var new_height = 0;
+    var new_width = 0;
+    if (imageView.height > imageView.width){
+        new_width = 640;
+        new_height = Math.floor(new_width * (imageView.height / imageView.width));
+        
+        var crop_y = (new_height - 640) / 2;
+        
+        if (crop_y < 0){
+            crop_y = 0;
+        }
+    
+        image = imageView.toImage().imageAsResized(new_width, new_height).imageAsCropped({width:640,height:640,x:0,y:crop_y});
+    }
+    else{ //Landscape
+        new_height = 640;
+        new_width = Math.floor(new_height * (imageView.width / imageView.height));
+        
+        var crop_x = (new_width - 640) / 2;
+        
+        if (crop_x < 0){
+            crop_x = 0;
+        }
+    
+        image = imageView.toImage().imageAsResized(new_width, new_height).imageAsCropped({width:640,height:640,x:crop_x,y:0});
+    }
 
     var f = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, 'temp.png');
     f.write(image);
@@ -507,8 +601,10 @@ function cammera_success(event, gallery){
         },
         'new_photo': true
     };
-    pass_nominate_data(data);
+    
     upload_photo(image);
+    pass_nominate_data(data);
+    camera_overlay.hide();
 }
 
 var photo_upload = Titanium.Network.createHTTPClient();
@@ -530,7 +626,10 @@ function upload_photo(image){
             Ti.App.Properties.setString("upload_complete", id);
         }
         catch(e){
-            // alert(e);
+            photo_upload.abort();
+            Ti.App.Properties.setString("upload_ready_state", 0);
+            Ti.App.Properties.setString("upload_progress", 0);
+            upload_photo(image);
         }
     };
     photo_upload.onerror = function(e){
@@ -551,8 +650,6 @@ function upload_photo(image){
     
     var url = SERVER_URL + '/upload_photo/'
     photo_upload.open('POST', url);
-    photo_upload.setRequestHeader("enctype", "multipart/form-data");
-    photo_upload.setRequestHeader("Content-Type", "image/png");
     photo_upload.send({
         'file': image,
         'iphone': true,
@@ -561,7 +658,7 @@ function upload_photo(image){
     
     clearInterval(upload_health_interval);
     upload_health_interval = setInterval(function(){
-        if (check_count > 12 && progress <= 10){
+        if (check_count > 12 && progress <= 0){
             clearInterval(upload_health_interval);
             try{
                 photo_upload.abort();
@@ -570,7 +667,7 @@ function upload_photo(image){
                 upload_photo(image);
             }
             catch (e){
-                // upload_photo(image);
+                upload_photo(image);
             }
         }
         check_count += 1;
@@ -585,10 +682,10 @@ function camera_error(error){
     var a = Titanium.UI.createAlertDialog({title:'Camera'});
 
     if (error.code == Titanium.Media.NO_CAMERA){
-        a.setMessage('Device does not have video recording capabilities');
+        a.setMessage('Device does not have camera capabilities');
     }
     else{
-        a.setMessage('Unexpected error: ' + error.code);
+        // a.setMessage('Unexpected error: ' + error.code);
     }
     
     a.show();
@@ -597,34 +694,42 @@ function camera_error(error){
 
 Ti.App.addEventListener('restart_upload', function(e){
     photo_upload.abort();
+    clearInterval(upload_health_interval);
     upload_photo(image);
+});
+
+Ti.App.addEventListener('abort_upload', function(e){
+    photo_upload.abort();
+    clearInterval(upload_health_interval);
 });
 
 Ti.App.addEventListener('cancel_nominate', function(e){
     take_photo_click = false;
     reset_shutter();
-    
-    setTimeout(function(){
-        show_camera();
-    }, 300);
+    photo_upload.abort();
+    camera_overlay.show();
 });
 
 Ti.App.addEventListener('reset_after_camera', function(e){
+    camera_overlay.hide();
     take_photo_click = false;
-    tabGroup.bottom = 0;
-    tabGroup.setActiveTab(0);
+    // tabGroup.bottom = 0;
+    // tabGroup.setActiveTab(0);
 });
 
 Ti.App.addEventListener('reset_after_camera_to_profile', function(e){
+    camera_overlay.hide();
     take_photo_click = false;
-    tabGroup.bottom = 0;
-    tabGroup.setActiveTab(4);
+    // tabGroup.bottom = 0;
+    // tabGroup.setActiveTab(4);
 });
 
 function reset_after_camera(prev){
+    camera_overlay.hide();
     Titanium.UI.iPhone.showStatusBar({animated:false});
-    take_photo_click = false;
     tabGroup.bottom = 0;
+    take_photo_click = false;
+
     if (typeof(prev) != 'undefined'){
         var prev_tab_index = parseInt(Ti.App.Properties.getString("selected_tab_index"));
         tabGroup.setActiveTab(prev_tab_index);
@@ -632,6 +737,4 @@ function reset_after_camera(prev){
     else{
         tabGroup.setActiveTab(0);
     }
-    
-    Titanium.UI.iPhone.showStatusBar({animated:false});
 }

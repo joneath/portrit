@@ -187,10 +187,6 @@ tabGroup.addEventListener('focus', function(e){
     Ti.App.Properties.setString("selected_tab_index", prev_tab_index);
 });
 
-win3.addEventListener('focus', function(){
-    tabGroup.bottom = -50;
-});
-
 function check_if_username(me){
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onload = function(){
@@ -375,6 +371,8 @@ function init_new_user(logout){
         });
         username.addEventListener('return', function(e){
             if (username.value != '' && alphaNumericCheck(username.value)){
+                create_go.hide();
+                
                 var xhr = Titanium.Network.createHTTPClient();
                 xhr.onload = function(){
                     var data = JSON.parse(this.responseData);
@@ -998,7 +996,7 @@ Titanium.Facebook.addEventListener('login', function(e) {
         });
 	}
 	if (e.error) {
-		alert(e.error);
+        // alert(e.error);
     }
 });
 

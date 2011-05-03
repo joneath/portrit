@@ -9,12 +9,12 @@
 
 NSString * const TI_APPLICATION_DEPLOYTYPE = @"production";
 NSString * const TI_APPLICATION_ID = @"com.portrit";
-NSString * const TI_APPLICATION_PUBLISHER = @"joneath";
+NSString * const TI_APPLICATION_PUBLISHER = @"Portrit";
 NSString * const TI_APPLICATION_URL = @"http://portrit.com";
 NSString * const TI_APPLICATION_NAME = @"Portrit";
-NSString * const TI_APPLICATION_VERSION = @"1.0";
+NSString * const TI_APPLICATION_VERSION = @"1.0.0";
 NSString * const TI_APPLICATION_DESCRIPTION = @"No description provided";
-NSString * const TI_APPLICATION_COPYRIGHT = @"2011 by joneath";
+NSString * const TI_APPLICATION_COPYRIGHT = @"2011 by Portrit";
 NSString * const TI_APPLICATION_GUID = @"2ee1dce7-9c8d-481b-a5f8-755ce8c5b799";
 BOOL const TI_APPLICATION_ANALYTICS = false;
 

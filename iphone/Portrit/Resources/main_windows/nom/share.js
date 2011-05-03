@@ -64,13 +64,13 @@ back_buttom = Titanium.UI.createButton({
 });
 
 back_buttom.addEventListener('click', function(){
-    if (!new_photo){
+    // if (!new_photo){
         win.close();
-    }
-    else{
-        win.animate(window_slide_back);
-        Ti.App.fireEvent('cancel_share');
-    }
+    // }
+    // else{
+    //     win.animate(window_slide_back);
+    //     Ti.App.fireEvent('cancel_share');
+    // }
 });
 window_nav_bar.add(back_buttom);
 
@@ -190,20 +190,55 @@ function close_share_nom(){
     }
 
     if (new_photo){
-        win.animate(fadeOut);
-
+        tabGroup.close();
+        win.close({animated:false});
+        Ti.App.fireEvent('close_nominate_page', { });
         Ti.App.fireEvent('close_settings_page', { });
+        
+        tabGroup.opacity = 0;
+        tabGroup.bottom = 0;
+        
         if (nominations != ''){
-            Ti.App.fireEvent('reset_after_camera', { });
-            Ti.App.fireEvent('update_active_noms', { });
-            if (user == me.fid){
-                Ti.App.fireEvent('update_my_photos', { });
-            }
+            tabGroup.setActiveTab(0);
         }
         else{
-            Ti.App.fireEvent('update_my_photos', { });
-            Ti.App.fireEvent('reset_after_camera_to_profile', { });
+            tabGroup.setActiveTab(4);
         }
+        
+        setTimeout(function(){
+            tabGroup.open(fadeIn);
+            setTimeout(function(){
+                if (nominations != ''){
+                    tabGroup.setActiveTab(0);
+                    Ti.App.fireEvent('reset_after_camera', { });
+                    Ti.App.fireEvent('update_active_noms', { });
+                    if (user == me.fid){
+                        Ti.App.fireEvent('update_my_noms', { });
+                    }
+                }
+                else{
+                    tabGroup.setActiveTab(4);
+                    Ti.App.fireEvent('reset_after_camera', { });
+                    Ti.App.fireEvent('update_my_photos', { });
+                }
+        	}, 250);
+        }, 50);
+        
+        // win.close({animated:false});
+        // 
+        // Ti.App.fireEvent('close_nominate_page', { });
+        // Ti.App.fireEvent('close_settings_page', { });
+        // if (nominations != ''){
+        //     Ti.App.fireEvent('reset_after_camera', { });
+        //     Ti.App.fireEvent('update_active_noms', { });
+        //     if (user == me.fid){
+        //         Ti.App.fireEvent('update_my_photos', { });
+        //     }
+        // }
+        // else{
+        //     Ti.App.fireEvent('update_my_photos', { });
+        //     Ti.App.fireEvent('reset_after_camera_to_profile', { });
+        // }
     }
     else{
         win.close();
@@ -219,7 +254,7 @@ function close_share_nom(){
                 if (user == me.fid){
                     Ti.App.fireEvent('update_my_photos', { });
                 }
-        	}, 100);
+        	}, 200);
         }, 50); 
     }
 }
@@ -302,17 +337,49 @@ function submit_nom(e){
                 }
             }
             
-            if (check_count > 30 && (!progress || progress <= 5) && parseInt(upload_ready_state) < 4){
-                if (restart_count < 1){
-                    check_count = 0;
-                    restart_count += 1;
-                    Ti.App.fireEvent('restart_upload', { });
-                }
-                else{
-                    clearInterval(check_upload_interval);
-                    win.animate(fadeOut);
-                    Ti.App.fireEvent('reset_after_camera_to_profile', { });
-                }
+            if (check_count > 35 && (!progress || progress <= 5) && parseInt(upload_ready_state) < 4){
+                clearInterval(check_upload_interval);
+                
+                var f = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, 'temp.png');
+                Titanium.Media.saveToPhotoGallery(f);
+                
+                var upload_error_alert = Titanium.UI.createAlertDialog({
+                	title:'Unable to upload photo. Photo saved to Camera Roll.',
+                	buttonNames: ['OK'],
+                	cancel: 0
+                });
+                upload_error_alert.addEventListener('click', function(e){
+                    if (e.index == 0){
+                        tabGroup.close();
+                        win.close({animated:false});
+                        Ti.App.fireEvent('close_nominate_page', { });
+                        Ti.App.fireEvent('close_settings_page', { });
+                        
+                        tabGroup.opacity = 0;
+                        tabGroup.bottom = 0;
+                        
+                        setTimeout(function(){
+                            tabGroup.open(fadeIn);
+                            setTimeout(function(){
+                                if (nominations != ''){
+                                    tabGroup.setActiveTab(0);
+                                }
+                                else{
+                                    tabGroup.setActiveTab(4);
+                                }
+                                
+                                Ti.App.fireEvent('abort_upload', { });
+                                Ti.App.fireEvent('reset_after_camera_to_profile', { });
+                            }, 400);
+                        }, 50);
+                    }
+                    // if (e.index == 1){
+                    //     check_count = 0;
+                    //     Ti.App.fireEvent('restart_upload', { });
+                    //     submit_nom();
+                    // }
+                });
+                upload_error_alert.show();
             }
             check_count += 1;
         }, 200);
@@ -365,12 +432,28 @@ function post_photo(url, data){
             clearInterval(check_photo_upload);
             upload_photo_request.abort();
             
-            win.animate(fadeOut);
-            Ti.App.fireEvent('reset_after_camera', { });
-            Ti.App.fireEvent('update_active_noms', { });
-            if (user == me.fid){
-                Ti.App.fireEvent('update_my_photos', { });
-            }
+            tabGroup.close();
+            win.close({animated:false});
+            Ti.App.fireEvent('close_nominate_page', { });
+            Ti.App.fireEvent('close_settings_page', { });
+            
+            tabGroup.opacity = 0;
+            tabGroup.bottom = 0;
+            
+            setTimeout(function(){
+                tabGroup.open(fadeIn);
+                setTimeout(function(){
+                    if (nominations != ''){
+                        tabGroup.setActiveTab(0);
+                    }
+                    else{
+                        tabGroup.setActiveTab(4);
+                    }
+                    
+                    Ti.App.fireEvent('abort_upload', { });
+                    Ti.App.fireEvent('reset_after_camera_to_profile', { });
+                }, 400);
+            }, 50);
         }
         upload_tick += 1;
     }, 200);

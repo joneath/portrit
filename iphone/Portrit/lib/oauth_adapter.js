@@ -231,32 +231,57 @@ var OAuthAdapter = function(pConsumerSecret, pConsumerKey, pSignatureMethod)
     var authorizeUICallback = function(e)
     {
         Ti.API.debug('authorizeUILoaded');
-
-        var xmlDocument = Ti.XML.parseString(e.source.html);
-        var nodeList = xmlDocument.getElementsByTagName('div');
-
-        for (var i = 0; i < nodeList.length; i++)
-        {
-            var node = nodeList.item(i);
-            var id = node.attributes.getNamedItem('id');
-            if (id && id.nodeValue == 'oauth_pin')
-            {
-                pin = node.text;
-
-                if (receivePinCallback) setTimeout(receivePinCallback, 100);
-
-                id = null;
-                node = null;
-
-                destroyAuthorizeUI();
-
-                break;
-            }
+        
+        var start_index_of_code = e.source.html.indexOf('<code>');
+        var end_index_of_code = e.source.html.indexOf('</code>');
+        
+        if (start_index_of_code > 0 && end_index_of_code > 0){
+            pin = e.source.html.slice(start_index_of_code + 6, end_index_of_code);
+        
+            if (receivePinCallback) setTimeout(receivePinCallback, 100);
+        
+            id = null;
+            node = null;
+        
+            destroyAuthorizeUI();
         }
 
-        nodeList = null;
-        xmlDocument = null;
-
+        // var xmlDocument = Ti.XML.parseString(e.source.html);
+        // var nodeList = xmlDocument.getElementsByTagName('code');
+        
+        // for (var i = 0; i < nodeList.length; i++)
+        // {
+        //     var node = nodeList.item(i);
+        //     
+        //     pin = node.text;
+        // 
+        //     if (receivePinCallback) setTimeout(receivePinCallback, 100);
+        // 
+        //     id = null;
+        //     node = null;
+        // 
+        //     destroyAuthorizeUI();
+        // 
+        //     break;
+        //     
+        //     // var id = node.attributes.getNamedItem('id');
+        //     // if (id && (id.nodeValue == 'oauth-pin' || id.nodeValue == 'oauth_pin'))
+        //     // {
+        //     //     pin = node.text;
+        //     // 
+        //     //     if (receivePinCallback) setTimeout(receivePinCallback, 100);
+        //     // 
+        //     //     id = null;
+        //     //     node = null;
+        //     // 
+        //     //     destroyAuthorizeUI();
+        //     // 
+        //     //     break;
+        //     // }
+        // }
+        // 
+        // nodeList = null;
+        // xmlDocument = null;
     };
 
     // shows the authorization UI

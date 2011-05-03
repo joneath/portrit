@@ -218,7 +218,7 @@ function render_user_photos(data, append){
     		image: '../images/photo_loader.png',
     		width: photo_width,
     		height: photo_height,
-    		hires: highres,
+    		hires: true,
     		top: 0
     	});
     	cachedImageView('images', data[i].source, main_image);
@@ -1010,7 +1010,7 @@ function render_active_view(data){
         });
         
         photo_action_row = Titanium.UI.createView({
-            backgroundColor: '#222',
+            backgroundColor: '#fff',
             top: 0,
             width: 320,
             height: 35
@@ -1123,6 +1123,15 @@ function render_active_view(data){
             });
             comments_cont.add(load_more_comments);
         }
+        
+        photo_action_row_shadow = Titanium.UI.createView({
+            backgroundImage: '../images/action_bar_shadow.png',
+            top: 35,
+            width: 320,
+            height: 8,
+            zIndex: 100
+        });
+        row.add(photo_action_row_shadow);
         
         section.add(row);
         section.created_time = nom.created_time;
@@ -1747,22 +1756,7 @@ name = me.name;
 init_profile_view();
 
 Ti.App.addEventListener('update_my_photos', function(eventData) {
-    update_profile = true;
-});
-
-var update_follow_counts_flag = false;
-var reset = false;
-var first_profile = Ti.App.Properties.getString("first_profile");
-win.addEventListener('focus', function(){
-    if (update_profile && !reset){
-        update_profile = false;
-        // get_user_profile_count = 0;
-        // list_view_data = [ ];
-        // tv.setData(list_view_data);
-        // init_profile_view();
-        
-        window_activity_cont.show();
-        window_activity_timeout();
+    if (get_user_profile_count > 0){
         var xhr = Titanium.Network.createHTTPClient();
         xhr.onload = function(){
             data = JSON.parse(this.responseData);
@@ -1777,11 +1771,41 @@ win.addEventListener('focus', function(){
             }
             window_activity_cont.hide();
         };
-        
+
         var url = SERVER_URL + '/api/get_user_profile/?access_token=' + me.access_token + '&method=photos';
         xhr.open('GET', url);
         xhr.send();
     }
+});
+
+var update_follow_counts_flag = false;
+var reset = false;
+var first_profile = Ti.App.Properties.getString("first_profile");
+win.addEventListener('focus', function(){
+    // if (update_profile && !reset && get_user_profile_count > 0){
+    //     update_profile = false;
+    //     
+    //     window_activity_cont.show();
+    //     window_activity_timeout();
+    //     var xhr = Titanium.Network.createHTTPClient();
+    //     xhr.onload = function(){
+    //         data = JSON.parse(this.responseData);
+    //         if (data.photos.length > 0){
+    //             list_view_data = [ ];
+    //             render_user_photos(data.photos);
+    //             newest_photo = data.photos[0].created_time;
+    //             oldest_photo = data.photos[data.photos.length - 1].id;
+    //             if (data.photos.length > 10){
+    //                 load_more_view.show();
+    //             }
+    //         }
+    //         window_activity_cont.hide();
+    //     };
+    //     
+    //     var url = SERVER_URL + '/api/get_user_profile/?access_token=' + me.access_token + '&method=photos';
+    //     xhr.open('GET', url);
+    //     xhr.send();
+    // }
     if (update_follow_counts_flag){
         update_follow_counts_flag = false;
         update_follow_counts();
@@ -1870,6 +1894,11 @@ win.addEventListener('focus', function(){
         help_cont.addEventListener('click', close_help_text);
         setTimeout(close_help_text, 6500);
     }
+});
+
+Ti.App.addEventListener('update_my_noms', function(eventData) {
+    active_noms_count += 1;
+    active_noms_cache = [ ];
 });
 
 Ti.App.addEventListener('update_follow_counts', function(eventData) {

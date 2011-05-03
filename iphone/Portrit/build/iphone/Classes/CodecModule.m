@@ -41,7 +41,7 @@
     
     ENSURE_ARG_FOR_KEY(dest, args, @"dest", TiBuffer);
     ENSURE_INT_OR_NIL_FOR_KEY(position, args, @"position", hasPosition);
-    ENSURE_ARG_FOR_KEY(data, args, @"src", NSNumber);
+    ENSURE_ARG_FOR_KEY(data, args, @"source", NSNumber);
     ENSURE_ARG_FOR_KEY(type, args, @"type", NSString);
     ENSURE_INT_OR_NIL_FOR_KEY(byteOrder, args, @"byteOrder", hasByteOrder);
     
@@ -94,7 +94,7 @@
     CFByteOrder byteOrder;
     BOOL hasByteOrder;
     
-    ENSURE_ARG_FOR_KEY(src,args,@"src",TiBuffer);
+    ENSURE_ARG_FOR_KEY(src,args,@"source",TiBuffer);
     ENSURE_ARG_FOR_KEY(type, args, @"type", NSString);
     ENSURE_INT_OR_NIL_FOR_KEY(position, args, @"position", hasPosition);
     ENSURE_INT_OR_NIL_FOR_KEY(byteOrder, args, @"byteOrder", hasByteOrder);
@@ -219,14 +219,15 @@
     
     ENSURE_ARG_FOR_KEY(dest, args, @"dest", TiBuffer);
     ENSURE_INT_OR_NIL_FOR_KEY(destPosition, args, @"destPosition", hasDestPosition);
-    ENSURE_ARG_FOR_KEY(string, args, @"string", NSString);
-    ENSURE_INT_OR_NIL_FOR_KEY(srcPosition, args, @"srcPosition", hasSrcPosition);
-    ENSURE_INT_OR_NIL_FOR_KEY(srcLength, args, @"srcLength", hasSrcLength);
-    ENSURE_ARG_FOR_KEY(charset, args, @"charset", NSString);
+    ENSURE_ARG_FOR_KEY(string, args, @"source", NSString);
+    ENSURE_INT_OR_NIL_FOR_KEY(srcPosition, args, @"sourcePosition", hasSrcPosition);
+    ENSURE_INT_OR_NIL_FOR_KEY(srcLength, args, @"sourceLength", hasSrcLength);
+    ENSURE_ARG_OR_NIL_FOR_KEY(charset, args, @"charset", NSString);
     
     destPosition = (hasDestPosition) ? destPosition : 0;
     srcPosition = (hasSrcPosition) ? srcPosition : 0;
     srcLength = (hasSrcLength) ? srcLength : [string length];
+    charset = (charset) ? charset : [self CHARSET_UTF8];
     
     int result = [TiUtils encodeString:string toBuffer:dest charset:charset offset:destPosition sourceOffset:srcPosition length:srcLength];
     
@@ -266,7 +267,7 @@
     int length;
     NSString* charset = nil;
     
-    ENSURE_ARG_FOR_KEY(src, args, @"src", TiBuffer);
+    ENSURE_ARG_FOR_KEY(src, args, @"source", TiBuffer);
     ENSURE_INT_FOR_KEY(position, args, @"position");
     ENSURE_INT_FOR_KEY(length, args, @"length");
     ENSURE_ARG_OR_NIL_FOR_KEY(charset, args, @"charset", NSString);

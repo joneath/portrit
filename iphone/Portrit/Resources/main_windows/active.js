@@ -995,37 +995,38 @@ function render_nom(nom, top, row_count){
         // nominator_name.username = nom.nominator_username;
         // nominator_name.addEventListener('click', add_profile_window);
         // 
-        // if (nom.tagged_users.length > 0){
-        //     tagged_cont = Titanium.UI.createView({
-        //         height: 30,
-        //         width: 'auto',
-        //         right: 3,
-        //     });
-        //     tagged_label = Titanium.UI.createLabel({
-        //         text: nom.tagged_users.length + ' Tagged',
-        //         textAlign: 'left',
-        //         color: '#fff',
-        //         left: 8,
-        //         right: 35,
-        //         font:{fontSize: 13, fontWeight: 'bold'},
-        //         size: {width: 'auto', height: 35}
-        //     });
-        //     tagged_label.tags = nom.tagged_users;
-        //     tagged_cont.add(tagged_label);
-        // 
-        //     disclosure = Titanium.UI.createButton({
-        //         style:Titanium.UI.iPhone.SystemButton.DISCLOSURE,
-        //         right: 0
-        //     });
-        //     disclosure.tags = nom.tagged_users;
-        //     tagged_cont.add(disclosure);
-        // 
-        //     tagged_cont.tags = nom.tagged_users;
-        //     tagged_cont.addEventListener('click', show_tags);
-        //     
-        //     nominator_footer.add(tagged_cont);
-        // }
-        // 
+        if (nom.tagged_users.length > 0){
+            tagged_cont = Titanium.UI.createView({
+                height: 'auto',
+                width: 'auto',
+                right: 3,
+                zIndex: 10
+            });
+            tagged_label = Titanium.UI.createLabel({
+                text: nom.tagged_users.length + ' Tagged',
+                textAlign: 'left',
+                color: '#fff',
+                left: 8,
+                right: 35,
+                font:{fontSize: 13, fontWeight: 'bold'},
+                size: {width: 'auto', height: 35}
+            });
+            tagged_label.tags = nom.tagged_users;
+            tagged_cont.add(tagged_label);
+        
+            disclosure = Titanium.UI.createButton({
+                style:Titanium.UI.iPhone.SystemButton.DISCLOSURE,
+                right: 0
+            });
+            disclosure.tags = nom.tagged_users;
+            tagged_cont.add(disclosure);
+        
+            tagged_cont.tags = nom.tagged_users;
+            tagged_cont.addEventListener('click', show_tags);
+            
+            nominator_footer.add(tagged_cont);
+        }
+        
         row.add(nominator_footer);
         
         time = new Date(nom.created_time * 1000);
@@ -1079,7 +1080,7 @@ function render_nom(nom, top, row_count){
         });
         
         photo_action_row = Titanium.UI.createView({
-            backgroundColor: '#222',
+            backgroundColor: '#fff',
             top: 0,
             width: 320,
             height: 35
@@ -1193,13 +1194,22 @@ function render_nom(nom, top, row_count){
             comments_cont.add(load_more_comments);
         }
         
+        photo_action_row_shadow = Titanium.UI.createView({
+            backgroundImage: '../images/action_bar_shadow.png',
+            top: 35,
+            width: 320,
+            height: 8,
+            zIndex: 100
+        });
+        row.add(photo_action_row_shadow);
+        
         section.add(row);
         section.created_time = nom.created_time;
 
         list_view_data.push(section);
     }
     catch (err){
-        alert(err);
+        // alert(err);
     }
 }
 

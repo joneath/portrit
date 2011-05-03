@@ -73,13 +73,13 @@ back_buttom = Titanium.UI.createButton({
 });
 
 back_buttom.addEventListener('click', function(){
-    if (!new_photo){
+    // if (typeof(new_photo) == 'undefined' || !new_photo){
         win.close();
-    }
-    else{
-        win.animate(window_slide_back);
+    // }
+    // else{
+    //     win.animate(window_slide_back);
         Ti.App.fireEvent('cancel_nominate');
-    }
+    // }
 });
 
 window_nav_bar.add(back_buttom);
@@ -545,23 +545,23 @@ function post_nom(e){
         	    }
         	}
         	
-    	    if (!new_photo){
+            // if (!new_photo){
     	        var w = Ti.UI.createWindow({backgroundColor:"#eee", url:'share.js'});
             	Titanium.UI.currentTab.open(w,{animated:true});
-    	    }
-    	    else{
-                // if (!share_window){
-                // 
-                //     setTimeout(function(){
-                //         share_window.animate(window_slide_in);
-                //         win.animate(window_slide_out);
-                //     }, 300);
-                // }
-                // else{
-                    share_window.animate(window_slide_in);
-                    win.animate(window_slide_out);
-                // }
-    	    }
+            // }
+            // else{
+            //                 // if (!share_window){
+            //                 // 
+            //                 //     setTimeout(function(){
+            //                 //         share_window.animate(window_slide_in);
+            //                 //         win.animate(window_slide_out);
+            //                 //     }, 300);
+            //                 // }
+            //                 // else{
+            //                     share_window.animate(window_slide_in);
+            //                     win.animate(window_slide_out);
+            //                 // }
+            // }
 
         	setTimeout(function(){
         	    Ti.App.fireEvent('pass_nom_data', {
@@ -753,8 +753,7 @@ function show_tag_window(e){
         if (following_cache.length == 0){
             var xhr = Titanium.Network.createHTTPClient();
 
-            xhr.onload = function()
-            {   
+            xhr.onload = function(){   
                 var data = JSON.parse(this.responseData);
                 if (data.data.length > 0){
                     following_cache = data.data;
@@ -871,6 +870,5 @@ Ti.App.addEventListener('close_nom_share', function(e){
 });
 
 Ti.App.addEventListener('close_nominate_page', function(e){
-    win.hide();
-    win.close();
+    win.close({animated:false});
 });
