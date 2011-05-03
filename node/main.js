@@ -55,6 +55,15 @@ var Portrit = function(){
         return cat.replace(' ', '_').toLowerCase();
     }
     
+    function user_in_list(list, id){
+        for (var i = 0; i < list.length; i++){
+            if (list[i].user == id){
+                return true;
+            }
+        }
+        return false;
+    }
+    
     function prep_push_data(friends, data){
         var push_payload = [ ];
         var push = { };
@@ -79,21 +88,17 @@ var Portrit = function(){
             }
             
             for (id in friends){
-                if (id != undefined){
-                    allow_push = false;
-                    
-                    if (friends[id].push_on && friends[id].push_nominations && id != data.payload.nom_data[0].nominatee && id != data.payload.nom_data[0].nominator){
-                        message = data.payload.nom_data[0].nominator_username + ' tagged you in a photo for ' + data.payload.nom_data[0].nomination_category;
+                if (id != undefined && user_in_list(data.payload.nom_data[0].tagged_users, id) && friends[id].push_on && friends[id].push_nominations && id != data.payload.nom_data[0].nominatee && id != data.payload.nom_data[0].nominator){
+                    message = data.payload.nom_data[0].nominator_username + ' tagged you in a photo for ' + data.payload.nom_data[0].nomination_category;
 
-                        push = { 
-                            'aliases': [String(id)],
-                            'aps': {
-                                'badge': '+1',
-                                'alert': message
-                            }
-                        };
-                        push_payload.push(push);
-                    }
+                    push = { 
+                        'aliases': [String(id)],
+                        'aps': {
+                            'badge': '+1',
+                            'alert': message
+                        }
+                    };
+                    push_payload.push(push);
                 }
             }
         }

@@ -41,7 +41,7 @@ win.add(tv);
 
 window_activity = Titanium.UI.createActivityIndicator({
     message: 'Loading...',
-    font:{fontSize:14, fontWeight:'bold'},
+    font:{fontSize:16, fontWeight:'bold'},
     color: '#fff',
     height:50,
     width:10

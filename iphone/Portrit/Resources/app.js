@@ -188,7 +188,7 @@ tabGroup.addEventListener('focus', function(e){
 });
 
 function check_if_username(me){
-    var xhr = Titanium.Network.createHTTPClient();
+    var xhr = Titanium.Network.createHTTPClient({enableKeepAlive:false});
     xhr.onload = function(){
         var data = JSON.parse(this.responseData);
         if (data.username){
@@ -373,7 +373,7 @@ function init_new_user(logout){
             if (username.value != '' && alphaNumericCheck(username.value)){
                 create_go.hide();
                 
-                var xhr = Titanium.Network.createHTTPClient();
+                var xhr = Titanium.Network.createHTTPClient({enableKeepAlive:false});
                 xhr.onload = function(){
                     var data = JSON.parse(this.responseData);
                     if (data){
@@ -418,7 +418,7 @@ function init_new_user(logout){
                     username_activity.animate(fadeIn);
                     clearTimeout(check_name_aval);
                     check_name_aval = setTimeout(function(){
-                        var xhr = Titanium.Network.createHTTPClient();
+                        var xhr = Titanium.Network.createHTTPClient({enableKeepAlive:false});
                         xhr.onload = function(){
                             username_activity.animate(fadeOut);
                             var data = JSON.parse(this.responseData);
@@ -969,7 +969,7 @@ Titanium.Facebook.addEventListener('login', function(e) {
         window_activity_cont.add(window_activity);
         landing_win.add(window_activity_cont);
         
-        var xhr = Titanium.Network.createHTTPClient();
+        var xhr = Titanium.Network.createHTTPClient({enableKeepAlive:false});
         xhr.onload = function(){
             window_activity_cont.hide();
             var data = JSON.parse(this.responseData);
@@ -1024,7 +1024,7 @@ function register_push_notifications(alias){
             };
             UrbanAirship.register(params, function(data) {
                 if (!(Ti.App.Properties.getString('push_notifications'))){
-                    var xhr = Titanium.Network.createHTTPClient();
+                    var xhr = Titanium.Network.createHTTPClient({enableKeepAlive:false});
                     var url = SERVER_URL + '/api/push_notifications/'
                     xhr.onload = function(){
                         Ti.App.Properties.setString("push_notifications", true);

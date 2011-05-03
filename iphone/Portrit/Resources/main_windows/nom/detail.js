@@ -91,6 +91,7 @@ win.add(window_nav_bar);
 
 window_activity = Titanium.UI.createActivityIndicator({
     message: 'Loading...',
+    font:{fontSize:16, fontWeight:'bold'},
     color: '#fff',
     height:50,
     width:10

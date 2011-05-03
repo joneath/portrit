@@ -96,7 +96,7 @@ def upload_photo(request):
             image = Image.open(file_loc)
             size = 130, 130
             image.thumbnail(size, Image.ANTIALIAS)
-            image.save(file_loc + '_130.jpg', 'JPEG', quality=70)
+            image.save(file_loc + '_130.jpg', 'JPEG', quality=80)
             thumb_img_size = image.size
             
             image = Image.open(file_loc)           
@@ -110,12 +110,12 @@ def upload_photo(request):
             # image.save(file_loc + '_iphone.jpg', 'JPEG', quality=80)
             
             #Create crop section
-            cropped_image = crop_to_size(image, (400,400), large_img_size, (200, 150))
+            cropped_image = crop_to_size(image, (300,300), large_img_size, (200, 150))
             cropped_image.save(file_loc + '_crop.jpg', 'JPEG', quality=80)
             
             #Create small crop
-            small_cropped_image = crop_to_size(image, (300,300), large_img_size, (100, 100))
-            small_cropped_image.save(file_loc + '_crop_small.jpg', 'JPEG', quality=70)
+            small_cropped_image = crop_to_size(image, (200,200), large_img_size, (100, 100))
+            small_cropped_image.save(file_loc + '_crop_small.jpg', 'JPEG', quality=80)
             
             s = S3Bucket('cdn.portrit.com', access_key=AWS_KEY, secret_key=AWS_SECRET_KEY)
             thumbnail = open(file_loc + '_130.jpg', 'rb+')

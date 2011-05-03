@@ -67,7 +67,7 @@ win.add(window_nav_bar);
 
 window_activity = Titanium.UI.createActivityIndicator({
     message: 'Loading...',
-    font:{fontSize:14, fontWeight:'bold'},
+    font:{fontSize:16, fontWeight:'bold'},
     color: '#fff',
     height:50,
     width:10
@@ -1573,14 +1573,14 @@ function init_profile_view(){
             follow_count = Titanium.UI.createLabel({
                 text: follow_data.followers,
                 color: '#333',
-                left: 80,
+                left: 85,
                 font: {fontSize: 18, fontWeight: 'bold'}
             });
 
             following_count = Titanium.UI.createLabel({
                 text: follow_data.following,
                 color: '#333',
-                left: 184,
+                left: 189,
                 font: {fontSize: 18, fontWeight: 'bold'}
             });
 
@@ -1757,6 +1757,7 @@ init_profile_view();
 
 Ti.App.addEventListener('update_my_photos', function(eventData) {
     if (get_user_profile_count > 0){
+        window_activity_cont.show();
         var xhr = Titanium.Network.createHTTPClient();
         xhr.onload = function(){
             data = JSON.parse(this.responseData);

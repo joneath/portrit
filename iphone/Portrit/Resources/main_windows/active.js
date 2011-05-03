@@ -46,7 +46,7 @@ var fadeIn = Titanium.UI.createAnimation({
 
 window_activity = Titanium.UI.createActivityIndicator({
     message: 'Loading...',
-    font:{fontSize:14, fontWeight:'bold'},
+    font:{fontSize:16, fontWeight:'bold'},
     color: '#fff',
     height:50,
     width:10
@@ -1302,28 +1302,27 @@ function render_stream_photos(data, append){
                     bottom: 4,
                     top: 4,
                     textAlign: 'left',
-                    size: {width: 'auto', height: 20},
-                    font:{fontSize: 13}
+                    size: {width: 'auto', height: 26},
+                    font:{fontSize: 14}
                 });
 
-                // post_time_background = Titanium.UI.createView({
-                //     backgroundColor: '#000',
-                //     // borderRadius: 5,
-                //     opacity: 0.8,
-                //     height: 20,
-                //     width: '100%',
-                //     zIndex: -1
-                // });
+                post_time_background = Titanium.UI.createView({
+                    backgroundColor: '#000',
+                    // borderRadius: 5,
+                    opacity: 0.8,
+                    height: 26,
+                    width: '100%',
+                    zIndex: -1
+                });
 
                 post_time_cont = Titanium.UI.createView({
-                    backgroundColor: '#000',
-                    opacity: 0.8,
                     top: 0,
                     left: 5,
-                    height: 24,
+                    height: 26,
                     width: 'auto',
                     zIndex: 10
                 });
+                post_time_cont.add(post_time_background);
                 post_time_cont.add(post_time);
 
                 row.add(post_time_cont);

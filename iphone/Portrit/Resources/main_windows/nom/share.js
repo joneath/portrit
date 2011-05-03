@@ -190,12 +190,6 @@ function close_share_nom(){
     }
 
     if (new_photo){
-        tabGroup.close();
-        win.close({animated:false});
-        Ti.App.fireEvent('close_nominate_page', { });
-        Ti.App.fireEvent('close_settings_page', { });
-        
-        tabGroup.opacity = 0;
         tabGroup.bottom = 0;
         
         if (nominations != ''){
@@ -205,57 +199,38 @@ function close_share_nom(){
             tabGroup.setActiveTab(4);
         }
         
+        win.close({animated:false});
+        Ti.App.fireEvent('close_nominate_page', { });
+        Ti.App.fireEvent('close_settings_page', { });
+
         setTimeout(function(){
-            tabGroup.open(fadeIn);
-            setTimeout(function(){
-                if (nominations != ''){
-                    tabGroup.setActiveTab(0);
-                    Ti.App.fireEvent('reset_after_camera', { });
-                    Ti.App.fireEvent('update_active_noms', { });
-                    if (user == me.fid){
-                        Ti.App.fireEvent('update_my_noms', { });
-                    }
-                }
-                else{
-                    tabGroup.setActiveTab(4);
-                    Ti.App.fireEvent('reset_after_camera', { });
-                    Ti.App.fireEvent('update_my_photos', { });
-                }
-        	}, 250);
-        }, 50);
-        
-        // win.close({animated:false});
-        // 
-        // Ti.App.fireEvent('close_nominate_page', { });
-        // Ti.App.fireEvent('close_settings_page', { });
-        // if (nominations != ''){
-        //     Ti.App.fireEvent('reset_after_camera', { });
-        //     Ti.App.fireEvent('update_active_noms', { });
-        //     if (user == me.fid){
-        //         Ti.App.fireEvent('update_my_photos', { });
-        //     }
-        // }
-        // else{
-        //     Ti.App.fireEvent('update_my_photos', { });
-        //     Ti.App.fireEvent('reset_after_camera_to_profile', { });
-        // }
-    }
-    else{
-        win.close();
-        tabGroup.close();
-        tabGroup.opacity = 0;
-        setTimeout(function(){
-            tabGroup.open(fadeIn);
-            setTimeout(function(){
-        	    Ti.App.fireEvent('update_active_noms', { });
-                // Ti.App.fireEvent('close_nominate_page', { });
-                Ti.App.fireEvent('close_settings_page', { });
-                Ti.App.fireEvent('close_user_profile_page', { });
+            if (nominations != ''){
+                Ti.App.fireEvent('reset_after_camera', { });
+                Ti.App.fireEvent('update_active_noms', { });
                 if (user == me.fid){
                     Ti.App.fireEvent('update_my_photos', { });
+                    Ti.App.fireEvent('update_my_noms', { });
                 }
-        	}, 200);
-        }, 50); 
+            }
+            else{
+                Ti.App.fireEvent('reset_after_camera', { });
+                Ti.App.fireEvent('update_my_photos', { });
+            }
+    	}, 450);
+    }
+    else{
+        tabGroup.setActiveTab(0);
+        
+        win.close({animated:false});
+        Ti.App.fireEvent('close_nominate_page', { });
+        Ti.App.fireEvent('close_settings_page', { });
+        
+        setTimeout(function(){
+    	    Ti.App.fireEvent('update_active_noms', { });
+            if (user == me.fid){
+                Ti.App.fireEvent('update_my_photos', { });
+            }
+    	}, 450);
     }
 }
 
@@ -350,28 +325,19 @@ function submit_nom(e){
                 });
                 upload_error_alert.addEventListener('click', function(e){
                     if (e.index == 0){
-                        tabGroup.close();
+                        Ti.App.fireEvent('abort_upload', { });
+                        tabGroup.bottom = 0;
+                        if (nominations != ''){
+                            tabGroup.setActiveTab(0);
+                        }
+                        else{
+                            tabGroup.setActiveTab(4);
+                        }
+                        
                         win.close({animated:false});
                         Ti.App.fireEvent('close_nominate_page', { });
-                        Ti.App.fireEvent('close_settings_page', { });
-                        
-                        tabGroup.opacity = 0;
-                        tabGroup.bottom = 0;
-                        
-                        setTimeout(function(){
-                            tabGroup.open(fadeIn);
-                            setTimeout(function(){
-                                if (nominations != ''){
-                                    tabGroup.setActiveTab(0);
-                                }
-                                else{
-                                    tabGroup.setActiveTab(4);
-                                }
-                                
-                                Ti.App.fireEvent('abort_upload', { });
-                                Ti.App.fireEvent('reset_after_camera_to_profile', { });
-                            }, 400);
-                        }, 50);
+                        Ti.App.fireEvent('close_settings_page', { });                        
+                        Ti.App.fireEvent('reset_after_camera_to_profile', { });
                     }
                     // if (e.index == 1){
                     //     check_count = 0;
