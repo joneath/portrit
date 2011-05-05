@@ -1103,13 +1103,10 @@ function render_nom_detail(noms){
         top: 40
     });
     
-    caption_top = 'auto';
-    caption_text_align = 'center';    
     caption_size = 12;
     var caption = '';
     if (selected_nom.caption){
         caption = selected_nom.caption;
-        // caption_text_align = 'left';
         caption_size = 12;
     }
     else{
@@ -1117,12 +1114,9 @@ function render_nom_detail(noms){
     }
     nominatee_caption = Titanium.UI.createLabel({
 	    text: caption,
-	    textAlign: caption_text_align,
+	    textAlign: 'center',
         color: '#333',
-        top: caption_top,
-        font: {fontSize: caption_size},
-        minimumFontSize: 10,
-        size: {width: 150, height: 'auto'}
+        font: {fontSize: caption_size}
     });
     nominatee_bottom_cont.add(nominatee_caption);
     

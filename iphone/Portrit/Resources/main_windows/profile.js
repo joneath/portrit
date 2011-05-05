@@ -1530,74 +1530,76 @@ function init_profile_view(){
     
     if (get_profile_data == 0){
         window_activity_cont.show();
-        window_activity_timeout();
-        var user_profile_request = Titanium.Network.createHTTPClient();
-        user_profile_request.onload = function(){   
-            var data = JSON.parse(this.responseData);
-            active_noms_count = data.active_noms_count;
-            if (data.photos.length > 0){
-                render_user_photos(data.photos);
-                if (data.photos.length == 10){
-                    newest_photo = data.photos[0].created_time;
-                    oldest_photo = data.photos[data.photos.length - 1].id;
-                    load_more_view.show();
+        setTimeout(function(){
+            window_activity_timeout();
+            var user_profile_request = Titanium.Network.createHTTPClient();
+            user_profile_request.onload = function(){   
+                var data = JSON.parse(this.responseData);
+                active_noms_count = data.active_noms_count;
+                if (data.photos.length > 0){
+                    render_user_photos(data.photos);
+                    if (data.photos.length == 10){
+                        newest_photo = data.photos[0].created_time;
+                        oldest_photo = data.photos[data.photos.length - 1].id;
+                        load_more_view.show();
+                    }
                 }
-            }
-            else{
-                var empty_label = Titanium.UI.createLabel({
-                    text: 'You have not taken any photos.',
-                    color: '#eee',
-                    textAlign: 'center',
-                    font: {fontSize: 16, fontWeight: 'bold'}
-                });
-                var empty_label_cont = Titanium.UI.createView({
-                        height: 20,
-                        top: 100,
-                        width: 320,
+                else{
+                    var empty_label = Titanium.UI.createLabel({
+                        text: 'You have not taken any photos.',
+                        color: '#eee',
+                        textAlign: 'center',
+                        font: {fontSize: 16, fontWeight: 'bold'}
                     });
-                empty_label_cont.add(empty_label);
+                    var empty_label_cont = Titanium.UI.createView({
+                            height: 20,
+                            top: 100,
+                            width: 320,
+                        });
+                    empty_label_cont.add(empty_label);
 
-                var row = Ti.UI.createTableViewRow({
-                        height:'auto',
-                        selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+                    var row = Ti.UI.createTableViewRow({
+                            height:'auto',
+                            selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+                    });
+                    row.add(empty_label_cont);
+
+                    list_view_data = [row];
+                    tv.setData(list_view_data);
+                }
+
+                //Set follow counts
+                var follow_data = data.follow_counts;
+                follow_count = Titanium.UI.createLabel({
+                    text: follow_data.followers,
+                    color: '#333',
+                    left: 85,
+                    font: {fontSize: 18, fontWeight: 'bold'}
                 });
-                row.add(empty_label_cont);
 
-                list_view_data = [row];
-                tv.setData(list_view_data);
-            }
+                following_count = Titanium.UI.createLabel({
+                    text: follow_data.following,
+                    color: '#333',
+                    left: 189,
+                    font: {fontSize: 18, fontWeight: 'bold'}
+                });
 
-            //Set follow counts
-            var follow_data = data.follow_counts;
-            follow_count = Titanium.UI.createLabel({
-                text: follow_data.followers,
-                color: '#333',
-                left: 85,
-                font: {fontSize: 18, fontWeight: 'bold'}
-            });
+                follow_cont.add(follow_count);
+                follow_cont.add(following_count);
 
-            following_count = Titanium.UI.createLabel({
-                text: follow_data.following,
-                color: '#333',
-                left: 189,
-                font: {fontSize: 18, fontWeight: 'bold'}
-            });
+                if (active_noms_count > 0){
+                    render_active_count(active_noms_count);
+                }
+                if (data.trophy_count > 0){
+                    render_trophy_count(data.trophy_count);
+                }
 
-            follow_cont.add(follow_count);
-            follow_cont.add(following_count);
-
-            if (active_noms_count > 0){
-                render_active_count(active_noms_count);
-            }
-            if (data.trophy_count > 0){
-                render_trophy_count(data.trophy_count);
-            }
-            
-            window_activity_cont.hide();
-        };
-        var url = SERVER_URL + '/api/get_user_profile/?access_token=' + me.access_token;
-        user_profile_request.open('GET', url);
-        user_profile_request.send();   
+                window_activity_cont.hide();
+            };
+            var url = SERVER_URL + '/api/get_user_profile/?access_token=' + me.access_token;
+            user_profile_request.open('GET', url);
+            user_profile_request.send();
+        }, 300);
     }
     
     // Pull to refresh

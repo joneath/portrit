@@ -608,35 +608,121 @@ function add_comment_to_nom(e){
 	}, 30);
 }
 
+var open_init = false;
+var share_options_view = null;
 function open_options(e){
     var photo_id = e.source.photo_id;
     var nom = e.source.nom;
     
-    var optionsDialogOpts = {
-    	options:['Flag photo', 'Share on Facebook', 'Share on Twitter', 'Cancel'],
-    	destructive:0,
-    	cancel:3,
-    	title:'Photo options'
-    };
-
-    var dialog = Titanium.UI.createOptionDialog(optionsDialogOpts);
+    // if (!open_init){
+    //     open_init = true;
+    //     share_options_view = Titanium.UI.createView({
+    //         backgroundColor: '#fff',
+    //         height: 200,
+    //         bottom: -260,
+    //         width: 310,
+    //         layout: 'vertical'
+    //     });
+    //     
+    //     var share_options_drop_shadow = Titanium.UI.createView({
+    //         backgroundImage: '../images/upper_drop_shadow.png',
+    //         height: 2,
+    //         top: -2,
+    //         width: 320
+    //     });
+    //     share_options_view.add(share_options_drop_shadow);
+    // 
+    //     var share_options_header = Titanium.UI.createLabel({
+    //         text: 'Photo Options',
+    //         color: '#333',
+    //         textAlign: "center",
+    //         top: 5,
+    //         size: {width: 320, height: 30},
+    //         font:{fontSize: 22, fontWeight:'bold'}
+    //     });
+    // 
+    //     share_options_view.add(share_options_header);
+    //     
+    //     var share_cont = Titanium.UI.createView({
+    //         backgroundColor: '#fff',
+    //         height: 100,
+    //         width: 300,
+    //         layout: 'vertical'
+    //     });
+    //     share_options_view.add(share_cont);
+    //     
+    //     var share_header = Titanium.UI.createLabel({
+    //         text: 'Share Photo',
+    //         color: '#333',
+    //         textAlign: "left",
+    //         top: 5,
+    //         size: {width: 300, height: 30},
+    //         font:{fontSize: 18, fontWeight:'bold'}
+    //     });
+    //     share_cont.add(share_header);
+    //     
+    //     var flag_cont = Titanium.UI.createView({
+    //         backgroundColor: '#fff',
+    //         height: 100,
+    //         width: 300,
+    //         layout: 'vertical'
+    //     });
+    //     share_options_view.add(flag_cont);
+    //     
+    //     var flag_header = Titanium.UI.createLabel({
+    //         text: 'Flag Photo',
+    //         color: '#333',
+    //         textAlign: "left",
+    //         top: 5,
+    //         size: {width: 300, height: 30},
+    //         font:{fontSize: 18, fontWeight:'bold'}
+    //     });
+    //     flag_cont.add(flag_header);
+    //     
+    //     share_options_view.addEventListener('click', function(){
+    //         share_options_view.animate({
+    //             bottom: -260,
+    //             duration: 300,
+    //             curve: Ti.UI.ANIMATION_CURVE_EASE_OUT
+    //         });
+    //     });
+    //     
+    //     win.add(share_options_view);
+    // }
+    // 
+    // share_options_view.animate({
+    //     bottom: 0,
+    //     duration: 300,
+    //     curve: Ti.UI.ANIMATION_CURVE_EASE_IN
+    // });
     
-    dialog.addEventListener('click',function(e){
-        // Flag Photo
-        if (e.index == 0){
-            flag_nom(me, nom, photo_id, win);
-        }
-        else if (e.index == 1){
-            // Facebook Share
-            var title = me.username + ' shared a nomination on Portrit';
-            share_nom(nom, 'Facebook', title);
-        }
-        else if (e.index == 2){
-            // Twitter Share
-            share_nom(nom, 'Twitter', '');
-        }
-	});
-	dialog.show();
+    
+    
+        var optionsDialogOpts = {
+         options:['Flag photo', 'Share on Facebook', 'Share on Twitter', 'Cancel'],
+         destructive:0,
+         cancel:3,
+         title:'Photo options'
+        };
+    
+        var dialog = Titanium.UI.createOptionDialog(optionsDialogOpts);
+        
+        dialog.addEventListener('click',function(e){
+            // Flag Photo
+            if (e.index == 0){
+                flag_nom(me, nom, photo_id, win);
+            }
+            else if (e.index == 1){
+                // Facebook Share
+                var title = me.username + ' shared a nomination on Portrit';
+                share_nom(nom, 'Facebook', title);
+            }
+            else if (e.index == 2){
+                // Twitter Share
+                share_nom(nom, 'Twitter', '');
+            }
+    });
+    dialog.show();
 }
 
 function get_comments(id, cont, loading){
