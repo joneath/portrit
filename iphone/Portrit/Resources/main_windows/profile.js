@@ -1147,9 +1147,6 @@ function init_active_view(){
             render_active_view(active_noms_cache);
         }
         else{
-            window_activity_cont.show();
-            window_activity_timeout();
-            
             var xhr = Titanium.Network.createHTTPClient();
             xhr.onload = function(){
             	data = JSON.parse(this.responseData);
@@ -1160,6 +1157,8 @@ function init_active_view(){
             var url = SERVER_URL + '/api/get_user_profile/?access_token=' + me.access_token + '&method=active';
             xhr.open('GET', url);
             xhr.send();
+            window_activity_cont.show();
+            window_activity_timeout();
         }
     }
     else{
@@ -1748,6 +1747,8 @@ function init_profile_view(){
      }
     });
     // End pull to refresh
+    
+    Ti.App.Properties.setString("profile_rendered", true);
 }
 
 user = me.fid

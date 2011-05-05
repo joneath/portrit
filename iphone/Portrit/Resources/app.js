@@ -2,10 +2,18 @@ Ti.include('settings.js');
 Ti.include('includes.js');
 Ti.include('urbanairship.js');
 
-UrbanAirship.key='XOeKRpIDSJmpSvVAwjRXdg';
-UrbanAirship.secret ='r7RXQj6zS2ifBGXXLVy9Ag';
-UrbanAirship.master_secret='GtOv_7dURFOvSGLWcDne0A';
-UrbanAirship.baseurl = 'https://go.urbanairship.com';
+if (RUNTIME == 'production'){
+    UrbanAirship.key='yFcIhgzsR1Gcfa2oJ0enVg';
+    UrbanAirship.secret ='xdP59FVlQzupdrqTj6kDcA';
+    UrbanAirship.master_secret='0rUrhbsFQwOJBX_fQx85hQ';
+    UrbanAirship.baseurl = 'https://go.urbanairship.com';
+}
+else{
+    UrbanAirship.key='XOeKRpIDSJmpSvVAwjRXdg';
+    UrbanAirship.secret ='r7RXQj6zS2ifBGXXLVy9Ag';
+    UrbanAirship.master_secret='GtOv_7dURFOvSGLWcDne0A';
+    UrbanAirship.baseurl = 'https://go.urbanairship.com';
+}
 
 // this sets the background color of the master UIView (when there are no windows/tab groups on it)
 Titanium.UI.setBackgroundColor('#000');
@@ -213,7 +221,8 @@ function load_portrit(animate){
     me = JSON.parse(Ti.App.Properties.getString("me"));
     me.fid = Titanium.Facebook.uid;
     me.access_token = Titanium.Facebook.accessToken;
-
+    
+    Ti.App.Properties.removeProperty("profile_rendered");
     if (typeof(me.username) == 'undefined' || !me.username ||me.username == ''){
         Ti.App.Properties.setString("me", JSON.stringify(me));
         check_if_username(me);

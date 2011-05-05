@@ -3924,6 +3924,7 @@ $(document).ready(function(){
             reactivate_html = '',
             tagged_user_html = '',
             nom_detail_link = '',
+            nom_overlay_cont = '',
             trophy_size = 'large',
             selected_sub_nav = $('.sub_stream_nav.selected').attr('name');
             
@@ -4012,6 +4013,16 @@ $(document).ready(function(){
                 if (nom.tagged_users.length > 0){
                     tagged_user_html = '<div class="tagged_users" nom="' + nom.id + '"><span>' + nom.tagged_users.length + ' Tagged</span><div class="tag"></div></div>';
                 }
+                
+                nom_overlay_cont = '';
+                if (view_active == 'profile_active' && selected_user.fid == me.id){
+                    nom_overlay_cont = '<a href="/#!/' + nom.nominator_username + '/"><img class="user_img" src="https://graph.facebook.com/' + nom.nominator + '/picture?type=square"/></a>' +
+                                        '<h2>Nominated by <span class="strong"><a href="/#!/' + nom.nominator_username + '/">' + nominator_name + '</a></span></h2>' +
+                                        '<p class="nom_by_above">' + nominator_caption + '</p>';
+                }
+                else{
+                    nom_overlay_cont = '<p>' + nominator_caption + '</p>';
+                }
 
                 time = new Date(nom.created_time * 1000);
                 time_diff = now - time;
@@ -4033,9 +4044,7 @@ $(document).ready(function(){
                                                             '<p>' + secondsToHms(time_diff) + '</p>' +
                                                         '</div>' +
                                                         '<div id="nominator_overlay_cont">' +
-                                                            // '<a href="/#!/' + nom.nominator_username + '/"><img class="user_img" src="https://graph.facebook.com/' + nom.nominator + '/picture?type=square"/></a>' +
-                                                            // '<h2>Nominated by <span class="strong"><a href="/#!/' + nom.nominator_username + '/">' + nominator_name + '</a></span></h2>' +
-                                                            '<p>' + nominator_caption + '</p>' +
+                                                            nom_overlay_cont +
                                                             tagged_user_html +
                                                         '</div>' +
                                                     '</a>' +

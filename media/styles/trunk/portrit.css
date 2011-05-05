@@ -1875,6 +1875,11 @@ div#nom_detail_cont{
                         width:              315px;
                     }
                     
+                    div#nominator_overlay_cont p.nom_by_above{
+                        line-height:        16px;
+                        margin-top:         3px;
+                    }
+                    
                     div#nominator_overlay_cont a{
                         color:              white;
                     }

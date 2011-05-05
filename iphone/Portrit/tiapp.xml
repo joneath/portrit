@@ -3,7 +3,7 @@
     <deployment-targets>
         <target device="iphone">true</target>
         <target device="ipad">false</target>
-        <target device="android">true</target>
+        <target device="android">false</target>
     </deployment-targets>
 <id>com.portrit</id>
 <name>Portrit</name>
@@ -11,7 +11,7 @@
 <publisher>Portrit</publisher>
 <url>http://portrit.com</url>
 <description>No description provided</description>
-<copyright>2011 by Portrit</copyright>
+<copyright>2011 by Portrit Inc.</copyright>
 <icon>appicon.png</icon>
     <persistent-wifi>false</persistent-wifi>
     <prerendered-icon>true</prerendered-icon>
@@ -30,8 +30,6 @@
 			<orientation>Ti.UI.PORTRAIT</orientation>
 		</orientations>
 	</iphone>
-	<android xmlns:android="http://schemas.android.com/apk/res/android">
-	</android>
 	<modules>
 	</modules>
 </ti:app>

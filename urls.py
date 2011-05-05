@@ -134,7 +134,6 @@ urlpatterns += patterns('',
 #iPhone Views
 urlpatterns += patterns('',
     url(r'^init_app/$', 'main.iphone_views.init_app'),
-    
 )
 
 #Community URLs
@@ -168,12 +167,12 @@ urlpatterns += patterns('',
     url(r'^submit_bug_report/$', 'main.index_views.submit_bug_report', name='submit_bug_report'),
 )
 
-
 #Admin URLs
 urlpatterns += patterns('',
 	(r'^admin/', include(admin.site.urls)),
 )
 
-urlpatterns += patterns('',                                                            
-	(r'^site_media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': os.path.join(os.path.dirname(__file__), 'media').replace('\\','/')}),  
-)
+if ENV == "LOCAL":
+    urlpatterns += patterns('',                                                            
+    	(r'^site_media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': os.path.join(os.path.dirname(__file__), 'media').replace('\\','/')}),  
+    )

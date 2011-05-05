@@ -208,13 +208,17 @@ function close_share_nom(){
                 Ti.App.fireEvent('reset_after_camera', { });
                 Ti.App.fireEvent('update_active_noms', { });
                 if (user == me.fid){
-                    Ti.App.fireEvent('update_my_photos', { });
-                    Ti.App.fireEvent('update_my_noms', { });
+                    if (Ti.App.Properties.getString("profile_rendered")){
+                        Ti.App.fireEvent('update_my_photos', { });
+                        Ti.App.fireEvent('update_my_noms', { });
+                    }
                 }
             }
             else{
+                if (Ti.App.Properties.getString("profile_rendered")){
+                    Ti.App.fireEvent('update_my_photos', { });
+                }
                 Ti.App.fireEvent('reset_after_camera', { });
-                Ti.App.fireEvent('update_my_photos', { });
             }
     	}, 450);
     }
@@ -253,6 +257,8 @@ function submit_nom(e){
     var url = '';
     var check_upload_interval = null;
     var progress = 0;
+    var prev_progress = 0;
+    var prev_check_count = 0;
     var check_count = 0;
     var upload_ready_state = 0;
     var timeout_count = 0;
@@ -312,7 +318,11 @@ function submit_nom(e){
                 }
             }
             
-            if (check_count > 35 && (!progress || progress <= 5) && parseInt(upload_ready_state) < 4){
+            if (check_count % 8 == 0 && check_count > 0){
+                prev_progress = progress;
+                prev_check_count = check_count;
+            }
+            if ((check_count > 35 && (!progress || progress <= 5) && parseInt(upload_ready_state) < 4) || (check_count > 35 && (progress - prev_progress == 0) && (check_count - prev_check_count > 4) && progress < 50) || check_count > 100){
                 clearInterval(check_upload_interval);
                 
                 var f = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, 'temp.png');
@@ -368,7 +378,7 @@ function submit_nom(e){
     }
 }
 
-var upload_photo_request = Titanium.Network.createHTTPClient();
+var upload_photo_request = Titanium.Network.createHTTPClient({enableKeepAlive:false});
 function post_photo(url, data){
     var check_photo_upload = null;
     var upload_ready_state = 0;
