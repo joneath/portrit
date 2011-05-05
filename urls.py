@@ -25,6 +25,12 @@ urlpatterns += patterns('django.views.generic.simple',
     ('^beta/$', 'redirect_to', {'url': '/'}),
 )
 
+#Index view
+urlpatterns += patterns('',
+    url(r'^404$', 'main.index_views.handle404', name='handle404'),
+    url(r'^500$', 'main.index_views.handle500', name='handle500'),
+)
+
 #User Views
 urlpatterns += patterns('',
     url(r'^login_fb_user/$', 'main.user_views.login_fb_user', name='login_fb_user'),

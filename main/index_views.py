@@ -123,17 +123,33 @@ def submit_bug_report(request):
         return HttpResponse(data, mimetype='application/json')
         
 def handle404(request, template="404.html"):
+    production_code = True
+    test_code = False
     analytics = True
-    
+
     if ENV == 'LOCAL':
+        production_code = False
         analytics = None
-    payload = {'analytics': analytics,}
+    elif ENV == 'TEST':
+        production_code = False
+        test_code = True
+        analytics = None
+            
+    payload = {'analytics': analytics, 'production_code': production_code, 'test_code': test_code}
     return render_to_response(template, payload, context_instance=RequestContext(request))
 
 def handle500(request, template="500.html"):
+    production_code = True
+    test_code = False
     analytics = True
-    
+
     if ENV == 'LOCAL':
+        production_code = False
         analytics = None
-    payload = {'analytics': analytics,}
+    elif ENV == 'TEST':
+        production_code = False
+        test_code = True
+        analytics = None
+            
+    payload = {'analytics': analytics, 'production_code': production_code, 'test_code': test_code}
     return render_to_response(template, payload, context_instance=RequestContext(request))

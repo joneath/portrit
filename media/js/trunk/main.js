@@ -6995,8 +6995,18 @@ $(document).ready(function(){
                 var thumb = $(this).attr('thumb');
                 var fb_crop = $(this).attr('fb_crop')
                 var nom = nom_cache[nom_id];
+                
+                if (nom){
+                    thumb = nom.photo.thumbnail;
+                }
 
-                var flag_photo_html =   '<div id="flag_cont">' +
+                var flag_photo_html =   '<div id="flag_photo_selected_cont">' +
+                                            '<img src="' + thumb + '"/>' +
+                                            '<div id="flag_photo_overlay">' +
+                                                '<p>Selected</p>' +
+                                            '</div>' +
+                                        '</div>' +
+                                        '<div id="flag_cont">' +
                                             '<div id="flag_heading">' +
                                                 '<h1>Photo Options</h1>' +
                                                 '<p>Click one of the options below</p>' +

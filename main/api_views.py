@@ -4,6 +4,7 @@ from django.template import RequestContext
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.core.cache import cache
+from django.utils.html import strip_tags
 
 from main.documents import *
 
@@ -1944,6 +1945,8 @@ def new_comment(request):
         try:
             nomination = Nomination.objects.get(id=nomination_id)
             owner = nomination.nominatee
+            
+            strip_tags(body)
             
             comment = Comment(comment=body, owner=portrit_user, nomination=str(nomination.id))
             comment.save()

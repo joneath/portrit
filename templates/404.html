@@ -1,9 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head id="my_head">
-	<title>Portrit - </title>
+	<title>Portrit - 404</title>
     <meta charset="utf-8" />
-
+	{% if production_code %}
+        <link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/portrit-14.css"/>
+    {% else %}
+		{% if test_code %}
+			<link rel="stylesheet" href="http://portrit_test.s3.amazonaws.com/styles/trunk/portrit.css"/>
+		{% else %}
+        	<link rel="stylesheet" href="/site_media/styles/trunk/portrit.css"/>
+		{% endif %}
+    {% endif %}
     <style>
         html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, canvas{
         border:0 none;
@@ -55,7 +63,8 @@
         
         div#cont{
             margin:             0 auto;
-            width:              800px;
+			margin-top:			100px;
+            width:              600px;
         }
         
         div#login_header{
@@ -70,31 +79,37 @@
         #error_cont{
             background-color:   white;
             color:              #333;
-            -moz-border-radius: 10px; 
-        	-webkit-border-radius: 10px;
+            -moz-border-radius: 	5px; 
+        	-webkit-border-radius: 	5px;
         }
         
-        h1{
+		h1{
+			display:			inline;
+			font-size:          48px;
+			font-weight:		bold;
+			margin-bottom:		15px;
+			margin-left:		10px;
+		}
+
+        h2{
             font-size:          28px;
-            font-weight:        bold;
-            text-align:         center;
             padding:            20px;
         }
-        
-        ul{
-            list-style:         none;
-            min-height:         104px;
-            position:           relative;
-            text-align:         center;
-            top:                4px;
-        }
-        
-        li{
-            display:            inline-block;
-            margin:             0px 10px;
-        }
-    </style>
 
+		h2 a{
+			color:				#333;
+		}
+
+		strong{
+			font-weight:		bold;
+		}
+    </style>
+	
+	<script src="http://www.google.com/jsapi?key=ABQIAAAAv9UUX4Bh3gRCpbzjSE5MxxSfZ7BxKgj6oXj1KRYYnjuHN0SsnBTx1B5nTeUxCB_k-Yerxn8ZVGvnLA" type="text/javascript"></script>
+    <script type="text/javascript">
+        google.load("jquery", "1.5.2");
+    </script>
+	
     {% if analytics %}
         <script type="text/javascript">
 
@@ -110,46 +125,95 @@
 
         </script>
     {% endif %}
+	
+	<script type="text/javascript">
+	function handleSessionResponse(response){
+		if (!response.session) {
+			$('#public_login_cont').fadeIn();
+			$('#login').bind('click', login_user);
+		}
+	}
+	
+	function login_user(){
+        if (window.sessionStorage !== undefined){
+            try{
+                sessionStorage.removeItem('me');
+                sessionStorage.removeItem('friends');
+            }
+            catch (err){
+                
+            }
+        }
+        FB.login(function(){
+			window.location.href = '/';
+		}, {perms:'publish_stream,offline_access,email'});
+    }
+	</script>
+	
 </head>
 <body>
+	<div id="fb-root"></div>
+    <script type="text/javascript">
+    	if (window.location.hostname == 'portrit.com' || window.location.hostname == 'www.portrit.com' || window.location.hostname == 'm.portrit.com'){
+    	    window.fbAsyncInit = function() {
+                FB.init({appId: '126374870731237', status: true, cookie: true, xfbml: true});
+                clearTimeout(fb_server_timeout);
+                fb_server_timeout = setTimeout(fb_down, 6000);
+                FB.getLoginStatus(handleSessionResponse);
+            };
+        }
+        else if (window.location.hostname == 'test.portrit.com' || window.location.hostname == 'www.test.portrit.com' || window.location.hostname == 'portrit-load-balancer-1655256107.us-east-1.elb.amazonaws.com' || window.location.hostname == 'www.portrit-load-balancer-1655256107.us-east-1.elb.amazonaws.com'){
+            window.fbAsyncInit = function() {
+                FB.init({appId: '123063501058161', status: true, cookie: true, xfbml: true});
+                clearTimeout(fb_server_timeout);
+                fb_server_timeout = setTimeout(fb_down, 6000);
+                FB.getLoginStatus(handleSessionResponse);
+            };
+        }
+        else{
+            window.fbAsyncInit = function() {
+                FB.init({appId: '155664697800227', status: true, cookie: true, xfbml: true});
+                FB.getLoginStatus(handleSessionResponse);
+            };
+        }
+        (function() {
+            var e = document.createElement('script');
+            e.src = document.location.protocol + '//connect.facebook.net/en_US/all.js';
+            e.async = true;
+            document.getElementById('fb-root').appendChild(e);
+        }());
+	</script>
     <div id="wrapper">
+		<div id="header" class="public">
+			<div id="header_wrap">
+				<div id="public_header">
+					<div id="public_logo_wrap">
+						<a href="/">
+							<img src="http://portrit.s3.amazonaws.com/img/logo_blank.png">
+						</a>
+					</div>
+					<div id="public_tagline_cont">
+						<div class="left_triangle"></div>
+						<p id="tagline_main">Snap, nominate, vote, and earn wherever you go with the Portrit iPhone app.</p>
+					</div>
+					<div id="public_login_cont" style="display:none;">
+						<div id="public_login_wrap">
+							<a id="login" class="fb_button fb_button_large">
+								<span class="fb_button_text">Login with Facebook</span>
+							</a>
+							<p>Simply click Login with Facebook.</p>
+						</div>
+					</div>
+					<div class="clear"></div>
+				</div>
+			</div>
+		</div>
         <div id="cont">
-            <div id="login_header">
-                <a href="/">
-                    <img id="login_logo" src="http://s3.amazonaws.com/portrit/img/logo_blank.png">
-                </a>
-            </div>
             <div id="mid_cont">
-                <div id="trophy_cont">
-                    <ul>
-                        <li>
-                            <img src="http://s3.amazonaws.com/portrit/img/trophies/medium/artsy.png">
-                        </li>
-                        <li>
-                            <img src="http://s3.amazonaws.com/portrit/img/trophies/medium/wtf.png">
-                        </li>
-                        <li>
-                            <img src="http://s3.amazonaws.com/portrit/img/trophies/medium/party_animal.png">
-                        </li>
-                        <li>
-                            <img src="http://s3.amazonaws.com/portrit/img/trophies/medium/lol.png">
-                        </li>
-                        <li>
-                            <img src="http://s3.amazonaws.com/portrit/img/trophies/medium/hot.png">
-                        </li>
-                        <li>
-                            <img src="http://s3.amazonaws.com/portrit/img/trophies/medium/fail.png">
-                        </li>
-                        <li>
-                            <img src="http://s3.amazonaws.com/portrit/img/trophies/medium/cute.png">
-                        </li>
-                        <li>
-                            <img src="http://s3.amazonaws.com/portrit/img/trophies/medium/creepy.png">
-                        </li>
-                    </ul>
-                </div>
+				<img style="height: 113px; width: 113px;" src="http://s3.amazonaws.com/portrit/img/404_bear.png"/>
+				<h1>We're sorry...</h1>
                 <div id="error_cont">
-                    <h1>404</h1>
+                    <h2>We can't find the page you are looking for. Try returning back to the <strong><a href="/">homepage</a></strong>.</h2>
                 </div>
             </div>
         </div>

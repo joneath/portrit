@@ -3911,7 +3911,36 @@ div#context_overlay{
         
             div#flag_cont{
                 padding:            10px 20px;
+                position:           relative;
+                z-index:            10;
             }
+            
+                #flag_photo_selected_cont{
+                    background-color:   #fff;
+                    left:               -200px;
+                    top:                20px;
+                    width:              200px;
+                    padding:            10px;
+                    position:           absolute;
+                    text-align:         center;
+                    z-index:            -1;
+                }
+                
+                #flag_photo_overlay{
+                    background-color:   rgba(0,0,0,.7);
+                    color:              #fff;
+                    height:             30px;
+                    position:           absolute;
+                    width:              200px;
+                    bottom:             10px;
+                }
+                
+                #flag_photo_overlay p{
+                    line-height:        30px;
+                    font-size:          18px;
+                    margin-left:        15px;
+                    text-align:         left;
+                }
             
                 div#flag_cont h1{
                     font-size:          24px;
