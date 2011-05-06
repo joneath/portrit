@@ -39,6 +39,10 @@ body{
     overflow-y:         scroll;
 }
 
+strong{
+    font-weight:        bold;
+}
+
 .clear{
     clear:              both;
 }
@@ -422,7 +426,7 @@ div#login_cont{
             color:              #333;
             height:             163px;
             text-align:         center;
-            width:              340px;
+            width:              300px;
             padding-top:        37px;
             position:           absolute;
             z-index:            10000;
@@ -443,7 +447,7 @@ div#login_cont{
         }
         
             div#login_content div#login_right_cont h2{
-                font-size:          20px;
+                font-size:          24px;
                 font-weight:        bold;
                 margin-bottom:      15px;
             }
@@ -468,11 +472,10 @@ div#login_cont{
             
             div#tagline_top{
                 margin-left:        15px;
-                margin-right:       15px;
                 margin-top:         15px;
                 float:              left;
                 text-align:         left;
-                width:              590px;
+                width:              645px;
             }
             
                 div#tagline_top #iphone{
@@ -485,10 +488,24 @@ div#login_cont{
                 div#tagline_top #tagline_text{
                     margin-left:        260px;
                     margin-top:         15px;
+                    margin-right:       15px;
                 }
+                
+                div#tagline_top #app_row{
+                    margin-left:        260px;
+                    margin-top:         20px;
+                }
+                
+                    div#tagline_top #app_row h3{
+                        font-size:          18px;
+                        margin-bottom:      5px;
+                        float:              left;
+                        line-height:        53px;
+                        margin-right:       10px;
+                    }
             
                 div#tagline_top h2{
-                    font-size:      26px;
+                    font-size:      30px;
                     font-weight:    bold;
                     margin-bottom:  5px;
                 }

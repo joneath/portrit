@@ -439,19 +439,45 @@ def get_nom_detail(request):
             data = serialize_noms(data)
         
     elif nav_selected == 'community_active':
-        cat = nomination.nomination_category
-        if nomination.active:
+        if nomination:
+            cat = nomination.nomination_category
+            if nomination.active:
+                data = Nomination.objects.filter(
+                    nomination_category=cat, 
+                    active=True,
+                    public=True,
+                    won=False).order_by('-current_vote_count', '-created_date')
+
+                if dir:
+                    data = paginate_data(data, dir, pos)
+                else:
+                    data = list(data)
+                    selected_index = data.index(nomination)
+                    top = 10
+                    bottom = 0
+
+                    if selected_index - 5 > 0:
+                        bottom = selected_index - 4
+
+                    if selected_index + 5 > top:
+                        top = selected_index + 5
+
+                    data = data[bottom:top]
+                    data = serialize_noms(data, bottom)
+            else:
+                data = [serialize_nom(nomination)]
+        else:
             data = Nomination.objects.filter(
                 nomination_category=cat, 
                 active=True,
                 public=True,
                 won=False).order_by('-current_vote_count', '-created_date')
-            
+
             if dir:
                 data = paginate_data(data, dir, pos)
             else:
                 data = list(data)
-                selected_index = data.index(nomination)
+                selected_index = 0
                 top = 10
                 bottom = 0
 
@@ -463,8 +489,6 @@ def get_nom_detail(request):
 
                 data = data[bottom:top]
                 data = serialize_noms(data, bottom)
-        else:
-            data = [serialize_nom(nomination)]
         
     elif nav_selected == 'community_top':
         if nomination:

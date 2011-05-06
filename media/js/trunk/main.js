@@ -147,11 +147,16 @@ $(document).ready(function(){
                                         '<h2>Let\'s find the best photos.</h2>' + 
                                         '<p id="tagline_main">Snap, nominate, vote, and earn wherever you go with the Portrit iPhone app.</p>' +
                                     '</div>' +
+                                    '<div id="app_row">' +
+                                        '<h3>Download the <strong>free</strong> app.</h3>' +
+                                        '<a target="_blank" href="">' +
+                                            '<img style="height: 53px; width: 153px;" src="http://portrit.s3.amazonaws.com/img/app_store_badge.png"/>' +
+                                        '</a>' +
+                                    '</div>' +
                                     '<div class="clear"></div>' +
                                 '</div>' +
                                 '<div id="login_right_cont">' +
                                     '<h2>Try the Web App.</h2>' +
-                                    // '<p>Use your Facebook account to login into Portrit.</p>' +
                                     '<a id="login" class="fb_button fb_button_large"><span class="fb_button_text">Login with Facebook</span></a>' +
                                     '<p style="text-align:center;">Simply click Login with Facebook.</p>' +
                                 '</div>' +
