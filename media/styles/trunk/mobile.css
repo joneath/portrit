@@ -70,7 +70,37 @@ div#wrapper{
 
 #logo_link{
 	position:			relative;
-/*	top:				-70px;*/
+}
+
+div#tagline_top #app_row{
+    margin-left:        0px;
+    position:           relative;
+    z-index:            10;
+    width:              290px;
+}
+
+div#tagline_top #app_row img{
+    margin-left:        60px;
+}
+
+div#tagline_top #app_row h3{
+    color:              #333;
+    float:              none;
+    font-size:          26px;
+}
+
+div#login_content div#login_right_cont h2{
+    font-size:          20px;
+    margin-bottom:      10px;
+    margin-top:         5px;
+}
+
+#inactive_trophy_cont li{
+    width:              95px;
+}
+
+#inactive_trophy_cont li h3{
+    font-size:          16px;
 }
 
 div#login_cont{
@@ -117,19 +147,25 @@ div#tagline_top{
     position:               relative;
     width:                  520px;
     height:                 180px;
+    z-index:                10;
 }
 
 div#login_content div#login_right_cont{
     border-right:           none;
     border-left:            none;
+    height:                 153px;
+    padding-left:           150px;
+    padding-top:            47px;
     position:               relative;
+    z-index:                1;
     right:                  0px;
     width:                  520px;
 }
 
     div#login_content div#login_right_cont p{
         font-size:              18px;
-        width:                  300px;
+        margin-top:             10px;
+        width:                  250px;
     }
     
 #login_screenshot_cont{
@@ -215,6 +251,10 @@ div#search_cont #query{
 
 .close_img{
     height:             38px;
+}
+
+#close_feedback{
+    right:              -8px;
 }
 
 div.autocomplete{
@@ -475,14 +515,14 @@ div#active_cont .active_nom_cont{
 }
     
 #notification_footer_popup{
-    left:           -145px;
+    left:           -195px;
     height:         400px;
-    width:          350px;
+    width:          450px;
     z-index:        10101;
 }
     
     #notification_footer_popup #notification_arrow{
-        left:       165px;
+        left:       215px;
         opacity:    1;
         position:   absolute;
         top:        -11px;
@@ -511,6 +551,11 @@ div#active_cont .active_nom_cont{
             font-size:  16px;
         }
         
+#clear_all_notifications{
+    font-size:      18px;
+    top:            25px;
+}
+        
 div#profile_right_cont .active_nom_cont_left p{
     margin-top:     -20px;
     width:          85px;
@@ -520,7 +565,7 @@ div#left_nav #give_feedback{
     font-size:      18px;
     position:       absolute;
     top:            -100px;
-    right:          120px;
+    right:          110px;
     width:          200px;
 }
 
@@ -1215,6 +1260,7 @@ div#photo_comments p{
 }
 
 #about_left_cont img{
+    height:             229px;
     width:              480px;
 }
 
@@ -1362,6 +1408,7 @@ div#initial_tut_top_wrap .tut_point > div{
 
 div#tagline_top #tagline_text{
     margin-left:        250px;
+    margin-right:       20px;
     padding-top:        20px;
 }
 

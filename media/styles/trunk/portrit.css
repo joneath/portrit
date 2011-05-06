@@ -389,6 +389,10 @@ div#login_cont{
                 padding-bottom:     10px;
             }
             
+                #landing_photo_cont #landing_photos_loading{
+                    padding-top:        150px;
+                }
+            
                 #landing_photo_cont h2{
                     font-size:          22px;
                     font-weight:        bold;
@@ -6377,6 +6381,11 @@ div#all_friends {
     #about_left_cont{
         
     }
+    
+        #about_left_cont img{
+            width:              616px; 
+            height:             294px;
+        }
     
         #about_left_cont h3{
             color:              #6e6e6e;

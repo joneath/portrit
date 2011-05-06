@@ -141,15 +141,19 @@ $(document).ready(function(){
                             '<div id="login_top_cont">' +
                                 '<div id="tagline_top">' +
                                     '<div id="iphone">' +
-                                        '<img src="http://portrit.s3.amazonaws.com/img/iphone_asset.png"/>' +
+                                        '<a target="_blank" href="http://itunes.apple.com/us/app/portrit/id435873942?mt=8&ls=1">' +
+                                            '<img src="http://portrit.s3.amazonaws.com/img/iphone_asset.png"/>' +
+                                        '</a>' +
                                     '</div>' +
                                     '<div id="tagline_text">' +
                                         '<h2>Let\'s find the best photos.</h2>' + 
                                         '<p id="tagline_main">Snap, nominate, vote, and earn wherever you go with the Portrit iPhone app.</p>' +
                                     '</div>' +
                                     '<div id="app_row">' +
-                                        '<h3>Download the <strong>free</strong> app.</h3>' +
-                                        '<a target="_blank" href="">' +
+                                        '<a target="_blank" href="http://itunes.apple.com/us/app/portrit/id435873942?mt=8&ls=1">' +
+                                            '<h3>Download the <strong>free</strong> app.</h3>' +
+                                        '</a>' +
+                                        '<a target="_blank" href="http://itunes.apple.com/us/app/portrit/id435873942?mt=8&ls=1">' +
                                             '<img style="height: 53px; width: 153px;" src="http://portrit.s3.amazonaws.com/img/app_store_badge.png"/>' +
                                         '</a>' +
                                     '</div>' +
@@ -248,7 +252,10 @@ $(document).ready(function(){
                                 '</div>' +
                                 '<div id="landing_photo_cont">' +
                                     '<h2></h2>' +
-                                    '<div></div>' +
+                                    '<div id="landing_photos_loading" style="display:none;">' +
+                                        '<img src="http://portrit.s3.amazonaws.com/img/ajax-loader-light.gif"/>' +
+                                    '</div>' +
+                                    '<div id="landing_photos_target"></div>' +
                                 '</div>' +
                                 '<div class="clear"></div>' +
                             '</div>' +
@@ -302,8 +309,9 @@ $(document).ready(function(){
     
     var landing_photo_timeout = null;
     function load_landing_cat_photos(cat){
-        $('#landing_photo_cont > div').children().fadeOut('fast', function(){
+        $('#landing_photo_cont > div#landing_photos_target').children().fadeOut('fast', function(){
             $(this).remove();
+            $('#landing_photos_loading').show();
         });
         var page_size = 36;
         if (mobile && !tablet){
@@ -313,29 +321,30 @@ $(document).ready(function(){
         $.getJSON('/api/get_community_top_nominations_cat/', {'cat': cat, 'page_size': page_size, 'landing': true}, function(data){
             clearInterval(landing_photo_timeout);
             landing_photo_timeout = setInterval(function(){
-                if ($('#landing_photo_cont > div').children().length == 0){
+                if ($('#landing_photo_cont > div#landing_photos_target').children().length == 0){
                     clearInterval(landing_photo_timeout);
                     var photo_html = '';
                     var top = page_size;
                     var diff = 0;
                     
                     diff = top - data.length;
-                    $('#landing_photo_cont > div').append('<p class="tooltip"></p>');
+                    $('#landing_photo_cont > div#landing_photos_target').append('<p class="tooltip"></p>');
                     for (var i = 0; i < data.length; i++){
                         photo_html ='<div style="display: none;" class="top_cat_photo" name="' + data[i].nominatee_username + '">' +
                                         '<a href="/#!/community/active/' + data[i].id + '/">' +
                                             '<img src="' + data[i].photo.crop_small + '"/>' +
                                         '</a>' +
                                     '</div>';
-                        $('#landing_photo_cont > div').append(photo_html);
+                        $('#landing_photo_cont > div#landing_photos_target').append(photo_html);
                     }
                     for (var i = 0; i < diff; i++){
                         photo_html ='<div style="display: none;">' +
                                         '' +
                                     '</div>';
-                        $('#landing_photo_cont > div').append(photo_html);
+                        $('#landing_photo_cont > div#landing_photos_target').append(photo_html);
                     }
-                    $('#landing_photo_cont > div').children().fadeIn('fast');
+                    $('#landing_photo_cont > div#landing_photos_target').children().fadeIn('fast');
+                    $('#landing_photos_loading').hide();
                 }
             }, 50);
         });
@@ -755,7 +764,7 @@ $(document).ready(function(){
                             facebook_frame + 
                         '</div>' +
                         '<div id="about_left_cont">' +
-                            '<img style="width: 616px; height: 294px;" src="http://portrit.s3.amazonaws.com/img/about_graphic.jpg"/>' +
+                            '<img src="http://portrit.s3.amazonaws.com/img/about_graphic.jpg"/>' +
                             '<p>Portrit aims to make photo sharing more social. It\'s up to your social circle to find and award the best photos out there. No longer do you need to look through thousands of your friend\'s photos to find the best ones. On Portrit, you and your friends filter the lame photos from the awesome ones.</p>' +
                             '<p>Co-founded by Jonathan Eatherly and Jerry Lin in 2010.</p>' + 
                         '</div>' +
@@ -2279,7 +2288,7 @@ $(document).ready(function(){
             }
             
             if (mobile){
-                notification_scroller = new iScroll('notification_footer_popup_cont');
+                notification_scroller = new iScroll('notification_scroller');
             }
             
             $('#wrapper').live('click', function(){

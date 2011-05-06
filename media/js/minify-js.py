@@ -9,7 +9,7 @@ def minify_js():
     
     OPEN_FILES = ['easing.1.3.js',
 				  'jquery.autocomplete.js',
-				  'iscroll.js',
+				  'iscroll-lite.js',
 				  'mdetect.js',
 				  'jquery.fileupload.js',
 				  'main.js',]

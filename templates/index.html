@@ -36,14 +36,14 @@
 		{% if test_code %}
 			<script type="text/javascript" src="http://portrit_test.s3.amazonaws.com/js/trunk/easing.1.3.js"></script>
 	        <script type="text/javascript" src="http://portrit_test.s3.amazonaws.com/js/trunk/jquery.autocomplete.js"></script>
-	        <script type="text/javascript" src="http://portrit_test.s3.amazonaws.com/js/trunk/iscroll.js"></script>
+	        <script type="text/javascript" src="http://portrit_test.s3.amazonaws.com/js/trunk/iscroll-lite.js"></script>
 	        <script type="text/javascript" src="http://portrit_test.s3.amazonaws.com/js/trunk/mdetect.js"></script>
 	        <script type="text/javascript" src="http://portrit_test.s3.amazonaws.com/js/trunk/jquery.fileupload.js"></script>
 	        <script type="text/javascript" src="http://portrit_test.s3.amazonaws.com/js/trunk/main.js"></script>
 		{% else %}
 	        <script type="text/javascript" src="/site_media/js/trunk/easing.1.3.js"></script>
 	        <script type="text/javascript" src="/site_media/js/trunk/jquery.autocomplete.js"></script>
-	        <script type="text/javascript" src="/site_media/js/trunk/iscroll.js"></script>
+	        <script type="text/javascript" src="/site_media/js/trunk/iscroll-lite.js"></script>
 	        <script type="text/javascript" src="/site_media/js/trunk/mdetect.js"></script>
 	        <script type="text/javascript" src="/site_media/js/trunk/jquery.fileupload.js"></script>
 	        <script type="text/javascript" src="/site_media/js/trunk/main.js"></script>
@@ -164,9 +164,11 @@
 	                                <h2>Notifications</h2>
 	                                <span id="clear_all_notifications" style="display:none;">Clear</span>
 	                            </div>
-	                            <div id="notification_footer_popup_cont">
+								<div id="notification_scroller">
+									<div id="notification_footer_popup_cont">
 
-	                            </div>
+		                            </div>
+								</div>
 	                        </div>
 	                    </div>
 		                <div id="give_feedback"><a onclick="void(0)">Give Feedback</a></div>
