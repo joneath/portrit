@@ -177,7 +177,7 @@ class Photo_Flag(EmbeddedDocument):
     
     meta = {
         'ordering': ['-created_date'],
-        'indexes': ['flagger']
+        'indexes': ['flagger', 'created_date']
     }
     
 class GPS_Data(EmbeddedDocument):

@@ -1874,6 +1874,10 @@ div#nom_detail_cont{
                     width:              700px;
                 }
                 
+                    div#main_nom_cont_left_wrap div#nominator_overlay_cont p{
+                        width:              700px;
+                    }
+                
                     div#nominator_overlay_cont img{
                         float:              left;
                     }

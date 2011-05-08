@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from main.documents import *
 from settings import ENV, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET
 
-def flags(request, template='admin/flags.html'):
+def get_payload():
     production_code = True
     test_code = False
     analytics = True
@@ -22,8 +22,15 @@ def flags(request, template='admin/flags.html'):
         production_code = False
         test_code = True
         analytics = None
-        
-    title = "Portrit"
     
-    payload = {'analytics': analytics, 'production_code': production_code, 'test_code': test_code, 'title': title, 'fb_title': fb_title}
+    payload = {'analytics': analytics, 'production_code': production_code, 'test_code': test_code}
+    
+    return payload
+
+def flags(request, template='admin/flags.html'):
+    payload = get_payload()
+    
+    flags = Photo_Flag.objects.filter(active=True)
+    payload['flags'] = flags
+    
     return render_to_response(template, payload, context_instance=RequestContext(request))
