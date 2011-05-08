@@ -2078,7 +2078,8 @@ def flag_photo(request):
         photo = Photo.objects.get(id=str(photo_id))
         
         if len(filter(lambda flag: flag.flagger == portrit_user, photo.flags)) == 0:
-            flag_rec = Photo_Flag(flagger=portrit_user)
+            flag_rec = Photo_Flag(flagger=portrit_user, photo=photo)
+            flag_rec.save()
             photo.flags.append(flag_rec)
             
             if len(photo.flags) >= 3 and not photo.validated:

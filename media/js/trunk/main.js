@@ -4152,6 +4152,8 @@ $(document).ready(function(){
             flag_class = 'off';
         }
         
+        create_nom_cache(data);
+        
         for (var i = 0; i < data.length; i++){
             cat_name = data[i].nomination_category;
             cat_underscore = get_cat_under(cat_name);

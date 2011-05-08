@@ -3,7 +3,35 @@
 {% block title %}Photo Flag Admin{% endblock %}
 
 {% block cont %}
-	{% for flag in flags %}
-		{{ flag }}
-	{% endfor %}
+	<div id="cont">
+		<h1>Flagged Photos</h1>
+		<table border=1>
+			<tr>
+				<th>Thumb</th>
+				<th>Datetime</th>
+				<th>Flagger</th>
+			</tr>
+			{% for flag in flags %}
+				<tr id="{{ flag.id }}">
+					<td><img src="{{ flag.photo.thumbnail }}"/></td>
+					<td>{{ flag.created_date }}</td>
+					<td>{{ flag.flagger.username }}</td>
+					<td><a class="sick deny" value="{{ flag.id }}" method="deny">Deny</a><a class="sick approve" value="{{ flag.id }}" method="approve">Approve</a></td>
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
+	
+	<script type="text/javascript">
+		$('.deny, .approve').bind('click', function(){
+			var method = $(this).attr('method');
+			var id = $(this).attr('value');
+			
+			$.post('/admin/flags', {'id': id, 'method': method}, function(data){
+				
+			});
+
+			$('#' + id).fadeOut();
+		});
+	</script>
 {% endblock %}

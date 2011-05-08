@@ -170,9 +170,10 @@ class Nomination(Document):
         super(Nomination, self).save(*args, **kwargs)
         self.serialize_nom()
     
-class Photo_Flag(EmbeddedDocument):
+class Photo_Flag(Document):
     active = BooleanField(default=True)
     created_date = DateTimeField(default=datetime.datetime.now)
+    photo = ReferenceField('Photo')
     flagger = ReferenceField('Portrit_User')
     
     meta = {
@@ -215,7 +216,7 @@ class Photo(Document):
     location = EmbeddedDocumentField(GPS_Data)
     
     nominations = ListField(ReferenceField('Nomination'))
-    flags = ListField(EmbeddedDocumentField(Photo_Flag))
+    flags = ListField(ReferenceField(Photo_Flag))
     owner = ReferenceField('Portrit_User')
     
     meta = {
