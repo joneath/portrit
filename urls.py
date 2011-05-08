@@ -1,7 +1,5 @@
 import os.path
 from django.conf.urls.defaults import *
-from django.contrib import admin
-admin.autodiscover()
 
 from settings import ENV
 
@@ -25,10 +23,15 @@ urlpatterns += patterns('django.views.generic.simple',
     ('^beta/$', 'redirect_to', {'url': '/'}),
 )
 
-#Index view
+#Index views
 urlpatterns += patterns('',
     url(r'^404$', 'main.index_views.handle404', name='handle404'),
     url(r'^500$', 'main.index_views.handle500', name='handle500'),
+)
+
+#Admin views
+urlpatterns += patterns('',
+    url(r'^admin/flags$', 'main.admin_views.flags', name='flags'),
 )
 
 #User Views

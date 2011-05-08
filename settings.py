@@ -91,8 +91,8 @@ elif ENV == "TEST":
         'default': {
             'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
             'LOCATION': [
-                '10.202.158.211:11211',
-                '10.112.77.189:11211',
+                '10.195.222.71:11211',
+                '10.196.109.173:11211',
             ]
         }
     }
@@ -111,7 +111,7 @@ elif ENV == "TEST":
     POSTMARK_TEST_MODE = False
     
     try:
-        connect('portrit', host='10.112.81.115:27017,10.245.186.223:27017,10.195.203.165:27017')
+        connect('portrit', host='10.194.170.82:27017,10.202.147.73:27017,10.212.131.186:27017')
     except:
         print "Could not connect to Mongo"
     

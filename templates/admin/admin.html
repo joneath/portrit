@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{{ title }}</title>
+		<link rel="shortcut icon" href="http://portrit.s3.amazonaws.com/img/favicon.ico">
+		
+		{% if production_code %}
+	        <link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/admin.css"/>
+	    {% else %}
+			{% if test_code %}
+				<link rel="stylesheet" href="http://portrit_test.s3.amazonaws.com/styles/admin.css"/>
+			{% else %}
+	        	<link rel="stylesheet" href="/site_media/styles/admin.css"/>
+			{% endif %}
+	    {% endif %}
+		
+		<script src="http://www.google.com/jsapi?key=ABQIAAAAv9UUX4Bh3gRCpbzjSE5MxxSfZ7BxKgj6oXj1KRYYnjuHN0SsnBTx1B5nTeUxCB_k-Yerxn8ZVGvnLA" type="text/javascript"></script>
+	    <script type="text/javascript">
+	        google.load("jquery", "1.5.2");
+	    </script>
+	
+	</head>
+	<body>
+		<h1>TEST</h1>
+	</body>
+</html>
