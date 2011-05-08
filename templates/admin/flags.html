@@ -3,5 +3,7 @@
 {% block title %}Photo Flag Admin{% endblock %}
 
 {% block cont %}
-	TESTIN TEMPLATING
+	{% for flag in flags %}
+		{{ flag }}
+	{% endfor %}
 {% endblock %}
