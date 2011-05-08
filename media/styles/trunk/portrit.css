@@ -1853,7 +1853,7 @@ div#nom_detail_cont{
                     color:              white;
                     background:         rgba(0, 0, 0, .7);
                     padding:            10px;
-                    font-size:          26px;
+                    font-size:          42px;
                     font-weight:        bold;
                     border-radius:          5px;
                     -moz-border-radius:     5px;
@@ -4671,10 +4671,48 @@ div#context_overlay{
     text-align:         center;
     font-size:          24px;
 }
+
+#not_found_header{
+    width:              500px;
+    margin:             0 auto;
+    padding-top:        10px;
+}
+
+    #not_found_header h1{
+        color:                  #fff;
+        display:                inline;
+        font-size:              54px;
+        font-weight:            bold;
+        margin-left:            20px;
+    }
+    
+    #gallery_photo_center #not_found_header h1{
+        color:                  #333;
+    }
         
 #profile_user_context{
     
 }
+
+    #not_found_cont{
+        text-align:             center;
+        margin-top:             40px;
+        margin-bottom:          40px;
+    }
+        
+        #not_found_cont #not_found_message{
+            margin:                 0 auto;
+            width:                  500px;
+        }
+        
+        #not_found_cont h2{
+            background-color:       #333;
+            color:                  #eee;
+            font-size:              24px;
+            padding:                10px;
+            border-radius:          5px;
+            -moz-border-radius:     5px;
+        }
     
     #profile_user_context #user_trophy_cont{
         margin-top:         15px;

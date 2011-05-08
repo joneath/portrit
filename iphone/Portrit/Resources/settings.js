@@ -1,4 +1,4 @@
-var RUNTIME = 'production';
+var RUNTIME = 'test';
 var SERVER_URL = '';
 var VERSION = '1.0.1';
 var TWITTER_CONSUMER = '';

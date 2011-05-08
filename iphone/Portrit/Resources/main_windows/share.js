@@ -153,7 +153,6 @@ var camera_overlay = Titanium.UI.createView({
     width: 320,
     left: 0
 });
-camera_overlay.hide();
 
 var top_shutter = Titanium.UI.createView({
     backgroundColor: '#000',
@@ -543,7 +542,6 @@ win.addEventListener('focus', function(){
     reset_shutter();
     show_camera();
     
-    camera_overlay.show();
     take_photo_click = false;
     window_activity_cont.hide();
 });
@@ -605,7 +603,6 @@ function cammera_success(event, gallery){
     };
     
     pass_nominate_data(data);
-    camera_overlay.hide();
 }
 
 var photo_upload = Titanium.Network.createHTTPClient({enableKeepAlive:false});
@@ -708,25 +705,21 @@ Ti.App.addEventListener('cancel_nominate', function(e){
     take_photo_click = false;
     reset_shutter();
     photo_upload.abort();
-    camera_overlay.show();
 });
 
 Ti.App.addEventListener('reset_after_camera', function(e){
-    camera_overlay.hide();
     take_photo_click = false;
     // tabGroup.bottom = 0;
     // tabGroup.setActiveTab(0);
 });
 
 Ti.App.addEventListener('reset_after_camera_to_profile', function(e){
-    camera_overlay.hide();
     take_photo_click = false;
     // tabGroup.bottom = 0;
     // tabGroup.setActiveTab(4);
 });
 
 function reset_after_camera(prev){
-    camera_overlay.hide();
     Titanium.UI.iPhone.showStatusBar({animated:false});
     tabGroup.bottom = 0;
     take_photo_click = false;

@@ -671,7 +671,7 @@ $(document).ready(function(){
         mobile = true;
         close_size = 'mobile'
         
-        if (typeof(_gaq) !== "undefined"){
+        if (typeof(_gaq) !== "undefined" && ENV != 'TEST'){
             var meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-14.css"/>' +
                             '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
                             '<link rel="shortcut icon" href="http://portrit.s3.amazonaws.com/img/favicon.ico">' +
@@ -4550,12 +4550,17 @@ $(document).ready(function(){
         
         $.getJSON('/api/get_user_profile/', vars, function(data){
             selected_user = data.user;
-            if (method == 'all'){
-                user_profile_data = data;
+            if (selected_user.fid && selected_user.name){
+                if (method == 'all'){
+                    user_profile_data = data;
+                }
+                selected_user.photos = data.photos;
+
+                fnc_ptr(selected_user);
             }
-            selected_user.photos = data.photos;
-            
-            fnc_ptr(selected_user);
+            else{
+                raise_404();
+            }
         });
     }
     
@@ -4611,46 +4616,67 @@ $(document).ready(function(){
         var time_diff = now - time;
         time_diff /= 1000;
         
-        var gallery_html =  '<div id="gallery_header">' +
-                                '<a href="/#!/' + selected_user.username + '/">' +
-                                    '<img src="https://graph.facebook.com/' + selected_user.fid + '/picture?type=square"/>' +
-                                    '<h2>' + name + ' Photos</h2>' +
-                                '</a>' +
-                            '</div>' +
-                            '<div id="gallery_wrap">' +
-                                '<div id="gallery_left_stream">' +
-                                    '<div id="gallery_prev">' +
-                                        '<div class="up_arrow"></div>' +
-                                    '</div>' +
-                                    '<div id="gallery_prev_cont" class="gallery_thumb" value="' + prev_photo_value + '">' +
-                                        prev_photo_html +
-                                    '</div>' +
-                                    '<div id="gallery_selected_cont" class="gallery_thumb">' +
-                                        '<img src="' + selected_photo.crop + '"/>' +
-                                        '<div id="nominate" class="active">Nominate</div>' +
-                                        '<div id="nominate_arrow" class="nominate_arrow"></div>' +
-                                    '</div>' +
-                                    '<div id="gallery_next_cont" class="gallery_thumb" value="' + next_photo_value + '">' +
-                                        next_photo_html +
-                                    '</div>' +
-                                    '<div id="gallery_next">' +
-                                        '<div class="down_arrow"></div>' +
-                                    '</div>' +
-                                '</div>' +
-                                '<div id="gallery_photo_cont">' +
-                                    '<div id="gallery_photo_center">' +
-                                        '<img src="' + selected_photo.source + '"/>' +
-                                    '</div>' +
-                                    '<div id="gallery_photo_bottom_cont">' +
-                                        '<p>' + secondsToHms(time_diff) + '</p>' +
-                                        '<div class="flag flag_photo ' + flag_class + '" pid="' + selected_photo.id + '" thumb="' + selected_photo.crop + '" fb_crop="' + selected_photo.crop_small + '" owner="' + selected_user.username + '"></div>' +
-                                    '</div>' +
-                                '</div>' + 
-                                '<div id="gallery_photo_cache" style="display:none;"></div>' +
-                            '</div>' +
-                            '<div class="clear"></div>';
-                            
-        $('#gallery_cont').append(gallery_html);
+        var header_html =   '<a href="/#!/' + selected_user.username + '/">' +
+                                '<img src="https://graph.facebook.com/' + selected_user.fid + '/picture?type=square"/>' +
+                                '<h2>' + name + ' Photos</h2>' +
+                            '</a>';
+        
+        $('#gallery_header').append(header_html);
+        $('#gallery_prev_cont').attr('value', prev_photo_value).append(prev_photo_html);
+        
+        var nominate_html =  '<img src="' + selected_photo.crop + '"/>' +
+                            '<div id="nominate" class="active">Nominate</div>' +
+                            '<div id="nominate_arrow" class="nominate_arrow"></div>';
+        
+        $('#gallery_selected_cont').append(nominate_html);
+        $('#gallery_next_cont').attr('value', next_photo_value).append(next_photo_html);
+        
+        $('#gallery_photo_center').append('<img src="' + selected_photo.source + '"/>');
+        
+        var photo_action_bar = '<p>' + secondsToHms(time_diff) + '</p>' +
+                                '<div class="flag flag_photo ' + flag_class + '" pid="' + selected_photo.id + '" thumb="' + selected_photo.crop + '" fb_crop="' + selected_photo.crop_small + '" owner="' + selected_user.username + '"></div>';
+        $('#gallery_photo_bottom_cont').append(photo_action_bar);
+        
+        // var gallery_html =  '<div id="gallery_header">' +
+        //                         '<a href="/#!/' + selected_user.username + '/">' +
+        //                             '<img src="https://graph.facebook.com/' + selected_user.fid + '/picture?type=square"/>' +
+        //                             '<h2>' + name + ' Photos</h2>' +
+        //                         '</a>' +
+        //                     '</div>' +
+        //                     '<div id="gallery_wrap">' +
+        //                         '<div id="gallery_left_stream">' +
+        //                             '<div id="gallery_prev">' +
+        //                                 '<div class="up_arrow"></div>' +
+        //                             '</div>' +
+        //                             '<div id="gallery_prev_cont" class="gallery_thumb" value="' + prev_photo_value + '">' +
+        //                                 prev_photo_html +
+        //                             '</div>' +
+        //                             '<div id="gallery_selected_cont" class="gallery_thumb">' +
+        //                                 '<img src="' + selected_photo.crop + '"/>' +
+        //                                 '<div id="nominate" class="active">Nominate</div>' +
+        //                                 '<div id="nominate_arrow" class="nominate_arrow"></div>' +
+        //                             '</div>' +
+        //                             '<div id="gallery_next_cont" class="gallery_thumb" value="' + next_photo_value + '">' +
+        //                                 next_photo_html +
+        //                             '</div>' +
+        //                             '<div id="gallery_next">' +
+        //                                 '<div class="down_arrow"></div>' +
+        //                             '</div>' +
+        //                         '</div>' +
+        //                         '<div id="gallery_photo_cont">' +
+        //                             '<div id="gallery_photo_center">' +
+        //                                 '<img src="' + selected_photo.source + '"/>' +
+        //                             '</div>' +
+        //                             '<div id="gallery_photo_bottom_cont">' +
+        //                                 '<p>' + secondsToHms(time_diff) + '</p>' +
+        //                                 '<div class="flag flag_photo ' + flag_class + '" pid="' + selected_photo.id + '" thumb="' + selected_photo.crop + '" fb_crop="' + selected_photo.crop_small + '" owner="' + selected_user.username + '"></div>' +
+        //                             '</div>' +
+        //                         '</div>' + 
+        //                         '<div id="gallery_photo_cache" style="display:none;"></div>' +
+        //                     '</div>' +
+        //                     '<div class="clear"></div>';
+        //                     
+        // $('#gallery_cont').append(gallery_html);
         
         if (selected_photo_index - 1 >= 0){
             $('#gallery_photo_cache').append('<img src="' + selected_user.photos[selected_photo_index - 1].source + '"/>');
@@ -4865,7 +4891,41 @@ $(document).ready(function(){
         $('.stream_nav, .sub_stream_nav').removeClass('selected');
         
         var gallery_html =  '<div id="gallery_cont">' +
-                                '' +
+                                '<div id="gallery_header">' +
+                                    '' +
+                                '</div>' +
+                                '<div id="gallery_wrap">' +
+                                    '<div id="gallery_left_stream">' +
+                                        '<div id="gallery_prev">' +
+                                            '<div class="up_arrow"></div>' +
+                                        '</div>' +
+                                        '<div id="gallery_prev_cont" class="gallery_thumb">' +
+                                            '' +
+                                        '</div>' +
+                                        '<div id="gallery_selected_cont" class="gallery_thumb">' +
+                                            // '' +
+                                            // '<div id="nominate" class="active">Nominate</div>' +
+                                            // '<div id="nominate_arrow" class="nominate_arrow"></div>' +
+                                        '</div>' +
+                                        '<div id="gallery_next_cont" class="gallery_thumb">' +
+                                            '' +
+                                        '</div>' +
+                                        '<div id="gallery_next">' +
+                                            '<div class="down_arrow"></div>' +
+                                        '</div>' +
+                                    '</div>' +
+                                    '<div id="gallery_photo_cont">' +
+                                        '<div id="gallery_photo_center">' +
+                                            '' +
+                                        '</div>' +
+                                        '<div id="gallery_photo_bottom_cont">' +
+                                            '<p></p>' +
+                                            // '<div class="flag flag_photo ' + flag_class + '" pid="' + selected_photo.id + '" thumb="' + selected_photo.crop + '" fb_crop="' + selected_photo.crop_small + '" owner="' + selected_user.username + '"></div>' +
+                                        '</div>' +
+                                    '</div>' + 
+                                    '<div id="gallery_photo_cache" style="display:none;"></div>' +
+                                '</div>' +
+                                '<div class="clear"></div>' +
                             '</div>';
         $('#profile_cont_wrap').html(gallery_html);
                             
@@ -7853,7 +7913,57 @@ $(document).ready(function(){
                                 '</div>';
                                 
     function raise_404(){
-        $('#profile_cont_wrap').append('<h1>404</h1>');
+        if (view_active == 'profile_active' || view_active == 'profile_trophies' || view_active == 'profile_settings' || view_active == 'profile_following' || view_active == 'profile_followers'){
+            $('#profile_nav_cont').fadeOut('fast');
+            $('#profile_stats_cont').fadeOut('fast');
+
+            var not_found_header =  '<div id="not_found_header" style="display:none;">' +
+                                        '<img style="height: 113px; width: 113px;" src="http://portrit.s3.amazonaws.com/img/404_bear.png"/>' +
+                                        '<h1>We\'re sorry...</h1>' +
+                                    '</div>';
+
+            var cont =  '<div id="not_found_cont" style="display:none;">' +
+                            '<div id="not_found_message">' +
+                                '<h2>We can\'t find the page you are looking for. Try returning back to the <strong><a href="/#!/">homepage</a></strong></h2>' +
+                            '</div>' +
+                        '</div>';
+
+            $('#profile_user_header').append(not_found_header);
+            $('#profile_user_context').append(cont);
+
+            setTimeout(function(){
+                $('#not_found_header').fadeIn();
+                $('#not_found_cont').fadeIn();
+            }, 150);
+        }
+        else if (view_active == 'community_top_detail' || view_active == 'community_active_detail' || view_active == 'stream_winners_detail' || view_active == 'stream_active_detail' || view_active == 'nom_detail' || view_active == 'profile_trophies_detail' || view_active == 'profile_active_detail'){
+            $('#main_nom_photo').remove();
+            
+            var not_found_html ='<div id="not_found_header">' +
+                                    '<img style="height: 113px; width: 113px;" src="http://portrit.s3.amazonaws.com/img/404_bear.png"/>' +
+                                    '<h1>We\'re sorry...</h1>' +
+                                '</div>' +
+                                '<div id="not_found_cont">' +
+                                    '<div id="not_found_message">' +
+                                        '<h2>We can\'t find the page you are looking for. Try returning back to the <strong><a href="/#!/">homepage</a></strong></h2>' +
+                                    '</div>' +
+                                '</div>';
+            
+            $('#main_nom_cont_left_wrap').append(not_found_html);
+        }
+        else if (view_active == 'gallery'){
+            var not_found_html ='<div id="not_found_header">' +
+                                    '<img style="height: 113px; width: 113px;" src="http://portrit.s3.amazonaws.com/img/404_bear.png"/>' +
+                                    '<h1>We\'re sorry...</h1>' +
+                                '</div>' +
+                                '<div id="not_found_cont">' +
+                                    '<div id="not_found_message">' +
+                                        '<h2>We can\'t find the page you are looking for. Try returning back to the <strong><a href="/#!/">homepage</a></strong></h2>' +
+                                    '</div>' +
+                                '</div>';
+            
+            $('#gallery_photo_center').append(not_found_html);
+        }
     }
     
     function render_share_nom(data, comment_text){
@@ -8326,6 +8436,7 @@ $(document).ready(function(){
             else if (url_vars_list[0] == 'nomination'){
                 if (url_vars_list.length > 1){
                     //Nom Detail View
+                    view_active = 'nom_detail';
                     append_wall_html();
                     selected_nom = url_vars_list[1];
                     init_nom_detail();
