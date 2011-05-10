@@ -1519,6 +1519,52 @@ def get_user_profile(request):
     data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
+def get_profile_related_noms(request):
+    data = [ ]
+    username = request.GET.get('username')
+    
+    try:
+        target_user = Portrit_User.objects.get(username=username)
+        friends = target_user.get_following()
+        
+        target_user_active_noms = Nomination.objects.filter(Q(nominatee=target_user) | Q(tagged_users__in=[target_user]), active=True, won=False)
+        
+        for active_nom in target_user_active_noms:
+            nom_data = {
+                'selected_nom': serialize_nom(active_nom),
+                'next': None,
+                'prev': None,
+            }
+            nom_cat = active_nom.nomination_category
+
+            nominations = Nomination.objects.filter(
+                Q(nominatee__in=friends) |
+                Q(nominatee=target_user) |
+                Q(nominator=target_user),
+                nomination_category=nom_cat,
+                won=False, 
+                active=True).order_by('current_vote_count')
+                
+            nominations = list(nominations)
+            selected_index = nominations.index(active_nom)
+            nom_data['selected_nom']['position'] = selected_index
+            
+            if selected_index > 0:
+                nom_data['next'] = serialize_nom(nominations[selected_index - 1])
+                nom_data['next']['position'] = selected_index - 1
+                
+            if (selected_index + 1) < len(nominations):
+                nom_data['prev'] = serialize_nom(nominations[selected_index + 1])
+                nom_data['prev']['position'] = selected_index + 1
+                
+            data.append(nom_data)
+        
+    except Exception, err:
+        print err
+        
+    data = json.dumps(data)
+    return HttpResponse(data, mimetype='application/json')
+    
 @check_access_token
 def get_user_stream_photos(request):
     data = [ ]

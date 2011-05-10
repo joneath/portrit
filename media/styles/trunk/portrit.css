@@ -4882,6 +4882,7 @@ div#context_overlay{
     #profile_user_context #profile_active_cont{
         background-color:   #333;
         margin-top:         15px;
+        position:           relative;
         border-bottom-right-radius:     2px;
         border-bottom-left-radius:      5px;
         -moz-border-radius-bottomright: 2px;
@@ -5220,6 +5221,7 @@ div#latest_photos{
     background-color:   #333;
     float:              right;
     height:             100%;
+    position:           relative;
     width:              300px;
 }
 
@@ -5513,6 +5515,97 @@ div#latest_photos{
                 line-height:        50px;
                 width:              50px;
             }
+            
+    #top_right_cont .related_nom_cont{
+        height:             453px;
+        position:           absolute;
+        width:              300px;
+    }
+    
+        #top_right_cont .related_nom_cont > div{
+            background-color:   #fff;
+            height:             150px;
+            margin:             15px;
+        }
+        
+        #top_right_cont .related_nom_cont > .related_selected_cont{
+            background:             none;
+            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+            background-position:    -750px -75px;
+            margin:             0px;
+            position:           absolute;
+            left:               -42px;
+            top:                155px;
+            height:             135px;
+            width:              60px;
+            z-index:            10;
+        }
+        
+            #top_right_cont .related_nom_cont > .related_selected_cont h2{
+                font-size:          28px;
+                position:           absolute;
+                top:                52px;
+                right:              0px;
+                color:              white;
+            }
+        
+        .related_nom_cont .related_nom_left_cont{
+            float:              left;
+            width:              135px;
+        }
+        
+        .related_nom_cont .related_nom_right_cont{
+            float:              right;
+            overflow:           hidden;
+            width:              135px;
+        }
+        
+        .related_nom_cont .related_nom_top_cont{
+            border-bottom:      1px solid #dedede;
+            margin:             7px;
+            padding-bottom:     7px;
+        }
+        
+            .related_nom_cont .related_nom_top_cont h2{
+                color:              #999;
+                font-size:          30px;
+                font-weight:        bold;
+                float:              left;
+                line-height:        50px;
+                width:              63px;
+                text-align:         center;
+            }
+            
+            .related_nom_cont .related_nom_top_cont img{
+                float:              right;
+            }
+            
+        .related_nom_cont .related_nom_bottom_cont{
+            margin:             7px;
+            margin-top:         30px;   
+        }
+        
+            .related_nom_cont .related_nom_bottom_cont p{
+                color:              #555;
+                float:              left;
+                font-size:          20px;
+                line-height:        24px;
+                margin-left:        10px;
+            }
+            
+            .related_nom_cont .related_nom_bottom_cont h3{
+                color:              #555;
+                float:              right;
+                font-size:          24px;
+                font-weight:        bold;
+                line-height:        24px;
+                margin-right:       10px;
+            }
+        
+        #top_right_cont .related_nom_cont .related_nom_prev_cont{
+            position:           absolute;
+            bottom:             0px;
+        }
                 
 #recent_cont_1{
     background-color:       #333;

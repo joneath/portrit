@@ -77,6 +77,8 @@ urlpatterns += patterns('',
     
     url(r'^api/get_user_trophies/$', 'main.api_views.get_user_trophies'),
     
+    url(r'^api/get_profile_related_noms/$', 'main.api_views.get_profile_related_noms'),
+    
     #User
     url(r'^api/login/$', 'main.api_views.sign_in_create'),
     url(r'^api/check_username_availability/$', 'main.api_views.check_username_availability'),

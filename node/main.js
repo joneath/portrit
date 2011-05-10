@@ -70,9 +70,6 @@ var Portrit = function(){
         var allow_push = true;
         var message = '';
         
-        console.log(friends);
-        console.log(data.method);
-        
         if (data.method == 'new_nom'){
             if (data.payload.nom_data[0].nominatee != data.payload.nom_data[0].nominator && friends[data.payload.nom_data[0].nominatee].push_nominations){
                 message = data.payload.nom_data[0].nominator_username + ' nominated your photo for ' + data.payload.nom_data[0].nomination_category;
@@ -441,7 +438,7 @@ var Portrit = function(){
     });
     
     if (dev){
-        request_server.listen(8080, '192.168.0.197');
+        request_server.listen(8080, '192.168.1.126');
     }
     else{
         request_server.listen(8080, '10.117.57.137');

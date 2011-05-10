@@ -5116,6 +5116,96 @@ $(document).ready(function(){
         }
     }
     
+    function render_profile_related_noms(data){
+        var related_html = '';
+        var next_html = '';
+        var prev_html = '';
+        for (var i = 0; i < data.length; i++){
+            next_html = '';
+            if (data[i]['next']){
+                next_html = '<div class="related_nom_next_cont">' +
+                                '<div class="related_nom_left_cont">' +
+                                    '<div class="related_nom_top_cont" name="' + data[i]['next'].nominatee_username + '">' +
+                                        '<p class="tooltip"></p>' +
+                                        '<h2>' + getGetOrdinal(data[i]['next'].position + 1) + '</h2>' +
+                                        '<a href="/#!/' + data[i]['next'].nominatee_username + '/">' +
+                                            '<img src="https://graph.facebook.com/' + data[i]['next'].nominatee + '/picture?type=square"/>' +
+                                        '</a>' +
+                                        '<div class="clear"></div>' +
+                                    '</div>' +
+                                    '<div class="related_nom_bottom_cont">' +
+                                        '<a href="/#!/' + selected_user.username +'/active/nominations/" class="nomination_id" value="' + data[i]['next'].id + '">' +
+                                            '<p>Votes</p>' +
+                                            '<h3><strong>' + data[i]['next'].vote_count + '</strong></h3>' +
+                                            '<div class="clear"></div>' +
+                                        '</a>' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div class="related_nom_right_cont">' +
+                                    '<a href="/#!/' + selected_user.username +'/active/nominations/" class="nomination_id" value="' + data[i]['next'].id + '">' +
+                                        '<img src="' + data[i]['next'].photo.crop + '"/>' +
+                                    '</a>' +
+                                '</div>' +
+                                '<div class="clear"></div>' +
+                            '</div>';
+            }
+            else{
+                
+            }
+            
+            prev_html = '';
+            if (data[i]['prev']){
+                prev_html = '<div class="related_nom_prev_cont">' +
+                                '<div class="related_nom_left_cont">' +
+                                    '<div class="related_nom_top_cont" name="' + data[i]['prev'].nominatee_username + '">' +
+                                        '<p class="tooltip"></p>' +
+                                        '<h2>' + getGetOrdinal(data[i]['prev'].position + 1) + '</h2>' +
+                                        '<a href="/#!/' + data[i]['prev'].nominatee_username + '/">' +
+                                            '<img src="https://graph.facebook.com/' + data[i]['prev'].nominatee + '/picture?type=square"/>' +
+                                        '</a>' +
+                                        '<div class="clear"></div>' +
+                                    '</div>' +
+                                    '<div class="related_nom_bottom_cont">' +
+                                        '<a href="/#!/' + selected_user.username +'/active/nominations/" class="nomination_id" value="' + data[i]['prev'].id + '">' +
+                                            '<p>Votes</p>' +
+                                            '<h3><strong>' + data[i]['prev'].vote_count + '</strong></h3>' +
+                                            '<div class="clear"></div>' +
+                                        '</a>' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div class="related_nom_right_cont">' +
+                                    '<a href="/#!/' + selected_user.username +'/active/nominations/" class="nomination_id" value="' + data[i]['prev'].id + '">' +
+                                        '<img src="' + data[i]['prev'].photo.crop + '"/>' +
+                                    '</a>' +
+                                '</div>' +
+                                '<div class="clear"></div>' +
+                            '</div>';
+            }
+            else{
+                
+            }
+            
+            var nom_pos = $('.recent_nom_cont:eq(' + i + ')').position().top;
+            
+            related_html =  '<div class="related_nom_cont" style="top: ' + nom_pos + 'px;">' +
+                                next_html + 
+                                '<div class="related_selected_cont">' +
+                                    '<h2>' + getGetOrdinal(data[i]['selected_nom'].position + 1) + '</h2>' +
+                                '</div>' +
+                                prev_html +
+                            '</div>';
+            
+            $('#top_right_cont').append(related_html)
+        }
+    }
+    
+    function get_profile_related_noms(){
+        $.getJSON('/api/get_profile_related_noms/', {'username': selected_user.username}, function(data){
+            user_profile_data.related_noms = data;
+            render_profile_related_noms(data);
+        });
+    }
+    
     function init_profile_photos(){
         $('#profile_user_context').html('');
         render_user_photos(user_profile_data.photos);
@@ -5232,6 +5322,7 @@ $(document).ready(function(){
                 user_profile_data.active_noms = data.active_noms;
                 if (user_profile_data.active_noms.length > 0){
                     render_recent_stream(user_profile_data.active_noms, $('#recent_left_cont'));
+                    get_profile_related_noms();
                 }
                 else{
                     var empty_text = '';
@@ -5248,6 +5339,7 @@ $(document).ready(function(){
         else{
             if (user_profile_data.active_noms.length > 0){
                 render_recent_stream(user_profile_data.active_noms, $('#recent_left_cont'));
+                render_profile_related_noms(user_profile_data.related_noms);
             }
             else{
                 var empty_text = '';
@@ -6063,6 +6155,7 @@ $(document).ready(function(){
     var query_cache = { };
     var prev_query = '';
     var scroll_loading = false;
+    var profile_active_nom_scroll = 0;
     function attach_main_handlers(){
         $('.notification_pending_cont span').live('click', function(){
             var value = $(this).attr('value');
@@ -6214,6 +6307,14 @@ $(document).ready(function(){
                 else if (view_name == 'profile_settings'){
                     window.location.href = '#!/' + selected_user.username + '/settings/';
                 }
+            }
+        });
+        
+        $('.related_nom_top_cont').live('mouseover mouseout', function(event) {
+            if (event.type == 'mouseover') {
+                show_tooltip(this);
+            } else {
+                hide_tooltip(this);
             }
         });
         
@@ -7346,9 +7447,21 @@ $(document).ready(function(){
         
         $(window).bind('scroll', function(e){
             var scroll_pos = $(window).scrollTop();
+            var win_height = $(window).height();
+            var doc_height = $(document).height();
             
-            if ((scroll_pos >= $(document).height() - $(window).height() - 200) && scroll_loading == false){
+            if ((scroll_pos >= doc_height - win_height - 200) && scroll_loading == false){
                 load_more_data();
+            }
+            
+            if (view_active == 'profile_active'){
+                var first_nom_pos = $('.recent_nom_cont:first').position().top;
+                var nom_height = 453;
+                var nom_page = 0;
+                
+                if (scroll_pos >= first_nom_pos){
+                    
+                }
             }
         });
     }
