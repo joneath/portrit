@@ -1891,7 +1891,7 @@ div#nom_detail_cont{
                     
                     div#nominator_overlay_cont p{
                         color:              white;
-                        font-size:          16px;
+                        font-size:          14px;
                         line-height:        50px;
                         overflow:           hidden;
                         padding-left:       5px;
@@ -5535,16 +5535,17 @@ div#latest_photos{
             margin:             0px;
             position:           absolute;
             left:               -42px;
-            top:                155px;
+            top:                157px;
             height:             135px;
             width:              60px;
             z-index:            10;
         }
         
             #top_right_cont .related_nom_cont > .related_selected_cont h2{
-                font-size:          28px;
+                font-size:          24px;
+                font-weight:        bold;
                 position:           absolute;
-                top:                52px;
+                top:                54px;
                 right:              0px;
                 color:              white;
             }

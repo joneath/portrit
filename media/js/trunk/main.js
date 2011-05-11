@@ -3435,23 +3435,21 @@ $(document).ready(function(){
         var photo_list_html = '';
         var community_top = 15;
         var blanks = community_top - data.length;
+        var first = false;
         
-        $('#recent_left_cont').append('<div id="photo_list_cont"></div>');
+        if ($('#photo_list_cont').length == 0){
+            first = true;
+            $('#recent_left_cont').append('<div id="photo_list_cont"></div>');
+        }
         for (var i = 0; i < data.length; i++){
             photo_list_html =  '<div class="community_photo_cont" pid="' + data[i].photo.id + '" name="' + data[i].username + '">' +
                                             '<img src="' + data[i].photo.crop + '" owner="' + data[i].username + '" pid="' + data[i].photo.id +'"/>' +
                                     '</div>';
             $('#photo_list_cont').append(photo_list_html);
         }
-        $('#photo_list_cont').append('<p class="tooltip"></p><div class="clear"></div>');
-        
-        // if (typeof(append) == 'undefined'){
-        //     for (var i = 0; i < blanks; i++){
-        //         photo_list_html =  '<div class="community_photo_cont empty">' +
-        //                                 '</div>';
-        //         $('#recent_left_cont').append(photo_list_html);
-        //     }
-        // }
+        if (first){
+            $('#photo_list_cont').append('<p class="tooltip"></p><div class="clear"></div>');   
+        }
     }
     
     function init_community_photos(){
@@ -4208,13 +4206,17 @@ $(document).ready(function(){
                                         '</div>' +
                                         '<div class="community_active_bottom">' +
                                             '<div class="flag flag_photo ' + flag_class + '" nom_id="' + data[i].id + '"></div>' +
-                                            '<div class="active_stat">' +
-                                                '<h4>' + secondsToHms(time_diff) + '</h4>' +
-                                            '</div>' +
-                                            '<div class="active_stat">' +
-                                                '<h5>Votes</h5>' +
-                                                '<p>' + data[i].votes.length + '</p>' +
-                                            '</div>' +
+                                            '<a href="/#!/community/active/' + data[i].id + '/" class="nomination_id" value="' + data[i].id + '">' +
+                                                '<div class="active_stat">' +
+                                                    '<h4>' + secondsToHms(time_diff) + '</h4>' +
+                                                '</div>' +
+                                            '</a>' +
+                                            '<a href="/#!/community/active/' + data[i].id + '/" class="nomination_id" value="' + data[i].id + '">' +
+                                                '<div class="active_stat">' +
+                                                    '<h5>Votes</h5>' +
+                                                    '<p>' + data[i].votes.length + '</p>' +
+                                                '</div>' +
+                                            '</a>' +
                                         '</div>' +
                                     '</div>' +
                                     '<div class="clear"></div>' +
@@ -5120,7 +5122,10 @@ $(document).ready(function(){
         var related_html = '';
         var next_html = '';
         var prev_html = '';
+        var selected_place = '';
         for (var i = 0; i < data.length; i++){
+            selected_place = getGetOrdinal(data[i]['selected_nom'].position + 1);
+            
             next_html = '';
             if (data[i]['next']){
                 next_html = '<div class="related_nom_next_cont">' +
@@ -5182,7 +5187,7 @@ $(document).ready(function(){
                             '</div>';
             }
             else{
-                
+                selected_place = 'Last';
             }
             
             var nom_pos = $('.recent_nom_cont:eq(' + i + ')').position().top;
@@ -5190,7 +5195,7 @@ $(document).ready(function(){
             related_html =  '<div class="related_nom_cont" style="top: ' + nom_pos + 'px;">' +
                                 next_html + 
                                 '<div class="related_selected_cont">' +
-                                    '<h2>' + getGetOrdinal(data[i]['selected_nom'].position + 1) + '</h2>' +
+                                    '<h2>' + selected_place + '</h2>' +
                                 '</div>' +
                                 prev_html +
                             '</div>';
@@ -7455,11 +7460,16 @@ $(document).ready(function(){
             }
             
             if (view_active == 'profile_active'){
-                var first_nom_pos = $('.recent_nom_cont:first').position().top;
-                var nom_height = 453;
-                var nom_page = 0;
-                
-                if (scroll_pos >= first_nom_pos){
+                try{
+                    var first_nom_pos = $('.recent_nom_cont:first').position().top;
+                    var nom_height = 453;
+                    var nom_page = 0;
+
+                    if (scroll_pos >= first_nom_pos){
+
+                    }
+                }
+                catch (e){
                     
                 }
             }
