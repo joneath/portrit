@@ -866,14 +866,6 @@ div#search{
         border-top-left-radius:         5px;
         -moz-border-radius-topright:    5px;
         -moz-border-radius-topleft:     5px;
-        background-image: -webkit-gradient(
-            linear,
-            left bottom,
-            left top,
-            color-stop(0.13, rgb(38,38,38)),
-            color-stop(0.46, rgb(56,56,56)),
-            color-stop(0.79, rgb(71,71,71))
-        );
         background-image: -moz-linear-gradient(
             center bottom,
             rgb(38,38,38) 13%,

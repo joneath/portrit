@@ -4,7 +4,7 @@ import os.path
 from mongoengine import connect
 
 DEBUG = True
-ENV = "PRODUCTION"
+ENV = "LOCAL"
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (

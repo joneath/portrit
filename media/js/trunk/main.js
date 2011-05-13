@@ -114,17 +114,13 @@ $(document).ready(function(){
     var ENV = 'LOCAL';
     var HOST = 'http://192.168.1.126:8080/';
     
-    if (window.location.hostname == 'http://test.portrit.com'){
+    if (window.location.hostname == 'test.portrit.com'){
         ENV = 'TEST';
         HOST = 'http://test.portrit.com/';
     }
-    else if (window.location.hostname == 'http://portrit.com' || window.location.hostname == 'http://www.portrit.com'){
+    else if (window.location.hostname == 'portrit.com' || window.location.hostname == 'www.portrit.com'){
         ENV = 'PRODUCTION';
         HOST = 'http://www.portrit.com/';
-    }
-    else if (window.location.hostname == 'http://portrit-load-balancer-1655256107.us-east-1.elb.amazonaws.com' || window.location.hostname == 'portrit-load-balancer-1655256107.us-east-1.elb.amazonaws.com'){
-        ENV = 'NEW_PRODUCTION';
-        HOST = 'http://portrit-load-balancer-1655256107.us-east-1.elb.amazonaws.com';
     }
 
     var window_href = window.location.href;
@@ -1307,7 +1303,7 @@ $(document).ready(function(){
                 type: "GET",
                 url: host,
                 data: {'user': me.id},
-                dataType: "json",
+                dataType: "jsonp",
                 async: true,
                 cache: false,
                 timeout: 30000,
