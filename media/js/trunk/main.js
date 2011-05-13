@@ -118,9 +118,9 @@ $(document).ready(function(){
         ENV = 'TEST';
         HOST = 'http://test.portrit.com/';
     }
-    else if (window.location.hostname == 'http://portrit.com'){
+    else if (window.location.hostname == 'http://portrit.com' || window.location.hostname == 'http://www.portrit.com'){
         ENV = 'PRODUCTION';
-        HOST = 'http://portrit.com/';
+        HOST = 'http://www.portrit.com/';
     }
     else if (window.location.hostname == 'http://portrit-load-balancer-1655256107.us-east-1.elb.amazonaws.com' || window.location.hostname == 'portrit-load-balancer-1655256107.us-east-1.elb.amazonaws.com'){
         ENV = 'NEW_PRODUCTION';
@@ -176,7 +176,7 @@ $(document).ready(function(){
                                         '<div class="login_points_cont">' +
                                             '<div class="login_points_bottom">' +
                                                 '<h4>Nominate your friend\'s rockin\' pics.</h4>' +
-                                                '<p>Be nice and courteous or evil and sick, it\'s up to you.</p>' +
+                                                '<p>Choose from 10 categories that best describe the photo.</p>' +
                                             '</div>' +
                                         '</div>' +
                                     '</div>' +
@@ -188,7 +188,7 @@ $(document).ready(function(){
                                         '<div class="login_points_cont">' +
                                             '<div class="login_points_bottom">' +
                                                 '<h4>Give your vote to the best.</h4>' +
-                                                '<p>The power is in your hands. Use it wisely.</p>' +
+                                                '<p>Love it, vote it up. Hate it, vote it down.</p>' +
                                             '</div>' +
                                         '</div>' +
                                     '</div>' +
@@ -200,7 +200,7 @@ $(document).ready(function(){
                                         '<div class="login_points_cont">' +
                                             '<div class="login_points_bottom">' +
                                                 '<h4>Earn trophies for your amazing photos.</h4>' +
-                                                '<p>No longer search through thousands of your friend\'s photos to find the best.</p>' +
+                                                '<p>Quickly discover the best photos out there, determined by your friends.</p>' +
                                             '</div>' +
                                         '</div>' +
                                     '</div>' +
@@ -672,7 +672,7 @@ $(document).ready(function(){
         close_size = 'mobile'
         
         if (typeof(_gaq) !== "undefined" && ENV != 'TEST'){
-            var meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-14.css"/>' +
+            var meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-15.css"/>' +
                             '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
                             '<link rel="shortcut icon" href="http://portrit.s3.amazonaws.com/img/favicon.ico">' +
                             '<link rel="apple-touch-icon" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>' +
@@ -765,7 +765,7 @@ $(document).ready(function(){
                         '</div>' +
                         '<div id="about_left_cont">' +
                             '<img src="http://portrit.s3.amazonaws.com/img/about_graphic.jpg"/>' +
-                            '<p>Portrit aims to make photo sharing more social. It\'s up to your social circle to find and award the best photos out there. No longer do you need to look through thousands of your friend\'s photos to find the best ones. On Portrit, you and your friends filter the lame photos from the awesome ones.</p>' +
+                            '<p style="margin-top: 10px;">Portrit is a new way of sharing and discovering the best photos out there. Share your Party Animal, Artsy, Fail, WTF, etc. moments with your friends. Compete with your friends and the world to find who\'s got the best photos. Earn trophies for your amazing photos. Select from 10 nomination categories that best describe your photos. On Portrit, you and your friends filter the lame photos from the awesome ones.</p>' +
                             '<p>Co-founded by Jonathan Eatherly and Jerry Lin in 2010.</p>' + 
                         '</div>' +
                         '<div class="clear"></div>';
@@ -1296,7 +1296,7 @@ $(document).ready(function(){
         // else{
             //No websockets
             var host = '';
-            if (ENV == 'NEW_PRODUCTION'){
+            if (ENV == 'PRODUCTION'){
                 host = 'http://node.portrit.com/';
             }
             else{
@@ -1796,6 +1796,8 @@ $(document).ready(function(){
            'opacity': '1.0' 
         });
         $('#footer_notification_cont > p').addClass('nom_cat_' + nom_cat + '_text');
+        
+        $('#notifications_empty').hide();
     }
     
     function render_notifications(data){
@@ -1810,7 +1812,9 @@ $(document).ready(function(){
             my_winnings = [ ],
             time_str = '';
         
-        if (data){
+        $('#notification_footer_popup_cont').append('<div id="notifications_empty" style="display:none;"><h2>You Have No Updates</h2></div>');
+        
+        if (data && data.length > 0){
             for (var i = 0; i < data.length; i++){
                 color_class = '';
                 if (data[i].source_id == me.id){
@@ -1964,6 +1968,9 @@ $(document).ready(function(){
                     }
                 }
             }
+        }
+        else{
+            $('#notifications_empty').show();
         }
         
         if (my_winnings && my_winnings.length > 0){
@@ -2219,6 +2226,7 @@ $(document).ready(function(){
         }
 
         $('.notification_popup_cont').remove();
+        $('#notifications_empty').show();
         e.stopPropagation();
         return false
     });

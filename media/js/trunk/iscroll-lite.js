@@ -39,7 +39,7 @@ function iScroll (el, options) {
 		hideScrollbar: isIDevice || !hasTouch,
 		scrollbarClass: '',
 		onScrollStart: null,
-		onScrollEnd: null,
+		onScrollEnd: null
 	};
 
 	// User defined options

@@ -350,7 +350,7 @@ div#login_cont{
         
             .login_points{
                 float:              left;
-                margin-bottom:      15px;
+                margin-bottom:      10px;
                 margin-left:        6px;
                 margin-right:       6px;
                 width:              300px;
@@ -364,7 +364,7 @@ div#login_cont{
                 }
             
                 .login_points_cont{
-                    margin-top:         10px;
+                    margin-top:         5px;
                     position:           relative;
                 }
                 
@@ -380,7 +380,6 @@ div#login_cont{
                     
                     .login_points_cont p{
                         font-size:      14px;
-                        margin-top:     5px;
                     }
                     
             #landing_photo_cont{
@@ -1628,7 +1627,7 @@ div#initial_tut_cont{
         }
         .trophy_img.medium.blank{
             background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
-            background-position:    -230px -509px;
+            background-position:    -228px -509px;
         }
         .trophy_img.medium.hot{
             background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
@@ -7428,6 +7427,13 @@ div#payment_types_cont{
             height:                 365px;
             overflow-y:             auto;
         }
+        
+            #notifications_empty{
+                color:                  #333;
+                font-size:              20px;
+                font-weight:            bold;
+                margin-top:             100px;
+            }
         
             #notification_footer_popup_heading{
                 background-color:       white;
