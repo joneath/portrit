@@ -1816,7 +1816,7 @@ def get_community_nominations(request):
 def get_community_top_nominations_cat(request):
     data = []
     PAGE_SIZE = 12
-    cat = request.GET.get('cat')
+    cat = request.GET.get('cat').replace('-', ' ')
     page_size = request.GET.get('page_size')
     landing = request.GET.get('landing')
     
