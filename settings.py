@@ -4,7 +4,7 @@ import os.path
 from mongoengine import connect
 
 DEBUG = True
-ENV = "LOCAL"
+ENV = "PRODUCTION"
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -67,7 +67,7 @@ if ENV == "LOCAL":
     except:
         print "Could not connect to Mongo"
     
-elif ENV == "TEST":
+elif ENV == "PRODUCTION":
     DATABASE_ENGINE = ''           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
     DATABASE_NAME = ''             # Or path to database file if using sqlite3.
     DATABASE_USER = ''             # Not used with sqlite3.
@@ -132,14 +132,14 @@ else:
     FACEBOOK_APP_SECRET = "d6c5a3023e9b92aa4bae8dd7581deeaf"
     
     NODE_SOCKET = 8081
-    NODE_HOST = '10.195.221.50'
+    NODE_HOST = '10.194.11.77'
     
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
             'LOCATION': [
-                '10.117.73.243:11211',
-                '10.117.37.72:11211',
+                '10.117.81.230:11211',
+                '10.245.79.53:11211',
             ]
         }
     }
@@ -158,7 +158,7 @@ else:
     POSTMARK_TEST_MODE = False
     
     try:
-        connect('portrit', host='10.112.81.115:27017,10.245.186.223:27017,10.195.203.165:27017')
+        connect('portrit', host='10.244.17.88:27017,10.204.138.242:27017,10.202.206.232:27017')
     except:
         print "Could not connect to Mongo"
         
