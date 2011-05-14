@@ -91,8 +91,8 @@ def get_active_notifications(user):
                 photo = notification.nomination.photo.get_photo()
             except:
                 pass
-            
-            if notification.notification_type != 'new_follow':
+
+            if notification.notification_type.name != 'new_follow':
                 data.append({
                     'notification_type': notification.notification_type.name,
                     'create_time': time.mktime(notification.created_date.utctimetuple()),

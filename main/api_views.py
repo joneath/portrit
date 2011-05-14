@@ -70,7 +70,6 @@ def sign_in_create(request):
     if len(user) == 0:
         graph = facebook.GraphAPI(access_token)
         try:
-            print "empty"
             profile = graph.get_object("me")
             fb_user = FB_User(fid=profile['id'], mobile_access_token=access_token)
             

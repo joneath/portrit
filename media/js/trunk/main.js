@@ -671,9 +671,8 @@ $(document).ready(function(){
             var meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-15.css"/>' +
                             '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
                             '<link rel="shortcut icon" href="http://portrit.s3.amazonaws.com/img/favicon.ico">' +
-                            '<link rel="apple-touch-icon" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>' +
-                            '<link rel="apple-touch-icon-precomposed" href="http://portrit.s3.amazonaws.com/img/icon128.png"/>';
-        
+                            '<link rel="apple-touch-icon" href="http://portrit.s3.amazonaws.com/img/appicon@2x.png"/>' +
+                            '<link rel="apple-touch-icon-precomposed" href="http://portrit.s3.amazonaws.com/img/appicon@2x.png"/>';
         }
         else{
             var meta_html = '<link rel="stylesheet" href="/site_media/styles/trunk/mobile.css"/>' +
@@ -2656,10 +2655,17 @@ $(document).ready(function(){
             }
         });
         
-        var check_username_timeout = null;
         $('#username').bind('keydown', function(e){
             var value = $(this).val();
             if (value.length > 16 && e.keyCode != 8){
+                return false;
+            }
+        });
+        
+        var check_username_timeout = null;
+        $('#username').bind('keyup', function(e){
+            var value = $(this).val();
+            if (value.length > 16){
                 return false;
             }
             else{
