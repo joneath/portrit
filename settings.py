@@ -67,7 +67,7 @@ if ENV == "LOCAL":
     except:
         print "Could not connect to Mongo"
     
-elif ENV == "PRODUCTION":
+elif ENV == "TEST":
     DATABASE_ENGINE = ''           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
     DATABASE_NAME = ''             # Or path to database file if using sqlite3.
     DATABASE_USER = ''             # Not used with sqlite3.

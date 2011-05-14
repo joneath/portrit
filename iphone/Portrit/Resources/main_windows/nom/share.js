@@ -159,32 +159,68 @@ function close_share_nom(){
     
     if (!new_photo){
         var nom = data[0];
-        if (twitter_switch && twitter_switch.value){
-            share_on_twitter(me, nom, caption_text);
-        }
-        if (facebook_switch.value){
-            var title = me.name.split(' ')[0] + ' nominated a photo for ' + nom.nomination_category + ' on Portrit';
-            share_on_facebook(me, nom, caption_text, title);
-        }
-    }
-    else{
-        if (typeof(data.length) != 'undefined'){
-            var nom = data[0];
+        try{
             if (twitter_switch && twitter_switch.value){
                 share_on_twitter(me, nom, caption_text);
             }
+        }
+        catch (e){
+            
+        }
+        
+        try{
             if (facebook_switch.value){
                 var title = me.name.split(' ')[0] + ' nominated a photo for ' + nom.nomination_category + ' on Portrit';
                 share_on_facebook(me, nom, caption_text, title);
             }
         }
-        else{
-            if (twitter_switch && twitter_switch.value){
-                share_on_twitter(me, data, caption_text);
+        catch (e){
+            
+        }
+    }
+    else{
+        if (typeof(data.length) != 'undefined'){
+            try{
+                var nom = data[0];
+                try{
+                    if (twitter_switch && twitter_switch.value){
+                        share_on_twitter(me, nom, caption_text);
+                    }
+                }
+                catch (e){
+                    
+                }
+                try{
+                    if (facebook_switch.value){
+                        var title = me.name.split(' ')[0] + ' nominated a photo for ' + nom.nomination_category + ' on Portrit';
+                        share_on_facebook(me, nom, caption_text, title);
+                    }
+                }
+                catch (e){
+                    
+                }
             }
-            if (facebook_switch.value){
-                var title = me.name.split(' ')[0] + ' shared a photo on Portrit';
-                share_on_facebook(me, data, caption_text, title);
+            catch (e){
+                
+            }
+        }
+        else{
+            try{
+                if (twitter_switch && twitter_switch.value){
+                    share_on_twitter(me, data, caption_text);
+                }
+            }
+            catch (e){
+                
+            }
+            try{
+                if (facebook_switch.value){
+                    var title = me.name.split(' ')[0] + ' shared a photo on Portrit';
+                    share_on_facebook(me, data, caption_text, title);
+                }
+            }
+            catch(e){
+                
             }
         }
     }

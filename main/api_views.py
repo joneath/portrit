@@ -2459,17 +2459,13 @@ def share_twitter(request):
     access_token = request.POST.get('access_token')
     url = request.POST.get('url')
     status = request.POST.get('status')
-    print 'there'
     url = shorten_url(url)
-    print 'here'
     status = status + ' ' + url
     
     CONNECTION = httplib.HTTPSConnection(SERVER)
     try:
         portrit_user = get_user_from_access_token(access_token)
-        print portrit_user
         twitter_access_token = portrit_user.twitter_user.get_access_token()
-        print twitter_access_token
         token = oauth.OAuthToken.from_string(twitter_access_token['access_token'])
         if twitter_access_token['mobile']:  
             update_status(CONSUMER_MOBILE, CONNECTION, token, status)
@@ -2506,12 +2502,12 @@ def push_notifications(request):
 def shorten_url_request(request):
     data = {'url': None}
     url = request.POST.get('url')
-    print url
+
     try:
         url = shorten_url(url)
         data['url'] = url
     except Exception, err:
-        print err
+        data['url'] = url
         
     data = json.dumps(data) 
     return HttpResponse(data, mimetype='application/json')
