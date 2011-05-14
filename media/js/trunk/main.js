@@ -7359,10 +7359,10 @@ $(document).ready(function(){
                         }
                         var title = '';
                         if (nom){
-                            title = me.username + ' shared a nomination on Portrit';
+                            title = me.name.split(' ')[0] + ' shared a nomination on Portrit';
                         }
                         else{
-                            title = me.username + ' shared a photo on Portrit';
+                            title = me.name.split(' ')[0] + ' shared a photo on Portrit';
                         }
                         share_on_facebook(title, caption, url, crop);
                     }
@@ -8196,7 +8196,7 @@ $(document).ready(function(){
             }
             
             if ($('#share_facebook').hasClass('switch_on')){
-                var title = me.username + ' nominated a photo on Portrit';
+                var title = me.name.split(' ')[0] + ' nominated a photo on Portrit';
                 share_on_facebook(title, caption, url, crop);
             }
             if ($('#share_twitter').hasClass('switch_on')){

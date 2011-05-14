@@ -390,19 +390,22 @@ def get_nom_detail(request):
             data = paginate_data(data, dir, pos)
             
         elif nomination:
-            data = list(data)
-            selected_index = data.index(nomination)
-            top = 10
-            bottom = 0
+            try:
+                data = list(data)
+                selected_index = data.index(nomination)
+                top = 10
+                bottom = 0
         
-            if selected_index - 5 > 0:
-                bottom = selected_index - 4
+                if selected_index - 5 > 0:
+                    bottom = selected_index - 4
         
-            if selected_index + 5 > top:
-                top = selected_index + 5
+                if selected_index + 5 > top:
+                    top = selected_index + 5
             
-            data = data[bottom:top]
-            data = serialize_noms(data, bottom)
+                data = data[bottom:top]
+                data = serialize_noms(data, bottom)
+            except:
+                data = [serialize_nom(nomination)]
         else:
             data = data[:PAGE_SIZE]
             data = serialize_noms(data)
@@ -421,19 +424,22 @@ def get_nom_detail(request):
             data = paginate_data(data, dir, pos)
 
         elif nomination:
-            data = list(data)
-            selected_index = data.index(nomination)
-            top = 10
-            bottom = 0
+            try:
+                data = list(data)
+                selected_index = data.index(nomination)
+                top = 10
+                bottom = 0
 
-            if selected_index - 5 > 0:
-                bottom = selected_index - 4
+                if selected_index - 5 > 0:
+                    bottom = selected_index - 4
 
-            if selected_index + 5 > top:
-                top = selected_index + 5
+                if selected_index + 5 > top:
+                    top = selected_index + 5
 
-            data = data[bottom:top]
-            data = serialize_noms(data, bottom)
+                data = data[bottom:top]
+                data = serialize_noms(data, bottom)
+            except:
+                data = [serialize_nom(nomination)]
         else:
             data = data[:PAGE_SIZE]
             data = serialize_noms(data)
@@ -451,19 +457,22 @@ def get_nom_detail(request):
                 if dir:
                     data = paginate_data(data, dir, pos)
                 else:
-                    data = list(data)
-                    selected_index = data.index(nomination)
-                    top = 10
-                    bottom = 0
+                    try:
+                        data = list(data)
+                        selected_index = data.index(nomination)
+                        top = 10
+                        bottom = 0
 
-                    if selected_index - 5 > 0:
-                        bottom = selected_index - 4
+                        if selected_index - 5 > 0:
+                            bottom = selected_index - 4
 
-                    if selected_index + 5 > top:
-                        top = selected_index + 5
+                        if selected_index + 5 > top:
+                            top = selected_index + 5
 
-                    data = data[bottom:top]
-                    data = serialize_noms(data, bottom)
+                        data = data[bottom:top]
+                        data = serialize_noms(data, bottom)
+                    except:
+                        data = [serialize_nom(nomination)]
             else:
                 data = [serialize_nom(nomination)]
         else:
@@ -506,19 +515,22 @@ def get_nom_detail(request):
             data = paginate_data(data, dir, pos)
 
         elif nomination:
-            data = list(data)
-            selected_index = data.index(nomination)
-            top = 10
-            bottom = 0
+            try:
+                data = list(data)
+                selected_index = data.index(nomination)
+                top = 10
+                bottom = 0
 
-            if selected_index - 5 > 0:
-                bottom = selected_index - 4
+                if selected_index - 5 > 0:
+                    bottom = selected_index - 4
 
-            if selected_index + 5 > top:
-                top = selected_index + 5
+                if selected_index + 5 > top:
+                    top = selected_index + 5
 
-            data = data[bottom:top]
-            data = serialize_noms(data, bottom)
+                data = data[bottom:top]
+                data = serialize_noms(data, bottom)
+            except:
+                data = [serialize_nom(nomination)]
         else:
             data = data[:PAGE_SIZE]
             data = serialize_noms(data)
@@ -539,19 +551,22 @@ def get_nom_detail(request):
             data = paginate_data(data, dir, pos)
 
         elif nomination:
-            data = list(data)
-            selected_index = data.index(nomination)
-            top = 10
-            bottom = 0
+            try:
+                data = list(data)
+                selected_index = data.index(nomination)
+                top = 10
+                bottom = 0
 
-            if selected_index - 5 > 0:
-                bottom = selected_index - 4
+                if selected_index - 5 > 0:
+                    bottom = selected_index - 4
 
-            if selected_index + 5 > top:
-                top = selected_index + 5
+                if selected_index + 5 > top:
+                    top = selected_index + 5
 
-            data = data[bottom:top]
-            data = serialize_noms(data, bottom)
+                data = data[bottom:top]
+                data = serialize_noms(data, bottom)
+            except:
+                data = [serialize_nom(nomination)]
         else:
             data = data[:PAGE_SIZE]
             data = serialize_noms(data)
@@ -567,39 +582,29 @@ def get_nom_detail(request):
             data = paginate_data(data, dir, pos)
 
         elif nomination:
-            data = list(data)
-            selected_index = data.index(nomination)
-            top = 10
-            bottom = 0
+            try:
+                data = list(data)
+                selected_index = data.index(nomination)
+                top = 10
+                bottom = 0
 
-            if selected_index - 5 > 0:
-                bottom = selected_index - 4
+                if selected_index - 5 > 0:
+                    bottom = selected_index - 4
 
-            if selected_index + 5 > top:
-                top = selected_index + 5
+                if selected_index + 5 > top:
+                    top = selected_index + 5
 
-            data = data[bottom:top]
-            data = serialize_noms(data, bottom)
+                data = data[bottom:top]
+                data = serialize_noms(data, bottom)
+            except:
+                data = [serialize_nom(nomination)]
         else:
             data = data[:PAGE_SIZE]
             data = serialize_noms(data)
         
     else:
         data = [serialize_nom(nomination)]
-    #     
-    # if source:
-    #     source = Portrit_User.objects.get(username=source)
-    #     source_following = source.get_following()
-    #     
-    #     if nomination.nominatee == source or nomination.nominatee in source_following:
-    #         print "connected"
-    #         
-    #     else:
-    #         print "not connected"
-    #         data = serialize_nom(nomination)
-    #     
-    # else:
-    #     data = serialize_nom(nomination)
+
     data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
