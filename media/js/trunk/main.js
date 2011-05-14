@@ -155,7 +155,7 @@ $(document).ready(function(){
                                     '</div>' +
                                     '<div class="clear"></div>' +
                                 '</div>' +
-                                '<div id="login_right_cont">' +
+                                '<div id="login_right_cont" style="background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.06, rgb(209,209,209)), color-stop(0.53, rgb(242,242,242)));">' +
                                     '<h2>Try the Web App.</h2>' +
                                     '<a id="login" class="fb_button fb_button_large"><span class="fb_button_text">Login with Facebook</span></a>' +
                                     '<p style="text-align:center;">Simply click Login with Facebook.</p>' +
@@ -2943,15 +2943,18 @@ $(document).ready(function(){
                                 '</div>' +
                                 '<div id="public_tagline_cont">' +
                                     '<div class="left_triangle"></div>' +
-                                    '<p id="tagline_main">Snap, nominate, vote, and earn wherever you go with the Portrit iPhone app.</p>' +
+                                    '<p id="tagline_main">Snap, nominate, vote, and earn wherever you go with the <a href="http://itunes.apple.com/us/app/portrit/id435873942?mt=8&amp;ls=1" target="_blank"><strong>Portrit iPhone app.</strong></a></p>' +
                                 '</div>' +
-                                '<div id="search_control" class="grey"></div>' +
-                                '<div id="public_login_cont">' +
+                                '<a target="_blank" href="http://itunes.apple.com/us/app/portrit/id435873942?mt=8&amp;ls=1" target="_blank">' +
+                                    '<img style="height: 53px; width: 153px; margin-top: 19px;" src="http://portrit.s3.amazonaws.com/img/app_store_badge.png">' +
+                                '</a>' +
+                                '<div id="public_login_cont" style="background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.04, rgb(173,173,173)), color-stop(0.7, rgb(250,250,250)));">' +
                                     '<div id="public_login_wrap">' +
                                         '<a id="login" class="fb_button fb_button_large"><span class="fb_button_text">Login with Facebook</span></a>' +
                                         '<p>Simply click Login with Facebook.</p>' +
                                     '</div>' +
                                 '</div>' +
+                                // '<div id="search_control" class="grey"></div>' +
                                 '<div class="clear"></div>';
 	    
 	    $('#public_header').html(public_header_html);
@@ -3677,7 +3680,10 @@ $(document).ready(function(){
                                             '<div id="community_right_cont">' +
                                                 '<div id="community_public_push"></div>' +
                                                 '<div id="app_download_cont">' +
-                                                    '<h2>Download our free app.</h2>' +
+                                                    '<a href="http://itunes.apple.com/us/app/portrit/id435873942?mt=8&ls=1" target="_blank">' +
+                                                        '<h2>Download our free app.</h2>' +
+                                                        '<img src="http://portrit.s3.amazonaws.com/img/appicon.png"/>' +
+                                                    '</a>' +
                                                 '</div>' +
                                                 '<div id="community_interesting_people">' +
                                                     '<h1>Interesting People</h1>' +
@@ -5189,6 +5195,9 @@ $(document).ready(function(){
                                 '</div>' +
                                 '<div class="clear"></div>' +
                             '</div>';
+            }
+            else if (!data[i]['next'] && data[i]['prev']){
+                selected_place = 'First';
             }
             else{
                 selected_place = 'Last';

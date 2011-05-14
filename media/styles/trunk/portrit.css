@@ -207,7 +207,7 @@ div#wrapper{
 }
 
 #public_header{
-    width:              920px;
+    width:              960px;
     height:             90px;
     margin:             0 auto;
 }
@@ -226,9 +226,9 @@ div#wrapper{
     #public_header #public_tagline_cont{
         background-color:   #333;
         float:              left;
-        width:              300px;
+        width:              295px;
         text-align:         left;
-        margin-left:        40px;
+        margin-left:        15px;
         margin-top:         15px;
         line-height:        22px;
         height:             60px;
@@ -252,7 +252,7 @@ div#wrapper{
     
     #public_header #search_control{
         cursor:             pointer;
-        float:              left;
+        float:              right;
         height:             60px;
         width:              60px;
         margin-top:         15px;
@@ -267,15 +267,8 @@ div#wrapper{
     #public_header #public_login_cont{
         color:              #333;
         float:              right;
-        width:              315px;
+        width:              290px;
         height:             90px;
-        background-image: -webkit-gradient(
-            linear,
-            left bottom,
-            left top,
-            color-stop(0.04, rgb(173,173,173)),
-            color-stop(0.7, rgb(250,250,250))
-        );
         background-image: -moz-linear-gradient(
             center bottom,
             rgb(173,173,173) 4%,
@@ -435,13 +428,6 @@ div#login_cont{
             z-index:            10000;
             border-top-right-radius:        5px;
             -moz-border-radius-topright:    5px;
-            background-image: -webkit-gradient(
-                linear,
-                left bottom,
-                left top,
-                color-stop(0.06, rgb(209,209,209)),
-                color-stop(0.53, rgb(242,242,242))
-            );
             background-image: -moz-linear-gradient(
                 center bottom,
                 rgb(209,209,209) 6%,
@@ -2595,10 +2581,18 @@ div#community{
             }
             
                 #app_download_cont h2{
+                    color:                  #333;
+                    float:                  left;
                     font-weight:            bold;
-                    font-size:              14px;
+                    font-size:              18px;
                     line-height:            70px;
                     margin-left:            15px;
+                }
+                
+                #app_download_cont img{
+                    float:                      right;
+                    margin-top:                 7px;
+                    margin-right:               7px;
                 }
                 
             #community_right_cont h1{
