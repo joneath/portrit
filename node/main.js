@@ -350,7 +350,12 @@ var Portrit = function(){
             var proxy = http.createClient(8000, "127.0.0.1");
             var path = url.parse(request.url).pathname;
             if (path === '/watch_update/'){
-                var event_user = url.parse(request.url, true).query.user;
+                var callback = '';
+                var params = url.parse(request.url, true).query
+                var event_user = params.user;
+                if (params.callback){
+                    callback = params.callback;
+                }
                 var nom_callback = function(notification_id, data){
                     // nomination_emitter.removeAllListeners(event_user);
                     console.log('event sent');
@@ -360,13 +365,13 @@ var Portrit = function(){
                     if (typeof(notification_id) !== "undefined"){
                         data.payload.notification_id = notification_id;
                     }
-            		response.end(JSON.stringify(data));
+            		response.end(callback + '(' + JSON.stringify(data) + ')');
                 }
 
                 var nom_timeout = setTimeout(function(){
                     nomination_emitter.removeListener(event_user, nom_callback);
                     response.writeHead(200, { "Content-Type" : "text/plain" });  
-                    response.end(JSON.stringify([]));
+                    response.end(callback + '(' + JSON.stringify([]) + ')');
                 }, 25000);
                 
                 nomination_emitter.addListener(event_user, nom_callback);
@@ -391,8 +396,16 @@ var Portrit = function(){
             }
         }
         else{
+            var callback = '';
+            var params = null;
+            var event_user = '';
             try{
-                var event_user = url.parse(request.url, true).query.user;
+                callback = '';
+                params = url.parse(request.url, true).query
+                event_user = params.user;
+                if (params.callback){
+                    callback = params.callback;
+                }
             }
             catch (err){
 
@@ -406,12 +419,12 @@ var Portrit = function(){
                     if (typeof(notification_id) !== "undefined"){
                         data.payload.notification_id = notification_id;
                     }
-            		response.end(JSON.stringify(data));
+                    response.end(callback + '(' + JSON.stringify(data) + ')');
                 }
                 catch(err){
                     clearTimeout(nom_timeout);
                     response.writeHead(200, { "Content-Type": "text/plain" });
-            		response.end(JSON.stringify([]));
+                    response.end(callback + '(' + JSON.stringify([]) + ')');
                 }
             }
 
@@ -423,7 +436,7 @@ var Portrit = function(){
                     console.log(err);
                 }
                 response.writeHead(200, { "Content-Type" : "text/plain" });  
-                response.end(JSON.stringify([]));
+                response.end(callback + '(' + JSON.stringify([]) + ')');
             }, 25000);
             
             try{
