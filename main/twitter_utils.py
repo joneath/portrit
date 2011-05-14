@@ -92,6 +92,8 @@ def update_status(consumer, connection, access_token, status):
     return json
     
 def shorten_url(url):
+    url = url.replace('http://portrit', 'http://www.portrit')
+    
     bitly_params = {
         'login': settings.BITLY_LOGIN,
         'apiKey': settings.BITLY_APIKEY,

@@ -2507,6 +2507,8 @@ def push_notifications(request):
 def shorten_url_request(request):
     data = {'url': None}
     url = request.POST.get('url')
+    
+    url = url.replace('http://portrit', 'http://www.portrit')
 
     try:
         url = shorten_url(url)
