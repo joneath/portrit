@@ -664,23 +664,25 @@ $(document).ready(function(){
     me = null;
     
     if (DetectMobileQuick() === true){
+        var meta_html = '';
         mobile = true;
         close_size = 'mobile'
         
-        if (typeof(_gaq) !== "undefined" && ENV != 'TEST'){
-            var meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-15.css"/>' +
-                            '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
-                            '<link rel="shortcut icon" href="http://portrit.s3.amazonaws.com/img/favicon.ico">' +
-                            '<link rel="apple-touch-icon" href="http://portrit.s3.amazonaws.com/img/appicon@2x.png"/>' +
-                            '<link rel="apple-touch-icon-precomposed" href="http://portrit.s3.amazonaws.com/img/appicon@2x.png"/>';
+        alert(typeof(_gaq));
+        if (typeof(_gaq) !== "undefined"){
+            alert('here');
+            meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-15.css"/>' +
+                        '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
+                        '<link rel="shortcut icon" href="http://portrit.s3.amazonaws.com/img/favicon.ico">' +
+                        '<link rel="apple-touch-icon" href="http://portrit.s3.amazonaws.com/img/appicon@2x.png"/>' +
+                        '<link rel="apple-touch-icon-precomposed" href="http://portrit.s3.amazonaws.com/img/appicon@2x.png"/>';
         }
         else{
-            var meta_html = '<link rel="stylesheet" href="/site_media/styles/trunk/mobile.css"/>' +
-                            '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
-                            '<link rel="shortcut icon" href="/site_media/img/favicon.ico">' +
-                            '<link rel="apple-touch-icon" href="/site_media/img/icon128.png"/>' +
-                            '<link rel="apple-touch-icon-precomposed" href="/site_media/img/icon128.png"/>';
-        
+            meta_html = '<link rel="stylesheet" href="/site_media/styles/trunk/mobile.css"/>' +
+                        '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
+                        '<link rel="shortcut icon" href="/site_media/img/favicon.ico">' +
+                        '<link rel="apple-touch-icon" href="/site_media/img/icon128.png"/>' +
+                        '<link rel="apple-touch-icon-precomposed" href="/site_media/img/icon128.png"/>';
         }
         $('head').append(meta_html);
 

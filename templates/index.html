@@ -26,10 +26,28 @@
         	<link rel="stylesheet" href="/site_media/styles/trunk/portrit.css"/>
 		{% endif %}
     {% endif %}
+
     <script src="http://www.google.com/jsapi?key=ABQIAAAAv9UUX4Bh3gRCpbzjSE5MxxSfZ7BxKgj6oXj1KRYYnjuHN0SsnBTx1B5nTeUxCB_k-Yerxn8ZVGvnLA" type="text/javascript"></script>
     <script type="text/javascript">
         google.load("jquery", "1.5.2");
     </script>
+
+    {% if analytics %}
+        <script type="text/javascript">
+
+          var _gaq = _gaq || [];
+          _gaq.push(['_setAccount', 'UA-17124785-1']);
+          _gaq.push(['_trackPageview']);
+
+          (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+          })();
+
+        </script>
+    {% endif %}
+
     {% if production_code %}
         <script type="text/javascript" src="http://portrit.s3.amazonaws.com/js/production/portrit-min-18.js"></script>
     {% else %}
@@ -48,22 +66,6 @@
 	        <script type="text/javascript" src="/site_media/js/trunk/jquery.fileupload.js"></script>
 	        <script type="text/javascript" src="/site_media/js/trunk/main.js"></script>
 		{% endif %}
-    {% endif %}
-
-    {% if analytics %}
-        <script type="text/javascript">
-
-          var _gaq = _gaq || [];
-          _gaq.push(['_setAccount', 'UA-17124785-1']);
-          _gaq.push(['_trackPageview']);
-
-          (function() {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-          })();
-
-        </script>
     {% endif %}
 </head>
 <body>
@@ -88,11 +90,6 @@
         else{
             window.fbAsyncInit = function() {
                 FB.init({appId: '155664697800227', status: true, cookie: true, xfbml: true});
-                // FB.provide("UIServer.Methods",
-                //    { 'permissions.request' : { size : {width: 575, height: 300}, 
-                //                     url: 'connect/uiserver.php',
-                //                 transform : FB.UIServer.genericTransform }
-                //     } );
                 clearTimeout(fb_server_timeout);
                 fb_server_timeout = setTimeout(fb_down, 6000);
                 FB.getLoginStatus(handleSessionResponse);
