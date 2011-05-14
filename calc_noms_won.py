@@ -135,6 +135,18 @@ def calc_noms_won():
         #         photo.save()
 
         Nomination.objects.filter(active=True).update(set__active=False)
+
+        # Return losing nom photos to owners
+        noms = Nomination.objects.only('photo').filter(active=False, cleared=False, won=False)
+        for nom in noms:
+            try:
+                nom.photo.nominations = [ ]
+                nom.photo.save()
+            except:
+                pass
+            nom.cleared = True
+            nom.save()
+        
     except Exception, err:
         print err
     

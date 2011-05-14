@@ -942,14 +942,14 @@ def get_top_users(user):
                                                     Q(id__in=following_id_list), 
                                                     winning_nomination_count__gt=0, 
                                                     active=True, 
-                                                    pending=False).order_by('winning_nomination_count')[:10]
+                                                    pending=False).order_by('-winning_nomination_count')[:10]
                                                     
             for friend in friends:
                 top_cat = Nomination.objects.filter((Q(nominatee=friend) | 
                                                     Q(tagged_users__in=[friend])), won=True).item_frequencies('nomination_category')
 
                 top_cat = sorted(top_cat.items(), key=itemgetter(1), reverse=True)[:1][0][0]
-                data.insert(0, {
+                data.append({
                     'fid': friend.fb_user.fid,
                     'name': friend.name,
                     'username': friend.username,

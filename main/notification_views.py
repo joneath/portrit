@@ -92,22 +92,40 @@ def get_active_notifications(user):
             except:
                 pass
             
-            data.append({
-                'notification_type': notification.notification_type.name,
-                'create_time': time.mktime(notification.created_date.utctimetuple()),
-                'read': notification.read,
-                'pending': notification.pending,
-                'source_id': source_id,
-                'source_name': source_name,
-                'source_username': source_username,
-                'destination_id': destination_id,
-                'destination_name': destination_name,
-                'destination_username': destination_username,
-                'nomination': notification.get_nomination_id(),
-                'notification_id': str(notification.id),
-                'nomination_category': notification.get_nomination_category(),
-                'photo': photo,
-            })
+            if notification.notification_type != 'new_follow':
+                data.append({
+                    'notification_type': notification.notification_type.name,
+                    'create_time': time.mktime(notification.created_date.utctimetuple()),
+                    'read': notification.read,
+                    'pending': notification.pending,
+                    'source_id': source_id,
+                    'source_name': source_name,
+                    'source_username': source_username,
+                    'destination_id': destination_id,
+                    'destination_name': destination_name,
+                    'destination_username': destination_username,
+                    'nomination': notification.get_nomination_id(),
+                    'notification_id': str(notification.id),
+                    'nomination_category': notification.get_nomination_category(),
+                    'photo': photo,
+                })
+            elif source_username:
+                data.append({
+                    'notification_type': notification.notification_type.name,
+                    'create_time': time.mktime(notification.created_date.utctimetuple()),
+                    'read': notification.read,
+                    'pending': notification.pending,
+                    'source_id': source_id,
+                    'source_name': source_name,
+                    'source_username': source_username,
+                    'destination_id': destination_id,
+                    'destination_name': destination_name,
+                    'destination_username': destination_username,
+                    'nomination': notification.get_nomination_id(),
+                    'notification_id': str(notification.id),
+                    'nomination_category': notification.get_nomination_category(),
+                    'photo': photo,
+                })
         
         return data
     except Exception, err:

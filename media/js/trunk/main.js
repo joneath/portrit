@@ -7440,7 +7440,7 @@ $(document).ready(function(){
             var username = $(this).attr('value');
             
             if (username){
-                window.location.href = '/#/' + username + '/';
+                window.location.href = '/#!/' + username + '/';
             }
         });
         

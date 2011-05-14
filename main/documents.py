@@ -30,6 +30,7 @@ class Nomination_Category(Document):
 class Nomination(Document):
     active = BooleanField(default=True)
     removed = BooleanField(default=False)
+    cleared = BooleanField(default=False)
     created_date = DateTimeField(default=datetime.datetime.now)
     won = BooleanField(default=False)
     
@@ -414,7 +415,8 @@ class Portrit_User(Document):
                 following = filter(lambda follow: follow.pending == False and follow.active == True and follow.user , self.following)
                 following_dict = {}
                 for follow in following:
-                    following_dict[follow.user.id] = follow.user.id
+                    if follow.user.username:
+                        following_dict[follow.user.id] = follow.user.id
 
                 following_list = following_dict.values()
                 cache.set(str(self.id) + '_following_id', following_list)
@@ -430,7 +432,8 @@ class Portrit_User(Document):
             following = filter(lambda follow: follow.pending == False and follow.active == True, self.following)
             following_dict = { }
             for follow in following:
-                following_dict[follow.user.id] = follow.user
+                if follow.user.username:
+                    following_dict[follow.user.id] = follow.user
             
             return following_dict.values()
         except:
@@ -441,7 +444,8 @@ class Portrit_User(Document):
             followers = filter(lambda follow: follow.pending == False and follow.active == True, self.followers)
             followers_dict = { }
             for follow in followers:
-                followers_dict[follow.user.id] = follow.user
+                if follow.user.username:
+                    followers_dict[follow.user.id] = follow.user
 
             return followers_dict.values()
         except:
@@ -454,13 +458,14 @@ class Portrit_User(Document):
             user_data = cache.get(str(user.id))
             if not user_data:
                 try:
-                    user_data = {
-                        'fid': user.fb_user.fid,
-                        'name': user.name,
-                        'username': user.username,
-                    }
-                    follow_data.append(user_data)
-                    cache.set(str(self.id), user_data)
+                    if user.username:
+                        user_data = {
+                            'fid': user.fb_user.fid,
+                            'name': user.name,
+                            'username': user.username,
+                        }
+                        follow_data.append(user_data)
+                        cache.set(str(self.id), user_data)
                 except:
                     pass
             else:

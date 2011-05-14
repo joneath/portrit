@@ -156,10 +156,7 @@ def add_username(request):
             Portrit_User.objects.get(username__iexact=username)
             data = False
         except:
-            print user
             user.username = username
-            print user.username
-            print email_notifications
             
             if post_wins_to_fb == '1' or post_wins_to_fb == 'true' or post_wins_to_fb == True:
                 user.allow_winning_fb_album = True
@@ -1925,22 +1922,23 @@ def get_active_notifications(request):
                 destination_username = None
             
             if not notification.notification_type.name == 'new_follow':
-                data.append({
-                    'notification_type': notification.notification_type.name,
-                    'create_time': time.mktime(notification.created_date.utctimetuple()),
-                    'read': notification.read,
-                    'pending': notification.pending,
-                    'source_id': source_id,
-                    'source_name': source_name,
-                    'source_username': source_username,
-                    'destination_id': destination_id,
-                    'destination_name': destination_name,
-                    'destination_username': destination_username,
-                    'nomination': str(notification.nomination.id),
-                    'photo': notification.nomination.photo.get_photo(),
-                    'notification_id': str(notification.id),
-                    'nomination_category': notification.nomination.nomination_category,
-                })
+                if source_username:
+                    data.append({
+                        'notification_type': notification.notification_type.name,
+                        'create_time': time.mktime(notification.created_date.utctimetuple()),
+                        'read': notification.read,
+                        'pending': notification.pending,
+                        'source_id': source_id,
+                        'source_name': source_name,
+                        'source_username': source_username,
+                        'destination_id': destination_id,
+                        'destination_name': destination_name,
+                        'destination_username': destination_username,
+                        'nomination': str(notification.nomination.id),
+                        'photo': notification.nomination.photo.get_photo(),
+                        'notification_id': str(notification.id),
+                        'nomination_category': notification.nomination.nomination_category,
+                    })
             else:
                 data.append({
                     'notification_type': notification.notification_type.name,
