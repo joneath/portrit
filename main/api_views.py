@@ -1921,24 +1921,23 @@ def get_active_notifications(request):
                 destination_username = None
             
             if not notification.notification_type.name == 'new_follow':
-                if source_username:
-                    data.append({
-                        'notification_type': notification.notification_type.name,
-                        'create_time': time.mktime(notification.created_date.utctimetuple()),
-                        'read': notification.read,
-                        'pending': notification.pending,
-                        'source_id': source_id,
-                        'source_name': source_name,
-                        'source_username': source_username,
-                        'destination_id': destination_id,
-                        'destination_name': destination_name,
-                        'destination_username': destination_username,
-                        'nomination': str(notification.nomination.id),
-                        'photo': notification.nomination.photo.get_photo(),
-                        'notification_id': str(notification.id),
-                        'nomination_category': notification.nomination.nomination_category,
-                    })
-            else:
+                data.append({
+                    'notification_type': notification.notification_type.name,
+                    'create_time': time.mktime(notification.created_date.utctimetuple()),
+                    'read': notification.read,
+                    'pending': notification.pending,
+                    'source_id': source_id,
+                    'source_name': source_name,
+                    'source_username': source_username,
+                    'destination_id': destination_id,
+                    'destination_name': destination_name,
+                    'destination_username': destination_username,
+                    'nomination': str(notification.nomination.id),
+                    'photo': notification.nomination.photo.get_photo(),
+                    'notification_id': str(notification.id),
+                    'nomination_category': notification.nomination.nomination_category,
+                })
+            elif source_username:
                 data.append({
                     'notification_type': notification.notification_type.name,
                     'create_time': time.mktime(notification.created_date.utctimetuple()),
