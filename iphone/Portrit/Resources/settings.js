@@ -1,6 +1,6 @@
-var RUNTIME = 'test';
+var RUNTIME = 'production';
 var SERVER_URL = '';
-var VERSION = '1.0.1';
+var VERSION = '1.0.2';
 var TWITTER_CONSUMER = '';
 var TWITTER_CONSUMER_SECRET = '';
     

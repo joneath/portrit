@@ -681,6 +681,10 @@ reset = false;
 var first_updates = Ti.App.Properties.getString("first_updates");
 win.addEventListener('focus', function(){
     var tabGroup = win.tabGroup;
+    
+    if (tabGroup.tabs[3].badge && tabGroup.tabs[3].badge > 0){
+        reset = true;
+    }
     tabGroup.tabs[3].badge = null;
     
     if (reset){

@@ -1573,14 +1573,14 @@ function init_profile_view(){
                 follow_count = Titanium.UI.createLabel({
                     text: follow_data.followers,
                     color: '#333',
-                    left: 85,
+                    left: 80,
                     font: {fontSize: 18, fontWeight: 'bold'}
                 });
 
                 following_count = Titanium.UI.createLabel({
                     text: follow_data.following,
                     color: '#333',
-                    left: 189,
+                    left: 184,
                     font: {fontSize: 18, fontWeight: 'bold'}
                 });
 

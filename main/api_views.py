@@ -713,7 +713,7 @@ def nominate_photo(request):
         
         photo = Photo.objects.get(id=photo_id)
         photo.pending = False
-        if public:
+        if public_perm == 'true' or public_perm == '1':
             photo.public = True
             
         if len(photo.nominations) == 0:

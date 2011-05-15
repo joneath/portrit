@@ -154,13 +154,13 @@ function close_share_nom(){
     var data = JSON.parse(this.responseData);
     
     var nom = null;
-    window_activity_cont.hide();
-    caption.blur();
+    var close_timeout = 0;
     
     if (!new_photo){
         var nom = data[0];
         try{
             if (twitter_switch && twitter_switch.value){
+                close_timeout = 1000;
                 share_on_twitter(me, nom, caption_text);
             }
         }
@@ -170,6 +170,7 @@ function close_share_nom(){
         
         try{
             if (facebook_switch.value){
+                close_timeout = 1000;
                 var title = me.name.split(' ')[0] + ' nominated a photo for ' + nom.nomination_category + ' on Portrit';
                 share_on_facebook(me, nom, caption_text, title);
             }
@@ -184,6 +185,7 @@ function close_share_nom(){
                 var nom = data[0];
                 try{
                     if (twitter_switch && twitter_switch.value){
+                        close_timeout = 1000;
                         share_on_twitter(me, nom, caption_text);
                     }
                 }
@@ -192,6 +194,7 @@ function close_share_nom(){
                 }
                 try{
                     if (facebook_switch.value){
+                        close_timeout = 1000;
                         var title = me.name.split(' ')[0] + ' nominated a photo for ' + nom.nomination_category + ' on Portrit';
                         share_on_facebook(me, nom, caption_text, title);
                     }
@@ -207,6 +210,7 @@ function close_share_nom(){
         else{
             try{
                 if (twitter_switch && twitter_switch.value){
+                    close_timeout = 1000;
                     share_on_twitter(me, data, caption_text);
                 }
             }
@@ -215,6 +219,7 @@ function close_share_nom(){
             }
             try{
                 if (facebook_switch.value){
+                    close_timeout = 1000;
                     var title = me.name.split(' ')[0] + ' shared a photo on Portrit';
                     share_on_facebook(me, data, caption_text, title);
                 }
@@ -224,41 +229,47 @@ function close_share_nom(){
             }
         }
     }
-
+    
+    
     if (new_photo){
-        tabGroup.bottom = 0;
-        
-        if (nominations != ''){
-            tabGroup.setActiveTab(0);
-        }
-        else{
-            tabGroup.setActiveTab(4);
-        }
-        
-        win.close({animated:false});
-        Ti.App.fireEvent('close_nominate_page', { });
-        Ti.App.fireEvent('close_settings_page', { });
-
         setTimeout(function(){
+            window_activity_cont.hide();
+            caption.blur();
+            tabGroup.bottom = 0;
             if (nominations != ''){
-                Ti.App.fireEvent('reset_after_camera', { });
-                Ti.App.fireEvent('update_active_noms', { });
-                if (user == me.fid){
-                    if (Ti.App.Properties.getString("profile_rendered")){
-                        Ti.App.fireEvent('update_my_photos', { });
-                        Ti.App.fireEvent('update_my_noms', { });
-                    }
-                }
+                tabGroup.setActiveTab(0);
             }
             else{
-                if (Ti.App.Properties.getString("profile_rendered")){
-                    Ti.App.fireEvent('update_my_photos', { });
-                }
-                Ti.App.fireEvent('reset_after_camera', { });
+                tabGroup.setActiveTab(4);
             }
-    	}, 450);
+
+            win.close({animated:false});
+            Ti.App.fireEvent('close_nominate_page', { });
+            Ti.App.fireEvent('close_settings_page', { });
+
+            setTimeout(function(){
+                if (nominations != ''){
+                    Ti.App.fireEvent('reset_after_camera', { });
+                    Ti.App.fireEvent('update_active_noms', { });
+                    if (user == me.fid){
+                        if (Ti.App.Properties.getString("profile_rendered")){
+                            Ti.App.fireEvent('update_my_photos', { });
+                            Ti.App.fireEvent('update_my_noms', { });
+                        }
+                    }
+                }
+                else{
+                    if (Ti.App.Properties.getString("profile_rendered")){
+                        Ti.App.fireEvent('update_my_photos', { });
+                    }
+                    Ti.App.fireEvent('reset_after_camera', { });
+                }
+        	}, 1000);
+        }, close_timeout);
     }
     else{
+        window_activity_cont.hide();
+        caption.blur();
         tabGroup.setActiveTab(0);
         
         win.close({animated:false});
@@ -270,7 +281,7 @@ function close_share_nom(){
             if (user == me.fid){
                 Ti.App.fireEvent('update_my_photos', { });
             }
-    	}, 450);
+    	}, 1000);
     }
 }
 
@@ -339,7 +350,6 @@ function submit_nom(e){
                     };
                     post_photo(url, send_data);
                 }
-
             }
             else{
                 progress = Ti.App.Properties.getString("upload_progress");
@@ -486,6 +496,7 @@ win.add(tv);
 //     tv.height = '100%';
 // }
 
+var twitter_switch = null;
 var init_share_nom = function(){
     var options_data = [ ];
     
@@ -555,7 +566,7 @@ var init_share_nom = function(){
         has_child = true;
     }
     
-    var row = Ti.UI.createTableViewRow({
+    var twitter_row = Ti.UI.createTableViewRow({
             hasChild: has_child,
             title: 'Twitter',
             color: '#333',
@@ -574,42 +585,50 @@ var init_share_nom = function(){
             size: {width: 100, height: 'auto'},
             font:{fontSize: 16}
         });
-        row.add(link_label);
+        twitter_row.add(link_label);
     }
     else{
         twitter_switch = Titanium.UI.createSwitch({
             value: false,
             right: 10
         });
-        row.add(twitter_switch);
+        twitter_row.add(twitter_switch);
     }
     
-    row.addEventListener('click', function(){
+    var twitter_auth_shown = false;
+    twitter_row.addEventListener('click', function(){
         if (oAuthAdapter.isAuthorized() == false) {
-            // this function will be called as soon as the application is authorized
-            var receivePin = function() {
-                // get the access token with the provided pin/oauth_verifier
-                oAuthAdapter.getAccessToken('http://twitter.com/oauth/access_token');
-                // save the access token
-                oAuthAdapter.saveAccessToken('twitter');
-                
-                row.remove(link_label);
-                row.hasChild = false;
-                var twitter_switch = Titanium.UI.createSwitch({
-                    value: true,
-                    right: 10
-                });
-                row.add(twitter_switch);
-            };
+            if (!twitter_auth_shown){
+                twitter_auth_shown = true;
+                // this function will be called as soon as the application is authorized
+                var receivePin = function() {
+                    // get the access token with the provided pin/oauth_verifier
+                    oAuthAdapter.getAccessToken('http://twitter.com/oauth/access_token');
+                    // save the access token
+                    oAuthAdapter.saveAccessToken('twitter');
+
+                    twitter_row.remove(link_label);
+                    twitter_row.hasChild = false;
+                    twitter_switch = Titanium.UI.createSwitch({
+                        value: true,
+                        right: 10
+                    });
+                    twitter_row.add(twitter_switch);
+                };
+
+                var request_token = oAuthAdapter.getRequestToken('https://api.twitter.com/oauth/request_token', 'oob');
+
+                // show the authorization UI and call back the receive PIN function
+                oAuthAdapter.showAuthorizeUI('https://twitter.com/oauth/authorize?' + request_token, receivePin);
             
-            var request_token = oAuthAdapter.getRequestToken('https://api.twitter.com/oauth/request_token', 'oob');
-            
-            // show the authorization UI and call back the receive PIN function
-            oAuthAdapter.showAuthorizeUI('https://twitter.com/oauth/authorize?' + request_token, receivePin);
+                setTimeout(function(){
+                    twitter_auth_shown = false;
+                }, 10000);
+            }
         }
-    })
+    });
     
-    section.add(row);
+    section.add(twitter_row);
     
     options_data.push(section);
     

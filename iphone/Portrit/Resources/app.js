@@ -355,7 +355,8 @@ function init_new_user(logout){
         font: {fontSize: 18},
         hintText: 'Username',
         autocapitalization: Titanium.UI.TEXT_AUTOCAPITALIZATION_NONE,
-        returnKeyType: Titanium.UI.RETURNKEY_GO
+        returnKeyType: Titanium.UI.RETURNKEY_GO,
+        suppressReturn: false
     });
     
     var create_go = Titanium.UI.createButton({
@@ -379,7 +380,7 @@ function init_new_user(logout){
             // tv.scrollToTop(0);
         });
         username.addEventListener('return', function(e){
-            if (username.value != '' && alphaNumericCheck(username.value)){
+            if (username.value != '' && alphaNumericCheck(username.value.replace(' ', ''))){
                 create_go.hide();
                 
                 var xhr = Titanium.Network.createHTTPClient({enableKeepAlive:false});
@@ -404,7 +405,7 @@ function init_new_user(logout){
                 var url = SERVER_URL + '/api/add_username/';
                 xhr.open('POST', url);
                 xhr.send({
-                    'username': username.value,
+                    'username': username.value.replace(' ', ''),
                     'post_wins': post_wins.value,
                     'access_token': me.access_token
                 });
@@ -416,7 +417,7 @@ function init_new_user(logout){
         var check_name_aval = null;
         username.addEventListener('change', function(e){
             if (username.value != ''){
-                if (alphaNumericCheck(username.value)){
+                if (alphaNumericCheck(username.value.replace(' ', ''))){
                     if (!go_shown){
                         go_shown = true;
                         create_go.show();
@@ -432,12 +433,12 @@ function init_new_user(logout){
                             username_activity.animate(fadeOut);
                             var data = JSON.parse(this.responseData);
                             if (data == true){
-                                if (username.value != ''){
+                                if (username.value.replace(' ', '') != ''){
                                     cross.animate(fadeIn);
                                 }
                             }
                             else{
-                                if (username.value != ''){
+                                if (username.value.replace(' ', '') != ''){
                                     check.animate(fadeIn);
                                 }
                             }
@@ -446,11 +447,12 @@ function init_new_user(logout){
                         var url = SERVER_URL + '/api/check_username_availability/';
                         xhr.open('POST', url);
                         xhr.send({
-                            'username': username.value
+                            'username': username.value.replace(' ', '')
                         });
                     }, 1000);
                 }
                 else{
+                    check.opacity = 0;
                     cross.animate(fadeIn);
                 }
             }
@@ -877,7 +879,7 @@ function init_login(){
     welcome_cont.add(welcome_bottom_text);
     
     var web_link_text = Ti.UI.createLabel({
-        text: 'Dont forget our Web App at portrit.com',
+        text: 'Dont forget our Web app at portrit.com',
         width: 230,
         height: 'auto',
         color: '#eee',

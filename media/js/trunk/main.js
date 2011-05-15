@@ -755,6 +755,11 @@ $(document).ready(function(){
                                 '<h3>Find us on the tubes</h3>' +
                                 '<ul>' +
                                     '<li>' +
+                                        '<a target="_blank" href="http://itunes.apple.com/us/app/portrit/id435873942?mt=8&amp;ls=1">' +
+                                            '<img style="height: 53px; width: 153px;" src="http://portrit.s3.amazonaws.com/img/app_store_badge.png">' +
+                                        '</a>' +
+                                    '</li>' +
+                                    '<li>' +
                                         '<h4>Blog</h4>' +
                                         '<a target="_blank" href="http://blog.portrit.com">Posterous</a>' +
                                     '</li>' +
@@ -783,6 +788,7 @@ $(document).ready(function(){
         var contact_html = '<div id="contact_header">' +
                             '<h1 id="contact_title">Tell Us What\'s Up</h1>' +
                             '<p id="contact_explain">Comments? Love us? Hate us? Found a bug and want to share? Dont hold back, give it to us real.</p>' +
+                            '<p>Don\'t like contact forms? Email us at <a href="mailto:contact@portrit.com">contact@portrit.com</a></p>' +
                          '</div>' +
                          '<div id="contact_nav">' +
                             '<ul>' +

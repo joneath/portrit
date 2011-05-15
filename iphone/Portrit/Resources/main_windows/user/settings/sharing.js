@@ -248,41 +248,50 @@ function init_sharing(){
         font:{fontSize: 16}
     });
     row.add(linked_text);
+    
+    var twitter_auth_shown = false;
     row.addEventListener('click', function(){
         // if the client is not authorized, ask for authorization. 
         // the previous tweet will be sent automatically after authorization
         if (oAuthAdapter.isAuthorized() == false) {
-            // this function will be called as soon as the application is authorized
-            var receivePin = function() {
-                // get the access token with the provided pin/oauth_verifier
-                oAuthAdapter.getAccessToken('http://twitter.com/oauth/access_token');
-                // save the access token
-                oAuthAdapter.saveAccessToken('twitter');
-                
-                // save twitter access token on server
-                var token = oAuthAdapter.get_access_token()
-                var xhr = Titanium.Network.createHTTPClient();
-                xhr.onload = function(){
-                	data = JSON.parse(this.responseData);
-                	user_settings_data = data;
-                	Ti.App.Properties.setString("user_settings", JSON.stringify(user_settings_data));
+            if (!twitter_auth_shown){
+                twitter_auth_shown = true;
+                // this function will be called as soon as the application is authorized
+                var receivePin = function() {
+                    // get the access token with the provided pin/oauth_verifier
+                    oAuthAdapter.getAccessToken('http://twitter.com/oauth/access_token');
+                    // save the access token
+                    oAuthAdapter.saveAccessToken('twitter');
+
+                    // save twitter access token on server
+                    var token = oAuthAdapter.get_access_token()
+                    var xhr = Titanium.Network.createHTTPClient();
+                    xhr.onload = function(){
+                    	data = JSON.parse(this.responseData);
+                    	user_settings_data = data;
+                    	Ti.App.Properties.setString("user_settings", JSON.stringify(user_settings_data));
+                    };
+                    var url = SERVER_URL + '/api/save_mobile_twitter_token/';
+                    xhr.open('POST', url);
+                    xhr.send({
+                        'access_token': me.access_token,
+                        'twitter_access_token': token.access_token,
+                        'twitter_access_token_secret': token.access_token_secret,
+                    });
+
+                    linked_text.text = 'Linked';
+                    linked_text.color = '#99CB6E';
                 };
-                var url = SERVER_URL + '/api/save_mobile_twitter_token/';
-                xhr.open('POST', url);
-                xhr.send({
-                    'access_token': me.access_token,
-                    'twitter_access_token': token.access_token,
-                    'twitter_access_token_secret': token.access_token_secret,
-                });
+
+                var request_token = oAuthAdapter.getRequestToken('https://api.twitter.com/oauth/request_token', 'oob');
+
+                // show the authorization UI and call back the receive PIN function
+                oAuthAdapter.showAuthorizeUI('https://twitter.com/oauth/authorize?' + request_token, receivePin);
                 
-                linked_text.text = 'Linked';
-                linked_text.color = '#99CB6E';
-            };
-            
-            var request_token = oAuthAdapter.getRequestToken('https://api.twitter.com/oauth/request_token', 'oob');
-            
-            // show the authorization UI and call back the receive PIN function
-            oAuthAdapter.showAuthorizeUI('https://twitter.com/oauth/authorize?' + request_token, receivePin);
+                setTimeout(function(){
+                    twitter_auth_shown = false;
+                }, 10000);
+            }
         }
         else{
             var unlink_alert = Titanium.UI.createAlertDialog({

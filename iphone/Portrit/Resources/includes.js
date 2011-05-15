@@ -163,6 +163,7 @@ function getOrdinal(n) {
    return n+(s[(v-20)%10]||s[v]||s[0]);
 }
 
+var twitter_auth_shown = false;
 function share_nom(nom, method, title, from){
     if (method != 'Twitter' || oAuthAdapter.isAuthorized()){
         var t = Titanium.UI.create2DMatrix();
@@ -297,31 +298,38 @@ function share_nom(nom, method, title, from){
     	}, 30);
     }
     else if (method == 'Twitter' && oAuthAdapter.isAuthorized() == false){
-        var receivePin = function() {
-            // get the access token with the provided pin/oauth_verifier
-            oAuthAdapter.getAccessToken('http://twitter.com/oauth/access_token');
-            // save the access token
-            oAuthAdapter.saveAccessToken('twitter');
-            
-            // save twitter access token on server
-            var token = oAuthAdapter.get_access_token()
-            var xhr = Titanium.Network.createHTTPClient({enableKeepAlive:false});
-            xhr.onload = function(){
-                share_nom(nom, method, title, from)
+        if (!twitter_auth_shown){
+            twitter_auth_shown = true;
+            var receivePin = function() {
+                // get the access token with the provided pin/oauth_verifier
+                oAuthAdapter.getAccessToken('http://twitter.com/oauth/access_token');
+                // save the access token
+                oAuthAdapter.saveAccessToken('twitter');
+
+                // save twitter access token on server
+                var token = oAuthAdapter.get_access_token()
+                var xhr = Titanium.Network.createHTTPClient({enableKeepAlive:false});
+                xhr.onload = function(){
+                    share_nom(nom, method, title, from)
+                };
+                var url = SERVER_URL + '/api/save_mobile_twitter_token/';
+                xhr.open('POST', url);
+                xhr.send({
+                    'access_token': me.access_token,
+                    'twitter_access_token': token.access_token,
+                    'twitter_access_token_secret': token.access_token_secret,
+                });
             };
-            var url = SERVER_URL + '/api/save_mobile_twitter_token/';
-            xhr.open('POST', url);
-            xhr.send({
-                'access_token': me.access_token,
-                'twitter_access_token': token.access_token,
-                'twitter_access_token_secret': token.access_token_secret,
-            });
-        };
-        
-        var request_token = oAuthAdapter.getRequestToken('https://api.twitter.com/oauth/request_token', 'oob');
-        
-        // show the authorization UI and call back the receive PIN function
-        oAuthAdapter.showAuthorizeUI('https://twitter.com/oauth/authorize?' + request_token, receivePin);
+
+            var request_token = oAuthAdapter.getRequestToken('https://api.twitter.com/oauth/request_token', 'oob');
+
+            // show the authorization UI and call back the receive PIN function
+            oAuthAdapter.showAuthorizeUI('https://twitter.com/oauth/authorize?' + request_token, receivePin);
+            
+            setTimeout(function(){
+                twitter_auth_shown = false;
+            }, 10000);
+        }
     }
 }
 
