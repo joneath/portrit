@@ -77,9 +77,12 @@ def flags(request, template='admin/flags.html'):
             
             if method == 'approve':
                 flag.active = False
+                flag.photo.active = True
+                flag.photo.save()
             elif method == 'deny':
                 flag.active = False
                 flag.photo.active = False
+                flag.photo.save()
                 
                 Nomination.objects.filter(photo=flag.photo).update(set__active=False)
                 

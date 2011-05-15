@@ -5216,8 +5216,8 @@ $(document).ready(function(){
                                 '<div class="clear"></div>' +
                             '</div>';
             }
-            else if (!data[i]['next'] && data[i]['prev']){
-                selected_place = 'First';
+            else if (!data[i]['next'] && !data[i]['prev']){
+                selected_place = '1st';
             }
             else{
                 selected_place = 'Last';

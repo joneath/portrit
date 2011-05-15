@@ -87,15 +87,16 @@ def contact_portrit(request):
         
             from django.core.mail import EmailMessage
             subject = 'Contact Form'
-            html_content = message
+            html_content = from_email + '\n\n' + message
         
-            msg = EmailMessage(subject, html_content, from_email, [to_email,])
+            msg = EmailMessage(subject, html_content, 'no-reply@portrit.com', [to_email,])
             msg.send()
         
-            data = simplejson.dumps(True)
-            return HttpResponse(data, mimetype='application/json')
         except Exception, err:
             print err
+            
+    data = simplejson.dumps(True)
+    return HttpResponse(data, mimetype='application/json')
         
 def submit_bug_report(request):
     cookie = facebook.get_user_from_cookie(
@@ -107,7 +108,7 @@ def submit_bug_report(request):
         os = request.POST.get('os')
         browser = request.POST.get('browser')
         
-        from django.core.mail import EmailMessage
+        from django.core.mail import EmailMultiAlternatives
         subject = 'New User Bug Report'
         html_content =  '<h2>FROM: ' + from_email + '</h2>' \
                         '<h2>WHERE: ' + where + '</h2>' \
@@ -115,8 +116,8 @@ def submit_bug_report(request):
                         '<h2>BROWSER: ' + browser + '</h2>' \
                         '<p>' + message + '</p>'
                         
-        msg = EmailMessage(subject, html_content, from_email, ['bugs@portrit.com'])
-        msg.content_subtype = "html"
+        msg = EmailMultiAlternatives(subject, html_content, 'no-reply@portrit.com', ['bugs@portrit.com',])
+        msg.attach_alternative(html_content, "text/html")
         msg.send()
         
         data = simplejson.dumps(True)
