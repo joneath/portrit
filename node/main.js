@@ -288,7 +288,6 @@ var Portrit = function(){
                 var data = JSON.parse(data_stream);
                 if (typeof(data.email) == 'undefined'){
                     for (var id in data.payload.friends){
-                        console.log(id);
                         if (id != undefined){
                             nomination_emitter.emit(data.payload.friends[id].fid, data.payload.friends[id].notification_id, data);
                         }
@@ -411,10 +410,10 @@ var Portrit = function(){
 
             }
             var nom_callback = function(notification_id, data){
-                // nomination_emitter.removeAllListeners(event_user);
                 try{
                     clearTimeout(nom_timeout);
-                    nomination_emitter.removeListener(event_user, nom_callback);
+                    // nomination_emitter.removeListener(event_user, nom_callback);
+                    nomination_emitter.removeAllListeners(event_user);
                     response.writeHead(200, { "Content-Type": "text/plain" });
                     if (typeof(notification_id) !== "undefined"){
                         data.payload.notification_id = notification_id;
