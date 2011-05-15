@@ -27,11 +27,12 @@ div#wrapper{
 
 #public_header #public_logo_wrap{
     margin-left:        15px;
-    margin-top:         40px;
+    margin-top:         15px;
 }
 
 #public_header #public_tagline_cont{
     height:             80px;
+    margin-left:        35px;
     border-bottom-left-radius:          0px;
     border-bottom-right-radius:         0px;
     -moz-border-radius-bottomleft:      0px;
@@ -54,13 +55,21 @@ div#wrapper{
     background-image:   none;
     background-image:   none;
     height:             40px;
-    width:              340px;
-    margin-right:       4px;
+    width:              335px;
+    margin-right:       14px;
     background-color:   #333;
     border-bottom-left-radius:          5px;
     border-bottom-right-radius:         5px;
     -moz-border-radius-bottomleft:      5px;
     -moz-border-radius-bottomright:     5px;
+}
+
+#public_header > a > img{
+/*    display:            none;*/
+    float:              left;
+    position:           relative;
+    top:                -30px;
+    margin-left:        5px;
 }
 
 #public_login_cont #public_login_wrap{
@@ -80,6 +89,7 @@ div#tagline_top #app_row{
 }
 
 div#tagline_top #app_row img{
+    float:              none;
     margin-left:        60px;
 }
 

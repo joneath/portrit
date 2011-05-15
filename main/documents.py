@@ -265,7 +265,7 @@ class FB_User(EmbeddedDocument):
     pending = BooleanField(default=False)
     created_date = DateTimeField(default=datetime.datetime.now)
     
-    fid = IntField()
+    fid = IntField(unique=True)
     access_token = StringField()
     mobile_access_token = StringField()
     
@@ -359,7 +359,7 @@ class Portrit_User(Document):
     
     winning_noms = ListField(ReferenceField(Nomination))
     
-    fb_user = EmbeddedDocumentField(FB_User)
+    fb_user = EmbeddedDocumentField(FB_User, unique=True)
     twitter_user = EmbeddedDocumentField(Twitter_User)
     
     following = ListField(ReferenceField('Follow'))

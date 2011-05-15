@@ -2171,22 +2171,23 @@ def search(request):
         else:
             source_following = [ ]
             
-        users = Portrit_User.objects.filter(Q(name__icontains=q) | Q(username__icontains=q))[:40]
+        users = Portrit_User.objects.filter(Q(name__icontains=q) | Q(username__icontains=q), active=True)[:40]
         for user in users:
-            if user in source_following:
-                data.append({
-                    'fid': user.fb_user.fid,
-                    'name': user.name,
-                    'username': user.username,
-                    'follow': False
-                })
-            else:
-                data.append({
-                    'fid': user.fb_user.fid,
-                    'name': user.name,
-                    'username': user.username,
-                    'follow': True
-                })
+            if user.username:
+                if user in source_following:
+                    data.append({
+                        'fid': user.fb_user.fid,
+                        'name': user.name,
+                        'username': user.username,
+                        'follow': False
+                    })
+                else:
+                    data.append({
+                        'fid': user.fb_user.fid,
+                        'name': user.name,
+                        'username': user.username,
+                        'follow': True
+                    })
                 
         from operator import itemgetter  
         data = sorted(data, key=itemgetter('name'))
@@ -2209,24 +2210,25 @@ def combined_search(request):
         else:
             source_following = [ ]
 
-        users = Portrit_User.objects.filter(Q(username__icontains=q) | Q(name__icontains=q))[:SEARCH_LIMIT]
+        users = Portrit_User.objects.filter(Q(username__icontains=q) | Q(name__icontains=q), active=True)[:SEARCH_LIMIT]
         for user in users:
-            if user in source_following:
-                data.append({
-                    'fid': user.fb_user.fid,
-                    'name': user.name,
-                    'username': user.username,
-                    'wins': user.winning_nomination_count,
-                    'following': True
-                })
-            else:
-                data.append({
-                    'fid': user.fb_user.fid,
-                    'name': user.name,
-                    'username': user.username,
-                    'wins': user.winning_nomination_count,
-                    'following': False
-                })
+            if user.username:
+                if user in source_following:
+                    data.append({
+                        'fid': user.fb_user.fid,
+                        'name': user.name,
+                        'username': user.username,
+                        'wins': user.winning_nomination_count,
+                        'following': True
+                    })
+                else:
+                    data.append({
+                        'fid': user.fb_user.fid,
+                        'name': user.name,
+                        'username': user.username,
+                        'wins': user.winning_nomination_count,
+                        'following': False
+                    })
 
         from operator import itemgetter  
         data = sorted(data, key=itemgetter('following', 'name'), reverse=True)
@@ -2249,23 +2251,24 @@ def search_by_names(request):
             source_following = [ ]
     
         names = names.split(',')
-        users = Portrit_User.objects.filter(name__in=names)[:100]
+        users = Portrit_User.objects.filter(name__in=names, active=True)[:100]
     
         for user in users.iterator():
-            if user in source_following:
-                data.append({
-                    'fid': user.fb_user.fid,
-                    'name': user.name,
-                    'username': user.username,
-                    'follow': False
-                })
-            else:
-                data.append({
-                    'fid': user.fb_user.fid,
-                    'name': user.name,
-                    'username': user.username,
-                    'follow': True
-                })
+            if user.username:
+                if user in source_following:
+                    data.append({
+                        'fid': user.fb_user.fid,
+                        'name': user.name,
+                        'username': user.username,
+                        'follow': False
+                    })
+                else:
+                    data.append({
+                        'fid': user.fb_user.fid,
+                        'name': user.name,
+                        'username': user.username,
+                        'follow': True
+                    })
                 
         from operator import itemgetter  
         data = sorted(data, key=itemgetter('name'))
@@ -2280,7 +2283,6 @@ def search_by_email(request):
     source = request.POST.get('source')
     emails = request.POST.get('emails')
     
-    print emails
     try:
         if source:
             source = Portrit_User.objects.get(fb_user__fid=int(source))
@@ -2289,23 +2291,24 @@ def search_by_email(request):
             source_following = [ ]
     
         emails = emails.split(',')
-        users = Portrit_User.objects.filter(email__in=emails)[:100]
+        users = Portrit_User.objects.filter(email__in=emails, active=True)[:100]
     
         for user in users.iterator():
-            if user in source_following:
-                data.append({
-                    'fid': user.fb_user.fid,
-                    'name': user.name,
-                    'username': user.username,
-                    'follow': False
-                })
-            else:
-                data.append({
-                    'fid': user.fb_user.fid,
-                    'name': user.name,
-                    'username': user.username,
-                    'follow': True
-                })
+            if user.username:
+                if user in source_following:
+                    data.append({
+                        'fid': user.fb_user.fid,
+                        'name': user.name,
+                        'username': user.username,
+                        'follow': False
+                    })
+                else:
+                    data.append({
+                        'fid': user.fb_user.fid,
+                        'name': user.name,
+                        'username': user.username,
+                        'follow': True
+                    })
                 
         from operator import itemgetter  
         data = sorted(data, key=itemgetter('name'))
@@ -2526,10 +2529,8 @@ def delete_account(request):
         # Get all user photos
         photos = Photo.objects.filter(owner=portrit_user).update(set__active=False)
         
-        
         # Get all user nominations
         nominations = Nomination.objects.filter(nominatee=portrit_user).update(set__active=False)
-        
         
         # Get all user follow/following records
         following = portrit_user.following.all().update(set__active=False)

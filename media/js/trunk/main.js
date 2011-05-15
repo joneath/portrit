@@ -668,9 +668,7 @@ $(document).ready(function(){
         mobile = true;
         close_size = 'mobile'
         
-        alert(typeof(_gaq));
         if (typeof(_gaq) !== "undefined"){
-            alert('here');
             meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-15.css"/>' +
                         '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
                         '<link rel="shortcut icon" href="http://portrit.s3.amazonaws.com/img/favicon.ico">' +
@@ -725,10 +723,18 @@ $(document).ready(function(){
     }
     
     if (mobile){
-        $('#footer').css({
-            'position': 'relative',
-            'z-index': 99
-        });        
+        setTimeout(function(){
+            $('#footer').css({
+                'position': 'relative',
+                'z-index': 99
+            });
+        }, 500);
+        setTimeout(function(){
+            $('#footer').css({
+                'position': 'relative',
+                'z-index': 99
+            });
+        }, 1000);
     }
 
     function find_friend(fid, search_array){
@@ -2751,7 +2757,7 @@ $(document).ready(function(){
                                                 '<h2 class="tut_point_num nom_cat_fail">1</h2>' +
                                                 '<div>' +
                                                     '<input id="username" value="Create a Username"/>' + 
-                                                    '<p style="color: #666; font-size: 14px; margin-left: 5px;">Only alphanumeric characters please</p>' +
+                                                    '<p style="color: #666; font-size: 14px; margin-left: 5px; float: left;">No spaces and only alphanumeric characters please</p>' +
                                                     '<div class="clear"></div>' +
                                                 '</div>' +
                                             '</div>' +
@@ -3125,7 +3131,9 @@ $(document).ready(function(){
             
         if (state == 'stream_active'){
             title = '<h1 class="title" state="' + state + '" cat="' + nom_cat + '">Active <span class="nom_cat_' + nom_cat_under + '_text">' + nom_cat + '</span> Photos</h1>';
-            place = '<h2 id="nom_place">' + getGetOrdinal(nom.position + 1) + '</h2>';
+            if (nom.position){
+                place = '<h2 id="nom_place">' + getGetOrdinal(nom.position + 1) + '</h2>';
+            }
         }
         else if (state == 'stream_winners'){
             won = true;
@@ -3136,11 +3144,15 @@ $(document).ready(function(){
         }
         else if (state == 'community_active'){
             title = '<h1 class="title" state="' + state + '" cat="' + nom_cat + '">Community <span class="nom_cat_' + nom_cat_under + '_text">' + nom_cat + '</span> Photos</h1>';
-            place = '<h2 id="nom_place">' + getGetOrdinal(nom.position + 1) + '</h2>';
+            if (nom.position){
+                place = '<h2 id="nom_place">' + getGetOrdinal(nom.position + 1) + '</h2>';
+            }
         }
         else if (state == 'community_top'){
             title = '<h1 class="title" state="' + state + '" cat="' + nom_cat + '">Top Community <span class="nom_cat_' + nom_cat_under + '_text">' + nom_cat + '</span> Photos</h1>';
-            place = '<h2 id="nom_place">' + getGetOrdinal(nom.position + 1) + '</h2>';
+            if (nom.position){
+                place = '<h2 id="nom_place">' + getGetOrdinal(nom.position + 1) + '</h2>';
+            }
         }
         else if (state == 'profile_trophies'){
             won = true;

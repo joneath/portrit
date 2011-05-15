@@ -422,7 +422,7 @@ div#login_cont{
             color:              #333;
             height:             163px;
             text-align:         center;
-            width:              300px;
+            width:              280px;
             padding-top:        37px;
             position:           absolute;
             z-index:            10000;
@@ -464,7 +464,7 @@ div#login_cont{
                 margin-top:         15px;
                 float:              left;
                 text-align:         left;
-                width:              645px;
+                width:              665px;
             }
             
                 div#tagline_top #iphone{
@@ -491,6 +491,11 @@ div#login_cont{
                         float:              left;
                         line-height:        53px;
                         margin-right:       10px;
+                    }
+                    
+                    div#tagline_top #app_row img{
+                        float:              right;
+                        margin-right:       25px;
                     }
             
                 div#tagline_top h2{

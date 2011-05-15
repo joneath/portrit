@@ -1,16 +1,16 @@
 {
 "name": "Portrit",
-"description": "Finding the best photos between your friends.",
-"version": "1.0.1",
+"description": "Finding the best photos between your friends. On Portrit, you and your friends filter the lame photos from the awesome ones.",
+"version": "2.0.0",
 "icons": {
 "128": "icon128_rounded.png"
 },
 "app": {
 "urls": [
-"http://portrit.com/"
+"http://www.portrit.com/"
 ],
 "launch": {
-"web_url": "http://portrit.com/"
+"web_url": "http://www.portrit.com/"
 }
 },
 "permissions": [
