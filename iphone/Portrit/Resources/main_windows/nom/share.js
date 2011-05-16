@@ -312,6 +312,7 @@ function submit_nom(e){
     var restart_count = 0;
     
     caption_text = caption.value;
+    caption.blur();
     window_activity_cont.show();
     
     if (new_photo){

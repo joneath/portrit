@@ -912,44 +912,19 @@ function render_nom(nom, top, row_count){
         });
         
         var max_height = 320;
-        if (Ti.Platform.displayCaps.density == 'high') {
-            if (nom.photo.width > Ti.Platform.displayCaps.platformWidth){
-                photo_width = Ti.Platform.displayCaps.platformWidth;
-            }
-            else{
-                photo_width = nom.photo.width;
-            }
-        
-            if (nom.photo.height && nom.photo.height > max_height){
-                if (nom.photo.height > nom.photo.width){
-                    photo_height = max_height;
-                    photo_width = photo_height * (nom.photo.width / nom.photo.height);
-                }
-                else{
-                    photo_height = photo_width * (nom.photo.height / nom.photo.width);
-                }
-            }
-            else{
-                photo_height = max_height;
-            }
-            highres = true;
+        if (nom.photo.width > Ti.Platform.displayCaps.platformWidth){
+            photo_width = Ti.Platform.displayCaps.platformWidth;
         }
         else{
-            if (photo_width < 320){
-                photo_width = nom.photo.width;
-            }
-            else{
-                photo_width = 320
-            }
-        
-            if (nom.photo.height && nom.photo.height > max_height){
-                photo_width = max_height * (nom.photo.width / nom.photo.height);
-                photo_height = photo_width * (nom.photo.height / nom.photo.width);
-            }
-            else{
-                photo_height = max_height;
-            }
-            highres = false;
+            photo_width = nom.photo.width;
+        }
+
+        if (nom.photo.height > nom.photo.width){
+            photo_height = max_height;
+            photo_width = photo_height * (nom.photo.width / nom.photo.height);
+        }
+        else{
+            photo_height = photo_width * (nom.photo.height / nom.photo.width);
         }
 
         row = Ti.UI.createTableViewRow({

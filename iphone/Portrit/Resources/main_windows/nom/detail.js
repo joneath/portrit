@@ -1364,55 +1364,69 @@ function render_nom_detail(noms){
         	photo_thumb.nom = noms[i];
         	thumb_list.push(photo_thumb);
     	
-        	var max_height = 320;
-        	var highres = true;
         	var photo_width = 0;
         	var photo_height = 0;
-            if (Ti.Platform.displayCaps.density == 'high') {
-                if (noms[i].photo.width > Ti.Platform.displayCaps.platformWidth){
-                    photo_width = Ti.Platform.displayCaps.platformWidth;
-                }
-                else{
-                    photo_width = noms[i].photo.width;
-                }
-
-                if (noms[i].photo.height && noms[i].photo.height > max_height){
-                    if (noms[i].photo.height > noms[i].photo.width){
-                        photo_height = max_height;
-                        photo_width = photo_height * (noms[i].photo.width / noms[i].photo.height);
-                    }
-                    else{
-                        photo_height = photo_width * (noms[i].photo.height / noms[i].photo.width);
-                    }
-                }
-                else{
-                    photo_height = max_height;
-                }
-                highres = true;
+        	var max_height = 320;
+            if (noms[i].photo.width > Ti.Platform.displayCaps.platformWidth){
+                photo_width = Ti.Platform.displayCaps.platformWidth;
             }
             else{
-                if (photo_width < 320){
-                    photo_width = noms[i].photo.width;
-                }
-                else{
-                    photo_width = 320
-                }
-
-                if (noms[i].photo.height && noms[i].photo.height > max_height){
-                    photo_width = max_height * (noms[i].photo.width / noms[i].photo.height);
-                    photo_height = photo_width * (noms[i].photo.height / noms[i].photo.width);
-                }
-                else{
-                    photo_height = max_height;
-                }
-                highres = false;
+                photo_width = noms[i].photo.width;
             }
+
+            if (noms[i].photo.height > noms[i].photo.width){
+                photo_height = max_height;
+                photo_width = photo_height * (noms[i].photo.width / noms[i].photo.height);
+            }
+            else{
+                photo_height = photo_width * (noms[i].photo.height / noms[i].photo.width);
+            }
+        	
+            // if (Ti.Platform.displayCaps.density == 'high') {
+            //     if (noms[i].photo.width > Ti.Platform.displayCaps.platformWidth){
+            //         photo_width = Ti.Platform.displayCaps.platformWidth;
+            //     }
+            //     else{
+            //         photo_width = noms[i].photo.width;
+            //     }
+            // 
+            //     if (noms[i].photo.height && noms[i].photo.height > max_height){
+            //         if (noms[i].photo.height > noms[i].photo.width){
+            //             photo_height = max_height;
+            //             photo_width = photo_height * (noms[i].photo.width / noms[i].photo.height);
+            //         }
+            //         else{
+            //             photo_height = photo_width * (noms[i].photo.height / noms[i].photo.width);
+            //         }
+            //     }
+            //     else{
+            //         photo_height = max_height;
+            //     }
+            //     highres = true;
+            // }
+            // else{
+            //     if (photo_width < 320){
+            //         photo_width = noms[i].photo.width;
+            //     }
+            //     else{
+            //         photo_width = 320
+            //     }
+            // 
+            //     if (noms[i].photo.height && noms[i].photo.height > max_height){
+            //         photo_width = max_height * (noms[i].photo.width / noms[i].photo.height);
+            //         photo_height = photo_width * (noms[i].photo.height / noms[i].photo.width);
+            //     }
+            //     else{
+            //         photo_height = max_height;
+            //     }
+            //     highres = false;
+            // }
     	
         	detail_img = Ti.UI.createImageView({
         		image: '../../images/photo_loader.png',
         		width: photo_width,
         		height: photo_height,
-        		hires: highres
+        		hires: true
         	});
         	cachedImageView('images', noms[i].photo.source, detail_img);
     	
@@ -1489,45 +1503,61 @@ function render_nom_detail(noms){
     	var highres = true;
     	var photo_width = 0;
     	var photo_height = 0;
-        if (Ti.Platform.displayCaps.density == 'high') {
-            if (noms[0].photo.width > Ti.Platform.displayCaps.platformWidth){
-                photo_width = Ti.Platform.displayCaps.platformWidth;
-            }
-            else{
-                photo_width = noms[0].photo.width;
-            }
-
-            if (noms[0].photo.height && noms[0].photo.height > max_height){
-                if (noms[0].photo.height > noms[0].photo.width){
-                    photo_height = max_height;
-                    photo_width = photo_height * (noms[0].photo.width / noms[0].photo.height);
-                }
-                else{
-                    photo_height = photo_width * (noms[0].photo.height / noms[0].photo.width);
-                }
-            }
-            else{
-                photo_height = max_height;
-            }
-            highres = true;
+    	
+        if (noms[0].photo.width > Ti.Platform.displayCaps.platformWidth){
+            photo_width = Ti.Platform.displayCaps.platformWidth;
         }
         else{
-            if (photo_width < 320){
-                photo_width = noms[0].photo.width;
-            }
-            else{
-                photo_width = 320
-            }
-
-            if (noms[0].photo.height && noms[0].photo.height > max_height){
-                photo_width = max_height * (noms[0].photo.width / noms[0].photo.height);
-                photo_height = photo_width * (noms[0].photo.height / noms[0].photo.width);
-            }
-            else{
-                photo_height = max_height;
-            }
-            highres = false;
+            photo_width = noms[0].photo.width;
         }
+
+        if (noms[0].photo.height > noms[0].photo.width){
+            photo_height = max_height;
+            photo_width = photo_height * (noms[0].photo.width / noms[0].photo.height);
+        }
+        else{
+            photo_height = photo_width * (noms[0].photo.height / noms[0].photo.width);
+        }
+        
+        // if (Ti.Platform.displayCaps.density == 'high') {
+        //     if (noms[0].photo.width > Ti.Platform.displayCaps.platformWidth){
+        //         photo_width = Ti.Platform.displayCaps.platformWidth;
+        //     }
+        //     else{
+        //         photo_width = noms[0].photo.width;
+        //     }
+        // 
+        //     if (noms[0].photo.height && noms[0].photo.height > max_height){
+        //         if (noms[0].photo.height > noms[0].photo.width){
+        //             photo_height = max_height;
+        //             photo_width = photo_height * (noms[0].photo.width / noms[0].photo.height);
+        //         }
+        //         else{
+        //             photo_height = photo_width * (noms[0].photo.height / noms[0].photo.width);
+        //         }
+        //     }
+        //     else{
+        //         photo_height = max_height;
+        //     }
+        //     highres = true;
+        // }
+        // else{
+        //     if (photo_width < 320){
+        //         photo_width = noms[0].photo.width;
+        //     }
+        //     else{
+        //         photo_width = 320
+        //     }
+        // 
+        //     if (noms[0].photo.height && noms[0].photo.height > max_height){
+        //         photo_width = max_height * (noms[0].photo.width / noms[0].photo.height);
+        //         photo_height = photo_width * (noms[0].photo.height / noms[0].photo.width);
+        //     }
+        //     else{
+        //         photo_height = max_height;
+        //     }
+        //     highres = false;
+        // }
 	
     	detail_img = Ti.UI.createImageView({
     		image: '../../images/photo_loader.png',

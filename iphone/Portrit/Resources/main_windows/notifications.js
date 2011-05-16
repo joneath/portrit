@@ -485,7 +485,9 @@ function mark_read(id){
     xhr.send({'notification_id': id, 'kill': false, 'access_token': me.access_token});
 }
 
+var notifications_loaded = false;
 function load_notifications(){
+    notifications_loaded = true;
     tv = Ti.UI.createTableView({
             backgroundColor: '#000',
             top: 40,
@@ -682,7 +684,7 @@ var first_updates = Ti.App.Properties.getString("first_updates");
 win.addEventListener('focus', function(){
     var tabGroup = win.tabGroup;
     
-    if (tabGroup.tabs[3].badge && tabGroup.tabs[3].badge > 0){
+    if (tabGroup.tabs[3].badge && tabGroup.tabs[3].badge > 0 && notifications_loaded){
         reset = true;
     }
     tabGroup.tabs[3].badge = null;

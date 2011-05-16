@@ -172,48 +172,23 @@ function render_user_photos(data, append){
     
     for (var i = 0; i < data.length; i++){
         var max_height = 320;
-        if (Ti.Platform.displayCaps.density == 'high') {
-            if (data[i].width > Ti.Platform.displayCaps.platformWidth){
-                photo_width = Ti.Platform.displayCaps.platformWidth;
-            }
-            else{
-                photo_width = data[i].width;
-            }
-
-            if (data[i].height && data[i].height > max_height){
-                if (data[i].height > data[i].width){
-                    photo_height = max_height;
-                    photo_width = photo_height * (data[i].width / data[i].height);
-                }
-                else{
-                    photo_height = photo_width * (data[i].height / data[i].width);
-                }
-            }
-            else{
-                photo_height = max_height;
-            }
-            highres = true;
+        if (data[i].width > Ti.Platform.displayCaps.platformWidth){
+            photo_width = Ti.Platform.displayCaps.platformWidth;
         }
         else{
-            if (photo_width < 320){
-                photo_width = data[i].width;
-            }
-            else{
-                photo_width = 320
-            }
+            photo_width = data[i].width;
+        }
 
-            if (data[i].height && data[i].height > max_height){
-                photo_width = max_height * (data[i].width / data[i].height);
-                photo_height = photo_width * (data[i].height / data[i].width);
-            }
-            else{
-                photo_height = max_height;
-            }
-            highres = false;
+        if (data[i].height > data[i].width){
+            photo_height = max_height;
+            photo_width = photo_height * (data[i].width / data[i].height);
+        }
+        else{
+            photo_height = photo_width * (data[i].height / data[i].width);
         }
         
         row = Ti.UI.createTableViewRow({
-                height: 'auto',
+                height: photo_height + 10,
                 width: 320,
                 selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
         });
@@ -223,13 +198,14 @@ function render_user_photos(data, append){
     		width: photo_width,
     		height: photo_height,
     		hires: true,
-    		top: 0,
+    		top: 0
     	});
     	cachedImageView('images', data[i].source, main_image);
     	
     	main_image_cont = Titanium.UI.createView({
-            height: photo_width + 10,
-            width: photo_height
+            height: photo_height,
+            width: photo_width,
+            top: 0
         });
         main_image_cont.add(main_image);
     	
