@@ -905,6 +905,7 @@ def vote_on_nomination(request):
     nomination_id = request.POST.get('nomination_id')
     access_token = request.POST.get('access_token')
     voter = get_user_from_access_token(access_token)
+    
     nomination = Nomination.objects.get(id=nomination_id)
     
     if not voter in nomination.votes and nomination.active:
