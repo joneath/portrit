@@ -113,10 +113,9 @@ function follow_event(e){
     });
     actInd.show();
     parent.add(actInd);
-        
+    
+    var xhr = Titanium.Network.createHTTPClient({enableKeepAlive:false});
     if (method == 'follow'){
-        var xhr = Titanium.Network.createHTTPClient();
-
         xhr.onload = function(){   
             var data = JSON.parse(this.responseData);
             
@@ -146,8 +145,6 @@ function follow_event(e){
         xhr.send({'access_token': me.access_token, 'target': username, method: 'follow'});
     }
     else{
-        var xhr = Titanium.Network.createHTTPClient();
-
         xhr.onload = function(){   
             var data = JSON.parse(this.responseData);
             

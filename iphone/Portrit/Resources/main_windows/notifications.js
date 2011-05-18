@@ -487,7 +487,6 @@ function mark_read(id){
 
 var notifications_loaded = false;
 function load_notifications(){
-    notifications_loaded = true;
     tv = Ti.UI.createTableView({
             backgroundColor: '#000',
             top: 40,
@@ -551,6 +550,7 @@ function load_notifications(){
             tv.setData([notifications_empty_row]);
         }
         window_activity_cont.hide();
+        notifications_loaded = true;
     };
     
     var url = SERVER_URL + '/api/get_active_notifications/?access_token=' + me.access_token;

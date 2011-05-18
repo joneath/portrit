@@ -1496,23 +1496,30 @@ def get_user_profile(request):
                                                     pending=False)[:page_size]
                                                     
                 for photo in photos:
-                    data['photos'].append(photo.get_photo())
+                    photo_cache = cache.get(str(photo.id) + '_photo')
+                    if not photo_cache:
+                        photo_cache = photo.get_photo()
+                        cache.set(str(photo.id) + '_photo', photo_cache)
+                    data['photos'].append(photo_cache)
+                    
             except Exception, err:
                 print err
-        try:
-            following_count = len(portrit_user.get_following())
-        except:
-            following_count = 0
+                
+        if not method:
+            try:
+                following_count = len(portrit_user.get_following())
+            except:
+                following_count = 0
 
-        try:
-            followers_count = len(portrit_user.get_followers())
-        except:
-            followers_count = 0
+            try:
+                followers_count = len(portrit_user.get_followers())
+            except:
+                followers_count = 0
         
-        data['follow_counts'] = {
-            'following': following_count,
-            'followers': followers_count,
-        }
+            data['follow_counts'] = {
+                'following': following_count,
+                'followers': followers_count,
+            }
     
     except Exception, err:
         print err
@@ -1828,6 +1835,7 @@ def get_community_top_nominations_cat(request):
         nominations = cache.get('landing_nominations_' + cat.replace(' ', ''))
         if not nominations:
             nominations = Nomination.objects.filter(nomination_category=cat,
+                                                    active=True,
                                                     public=True).order_by('-created_date', '-current_vote_count')[:PAGE_SIZE]
             data = serialize_noms(nominations)
             cache.set('landing_nominations_' + cat.replace(' ', ''), data, 60*15)
@@ -1835,6 +1843,7 @@ def get_community_top_nominations_cat(request):
             data = nominations
     else:    
         nominations = Nomination.objects.filter(nomination_category=cat,
+                                                active=True,
                                                 public=True).order_by('-created_date', '-current_vote_count')[:PAGE_SIZE]
         data = serialize_noms(nominations)
         

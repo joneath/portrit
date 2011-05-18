@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html>
+  	<head>
+		<style>
+			html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, canvas{
+				border:0 none;
+			    font-family:inherit;
+			    font-size:100%;
+			    font-style:inherit;
+			    font-weight:inherit;
+			    margin:0;
+			    outline-color:-moz-use-text-color;
+			    outline-style:none;
+			    outline-width:0;
+			    padding:0;
+			    vertical-align:baseline;
+			}
+
+			tr, th, td{
+			    font-family:inherit;
+			    font-size:100%;
+			    font-style:inherit;
+			    font-weight:inherit;
+			    margin:0;
+			    outline-color:-moz-use-text-color;
+			    outline-style:none;
+			    outline-width:0;
+			    padding:0;
+			    vertical-align:baseline;
+			}
+
+			html, body{
+			    height:             100%;
+			}
+
+			body{
+			    color:              #333;
+				font-family:        Helvetica, Arial, Verdana, sans-serif;
+			    width:              550px;
+			}
+
+			strong{
+			    font-weight:        bold;
+			}
+
+			.clear{
+			    clear:              both;
+			}
+			
+			#cont{
+				height:				500px;
+				width:				550px;
+			}
+			
+			#header{
+				background-color:	#222;
+				padding:			10px;
+			}
+			
+				#header h1{
+					color:				#fff;
+					font-size:			26px;
+					font-weight:		bold;
+				}
+				
+				#header h2{
+					color:				#eee;
+					font-size:			16px;
+				}
+			
+			#img_cont{
+				background-color:	#000;
+				float:				left;
+				padding:			10px;
+				height:				330px;
+				width:				330px;
+			}
+			
+				#img_cont img{
+					max-width:			330px;
+					max-height:			330px;
+				}
+			
+			#trophy_cont{
+				background-color:	#333;
+				float:				left;
+				height:				350px;
+				overflow-y:			auto;
+				overflow-x:			hidden;
+				width:				200px;
+			}
+			
+				#trophy_cont li{
+					color:				#fff;
+					cursor:				pointer;
+					text-align:			center;
+				}
+				
+					#trophy_cont li h3{
+						font-size:			20px;
+						margin-top:			10px;
+						margin-bottom:		10px;
+					}
+			
+			#caption_cont{
+				height:				76px;
+				width:				550px;
+			}
+			
+				#caption_cont textarea{
+					padding: 			0px;
+					margin: 			0px;
+					width: 				518px;
+					border-left: 		1px solid #DEDEDE;
+					border-right: 		1px solid #DEDEDE;
+					border-bottom: 		1px solid #DEDEDE;
+					border-top: 		none;
+					padding: 			15px;
+					position: 			relative;
+					font-size: 			20px;
+					overflow: 			hidden;
+					resize: 			none;
+				}
+			
+			#action_row{
+				height:				80px;
+				width:				550px;
+			}
+			
+			.sick, .sick:visited, .sick_abs{
+				background: #222 url(http://portrit.s3.amazonaws.com/img/alert-overlay.png) repeat-x; 
+				display: inline-block; 
+				padding: 5px 10px 6px; 
+				color: #fff; 
+				text-decoration: none;
+				-moz-border-radius: 5px; 
+				border-radius: 5px;
+				-moz-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+				-webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+				box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+				text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+				border-bottom: 1px solid rgba(0,0,0,0.25);
+				position: relative;
+				cursor: pointer;
+			}
+
+			.sick_hover_lock:                            { background-color: #111; color: #fff; }
+			.sick:hover, .sick_abs:hover				{ background-color: #111; color: #fff; }
+			.sick:active							        { top: 1px; }
+			.small.sick, .small.sick:visited 			{ font-size: 11px; padding: ; }
+			.sick, .sick:visited, .sick_abs,
+			.medium.sick, .medium.sick:visited 		{ font-size: 13px; font-weight: bold; line-height: 1; text-shadow: 0 -1px 1px rgba(0,0,0,0.25); }
+			.large.sick, .large.sick:visited, .large.sick_abs  			{ font-size: 14px; padding: 8px 14px 9px; }
+
+			.green.sick, .green.sick:visited, .green.sick_abs		    { background-color: #91bd09; }
+			.green.sick:hover, .green.sick_abs:hover				    { background-color: #749a02; }
+			.blue.sick, .blue.sick:visited, .blue.sick_abs		        { background-color: #2daebf; }
+			.blue.sick:hover, .blue.sick_abs:hover		                { background-color: #007d9a; }
+			.red.sick, .red.sick:visited, .red.sick_abs			        { background-color: #e33100; }
+			.red.sick:hover, .red.sick_abs:hover					    { background-color: #872300; }
+			.magenta.sick, .magenta.sick:visited, .magenta.sick_abs		{ background-color: #a9014b; }
+			.magenta.sick:hover, .magenta.sick_abs:hover				{ background-color: #630030; }
+			.orange.sick, .orange.sick:visited, .orange.sick_abs		{ background-color: #ff5c00; }
+			.orange.sick:hover, .orange.sick_abs:hover					{ background-color: #d45500; }
+			.yellow.sick, .yellow.sick:visited, .yellow.sick_abs		{ background-color: #ffb515; }
+			.yellow.sick:hover							{ background-color: #fc9200; }
+			
+			.trophy_img{
+			    margin:         0 auto;
+			}
+
+			    .trophy_img.large{
+			        height:         200px;
+			        width:          100px;
+			    }
+
+			        .trophy_img.large.artsy{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -20px -84px;
+			        }
+			        .trophy_img.large.wtf{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -119px -84px;
+			        }
+			        .trophy_img.large.party_animal{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -219px -84px;
+			        }
+			        .trophy_img.large.lol{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -316px -84px;
+			        }
+			        .trophy_img.large.blank{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -416px -84px;
+			        }
+			        .trophy_img.large.fail{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -24px -295px;
+			        }
+			        .trophy_img.large.creepy{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -123px -295px;
+			        }
+			        .trophy_img.large.hot{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -222px -295px;
+			        }
+			        .trophy_img.large.cute{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -322px -295px;
+			        }
+
+			        .trophy_img.large.awesome{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -601px -141px;
+			        }
+
+			        .trophy_img.large.yummy{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -601px -388px;
+			        }
+
+			    .trophy_img.medium{
+			        height:         100px;
+			        width:          50px;
+			    }
+
+			        .trophy_img.medium.wtf{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -17px -509px;
+			        }
+			        .trophy_img.medium.party_animal{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -70px -509px;
+			        }
+			        .trophy_img.medium.lol{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -123px -509px;
+			        }
+			        .trophy_img.medium.fail{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -177px -509px;
+			        }
+			        .trophy_img.medium.blank{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -228px -509px;
+			        }
+			        .trophy_img.medium.hot{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -282px -509px;
+			        }
+			        .trophy_img.medium.cute{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -334px -509px;
+			        }
+			        .trophy_img.medium.creepy{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -386px -509px;
+			        }
+			        .trophy_img.medium.artsy{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -438px -509px;
+			        }
+
+			        .trophy_img.medium.awesome{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -704px -240px;
+			        }
+
+			        .trophy_img.medium.yummy{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -704px -488px;
+			        }
+
+			    .trophy_img.small{
+			        height:         50px;
+			        width:          25px;
+			    }
+
+			        .trophy_img.small.artsy{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -25px -621px;
+			        }
+			        .trophy_img.small.wtf{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -59px -621px;
+			        }
+			        .trophy_img.small.party_animal{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -93px -621px;
+			        }
+			        .trophy_img.small.lol{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -126px -621px;
+			        }
+			        .trophy_img.small.hot{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -159px -621px;
+			        }
+			        .trophy_img.small.fail{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -192px -621px;
+			        }
+			        .trophy_img.small.cute{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -224px -621px;
+			        }
+			        .trophy_img.small.creepy{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -256px -621px;
+			        }
+
+			        .trophy_img.small.awesome{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -759px -290px;
+			        }
+
+			        .trophy_img.small.yummy{
+			            background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
+			            background-position:    -759px -539px;
+			        }
+			
+		</style>
+		<script src="http://www.google.com/jsapi?key=ABQIAAAAv9UUX4Bh3gRCpbzjSE5MxxSfZ7BxKgj6oXj1KRYYnjuHN0SsnBTx1B5nTeUxCB_k-Yerxn8ZVGvnLA" type="text/javascript"></script>
+	    <script type="text/javascript">
+	        google.load("jquery", "1.6.1");
+	    </script>
+		<script>
+			$(document).ready(function(){
+
+			});
+    	</script>
+  	</head>
+  	<body>
+		<div id="cont">
+			<div id="header">
+				<h1>Share Photo on Portrit</h2>
+				<h2>Nominate photo for a trophy or just post photo.</h2>
+			</div>
+			<div id="img_cont">
+				<img src="{{ path }}"/>
+			</div>
+			<div id="trophy_cont">
+				<ul>
+                    <li class="active" id="hot_cont">
+                        <div class="trophy_img medium hot"></div>
+                        <h3 class="nom_cat_hot_text">Hot</h3>
+                    </li>
+                    <li class="active" id="lol_cont">
+                        <div class="trophy_img medium lol"></div>
+                        <h3 class="nom_cat_lol_text">LOL</h3>
+                    </li>
+                    <li class="active" id="artsy_cont">
+                        <div class="trophy_img medium artsy"></div>
+                        <h3 class="nom_cat_artsy_text">Artsy</h3>
+                    </li>
+                    <li class="active" id="fail_cont">
+                        <div class="trophy_img medium fail"></div>
+                        <h3 class="nom_cat_fail_text">Fail</h3>
+                    </li>
+                    <li class="active" id="party_animal_cont">
+                        <div class="trophy_img medium party_animal"></div>
+                        <h3 class="nom_cat_party_animal_text">Party Animal</h3>
+                    </li>
+                    <li class="active" id="cute_cont">
+                        <div class="trophy_img medium cute"></div>
+                        <h3 class="nom_cat_cute_text">Cute</h3>
+                    </li>
+                    <li class="active" id="wtf_cont">
+                        <div class="trophy_img medium wtf"></div>
+                        <h3 class="nom_cat_wtf_text">WTF</h3>
+                    </li>
+                    <li class="active" id="creepy_cont">
+                        <div class="trophy_img medium creepy"></div>
+                        <h3 class="nom_cat_creepy_text">Creepy</h3>
+                    </li>
+                    <li class="active" id="awesome_cont">
+                        <div class="trophy_img medium awesome"></div>
+                        <h3 class="nom_cat_awesome_text">Awesome</h3>
+                    </li>
+                    <li class="active" id="yummy_cont">
+                        <div class="trophy_img medium yummy"></div>
+                        <h3 class="nom_cat_yummy_text">Yummy</h3>
+                    </li>
+                </ul>
+			</div>
+			<div class="clear"></div>
+			<div id="caption_cont">
+				<textarea>Caption</textarea>
+			</div>
+			<div id="action_row">
+				<a class="sick large" id="cancel">Cancel</a>
+				<a class="sick large" id="post">Post</a>
+			</div>
+		</div>
+
+  	</body>
+</html>

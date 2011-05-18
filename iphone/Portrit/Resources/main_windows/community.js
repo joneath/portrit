@@ -1239,7 +1239,8 @@ function update_photo_cache(data){
 }
  
 var countdown_interval_set = false;
-var countdown_interval = null;       
+var countdown_interval = null;
+var globals_attached = false;
 function init_community_view(){
     win.add(tv);
     
@@ -1266,54 +1267,45 @@ function init_community_view(){
     xhr.send();
 
     //Pull to refresh
-    var tableHeader = Ti.UI.createView({
-    	backgroundColor:"#000",
-    	width:320,
-    	height:60
-    });
+    if (!globals_attached){
+        var tableHeader = Ti.UI.createView({
+        	backgroundColor:"#000",
+        	width:320,
+        	height:60
+        });
 
-    var arrow = Ti.UI.createView({
-    	backgroundImage:"../images/pull_arrow.png",
-    	width: 33,
-    	height: 41,
-    	bottom:10,
-    	left:20
-    });
+        var arrow = Ti.UI.createView({
+        	backgroundImage:"../images/pull_arrow.png",
+        	width: 33,
+        	height: 41,
+        	bottom:10,
+        	left:20
+        });
 
-    var statusLabel = Ti.UI.createLabel({
-    	text:"Pull to update",
-    	left:55,
-    	width:200,
-    	bottom:30,
-    	height:"auto",
-    	color:"#999",
-    	textAlign:"center",
-    	font:{fontSize:13,fontWeight:"bold"}
-    });
+        var statusLabel = Ti.UI.createLabel({
+        	text:"Pull to update",
+        	left:55,
+        	width:200,
+        	bottom:30,
+        	height:"auto",
+        	color:"#999",
+        	textAlign:"center",
+        	font:{fontSize:13,fontWeight:"bold"}
+        });
 
-    // var lastUpdatedLabel = Ti.UI.createLabel({
-    //  text:"Last Updated: "+formatDate(),
-    //  left:55,
-    //  width:200,
-    //  bottom:15,
-    //  height:"auto",
-    //  color:"#ffffff",
-    //  textAlign:"center",
-    //  font:{fontSize:12}
-    // });
-    var actInd = Titanium.UI.createActivityIndicator({
-    	left:20,
-    	bottom:13,
-    	width:30,
-    	height:30
-    });
+        var actInd = Titanium.UI.createActivityIndicator({
+        	left:20,
+        	bottom:13,
+        	width:30,
+        	height:30
+        });
 
-    tableHeader.add(arrow);
-    tableHeader.add(statusLabel);
-    // tableHeader.add(lastUpdatedLabel);
-    tableHeader.add(actInd);
+        tableHeader.add(arrow);
+        tableHeader.add(statusLabel);
+        tableHeader.add(actInd);
 
-    tv.headerPullView = tableHeader;
+        tv.headerPullView = tableHeader;
+    }
 
     var pulling = false;
     var reloading = false;
@@ -1369,136 +1361,135 @@ function init_community_view(){
     	actInd.hide();
     	arrow.show();
     }
-
-    tv.addEventListener('click', function(e){
-
-    });
-
-    tv.addEventListener('scroll',function(e){
-    	var offset = e.contentOffset.y;
-    	if (offset <= -65.0 && !pulling)
-    	{
-    		var t = Ti.UI.create2DMatrix();
-    		t = t.rotate(-180);
-    		pulling = true;
-    		arrow.animate({transform:t,duration:180});
-    		statusLabel.text = "Release to update...";
-    	}
-    	else if (pulling && offset > -65.0 && offset < 0)
-    	{
-    		pulling = false;
-    		var t = Ti.UI.create2DMatrix();
-    		arrow.animate({transform:t,duration:180});
-    		statusLabel.text = "Pull down to update...";
-    	}
-    	if (offset < 0 && !countdown_interval_set){
-    	    countdown_interval_set = true;
-    	    clearInterval(countdown_interval);
-    	    GetCount();
-            countdown_interval = setInterval(GetCount, 1000);
-    	}
-    	else if (offset >= 0 && countdown_interval_set){
-    	    countdown_interval_set = false;
-    	    clearInterval(countdown_interval);
-    	}
-    });
-
-    tv.addEventListener('scrollEnd',function(e){
-    	if (pulling && !reloading && e.contentOffset.y <= -65.0)
-    	{
-    		reloading = true;
-    		pulling = false;
-    		arrow.hide();
-    		actInd.show();
-    		statusLabel.text = "Reloading...";
-    		tv.setContentInsets({top:60},{animated:true});
-    		arrow.transform=Ti.UI.create2DMatrix();
-    		beginReloading();
-    	}
-    });
-    // End pull to refresh
     
-    //Countdown
-    var countdown = Ti.UI.createLabel({
-    	text:"",
-    	left:55,
-    	width:200,
-    	bottom:10,
-    	height:"auto",
-    	color:"#fff",
-    	textAlign:"center",
-    	font:{fontSize:14,fontWeight:"bold"}
-    });
-    tableHeader.add(countdown);
-    
-    var date = new Date();
-    var month = date.getMonth();
-    var todays_date = date.getDate();
-    var todays_year = date.getFullYear();
-    if (date.getHours() >= 23){
-        dateFuture = new Date(todays_year,month,todays_date+1,23,0,0);
-    }
-    else{
-        dateFuture = new Date(todays_year,month,todays_date,23,0,0);
-    }
-    tzOffset = -8;
-    dx = dateFuture.toGMTString();
-    dx = dx.substr(0,dx.length -3);
-    tzCurrent=(dateFuture.getTimezoneOffset()/60)*-2;
-    dateFuture.setTime(Date.parse(dx))
-    dateFuture.setHours(dateFuture.getHours() + tzCurrent - tzOffset);
-    
-    function GetCount(){
-    	dateNow = new Date();									//grab current date
-    	amount = dateFuture.getTime() - dateNow.getTime();		//calc milliseconds between dates
-    	delete dateNow;
-    	// time is already past
-    	if(amount <= 1){
-    	    var date = new Date();
-    	    var month = date.getMonth();
-            var todays_date = date.getDate();
-            var todays_year = date.getFullYear();
-            if (date.getHours() >= 23){
-                dateFuture = new Date(todays_year,month,todays_date+1,23,0,0);
+    if (!globals_attached){
+        tv.addEventListener('click', function(e){
+
+        });
+
+        tv.addEventListener('scroll',function(e){
+            var offset = e.contentOffset.y;
+            if (offset <= -65.0 && !pulling){
+                var t = Ti.UI.create2DMatrix();
+                t = t.rotate(-180);
+                pulling = true;
+                arrow.animate({transform:t,duration:180});
+                statusLabel.text = "Release to update...";
             }
-            else{
-                dateFuture = new Date(todays_year,month,todays_date,23,0,0);
+            else if (pulling && offset > -65.0 && offset < 0){
+                pulling = false;
+                var t = Ti.UI.create2DMatrix();
+                arrow.animate({transform:t,duration:180});
+                statusLabel.text = "Pull down to update...";
             }
-            tzOffset = -8;
-            dx = dateFuture.toGMTString();
-            dx = dx.substr(0,dx.length -3);
-            tzCurrent=(dateFuture.getTimezoneOffset()/60)*-2;
-            dateFuture.setTime(Date.parse(dx))
-            dateFuture.setHours(dateFuture.getHours() + tzCurrent - tzOffset);
+            if (offset < 0 && !countdown_interval_set){
+                countdown_interval_set = true;
+                clearInterval(countdown_interval);
+                GetCount();
+                countdown_interval = setInterval(GetCount, 1000);
+            }
+            else if (offset >= 0 && countdown_interval_set){
+                countdown_interval_set = false;
+                clearInterval(countdown_interval);
+            }
+        });
+
+        tv.addEventListener('scrollEnd',function(e){
+        	if (pulling && !reloading && e.contentOffset.y <= -65.0){
+        		reloading = true;
+        		pulling = false;
+        		arrow.hide();
+        		actInd.show();
+        		statusLabel.text = "Reloading...";
+        		tv.setContentInsets({top:60},{animated:true});
+        		arrow.transform=Ti.UI.create2DMatrix();
+        		beginReloading();
+        	}
+        });
+        // End pull to refresh
+    
+        //Countdown
+        var countdown = Ti.UI.createLabel({
+        	text:"",
+        	left:55,
+        	width:200,
+        	bottom:10,
+        	height:"auto",
+        	color:"#fff",
+        	textAlign:"center",
+        	font:{fontSize:14,fontWeight:"bold"}
+        });
+        tableHeader.add(countdown);
+    
+        var date = new Date();
+        var month = date.getMonth();
+        var todays_date = date.getDate();
+        var todays_year = date.getFullYear();
+        if (date.getHours() >= 23){
+            dateFuture = new Date(todays_year,month,todays_date+1,23,0,0);
+        }
+        else{
+            dateFuture = new Date(todays_year,month,todays_date,23,0,0);
+        }
+        tzOffset = -8;
+        dx = dateFuture.toGMTString();
+        dx = dx.substr(0,dx.length -3);
+        tzCurrent=(dateFuture.getTimezoneOffset()/60)*-2;
+        dateFuture.setTime(Date.parse(dx))
+        dateFuture.setHours(dateFuture.getHours() + tzCurrent - tzOffset);
+    
+        function GetCount(){
+        	dateNow = new Date();									//grab current date
+        	amount = dateFuture.getTime() - dateNow.getTime();		//calc milliseconds between dates
+        	delete dateNow;
+        	// time is already past
+        	if(amount <= 1){
+        	    var date = new Date();
+        	    var month = date.getMonth();
+                var todays_date = date.getDate();
+                var todays_year = date.getFullYear();
+                if (date.getHours() >= 23){
+                    dateFuture = new Date(todays_year,month,todays_date+1,23,0,0);
+                }
+                else{
+                    dateFuture = new Date(todays_year,month,todays_date,23,0,0);
+                }
+                tzOffset = -8;
+                dx = dateFuture.toGMTString();
+                dx = dx.substr(0,dx.length -3);
+                tzCurrent=(dateFuture.getTimezoneOffset()/60)*-2;
+                dateFuture.setTime(Date.parse(dx))
+                dateFuture.setHours(dateFuture.getHours() + tzCurrent - tzOffset);
             
-            // if ($('#winners_announced_cont').length == 0){
-            //     $('#cont').prepend('<div id="winners_announced_cont"><h2>Winners are being calculated. Check back in a few minutes.</h2></div>')
-            // }
-    	}
-		days=0;hours=0;mins=0;secs=0;out="";
+                // if ($('#winners_announced_cont').length == 0){
+                //     $('#cont').prepend('<div id="winners_announced_cont"><h2>Winners are being calculated. Check back in a few minutes.</h2></div>')
+                // }
+        	}
+    		days=0;hours=0;mins=0;secs=0;out="";
 
-		amount = Math.floor(amount/1000);//kill the "milliseconds" so just secs
+    		amount = Math.floor(amount/1000);//kill the "milliseconds" so just secs
 
-		days=Math.floor(amount/86400);//days
-		amount=amount%86400;
+    		days=Math.floor(amount/86400);//days
+    		amount=amount%86400;
 
-		hours=Math.floor(amount/3600);//hours
-		amount=amount%3600;
+    		hours=Math.floor(amount/3600);//hours
+    		amount=amount%3600;
 
-		mins=Math.floor(amount/60);//minutes
-		amount=amount%60;
+    		mins=Math.floor(amount/60);//minutes
+    		amount=amount%60;
 
-		secs=Math.floor(amount);//seconds
+    		secs=Math.floor(amount);//seconds
 
-        // if(days != 0){out += days +":";}
-		if(days != 0 || hours != 0){out += hours +"h:";}
-		if(days != 0 || hours != 0 || mins != 0){out += mins +"m:";}
-		out += secs + 's';
-		countdown.text = 'Time remaining ' + out;
+            // if(days != 0){out += days +":";}
+    		if(days != 0 || hours != 0){out += hours +"h:";}
+    		if(days != 0 || hours != 0 || mins != 0){out += mins +"m:";}
+    		out += secs + 's';
+    		countdown.text = 'Time remaining ' + out;
+        }
+        GetCount();
     }
-    GetCount();
+    globals_attached = true;
 }
-
 init_community_view();
 
 var reset = false;

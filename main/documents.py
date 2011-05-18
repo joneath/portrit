@@ -15,7 +15,7 @@ class Comment(Document):
     
     meta = {
         'ordering': ['-created_date'],
-        'indexes': ['nomination']
+        'indexes': ['nomination', 'owner']
     }
     
 class Nomination_Category(Document):
@@ -54,9 +54,8 @@ class Nomination(Document):
     meta = {
         'ordering': ['-created_date'],
         'indexes': ['tagged_users', 
-                    'votes',
-                    'up_voters',
-                    'down_voters']
+                    'nominator',
+                    'nominatee']
     }
     
     def get_tagged_users(self):
@@ -178,8 +177,7 @@ class Photo_Flag(Document):
     flagger = ReferenceField('Portrit_User')
     
     meta = {
-        'ordering': ['-created_date'],
-        'indexes': ['flagger', 'created_date']
+        'ordering': ['-created_date']
     }
     
 class GPS_Data(EmbeddedDocument):
@@ -274,10 +272,7 @@ class FB_User(EmbeddedDocument):
     
     meta = {
         'ordering': ['-created_date'],
-        'indexes': ['fid',
-                    'access_token',
-                    'mobile_access_token',
-                    'created_date']
+        'indexes': ['fid']
     }
     
     def get_access_token(self):
@@ -299,8 +294,7 @@ class Twitter_User(EmbeddedDocument):
     
     meta = {
         'ordering': ['-created_date'],
-        'indexes': ['access_token',
-                    'created_date']
+        'indexes': ['access_token']
     }
     
     def get_access_token(self):
@@ -369,9 +363,9 @@ class Portrit_User(Document):
         'ordering': ['-created_date'],
         'indexes': ['username',
                     'name',
+                    'email',
                     'following',
-                    'followers',
-                    'created_date']
+                    'followers']
     }
     
     def get_twitter_access_token(self):
@@ -542,9 +536,7 @@ class Follow(Document):
     
     meta = {
         'indexes': ['active',
-                    'pending',
                     'user',
-                    'pending_notification',
                     'created_date']
     }
     
@@ -554,8 +546,7 @@ class Notification_Type(Document):
     name = StringField(unique=True)
 
     meta = {
-        'ordering': ['-created_date'],
-        'indexes': ['name']
+        'ordering': ['-created_date']
     }
 
 class Notification(Document):
@@ -574,12 +565,10 @@ class Notification(Document):
 
     meta = {
         'ordering': ['-created_date'],
-        'indexes': ['notification_type',
-                    'source',
+        'indexes': ['source',
                     'destination',
                     'owner',
                     'nomination',
-                    'created_date',
                     'active']
     }
     

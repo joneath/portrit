@@ -9,9 +9,6 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.core.cache import cache
 
-# from main.models import Portrit_User, FB_User, Album, Photo, Nomination, Nomination_Category, Comment, \
-#                         Notification, Notification_Type
-
 from main.documents import *
 
 from settings import ENV, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, NODE_SOCKET, NODE_HOST

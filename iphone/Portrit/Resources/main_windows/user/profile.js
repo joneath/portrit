@@ -676,12 +676,11 @@ function follow_event(e){
         parent = e.source.parent_cont,
         user_fid = e.source.user_fid;
     
+    parent.remove(e.source);
+    
+    var xhr = Titanium.Network.createHTTPClient({enableKeepAlive:false});
     if (method == 'follow'){
-        parent.remove(e.source);
-        var xhr = Titanium.Network.createHTTPClient();
-
-        xhr.onload = function()
-        {   
+        xhr.onload = function(){   
             var data = JSON.parse(this.responseData);
             
             follow_button = Titanium.UI.createButton({
@@ -713,12 +712,7 @@ function follow_event(e){
         xhr.send({'access_token': me.access_token, 'target': username, method: 'follow'});
     }
     else{
-        parent.remove(e.source);
-        
-        var xhr = Titanium.Network.createHTTPClient();
-
-        xhr.onload = function()
-        {   
+        xhr.onload = function(){   
             var data = JSON.parse(this.responseData);
             
             follow_button = Titanium.UI.createButton({
@@ -1583,8 +1577,14 @@ function init_profile_view(){
                     backgroundImage: follow_user_button,
                     zIndex: 2
                 });
+                
+                if (data.follow){
+                    follow_button.method = 'unfollow';
+                }
+                else{
+                    follow_button.method = 'follow';
+                }
 
-                follow_button.method = 'unfollow';
                 follow_button.parent_cont = profile_header;
                 follow_button.button = true;
                 follow_button.user_fid = user;

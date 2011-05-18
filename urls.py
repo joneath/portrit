@@ -63,6 +63,11 @@ urlpatterns += patterns('',
     url(r'^init_stream/$', 'main.nomination_views.init_stream', name='init_stream'),
 )
 
+#Tool URLs
+urlpatterns += patterns('',
+    url(r'^tools/share/$', 'main.tool_views.share', name='share_tool'),
+)
+
 #API URLs
 urlpatterns += patterns('',
     url(r'^api/get_recent_stream/$', 'main.api_views.get_recent_stream'),

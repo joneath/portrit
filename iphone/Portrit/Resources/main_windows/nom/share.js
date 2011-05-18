@@ -160,7 +160,7 @@ function close_share_nom(){
         var nom = data[0];
         try{
             if (twitter_switch && twitter_switch.value){
-                close_timeout = 1000;
+                close_timeout = 2000;
                 share_on_twitter(me, nom, caption_text);
             }
         }
@@ -170,7 +170,7 @@ function close_share_nom(){
         
         try{
             if (facebook_switch.value){
-                close_timeout = 1000;
+                close_timeout = 2000;
                 var title = me.name.split(' ')[0] + ' nominated a photo for ' + nom.nomination_category + ' on Portrit';
                 share_on_facebook(me, nom, caption_text, title);
             }
@@ -185,7 +185,7 @@ function close_share_nom(){
                 var nom = data[0];
                 try{
                     if (twitter_switch && twitter_switch.value){
-                        close_timeout = 1000;
+                        close_timeout = 3000;
                         share_on_twitter(me, nom, caption_text);
                     }
                 }
@@ -194,7 +194,7 @@ function close_share_nom(){
                 }
                 try{
                     if (facebook_switch.value){
-                        close_timeout = 1000;
+                        close_timeout = 3000;
                         var title = me.name.split(' ')[0] + ' nominated a photo for ' + nom.nomination_category + ' on Portrit';
                         share_on_facebook(me, nom, caption_text, title);
                     }
@@ -210,7 +210,7 @@ function close_share_nom(){
         else{
             try{
                 if (twitter_switch && twitter_switch.value){
-                    close_timeout = 1000;
+                    close_timeout = 3000;
                     share_on_twitter(me, data, caption_text);
                 }
             }
@@ -219,7 +219,7 @@ function close_share_nom(){
             }
             try{
                 if (facebook_switch.value){
-                    close_timeout = 1000;
+                    close_timeout = 3000;
                     var title = me.name.split(' ')[0] + ' shared a photo on Portrit';
                     share_on_facebook(me, data, caption_text, title);
                 }
@@ -234,7 +234,6 @@ function close_share_nom(){
     if (new_photo){
         setTimeout(function(){
             window_activity_cont.hide();
-            caption.blur();
             tabGroup.bottom = 0;
             if (nominations != ''){
                 tabGroup.setActiveTab(0);
@@ -243,11 +242,8 @@ function close_share_nom(){
                 tabGroup.setActiveTab(4);
             }
 
-            win.close({animated:false});
-            Ti.App.fireEvent('close_nominate_page', { });
-            Ti.App.fireEvent('close_settings_page', { });
 
-            setTimeout(function(){
+            // setTimeout(function(){
                 if (nominations != ''){
                     Ti.App.fireEvent('reset_after_camera', { });
                     Ti.App.fireEvent('update_active_noms', { });
@@ -264,24 +260,27 @@ function close_share_nom(){
                     }
                     Ti.App.fireEvent('reset_after_camera', { });
                 }
-        	}, 1000);
+                
+                win.close({animated:false});
+                Ti.App.fireEvent('close_nominate_page', { });
+                Ti.App.fireEvent('close_settings_page', { });
+            // }, 1500);
         }, close_timeout);
     }
     else{
         window_activity_cont.hide();
-        caption.blur();
         tabGroup.setActiveTab(0);
         
-        win.close({animated:false});
-        Ti.App.fireEvent('close_nominate_page', { });
-        Ti.App.fireEvent('close_settings_page', { });
-        
-        setTimeout(function(){
+        // setTimeout(function(){
     	    Ti.App.fireEvent('update_active_noms', { });
             if (user == me.fid){
                 Ti.App.fireEvent('update_my_photos', { });
             }
-    	}, 1000);
+            
+            win.close({animated:false});
+            Ti.App.fireEvent('close_nominate_page', { });
+            Ti.App.fireEvent('close_settings_page', { });
+        // }, 1000);
     }
 }
 

@@ -1663,7 +1663,6 @@ function init_active_view(){
                 }
                 else{
                     tv.setData([empty_row]);
-                    tv.setData([empty_row]);
                     active_empty_label.hide();
                     winners_empty_label.hide();
                     photos_empty_label.show();
@@ -1697,8 +1696,7 @@ function init_active_view(){
      window_activity_cont.hide();
     }
     
-    if (!globals_attached){    
-    
+    if (!globals_attached){
         var countdown_interval_set = false;
         tv.addEventListener('scroll',function(e){
          var offset = e.contentOffset.y;
@@ -1757,7 +1755,9 @@ function init_active_view(){
 
                 header_tab_selection.animate(header_active_tab_animation);
             }
-            beginReloading();
+            setTimeout(function(){
+                beginReloading();
+            }, 1000);
         });
     
         //Countdown
@@ -1840,7 +1840,6 @@ function init_active_view(){
         }
         GetCount();
     }
-    
     globals_attached = true;
 }
 

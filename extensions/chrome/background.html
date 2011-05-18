@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<script src='jquery.js'></script>
+  </head>
+  <body>
+    <script>
+		var ENV = 'LOCAL';
+		var HOST = 'http://192.168.1.126:8080';
+		if (ENV == 'TETS'){
+			
+		}
+		else if (ENV == 'PROD'){
+			
+		}
+      	/**
+       	* Returns a handler which will open a new window when activated.
+       	*/
+      	function getClickHandler() {
+        	return function(info, tab) {
+
+          		// The srcUrl property is only available for image elements.
+          		var url = HOST + '/tools/share/?source=' + info.srcUrl;
+
+          		// Create a new window to the info page.
+          		chrome.windows.create({ url: url, width: 550, height: 660, type: 'popup' });
+        	};
+      	};
+
+      	/**
+       	* Create a context menu which will only show up for images.
+       	*/
+      	chrome.contextMenus.create({
+        	"title" : "Share on Portrit",
+        	"type" : "normal",
+        	"contexts" : ["image"],
+        	"onclick" : getClickHandler()
+      	});
+    </script>
+  </body>
+</html>

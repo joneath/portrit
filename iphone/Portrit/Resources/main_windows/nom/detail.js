@@ -241,7 +241,7 @@ function update_nom_detail(index){
     nominatee_profile_image.username = selected_nom.nominatee_username;
     
     var nominatee_name_text = '';
-	if (selected_nom.nominator == me.fid){
+	if (selected_nom.nominatee == me.fid){
 	    nominatee_name_text = 'You';
 	}
 	else{

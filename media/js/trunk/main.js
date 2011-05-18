@@ -1668,7 +1668,6 @@ $(document).ready(function(){
         if ($('#profile_followers_count_cont').length > 0 && selected_user.fid == me.id){
             var followers_count = parseInt($('#profile_followers_count_cont h3').text());
             followers_count += 1;
-            
             $('#profile_followers_count_cont h3').text(followers_count);
         }
     }
@@ -1687,8 +1686,8 @@ $(document).ready(function(){
         }
         
         var photo_html = '';
-        if ( data.photo){
-            photo_html = '<img src="' + data[i].photo.crop_small + '"/>';
+        if (data.photo){
+            photo_html = '<img src="' + data.photo.crop_small + '"/>';
         }
         
         if (method == 'new_nom'){
@@ -1705,6 +1704,7 @@ $(document).ready(function(){
                                         '<p class="strong" style="">' + name +'</p>' +
                                         '<span> nominated your photo.</span>' +
                                         '<p class="time">Right now</p>' +
+                                        '<div class="clear"></div>' +
                                     '</div>' +
                                     '<div class="kill_notification close_img ' + close_size + '" value="' + data.notification_id + '" style="display:none;"></div>' +
                                 '</div>';
@@ -1718,6 +1718,7 @@ $(document).ready(function(){
                                         '<p class="strong" style="">' + name +'</p>' +
                                         '<span> tagged you in a nomination.</span>' +
                                         '<p class="time">Right now</p>' +
+                                        '<div class="clear"></div>' +
                                     '</div>' +
                                     '<div class="kill_notification close_img ' + close_size + '" value="' + data.notification_id + '" style="display:none;"></div>' +
                                 '</div>';
@@ -1743,6 +1744,7 @@ $(document).ready(function(){
                                         '<p class="strong" style="">' + name +'</p>' +
                                         '<span> commented on ' + owner_text + ' photo.</span>' + 
                                         '<p class="time">Right now</p>' +
+                                        '<div class="clear"></div>' +
                                     '</div>' +
                                     '<div class="kill_notification close_img ' + close_size + '" value="' + data.notification_id + '" style="display:none;"></div>' +
                                 '</div>';
@@ -1761,6 +1763,7 @@ $(document).ready(function(){
                                         '<p class="strong" style="">' + name +'</p>' +
                                         '<span> photo won the </span><p class="strong" style="">' + data.nomination_category + '</p><span> trophy!</span>' +
                                         '<p class="time">Right now</p>' +
+                                        '<div class="clear"></div>' +
                                     '</div>' +
                                     '<div class="kill_notification close_img ' + close_size + '" value="' + data.notification_id + '" style="display:none;"></div>' +
                                 '</div>';
@@ -1779,9 +1782,7 @@ $(document).ready(function(){
                                             '<div class="clear"></div>' +
                                         '</div>' +
                                         '<div class="kill_notification close_img ' + close_size + '" value="' + data.notification_id + '" style="display:none;"/></div>' +
-                                    '</div>';
-                                    
-                                    
+                                    '</div>';    
             }
             else{
                 notification_html +='<div class="notification_popup_cont new_follow" value="' + data.follower_username + '" read="false" id="notification_' + data.id + '" onclick="void(0)">' +
@@ -1794,9 +1795,6 @@ $(document).ready(function(){
                                         '<div class="kill_notification close_img ' + close_size + '" value="' + data.notification_id + '" style="display:none;"/></div>' +
                                     '</div>';
             }
-            
-            
-
         }
 
         $('#notification_footer_popup_cont').prepend(notification_html);
@@ -4671,7 +4669,7 @@ $(document).ready(function(){
         $('#gallery_selected_cont').append(nominate_html);
         $('#gallery_next_cont').attr('value', next_photo_value).append(next_photo_html);
         
-        $('#gallery_photo_center').append('<img src="' + selected_photo.source + '"/>');
+        $('#gallery_photo_center').html('<img src="' + selected_photo.source + '"/>');
         
         var photo_action_bar = '<p>' + secondsToHms(time_diff) + '</p>' +
                                 '<div class="flag flag_photo ' + flag_class + '" pid="' + selected_photo.id + '" thumb="' + selected_photo.crop + '" fb_crop="' + selected_photo.crop_small + '" owner="' + selected_user.username + '"></div>';
@@ -4956,7 +4954,7 @@ $(document).ready(function(){
                                     '</div>' +
                                     '<div id="gallery_photo_cont">' +
                                         '<div id="gallery_photo_center">' +
-                                            '' +
+                                            '<img src="http://portrit.s3.amazonaws.com/img/ajax-loader-light.gif"/>' +
                                         '</div>' +
                                         '<div id="gallery_photo_bottom_cont">' +
                                             '<p></p>' +

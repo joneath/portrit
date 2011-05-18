@@ -1,17 +1,23 @@
 {
     "name": "Portrit",
-    "version": "1.0",
-    "description": "The first extension that I made.",
+    "version": "1.0.0",
+    "description": "Finding the best photos.",
     "icons": { 
         "16": "icon16.png",
         "32": "icon32.png",
         "48": "icon48.png",
         "128": "icon128.png"
     },
+	"background_page": "background.html",
     "browser_action": {
-        "default_icon": "icon16.png"
+        "default_icon": "icon16.png",
+		"popup": "popup.html"
     },
     "permissions": [
-        "tabs"
+		"http://www.portrit.com/",
+	    "contextMenus",
+	    "tabs",
+	    "http://*/*",
+	    "https://*/*"
     ]
 }
