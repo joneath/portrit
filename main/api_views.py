@@ -2140,7 +2140,7 @@ def flag_photo(request):
             
             if len(photo.flags) >= 3 and not photo.validated:
                 photo.active = False
-                Nomination.objects.filter(photo=photo).update(set__removed=True)
+                Nomination.objects.filter(photo=photo).update(set__removed=True, set__active=False)
                 
             photo.save()
             #Create Email, Send to Admins

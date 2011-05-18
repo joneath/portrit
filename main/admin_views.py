@@ -84,7 +84,7 @@ def flags(request, template='admin/flags.html'):
                 flag.photo.active = False
                 flag.photo.save()
                 
-                Nomination.objects.filter(photo=flag.photo).update(set__active=False)
+                Nomination.objects.filter(photo=flag.photo).update(set__active=False, removed=True)
                 
             flag.save()
             
