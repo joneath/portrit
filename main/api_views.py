@@ -1835,7 +1835,7 @@ def get_community_top_nominations_cat(request):
         nominations = cache.get('landing_nominations_' + cat.replace(' ', ''))
         if not nominations:
             nominations = Nomination.objects.filter(nomination_category=cat,
-                                                    active=True,
+                                                    removed=False,
                                                     public=True).order_by('-created_date', '-current_vote_count')[:PAGE_SIZE]
             data = serialize_noms(nominations)
             cache.set('landing_nominations_' + cat.replace(' ', ''), data, 60*15)
@@ -1843,7 +1843,7 @@ def get_community_top_nominations_cat(request):
             data = nominations
     else:    
         nominations = Nomination.objects.filter(nomination_category=cat,
-                                                active=True,
+                                                removed=False,
                                                 public=True).order_by('-created_date', '-current_vote_count')[:PAGE_SIZE]
         data = serialize_noms(nominations)
         
@@ -2140,7 +2140,7 @@ def flag_photo(request):
             
             if len(photo.flags) >= 3 and not photo.validated:
                 photo.active = False
-                Nomination.objects.filter(photo=photo).update(set__active=False)
+                Nomination.objects.filter(photo=photo).update(set__removed=True)
                 
             photo.save()
             #Create Email, Send to Admins
