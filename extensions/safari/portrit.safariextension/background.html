@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+	<script type="text/javascript">
+		var ENV = 'PROD';
+		var HOST = 'http://192.168.1.126:8080';
+		if (ENV == 'TEST'){
+			HOST = 'http://test.portrit.com';
+		}
+		else if (ENV == 'PROD'){
+			HOST = 'http://www.portrit.com';
+		}
+      	/**
+       	* Returns a handler which will open a new window when activated.
+       	*/
+      	function getClickHandler(event) {
+			source_url = event.userInfo.source_url;
+         	// The srcUrl property is only available for image elements.
+         	var url = HOST + '/tools/share/?source=' + escape(event.userInfo.path) + '&page_url=' + escape(source_url) + '&from=safari';
+
+			var w = 550;
+			var h = 786;
+			var left = (screen.width/2)-(w/2);
+			var top = (screen.height/2)-(h/2); 
+		
+			var win = safari.application.openBrowserWindow();
+			win.activeTab.url = url;
+
+       		// Create a new window to the info page.
+       		// chrome.windows.create({ url: url, width: w, height: h, type: 'popup', 'left': left, 'top': top});
+        }
+
+		// safari.application.addEventListener("share_portrit", getClickHandler, false);
+		safari.application.addEventListener("command", getClickHandler, false);
+		
+		function myValidateHandler(){
+			
+		}
+		
+		safari.application.addEventListener("validate", myValidateHandler, false);
+		
+		function handleContextMenu(event) {
+			if (event.userInfo && event.userInfo.tagName !== "IMG"){
+			        return;
+			}
+			event.contextMenu.appendContextMenuItem("share_portrit", "Share on Portrit");
+		}
+		
+		safari.application.addEventListener("contextmenu", handleContextMenu, false);
+
+      	/**
+       	* Create a context menu which will only show up for images.
+       	*/
+      	// chrome.contextMenus.create({
+      	//         	"title" : "Share on Portrit",
+      	//         	"type" : "normal",
+      	//         	"contexts" : ["image"],
+      	//         	"onclick" : getClickHandler()
+      	// });
+    </script>
+  </body>
+</html>

@@ -1,29 +1,33 @@
 <!DOCTYPE html>
 <html>
   <head>
-	<script src='jquery.js'></script>
   </head>
   <body>
     <script>
-		var ENV = 'LOCAL';
+		var ENV = 'PROD';
 		var HOST = 'http://192.168.1.126:8080';
-		if (ENV == 'TETS'){
-			
+		if (ENV == 'TEST'){
+			HOST = 'http://test.portrit.com';
 		}
 		else if (ENV == 'PROD'){
-			
+			HOST = 'http://www.portrit.com';
 		}
       	/**
        	* Returns a handler which will open a new window when activated.
        	*/
       	function getClickHandler() {
-        	return function(info, tab) {
-
+        	return function(info, tab){
+				source_url = tab.url
           		// The srcUrl property is only available for image elements.
-          		var url = HOST + '/tools/share/?source=' + info.srcUrl;
+          		var url = HOST + '/tools/share/?source=' + escape(info.srcUrl) + '&page_url=' + escape(source_url) + '&from=chrome';
+
+				var w = 550;
+				var h = 786;
+				var left = (screen.width/2)-(w/2);
+				var top = (screen.height/2)-(h/2); 
 
           		// Create a new window to the info page.
-          		chrome.windows.create({ url: url, width: 550, height: 660, type: 'popup' });
+          		chrome.windows.create({ url: url, width: w, height: h, type: 'popup', 'left': left, 'top': top});
         	};
       	};
 

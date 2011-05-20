@@ -66,6 +66,7 @@ urlpatterns += patterns('',
 #Tool URLs
 urlpatterns += patterns('',
     url(r'^tools/share/$', 'main.tool_views.share', name='share_tool'),
+    url(r'^tools/save_share/$', 'main.tool_views.save_share', name='save_share'),
 )
 
 #API URLs

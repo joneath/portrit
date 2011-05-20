@@ -1131,7 +1131,74 @@ $(document).ready(function(){
         }
     }
     
+    function render_extensions(){
+        var extension_html ='<div id="context_header">' +
+                                '<h1>Browser Extensions</h1>' +
+                                '<p>Share and nominate photos wherever you browse.</p>' +
+                            '</div>' +
+                            '<div id="context_main_cont">' +
+                                '<div id="extensions_cont">' +
+                                    '<a href="http://portrit.s3.amazonaws.com/extensions/portrit.crx">' +
+                                        '<div class="browser_cont">' +
+                                            '<img src="http://portrit.s3.amazonaws.com/img/chrome.png"/>' +
+                                            '<p>Google Chrome</p>' +
+                                        '</div>' +
+                                    '</a>' +
+                                    '<a href="http://portrit.s3.amazonaws.com/extensions/portrit.safariextz">' +
+                                        '<div class="browser_cont" style="border-left: 1px solid #dedede; border-right: 1px solid #dedede;">' +
+                                            '<img src="http://portrit.s3.amazonaws.com/img/safari.png"/>' +
+                                            '<p>Safari</p>' +
+                                        '</div>' +
+                                    '</a>' +
+                                    '<a href="http://portrit.s3.amazonaws.com/extensions/portrit.xpi">' +
+                                        '<div class="browser_cont">' +
+                                            '<img src="http://portrit.s3.amazonaws.com/img/firefox.png"/>' +
+                                            '<p>Firefox</p>' +
+                                        '</div>' +
+                                    '</a>' +
+                                    '<div class="clear"></div>' +
+                                '</div>' +
+                                '<div id="extensions_about_cont">' +
+                                    '<div class="extension_point">' +
+                                        '<div class="extension_point_header">' +
+                                            '<h2>1</h2>' +
+                                            '<h3>Download</h3>' +
+                                            '<div class="clear"></div>' +
+                                        '</div>' +
+                                        '<img src="http://portrit.s3.amazonaws.com/img/download.jpg"/>' +
+                                    '</div>' +
+                                    '<div class="extension_point">' +
+                                        '<div class="extension_point_header">' +
+                                            '<h2>2</h2>' +
+                                            '<h3>Right click</h3>' +
+                                            '<div class="clear"></div>' +
+                                        '</div>' +
+                                        '<img src="http://portrit.s3.amazonaws.com/img/right_click.jpg"/>' +
+                                    '</div>' +
+                                    '<div class="extension_point">' +
+                                        '<div class="extension_point_header">' +
+                                            '<h2>3</h2>' +
+                                            '<h3>Nominate and share</h3>' +
+                                            '<div class="clear"></div>' +
+                                        '</div>' +
+                                        '<img src="http://portrit.s3.amazonaws.com/img/share_extension.jpg"/>' +
+                                    '</div>' +
+                                    '<div class="clear"></div>' +
+                                '</div>' +
+                            '</div>';
+        
+        $('#context_cont').append(extension_html);
+        
+        if (typeof(_gaq) !== "undefined"){
+            _gaq.push(['_trackEvent', 'Extensions', 'Shown', '']);
+        }
+    }
+    
     function info_context_delagate(context){
+        if (first_tuts_on){
+            $('#first_tuts_cont').hide();
+        }
+        
         selected_user = {
             'username': null,
             'fid': null,
@@ -1165,6 +1232,10 @@ $(document).ready(function(){
         else if (context == 'faq'){
             view_active = 'faq';
             render_faq();
+        }
+        else if (context == 'extensions'){
+            view_active = 'extensions';
+            render_extensions();
         }
     }
     
@@ -2768,27 +2839,27 @@ $(document).ready(function(){
                                             '<div class="tut_point">' +
                                                 '<h2 class="tut_point_num nom_cat_lol">2</h2>' +
                                                 '<div>' +
-                                                    '<h3>Vote On Your Favorite</h3>' + 
-                                                    '<p>It\'s up to you and your friends to decide who earns a trophy. Take a look through all the Hot, WTF, FAIL, etc photos and give your opinion. Love it, vote it up. Hate it, vote it down.</p>' +
+                                                    '<h3>Check Out the Nominations</h3>' + 
+                                                    '<p>Once you click the submit button below, you will be taken to your personal stream. This will show you all active nominations by your followers. If you find your friends borring or maybe you don\'t have any, try looking through the community section. The community section is where you can see what everyone on Portrit is nominating.</p>' +
                                                 '</div>' +
                                                 '<div class="clear"></div>' +
                                             '</div>' +
                                             '<div class="tut_point" style="margin-bottom: 30px;">' +
                                                 '<h2 class="tut_point_num nom_cat_party_animal">3</h2>' +
                                                 '<div>' +
-                                                    '<h3>Build Up Your Trophy Room</h3>' + 
-                                                    '<p>Got amazing photos? Earn trophies for your hard work. Friends see your winning photos first, so your best photos are always first to be seen. Don\'t sweat not winning, everything starts fresh the next day, so your hilarious LOLcat photo can live again.</p>' +
+                                                    '<h3>Compete with Your Followers</h3>' + 
+                                                    '<p>Got amazing photos? Earn trophies for your hard work. Post a photo and nominate it for one of the 10 trophies to compete with your followers. Don\'t sweat it if someone has a better photo, nominations restart every night at 12AM(PST).</p>' +
                                                     '<div class="clear"></div>' +
                                                 '</div>' +
                                                 '<div class="clear"></div>' +
                                             '</div>' +
                                             '<div id="allow_notifications_cont">' +
-                                                '<label for="allow_notifications">Allow Portrit to notify you through email: </label>' +
+                                                '<label for="allow_notifications">Allow Portrit to notify me through email: </label>' +
                                                 '<div id="allow_notifications" value="fb_auto_post" class="switch switch_on"></div>' +
                                                 '<div class="clear"></div>' +
                                             '</div>' +
                                             '<div id="allow_portrit_album_cont">' +
-                                                '<label for="allow_portrit_album">Allow Portrit to post winning trophies back to Facebook: </label>' +
+                                                '<label for="allow_portrit_album">Allow Portrit to post my winning trophies back to Facebook: </label>' +
                                                 '<div id="allow_portrit_album" value="portrit_album" class="switch switch_on"></div>' +
                                                 '<div class="clear"></div>' +
                                             '</div>' +
@@ -2802,8 +2873,8 @@ $(document).ready(function(){
                                 '</div>';
         $('body').append(initial_tut_html);
         if (!mobile || tablet){
-            if ($(window).height() < 820){
-                $('#wrapper').css('min-height', 820);
+            if ($(window).height() < 860){
+                $('#wrapper').css('min-height', 860);
             }
         }
         attach_initial_tut_handlers(tut_counts);
@@ -2823,6 +2894,15 @@ $(document).ready(function(){
     var vote_tooltip_on = false;
     var my_username = '';
     var twitter_access_token = '';
+    var first_tuts_on = false;
+    var first_tuts_sections = {
+        'stream': true,
+        'community': true,
+        'profile': true,
+        'detail': true,
+        'gallery': true
+    };
+    
     function login_fb_user(){
         $('#cont').prepend('<div class="loading"><h1>Portrit Loading...</h1><div id="loader"><img src="http://portrit.s3.amazonaws.com/img/album-loader-dark.gif"/></div></div>');
         setTimeout(render_server_dead, 15000);
@@ -2849,8 +2929,12 @@ $(document).ready(function(){
                 twitter_access_token = data.twitter_access_token
                 
                 my_username = data.username;
-                // friends = data.following;
+                
                 if (first){
+                    if (!mobile || tablet){
+                        first_tuts_on = true;
+                        $('#wrapper').after('<div id="first_tuts_cont" style="display:none;"><div id="tuts_wrap"></div></div>');
+                    }
                     $('#right_nav').prepend('<div id="activate_tut"><div id="tutorial_cont" style="display:none;"><div id="tut_arrow"></div><h1>Tutorial</h1><div id="tut_section_wrap"><div class="tut_section" id="nomination_tut"></div><div class="tut_section" id="vote_count_tut"></div><div class="tut_section" id="comment_count_tut"></div></div><a id="skip_tut" class="sick large">Skip</a></div></div>');
                     render_initial_tutorial(tut_counts);
                 }
@@ -3736,6 +3820,25 @@ $(document).ready(function(){
         else if (view_to_activate == 'top'){
             $('#community_top').addClass('selected');
         }
+        
+        if (first_tuts_on && first_tuts_sections['community']){
+            $('#first_tuts_cont').show();
+            
+            var stream_help_html =  '<h1>Community</h1>' +
+                                    '<p>Watch the nominations as they come in, browse through the highest rated nominations of the day, and meet new people.<p>';
+            
+            $('#tuts_wrap').html(stream_help_html);
+            
+            setTimeout(function(){
+                if (view_active == 'community_active' || view_active == 'community_photos' || view_active == 'community_top'){
+                    $('#first_tuts_cont').fadeOut();
+                }
+                first_tuts_sections['community'] = false;
+            }, 10000);
+        }
+        else{
+            $('#first_tuts_cont').hide();
+        }
     }
     
     var selected_nom = null;
@@ -3789,6 +3892,25 @@ $(document).ready(function(){
             }
         });
         attach_nom_detail_handlers();
+        
+        if (first_tuts_on && first_tuts_sections['detail']){
+            $('#first_tuts_cont').show();
+            
+            var stream_help_html =  '<h1>Detail</h1>' +
+                                    '<p>Detail view is where the magic happens. Give your vote, leave a comment, see the other competing photos, and share the nomination with your friends.<p>';
+            
+            $('#tuts_wrap').html(stream_help_html);
+            
+            setTimeout(function(){
+                if (view_active == 'nom_detail'){
+                    $('#first_tuts_cont').fadeOut();
+                }
+                first_tuts_sections['detail'] = false;
+            }, 10000);
+        }
+        else{
+            $('#first_tuts_cont').hide();
+        }
     }
     
     function inject_nom_stream(noms, target){
@@ -4248,7 +4370,7 @@ $(document).ready(function(){
                                             '<a href="/#!/community/active/' + data[i].id + '/" class="nomination_id" value="' + data[i].id + '">' +
                                                 '<div class="active_stat">' +
                                                     '<h5>Votes</h5>' +
-                                                    '<p>' + data[i].votes.length + '</p>' +
+                                                    '<p>' + data[i].vote_count + '</p>' +
                                                 '</div>' +
                                             '</a>' +
                                         '</div>' +
@@ -4563,6 +4685,25 @@ $(document).ready(function(){
             render_top_noms(data.top);
             render_top_users(data.top_users);
         });
+        
+        if (first_tuts_on && first_tuts_sections['stream']){
+            $('#first_tuts_cont').show();
+            
+            var stream_help_html =  '<h1>Stream</h1>' +
+                                    '<p>This is your personalized stream. This will show nominations, photos, and recent winning photos from the users you follow.<p>';
+            
+            $('#tuts_wrap').html(stream_help_html);
+            
+            setTimeout(function(){
+                if (view_active == 'stream_active' || view_active == 'stream_photos' || view_active == 'stream_winners'){
+                    $('#first_tuts_cont').fadeOut();
+                }
+                first_tuts_sections['stream'] = false;
+            }, 10000);
+        }
+        else{
+            $('#first_tuts_cont').hide();
+        }
     }
     
     function load_user(method, fnc_ptr){
@@ -4980,6 +5121,25 @@ $(document).ready(function(){
         }
         
         attach_gallery_handlers();
+        
+        if (first_tuts_on && first_tuts_sections['gallery']){
+            $('#first_tuts_cont').show();
+            
+            var stream_help_html =  '<h1>Gallery</h1>' +
+                                    '<p>Browse through photos to find the best, then nominate it for a trophy!<p>';
+            
+            $('#tuts_wrap').html(stream_help_html);
+            
+            setTimeout(function(){
+                if (view_active == 'gallery'){
+                    $('#first_tuts_cont').fadeOut();
+                }
+                first_tuts_sections['gallery'] = false;
+            }, 10000);
+        }
+        else{
+            $('#first_tuts_cont').hide();
+        }
     }
     
     function render_user_profile(data){
@@ -5720,6 +5880,25 @@ $(document).ready(function(){
             }
         }
         attach_profile_handlers();
+        
+        if (first_tuts_on && first_tuts_sections['profile']){
+            $('#first_tuts_cont').show();
+            
+            var stream_help_html =  '<h1>Profile</h1>' +
+                                    '<p>Welcome to your profile. Check who you are following, look through your photos, keep track of your active nominations and more!<p>';
+            
+            $('#tuts_wrap').html(stream_help_html);
+            
+            setTimeout(function(){
+                if (view_active == 'profile_trophies' || view_active == 'profile_photos' || view_active == 'profile_active' || view_active == 'profile_settings'){
+                    $('#first_tuts_cont').fadeOut();
+                }
+                first_tuts_sections['profile'] = false;
+            }, 10000);
+        }
+        else{
+            $('#first_tuts_cont').hide();
+        }
     }
     
     function attach_profile_handlers(){
@@ -6199,6 +6378,10 @@ $(document).ready(function(){
     var scroll_loading = false;
     var profile_active_nom_scroll = 0;
     function attach_main_handlers(){
+        $('#tuts_wrap').live('click', function(){
+            $(this).parent().fadeOut();
+        });
+        
         $('.notification_pending_cont span').live('click', function(){
             var value = $(this).attr('value');
             var notification_id = $(this).parent().attr('value');
@@ -7513,7 +7696,6 @@ $(document).ready(function(){
         });
     }
     
-    var twitter_window_location_intervale
     function send_twitter_auth_request(){
         var callback_url = '';
         if (ENV == 'LOCAL'){
@@ -7526,7 +7708,7 @@ $(document).ready(function(){
             callback_url = 'http://portrit.com/return_twitter/';
         }
         
-        var twitter_window = window.open('/api/auth_twitter?access_token=' + fb_session.access_token ,"TwitterAuth", "width=800,height=434");
+        var twitter_window = window.open('/api/auth_twitter?access_token=' + fb_session.access_token ,"TwitterAuth", "width=800,height=677");
     }
     
     function catch_twitter_access_token(token){
@@ -8723,6 +8905,9 @@ $(document).ready(function(){
                         }
                         else if (url_vars_list[0] == 'faq'){
                             info_context_delagate('faq');
+                        }
+                        else if (url_vars_list[0] == 'extensions'){
+                            info_context_delagate('extensions');
                         }
                         else{
                             //Profile index

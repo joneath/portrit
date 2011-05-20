@@ -6656,6 +6656,70 @@ div#all_friends {
             margin-left:        30px;
         }
         
+    #extensions_cont{
+        width:              752px;
+        margin:             0 auto;
+        margin-top:         25px;
+        margin-bottom:      25px;
+        border:             1px solid #DEDEDE;
+        border-radius:      5px;
+        -moz-border-radius: 5px;
+    }
+    
+        #extensions_cont .browser_cont{
+            float:              left;
+            padding:            5px;
+            width:              240px;
+        }
+        
+        #extensions_cont .browser_cont:hover{
+            background-color:       #dedede;
+            cursor:                 pointer;
+        }
+        
+            #extensions_cont .browser_cont img{
+                float:              left;
+            }
+        
+            #extensions_cont .browser_cont p{
+                float:              left;
+                font-size:          18px;
+                line-height:        64px;
+                margin-bottom:      0px;
+            }
+            
+    #extensions_cont a:hover{
+        text-decoration:    none;
+    }
+            
+    #extensions_about_cont{
+        margin-top:         20px;
+    }
+    
+        #extensions_about_cont .extension_point{
+            float:              left;
+            text-align:         center;
+            width:              310px;
+        }
+        
+        .extension_point .extension_point_header{
+            margin-bottom:      10px;
+            text-align:         left;
+        }
+        
+        #extensions_about_cont .extension_point h2{
+            float:              left;
+            font-size:          42px;
+            margin-bottom:      0px;
+        }
+        
+        #extensions_about_cont .extension_point h3{
+            float:              left;
+            font-size:          20px;
+            line-height:        50px;
+            margin-left:        30px;
+        }
+        
         
 #settings_cont{
     
@@ -7288,6 +7352,34 @@ div#payment_types_cont{
         top:                    -10px;
         right:                  -10px;
     }
+    
+#first_tuts_cont{
+    background:         rgba(0,0,0,.8);
+    bottom:             30px;
+    position:           fixed;
+    width:              100%;
+    z-index:            999;
+}
+
+    #tuts_wrap{
+        cursor:             pointer;
+        height:             80px;
+        margin:             0 auto;
+        padding:            10px 15px;
+        width:              930px;
+        -webkit-box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.5);
+        -moz-box-shadow:    0px 0px 2px 1px rgba(0, 0, 0, 0.5);
+        box-shadow:         0px 0px 2px 1px rgba(0, 0, 0, 0.5);
+    }
+    
+        #tuts_wrap h1{
+            font-size:          30px;
+            font-weight:        bold;
+        }
+        
+        #tuts_wrap p{
+            font-size:          18px;
+        }
 
 #footer{
     border-top:         1px solid #1E1E1E;
@@ -7334,7 +7426,7 @@ div#payment_types_cont{
     
     #footer #portrit_copyright{
         display:            inline-block;
-        margin-left:        35px;
+        margin-left:        10px;
     }
     
         #portrit_copyright div{

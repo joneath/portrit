@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://portrit/skin/overlay.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://portrit/locale/overlay.dtd">
+<overlay id="portrit-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <script src="overlay.js"/>
+
+  <popup id="contentAreaContextMenu">
+    <menuitem class="menuitem-iconic" id="portrit-imagen" label="&portritUp.label;" image="chrome://portrit/content/favicon.png"
+              insertafter="context-copyimage"
+              oncommand="portrit.subir()"/>
+  </popup>
+</overlay>
