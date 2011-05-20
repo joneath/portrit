@@ -669,7 +669,7 @@ $(document).ready(function(){
         close_size = 'mobile'
         
         if (typeof(_gaq) !== "undefined"){
-            meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-15.css"/>' +
+            meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-16.css"/>' +
                         '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
                         '<link rel="shortcut icon" href="http://portrit.s3.amazonaws.com/img/favicon.ico">' +
                         '<link rel="apple-touch-icon" href="http://portrit.s3.amazonaws.com/img/appicon@2x.png"/>' +
