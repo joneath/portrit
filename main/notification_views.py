@@ -131,3 +131,59 @@ def get_active_notifications(user):
     except Exception, err:
         print err
         return [ ]
+        
+def get_winning_notifications(user):
+    try:
+        winning_notification_type = Notification_Type.objects.get(name='nom_won')
+        winning_notifications = Notification.objects(owner=user, active=True, notification_type=winning_notification_type).order_by('read', '-created_date')
+    
+        data = [ ]
+        for notification in winning_notifications:
+            source_id = None
+            source_name = None
+            source_username = None
+            destination_id = None
+            destination_name = None
+            destination_username = None
+            
+            try:
+                source_id = notification.source.fb_user.fid
+                source_name = notification.source.name
+                source_username = notification.source.username
+            except:
+                pass
+                
+            try:
+                destination_id = notification.destination.fb_user.fid
+                destination_name = notification.destination.name
+                destination_username = notification.destination.username
+            except:
+                pass
+                
+            photo = None
+            try:
+                photo = notification.nomination.photo.get_photo()
+            except:
+                pass
+
+            data.append({
+                'notification_type': notification.notification_type.name,
+                'create_time': time.mktime(notification.created_date.utctimetuple()),
+                'read': notification.read,
+                'pending': notification.pending,
+                'source_id': source_id,
+                'source_name': source_name,
+                'source_username': source_username,
+                'destination_id': destination_id,
+                'destination_name': destination_name,
+                'destination_username': destination_username,
+                'nomination': notification.get_nomination_id(),
+                'notification_id': str(notification.id),
+                'nomination_category': notification.get_nomination_category(),
+                'photo': photo,
+            })
+        
+        return data
+    except Exception, err:
+        print err
+        return [ ]

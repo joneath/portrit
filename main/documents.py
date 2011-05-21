@@ -161,13 +161,16 @@ class Nomination(Document):
                 'votes': votes,
             }
         
-            cache.set(str(self.id) + '_nom', data)
+            cache.set(str(self.id) + '_nom', data, 60*60*24)
             return data
         except:
             return { }
         
     def save(self, *args, **kwargs):
         super(Nomination, self).save(*args, **kwargs)
+        cache.delete(str(self.nominatee.id) + '_active_count')
+        cache.delete(str(self.nominatee.id) + '_user_active_noms')
+        cache.delete(str(self.nominatee.id) + '_related_noms')
         self.serialize_nom()
     
 class Photo_Flag(Document):

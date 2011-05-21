@@ -16,7 +16,7 @@ from settings import ENV, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, NODE_SOCKET, NOD
 import json, socket, urllib, urllib2, facebook, time, datetime, httplib, oauth
 
 from portrit_fb import Portrit_FB
-from notification_views import get_active_notifications
+from notification_views import get_active_notifications, get_winning_notifications
 from nomination_views import get_recent_stream, serialize_noms
 from import_friends import import_fb_friends
 
@@ -187,6 +187,14 @@ def get_user_data(user):
             notifications = get_active_notifications(user)
         except:
             notifications = [ ]
+            
+        winning_notifications = [ ]
+        try:
+            winning_notifications = get_winning_notifications(user)
+            print winning_notifications
+        except:
+            pass
+            
         tut_counts = False
         if not user.tutorial_completed:
             tut_counts = user.get_tutorial_counts()
@@ -196,7 +204,7 @@ def get_user_data(user):
         email_on_win = user.email_on_win
         email = user.email
         twitter_access_token = user.get_twitter_access_token()
-        print twitter_access_token
+
         data = {
             'notifications': notifications,
             'tut_counts': tut_counts,

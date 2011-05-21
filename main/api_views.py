@@ -1431,17 +1431,25 @@ def get_user_profile(request):
             data['user']['username'] = portrit_user.username
 
         if method == 'active':
-            user_active_noms = Nomination.objects.filter(Q(nominatee=portrit_user) | Q(tagged_users__in=[portrit_user]), active=True, won=False)
-            data['active_noms'] = serialize_noms(user_active_noms)
+            user_active_noms = cache.get(str(portrit_user.id) + '_user_active_noms')
+            if not user_active_noms:
+                user_active_noms = Nomination.objects.filter(Q(nominatee=portrit_user) | Q(tagged_users__in=[portrit_user]), active=True, won=False)
+                data['active_noms'] = serialize_noms(user_active_noms)
+                cache.get(str(portrit_user.id) + '_user_active_noms', data['active_noms'], 60*60*24)
+            else:
+                data['active_noms'] = user_active_noms
         elif not method:
-            data['active_noms_count'] = len(Nomination.objects.filter(Q(nominatee=portrit_user) | Q(tagged_users__in=[portrit_user]), active=True, won=False))
+            user_active_count = cache.get(str(user.fid) + '_active_count')
+            if not user_active_count:
+                data['active_noms_count'] = len(Nomination.objects.filter(Q(nominatee=portrit_user) | Q(tagged_users__in=[portrit_user]), active=True, won=False))
+                cache.set(str(portrit_user.id) + '_active_count', data['active_noms_count'], 60*60*24)
 
         if not method or method == 'trophies':
-            user_trophy_count = cache.get(str(user.fid) + '_trophy_count')
+            user_trophy_count = cache.get(str(portrit_user.id) + '_trophy_count')
             if not user_trophy_count:
                 trophy_count = portrit_user.winning_nomination_count
                 data['trophy_count'] = trophy_count
-                cache.set(str(user.fid) + '_trophy_count', trophy_count)
+                cache.set(str(portrit_user.id) + '_trophy_count', trophy_count, 60*60*24)
             else:
                 data['trophy_count'] = user_trophy_count
                 
@@ -1507,20 +1515,26 @@ def get_user_profile(request):
                 print err
                 
         if not method:
-            try:
-                following_count = len(portrit_user.get_following())
-            except:
-                following_count = 0
+            follow_counts = cache.get(str(portrit_user.id) + '_follow_count')
+            if not follow_counts:
+                try:
+                    following_count = len(portrit_user.get_following())
+                except:
+                    following_count = 0
 
-            try:
-                followers_count = len(portrit_user.get_followers())
-            except:
-                followers_count = 0
+                try:
+                    followers_count = len(portrit_user.get_followers())
+                except:
+                    followers_count = 0
         
-            data['follow_counts'] = {
-                'following': following_count,
-                'followers': followers_count,
-            }
+                data['follow_counts'] = {
+                    'following': following_count,
+                    'followers': followers_count,
+                }
+                
+                cache.set(str(portrit_user.id) + '_follow_count', data['follow_counts'], 5*60)
+            else:
+                data['follow_counts'] = follow_counts
     
     except Exception, err:
         print err
@@ -1534,40 +1548,46 @@ def get_profile_related_noms(request):
     
     try:
         target_user = Portrit_User.objects.get(username=username)
-        friends = target_user.get_following()
         
-        target_user_active_noms = Nomination.objects.filter(Q(nominatee=target_user) | Q(tagged_users__in=[target_user]), active=True, won=False)
+        related_noms = cache.get(str(target_user.id) + '_related_noms')
+        if not related_noms:
+            friends = target_user.get_following()
         
-        for active_nom in target_user_active_noms:
-            nom_data = {
-                'selected_nom': serialize_nom(active_nom),
-                'next': None,
-                'prev': None,
-            }
-            nom_cat = active_nom.nomination_category
+            target_user_active_noms = Nomination.objects.filter(Q(nominatee=target_user) | Q(tagged_users__in=[target_user]), active=True, won=False)
+        
+            for active_nom in target_user_active_noms:
+                nom_data = {
+                    'selected_nom': serialize_nom(active_nom),
+                    'next': None,
+                    'prev': None,
+                }
+                nom_cat = active_nom.nomination_category
 
-            nominations = Nomination.objects.filter(
-                Q(nominatee__in=friends) |
-                Q(nominatee=target_user) |
-                Q(nominator=target_user),
-                nomination_category=nom_cat,
-                won=False, 
-                active=True).order_by('current_vote_count')
+                nominations = Nomination.objects.filter(
+                    Q(nominatee__in=friends) |
+                    Q(nominatee=target_user) |
+                    Q(nominator=target_user),
+                    nomination_category=nom_cat,
+                    won=False, 
+                    active=True).order_by('current_vote_count')
                 
-            nominations = list(nominations)
-            selected_index = nominations.index(active_nom)
-            nom_data['selected_nom']['position'] = selected_index
+                nominations = list(nominations)
+                selected_index = nominations.index(active_nom)
+                nom_data['selected_nom']['position'] = selected_index
             
-            if selected_index > 0:
-                nom_data['next'] = serialize_nom(nominations[selected_index - 1])
-                nom_data['next']['position'] = selected_index - 1
+                if selected_index > 0:
+                    nom_data['next'] = serialize_nom(nominations[selected_index - 1])
+                    nom_data['next']['position'] = selected_index - 1
                 
-            if (selected_index + 1) < len(nominations):
-                nom_data['prev'] = serialize_nom(nominations[selected_index + 1])
-                nom_data['prev']['position'] = selected_index + 1
+                if (selected_index + 1) < len(nominations):
+                    nom_data['prev'] = serialize_nom(nominations[selected_index + 1])
+                    nom_data['prev']['position'] = selected_index + 1
                 
-            data.append(nom_data)
-        
+                data.append(nom_data)
+                
+            cache.set(str(target_user.id) + '_related_noms', data, 60*60*24)
+        else:
+            data = related_noms
     except Exception, err:
         print err
         
@@ -1593,25 +1613,19 @@ def get_user_stream_photos(request):
         
         try:
             if not pid:
-                photos = Photo.objects.filter(Q(nominations__active=False) &
-                                                Q(nominations__won=False) &
-                                                Q(nominations__removed=False) |
-                                                Q(nominations__size=0)).filter(
-                                                    Q(owner__in=source_following) |
-                                                    Q(owner=portrit_user),
-                                                    active=True, 
-                                                    pending=False).order_by('-created_date')[:page_size]
+                photos = Photo.objects.filter(Q(owner__in=source_following) |
+                                                Q(owner=portrit_user),
+                                                nominations__size=0,
+                                                active=True, 
+                                                pending=False).order_by('-created_date')[:page_size]
             else:
                 photo = Photo.objects.get(id=pid)
-                photos = Photo.objects.filter(Q(nominations__active=False) &
-                                                Q(nominations__won=False) &
-                                                Q(nominations__removed=False) |
-                                                Q(nominations__size=0)).filter(
-                                                    Q(owner__in=source_following) | 
-                                                    Q(owner=portrit_user),
-                                                    created_date__lt=photo.created_date,
-                                                    active=True, 
-                                                    pending=False).order_by('-created_date')[:page_size]
+                photos = Photo.objects.filter(Q(owner__in=source_following) | 
+                                                Q(owner=portrit_user),
+                                                nominations__size=0,
+                                                created_date__lt=photo.created_date,
+                                                active=True, 
+                                                pending=False).order_by('-created_date')[:page_size]
                     
         except Exception, err:
             photos = [ ]
@@ -1745,29 +1759,20 @@ def get_community_photos(request):
     try:
         if dir == 'new':
             photo = Photo.objects.get(id=pid)
-            photos = Photo.objects.filter((Q(nominations__active=False) &
-                                            Q(nominations__won=False) &
-                                            Q(nominations__removed=False)) |
-                                            Q(nominations__size=0),
+            photos = Photo.objects.filter(nominations__size=0,
                                             created_date__gt=photo.created_date,
                                             active=True, 
                                             pending=False,
                                             public=True).order_by('-created_date')[:PAGE_SIZE]
         elif dir == 'old':
             photo = Photo.objects.get(id=pid)
-            photos = Photo.objects.filter((Q(nominations__active=False) &
-                                            Q(nominations__won=False) &
-                                            Q(nominations__removed=False)) |
-                                            Q(nominations__size=0),
+            photos = Photo.objects.filter(nominations__size=0,
                                             created_date__lt=photo.created_date,
                                             active=True, 
                                             pending=False,
                                             public=True).order_by('-created_date')[:PAGE_SIZE]
         else:
-            photos = Photo.objects.filter((Q(nominations__active=False) &
-                                            Q(nominations__won=False) &
-                                            Q(nominations__removed=False)) |
-                                            Q(nominations__size=0),
+            photos = Photo.objects.filter(nominations__size=0,
                                             active=True, 
                                             pending=False,
                                             public=True).order_by('-created_date')[:PAGE_SIZE]
