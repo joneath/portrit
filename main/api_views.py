@@ -754,6 +754,7 @@ def nominate_photo(request):
             new_nomination = None
             for nomination in nominations:
                 if nomination != '':
+                    nomination = ' '.join([nomination[0].upper() + nomination[1:]])
                     nom_cat = Nomination_Category.objects.get(title=nomination)
                     nomination = Nomination(nomination_category=nom_cat.title)
                     if comment_text != "":

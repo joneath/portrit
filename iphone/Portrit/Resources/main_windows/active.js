@@ -2276,11 +2276,13 @@ function render_share_wins(data){
             close_facebook_button.addEventListener('click', function(){
                 facebook_row.remove(facebook_hidden_cont);
                 
-                share_window.animate({
-                    top: 0,
-                    duration: 300,
-                    curve: Ti.UI.ANIMATION_CURVE_EASE_OUT,
-                });
+                if (!twitter_share_shown){
+                    share_window.animate({
+                        top: 0,
+                        duration: 300,
+                        curve: Ti.UI.ANIMATION_CURVE_EASE_OUT,
+                    });
+                }
                 
                 setTimeout(function(){
                     facebook_share_shown = false;
@@ -2305,11 +2307,13 @@ function render_share_wins(data){
                 facebook_textarea.blur();
                 share_on_facebook(me, data[0], comment_body, title);
                 
-                share_window.animate({
-                    top: 0,
-                    duration: 300,
-                    curve: Ti.UI.ANIMATION_CURVE_EASE_OUT,
-                });
+                if (!twitter_share_shown){
+                    share_window.animate({
+                        top: 0,
+                        duration: 300,
+                        curve: Ti.UI.ANIMATION_CURVE_EASE_OUT,
+                    });
+                }
                 
                 facebook_row.remove(facebook_hidden_cont);
                 setTimeout(function(){
@@ -2324,7 +2328,7 @@ function render_share_wins(data){
             var caption_focus_interval_count = 0;
             clearInterval(caption_focus_interval);
             caption_focus_interval = setInterval(function(){
-                if (caption_focus_interval_count > 6){
+                if (caption_focus_interval_count > 8){
                     clearInterval(caption_focus_interval);
                 }
                 caption_focus_interval_count += 1;
@@ -2414,12 +2418,14 @@ function render_share_wins(data){
             close_twitter_button.addEventListener('click', function(){
                 twitter_row.remove(twitter_hidden_cont);
                 
-                share_window.animate({
-                    top: 0,
-                    duration: 300,
-                    curve: Ti.UI.ANIMATION_CURVE_EASE_OUT,
-                });
-                
+                if (!facebook_share_shown){
+                    share_window.animate({
+                        top: 0,
+                        duration: 300,
+                        curve: Ti.UI.ANIMATION_CURVE_EASE_OUT,
+                    });
+                }
+
                 setTimeout(function(){
                     twitter_share_shown = false;
                 }, 300);
@@ -2442,11 +2448,13 @@ function render_share_wins(data){
                 twitter_textarea.blur();
                 share_on_twitter(me, data[0], comment_body);
                 
-                share_window.animate({
-                    top: 0,
-                    duration: 300,
-                    curve: Ti.UI.ANIMATION_CURVE_EASE_OUT,
-                });
+                if (!facebook_share_shown){
+                    share_window.animate({
+                        top: 0,
+                        duration: 300,
+                        curve: Ti.UI.ANIMATION_CURVE_EASE_OUT,
+                    });
+                }
                 
                 twitter_row.remove(twitter_hidden_cont);
                 setTimeout(function(){
@@ -2461,7 +2469,7 @@ function render_share_wins(data){
             var caption_focus_interval_count = 0;
             clearInterval(caption_focus_interval);
             caption_focus_interval = setInterval(function(){
-                if (caption_focus_interval_count > 6){
+                if (caption_focus_interval_count > 8){
                     clearInterval(caption_focus_interval);
                 }
                 caption_focus_interval_count += 1;

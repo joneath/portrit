@@ -144,7 +144,7 @@ function nom_cat_to_text(nom_cat){
         return 'Party Animal';
     }
     if (nom_cat == 'cute'){
-        return 'cute';
+        return 'Cute';
     }
     if (nom_cat == 'lol'){
         return 'LOL';

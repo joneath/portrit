@@ -1599,8 +1599,8 @@ function render_nom(nom, append){
 }
 
 function render_active_list_view(data){
+    list_view_data = [ ];
     if (data.length > 0){
-        list_view_data = [ ];
         top_empty_label.hide();
         photos_empty_label.hide();
         active_empty_label.hide();
