@@ -19,6 +19,7 @@ from settings import ENV, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, NODE_SOCKET, NOD
 
 from portrit_fb import Portrit_FB
 from nomination_views import serialize_noms, serialize_nom
+from notification_views import get_winning_notifications
 from datetime import datetime
 from itertools import chain
 import facebook, json, socket, time
@@ -42,9 +43,12 @@ def init_app(request):
             won=False, active=True)[:PAGE_SIZE]
         
         notification_count = len(Notification.objects.filter(owner=user, read=False, active=True))
+        winning_notifications = get_winning_notifications(user)
+        
         data = {
             'noms': serialize_noms(nominations),
             'notification_count': notification_count,
+            'winning_notifications': winning_notifications,
             'username': user.username
         }
                    

@@ -537,11 +537,17 @@ def get_nom_detail(request):
         else:
             cat = cat.replace('-', ' ');
         
-        data = Nomination.objects.filter(
-            Q(tagged_users__in=[source]) |
-            Q(nominatee=source),
-            nomination_category=cat,
-            won=True).order_by('-current_vote_count', '-created_date')
+        if cat != 'all':
+            data = Nomination.objects.filter(
+                Q(tagged_users__in=[source]) |
+                Q(nominatee=source),
+                nomination_category=cat,
+                won=True).order_by('-current_vote_count', '-created_date')
+        else:
+            data = Nomination.objects.filter(
+                Q(tagged_users__in=[source]) |
+                Q(nominatee=source),
+                won=True).order_by('-current_vote_count', '-created_date')
             
         if dir:
             data = paginate_data(data, dir, pos)
@@ -1505,10 +1511,7 @@ def get_user_profile(request):
                                                     pending=False)[:page_size]
                                                     
                 for photo in photos:
-                    photo_cache = cache.get(str(photo.id) + '_photo')
-                    if not photo_cache:
-                        photo_cache = photo.get_photo()
-                        cache.set(str(photo.id) + '_photo', photo_cache)
+                    photo_cache = photo.get_photo()
                     data['photos'].append(photo_cache)
                     
             except Exception, err:

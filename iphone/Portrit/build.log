@@ -1,177 +1,194 @@
 Logfile initialized
 [INFO] logfile = /Users/joneath/Workspace/portrit/iphone/Portrit/build.log
+[DEBUG] /Library/Application Support/Titanium/mobilesdk/osx/1.7.0.RC1/android/builder.py simulator "Portrit" "/Users/joneath/android-sdk-mac_x86" "/Users/joneath/Workspace/portrit/iphone/Portrit" "com.portrit" "4" "WVGA800"
 [INFO] Building Portrit for Android ... one moment
-[INFO] Titanium SDK version: 1.7.0 (04/24/11 16:14 8af1b88...)
+[INFO] Titanium SDK version: 1.7.0 (05/15/11 17:26 e6afca8)
 [DEBUG] Waiting for device to be ready ...
 [TRACE] adb devices returned 1 devices/emulators
-[DEBUG] Device connected... (waited 0 seconds)
-[DEBUG] waited 0.144867 seconds on emulator to get ready
+[TRACE] adb devices returned 1 devices/emulators
+[TRACE] adb devices returned 1 devices/emulators
+[TRACE] adb devices returned 1 devices/emulators
+[TRACE] adb devices returned 1 devices/emulators
+[TRACE] adb devices returned 1 devices/emulators
+[TRACE] adb devices returned 1 devices/emulators
+[DEBUG] Device connected... (waited 30 seconds)
+[DEBUG] waited 30.160767 seconds on emulator to get ready
+[INFO] Waiting for the Android Emulator to become available
 [DEBUG] com.portrit installed? True
+[WARN] Fastdev enabled, but server isn't running, deploying normally
 [INFO] Copying project resources..
 [INFO] Detected tiapp.xml change, forcing full re-build...
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/appicon.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/appicon.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/appicon@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/appicon@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/Default.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/Default.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/Default@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/Default@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/active_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/active_button.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/active_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/active_button@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/back.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/back.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/back@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/back@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/background.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/background.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/background@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/background@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/camera_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_button.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/camera_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_button@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/camera_buttons/cam_back.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/cam_back.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/camera_buttons/cam_back@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/cam_back@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/camera_buttons/cam_front.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/cam_front.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/camera_buttons/cam_front@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/cam_front@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/camera_buttons/close_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/close_button.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/camera_buttons/close_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/close_button@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/camera_buttons/flash_auto.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/flash_auto.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/camera_buttons/flash_auto@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/flash_auto@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/camera_buttons/flash_off.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/flash_off.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/camera_buttons/flash_off@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/flash_off@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/camera_buttons/flash_on.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/flash_on.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/camera_buttons/flash_on@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/flash_on@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/camera_buttons/gallery.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/gallery.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/camera_buttons/gallery@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/gallery@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/camera_buttons/snap_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/snap_button.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/camera_buttons/snap_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/snap_button@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/camera_buttons/snap_button_click.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/snap_button_click.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/camera_buttons/snap_button_click@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/snap_button_click@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/close_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/close_button.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/close_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/close_button@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/com_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/com_button.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/com_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/com_button@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/comment_cancel_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/comment_cancel_button.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/comment_cancel_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/comment_cancel_button@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/comment_post_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/comment_post_button.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/comment_post_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/comment_post_button@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/down_arrow.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/down_arrow.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/down_arrow@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/down_arrow@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/fb_login_back.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/fb_login_back.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/fb_login_back@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/fb_login_back@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/finish_tag_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/finish_tag_button.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/finish_tag_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/finish_tag_button@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/follow_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/follow_button.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/follow_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/follow_button@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/following_asset.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/following_asset.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/following_asset@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/following_asset@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/geo_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/geo_button.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/geo_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/geo_button@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/iphone_header.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/iphone_header.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/iphone_header@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/iphone_header@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/iphone_header_blank.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/iphone_header_blank.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/iphone_header_blank@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/iphone_header_blank@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/large_square_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/large_square_button.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/large_square_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/large_square_button@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/load_more_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/load_more_button.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/load_more_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/load_more_button@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/logo.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/logo.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/logo@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/logo@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/lower_drop_shadow.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/lower_drop_shadow.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/lower_drop_shadow@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/lower_drop_shadow@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/nominate_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/nominate_button.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/nominate_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/nominate_button@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/notification_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/notification_button.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/notification_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/notification_button@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/notification_comments.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/notification_comments.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/notification_comments@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/notification_comments@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/notification_following.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/notification_following.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/notification_following@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/notification_following@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/notification_nomination.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/notification_nomination.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/notification_nomination@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/notification_nomination@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/notification_tag.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/notification_tag.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/notification_tag@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/notification_tag@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/notification_trophy.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/notification_trophy.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/notification_trophy@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/notification_trophy@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/option_icon.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/option_icon.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/option_icon@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/option_icon@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/photo_loader.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/photo_loader.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/photo_loader@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/photo_loader@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/plus_icon.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/plus_icon.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/plus_icon@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/plus_icon@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/post_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/post_button.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/post_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/post_button@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/profile_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/profile_button.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/profile_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/profile_button@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/profile_button_selected.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/profile_button_selected.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/profile_button_selected@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/profile_button_selected@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/profile_button_unselected.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/profile_button_unselected.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/profile_button_unselected@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/profile_button_unselected@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/profile_follow.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/profile_follow.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/profile_follow@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/profile_follow@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/profile_unfollow.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/profile_unfollow.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/profile_unfollow@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/profile_unfollow@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/pull_arrow.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/pull_arrow.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/pull_arrow@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/pull_arrow@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/right_triangle.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/right_triangle.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/right_triangle@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/right_triangle@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/selected_nav_bar.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/selected_nav_bar.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/selected_nav_bar@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/selected_nav_bar@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/square_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/square_button.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/square_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/square_button@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/stream_action_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/stream_action_button.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/stream_action_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/stream_action_button@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/stream_nav_bar_unselected.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/stream_nav_bar_unselected.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/stream_nav_bar_unselected@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/stream_nav_bar_unselected@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/stream_option_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/stream_option_button.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/stream_option_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/stream_option_button@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/stream_rounded_bar.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/stream_rounded_bar.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/stream_rounded_bar@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/stream_rounded_bar@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/submit_large.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/submit_large.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/submit_large@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/submit_large@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/tag_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/tag_button.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/tag_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/tag_button@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/trophies/large/artsy.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/large/artsy.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/trophies/large/awesome.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/large/awesome.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/trophies/large/blank.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/large/blank.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/trophies/large/creepy.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/large/creepy.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/trophies/large/cute.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/large/cute.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/trophies/large/fail.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/large/fail.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/trophies/large/hot.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/large/hot.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/trophies/large/lol.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/large/lol.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/trophies/large/party_animal.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/large/party_animal.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/trophies/large/wtf.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/large/wtf.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/trophies/large/yummy.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/large/yummy.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/trophies/medium/artsy.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/medium/artsy.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/trophies/medium/awesome.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/medium/awesome.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/trophies/medium/blank.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/medium/blank.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/trophies/medium/creepy.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/medium/creepy.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/trophies/medium/cute.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/medium/cute.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/trophies/medium/fail.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/medium/fail.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/trophies/medium/hot.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/medium/hot.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/trophies/medium/lol.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/medium/lol.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/trophies/medium/party_animal.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/medium/party_animal.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/trophies/medium/wtf.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/medium/wtf.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/trophies/medium/yummy.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/medium/yummy.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/trophy_box.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophy_box.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/trophy_box@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophy_box@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/unfollow_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/unfollow_button.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/unfollow_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/unfollow_button@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/up_arrow.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/up_arrow.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/up_arrow@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/up_arrow@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/upper_drop_shadow.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/upper_drop_shadow.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/upper_drop_shadow@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/upper_drop_shadow@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/vote_cont_triangle.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/vote_cont_triangle.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/vote_cont_triangle@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/vote_cont_triangle@2x.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/whiteArrow.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/whiteArrow.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/winner_nav_bar_unselected.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/winner_nav_bar_unselected.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/android/images/winner_nav_bar_unselected@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/winner_nav_bar_unselected@2x.png
 [TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/app.js => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/app.js
 [TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/app.jss => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/app.jss
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/appicon.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/appicon.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/appicon@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/appicon@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/Default.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/Default.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/Default@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/Default@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/Icon-72.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/Icon-72.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/Icon-Small-50.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/Icon-Small-50.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/Icon-Small.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/Icon-Small.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/Icon-Small@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/Icon-Small@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/Icon.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/Icon.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/Icon@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/Icon@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/action_bar_shadow.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/action_bar_shadow.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/action_bar_shadow@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/action_bar_shadow@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/active_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/active_button.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/active_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/active_button@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/back.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/back.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/back@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/back@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/background.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/background.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/background@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/background@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/camera_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_button.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/camera_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_button@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/camera_buttons/cam_back.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/cam_back.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/camera_buttons/cam_back@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/cam_back@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/camera_buttons/cam_front.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/cam_front.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/camera_buttons/cam_front@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/cam_front@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/camera_buttons/close_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/close_button.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/camera_buttons/close_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/close_button@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/camera_buttons/flash_auto.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/flash_auto.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/camera_buttons/flash_auto@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/flash_auto@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/camera_buttons/flash_off.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/flash_off.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/camera_buttons/flash_off@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/flash_off@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/camera_buttons/flash_on.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/flash_on.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/camera_buttons/flash_on@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/flash_on@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/camera_buttons/gallery.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/gallery.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/camera_buttons/gallery@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/gallery@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/camera_buttons/snap_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/snap_button.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/camera_buttons/snap_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/snap_button@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/camera_buttons/snap_button_click.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/snap_button_click.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/camera_buttons/snap_button_click@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/camera_buttons/snap_button_click@2x.png
 [TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/check.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/check.png
 [TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/check@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/check@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/close_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/close_button.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/close_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/close_button@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/com_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/com_button.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/com_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/com_button@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/comment_cancel_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/comment_cancel_button.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/comment_cancel_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/comment_cancel_button@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/comment_post_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/comment_post_button.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/comment_post_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/comment_post_button@2x.png
 [TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/cross.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/cross.png
 [TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/cross@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/cross@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/down_arrow.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/down_arrow.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/down_arrow@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/down_arrow@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/f_logo.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/f_logo.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/fb_login_back.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/fb_login_back.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/fb_login_back@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/fb_login_back@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/finish_tag_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/finish_tag_button.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/finish_tag_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/finish_tag_button@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/follow_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/follow_button.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/follow_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/follow_button@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/following_asset.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/following_asset.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/following_asset@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/following_asset@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/geo_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/geo_button.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/geo_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/geo_button@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/iphone_header.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/iphone_header.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/iphone_header@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/iphone_header@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/iphone_header_blank.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/iphone_header_blank.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/iphone_header_blank@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/iphone_header_blank@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/large_square_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/large_square_button.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/large_square_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/large_square_button@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/load_more_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/load_more_button.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/load_more_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/load_more_button@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/logo.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/logo.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/logo@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/logo@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/lower_drop_shadow.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/lower_drop_shadow.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/lower_drop_shadow@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/lower_drop_shadow@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/nominate_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/nominate_button.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/nominate_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/nominate_button@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/notification_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/notification_button.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/notification_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/notification_button@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/notification_comments.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/notification_comments.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/notification_comments@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/notification_comments@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/notification_following.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/notification_following.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/notification_following@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/notification_following@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/notification_nomination.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/notification_nomination.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/notification_nomination@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/notification_nomination@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/notification_tag.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/notification_tag.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/notification_tag@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/notification_tag@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/notification_trophy.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/notification_trophy.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/notification_trophy@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/notification_trophy@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/option_icon.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/option_icon.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/option_icon@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/option_icon@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/photo_loader.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/photo_loader.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/photo_loader@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/photo_loader@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/plus_icon.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/plus_icon.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/plus_icon@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/plus_icon@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/post_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/post_button.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/post_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/post_button@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/profile_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/profile_button.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/profile_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/profile_button@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/profile_button_selected.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/profile_button_selected.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/profile_button_selected@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/profile_button_selected@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/profile_button_unselected.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/profile_button_unselected.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/profile_button_unselected@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/profile_button_unselected@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/profile_follow.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/profile_follow.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/profile_follow@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/profile_follow@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/profile_unfollow.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/profile_unfollow.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/profile_unfollow@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/profile_unfollow@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/pull_arrow.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/pull_arrow.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/pull_arrow@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/pull_arrow@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/right_triangle.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/right_triangle.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/right_triangle@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/right_triangle@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/selected_nav_bar.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/selected_nav_bar.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/selected_nav_bar@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/selected_nav_bar@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/square_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/square_button.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/square_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/square_button@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/stream_action_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/stream_action_button.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/stream_action_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/stream_action_button@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/stream_nav_bar_unselected.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/stream_nav_bar_unselected.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/stream_nav_bar_unselected@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/stream_nav_bar_unselected@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/stream_option_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/stream_option_button.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/stream_option_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/stream_option_button@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/stream_rounded_bar.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/stream_rounded_bar.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/stream_rounded_bar@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/stream_rounded_bar@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/submit_large.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/submit_large.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/submit_large@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/submit_large@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/tag_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/tag_button.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/tag_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/tag_button@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/trophies/large/artsy.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/large/artsy.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/trophies/large/awesome.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/large/awesome.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/trophies/large/blank.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/large/blank.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/trophies/large/creepy.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/large/creepy.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/trophies/large/cute.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/large/cute.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/trophies/large/fail.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/large/fail.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/trophies/large/hot.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/large/hot.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/trophies/large/lol.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/large/lol.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/trophies/large/party_animal.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/large/party_animal.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/trophies/large/wtf.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/large/wtf.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/trophies/large/yummy.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/large/yummy.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/trophies/medium/artsy.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/medium/artsy.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/trophies/medium/awesome.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/medium/awesome.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/trophies/medium/blank.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/medium/blank.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/trophies/medium/creepy.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/medium/creepy.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/trophies/medium/cute.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/medium/cute.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/trophies/medium/fail.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/medium/fail.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/trophies/medium/hot.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/medium/hot.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/trophies/medium/lol.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/medium/lol.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/trophies/medium/party_animal.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/medium/party_animal.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/trophies/medium/wtf.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/medium/wtf.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/trophies/medium/yummy.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophies/medium/yummy.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/trophy_box.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophy_box.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/trophy_box@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/trophy_box@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/twitter_logo.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/twitter_logo.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/unfollow_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/unfollow_button.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/unfollow_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/unfollow_button@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/up_arrow.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/up_arrow.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/up_arrow@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/up_arrow@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/upper_drop_shadow.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/upper_drop_shadow.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/upper_drop_shadow@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/upper_drop_shadow@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/vote_cont_triangle.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/vote_cont_triangle.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/vote_cont_triangle@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/vote_cont_triangle@2x.png
 [TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/welcome_go_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/welcome_go_button.png
 [TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/welcome_go_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/welcome_go_button@2x.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/whiteArrow.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/whiteArrow.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/winner_nav_bar_unselected.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/winner_nav_bar_unselected.png
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/images/winner_nav_bar_unselected@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/images/winner_nav_bar_unselected@2x.png
 [TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/includes.js => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/includes.js
 [TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/iTunesArtwork.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/iTunesArtwork.png
 [TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/KS_nav_ui.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/KS_nav_ui.png
 [TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/KS_nav_views.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/KS_nav_views.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/lib/close_button.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/lib/close_button.png
-[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/lib/close_button@2x.png => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/lib/close_button@2x.png
 [TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/lib/oauth.js => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/lib/oauth.js
 [TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/lib/oauth_adapter.js => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/lib/oauth_adapter.js
 [TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/lib/sha1.js => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/lib/sha1.js
@@ -193,6 +210,7 @@ Logfile initialized
 [TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/main_windows/nom/tags.js => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/main_windows/nom/tags.js
 [TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/main_windows/nom/votes.js => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/main_windows/nom/votes.js
 [TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/main_windows/notifications.js => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/main_windows/notifications.js
+[TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/main_windows/photo/detail.js => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/main_windows/photo/detail.js
 [TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/main_windows/profile.js => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/main_windows/profile.js
 [TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/main_windows/share.js => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/main_windows/share.js
 [TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/main_windows/user/follow.js => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/main_windows/user/follow.js
@@ -228,15 +246,18 @@ Logfile initialized
 [TRACE] COPYING CREATED FILE: /Users/joneath/Workspace/portrit/iphone/Portrit/Resources/urbanairship.js => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/urbanairship.js
 [TRACE] Generating Java Classes
 [DEBUG] Processing Android resource drawables
+[DEBUG] app stylesheet => /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/gen/com/portrit/ApplicationStylesheet.java
 [DEBUG] copying app icon: /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/appicon.png
 [DEBUG] generating theme.xml
 [DEBUG] found splash screen at /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/assets/Resources/default.png
 [TRACE] Writing out AndroidManifest.xml
+[DEBUG] adding /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/gen/com/portrit/ApplicationStylesheet.java to javac build list
 [DEBUG] adding /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/gen/com/portrit/PortritActivity.java to javac build list
 [DEBUG] adding /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/gen/com/portrit/PortritAppInfo.java to javac build list
 [DEBUG] adding /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/gen/com/portrit/PortritApplication.java to javac build list
 [DEBUG] adding /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/gen/com/portrit/R.java to javac build list
-[DEBUG] Building Java Sources: "/Users/joneath/Workspace/portrit/iphone/Portrit/build/android/gen/com/portrit/PortritActivity.java" "/Users/joneath/Workspace/portrit/iphone/Portrit/build/android/gen/com/portrit/PortritAppInfo.java" "/Users/joneath/Workspace/portrit/iphone/Portrit/build/android/gen/com/portrit/PortritApplication.java" "/Users/joneath/Workspace/portrit/iphone/Portrit/build/android/gen/com/portrit/R.java"
+[DEBUG] Building Java Sources: "/Users/joneath/Workspace/portrit/iphone/Portrit/build/android/gen/com/portrit/ApplicationStylesheet.java" "/Users/joneath/Workspace/portrit/iphone/Portrit/build/android/gen/com/portrit/PortritActivity.java" "/Users/joneath/Workspace/portrit/iphone/Portrit/build/android/gen/com/portrit/PortritAppInfo.java" "/Users/joneath/Workspace/portrit/iphone/Portrit/build/android/gen/com/portrit/PortritApplication.java" "/Users/joneath/Workspace/portrit/iphone/Portrit/build/android/gen/com/portrit/R.java"
+[INFO] Waiting for SDCard to become available..
 [INFO] Compiling Android Resources... This could take some time
 [DEBUG] Android classes.dex built
 [DEBUG] creating unsigned apk: /Users/joneath/Workspace/portrit/iphone/Portrit/build/android/bin/app-unsigned.apk
@@ -280,6 +301,8 @@ Logfile initialized
 [DEBUG] from resource zip => assets/Resources/images/trophies/medium/party_animal.png
 [DEBUG] from resource zip => assets/Resources/images/trophies/medium/wtf.png
 [DEBUG] from resource zip => assets/Resources/images/trophies/medium/yummy.png
+[DEBUG] from resource zip => assets/Resources/images/action_bar_shadow.png
+[DEBUG] from resource zip => assets/Resources/images/action_bar_shadow@2x.png
 [DEBUG] from resource zip => assets/Resources/images/active_button.png
 [DEBUG] from resource zip => assets/Resources/images/active_button@2x.png
 [DEBUG] from resource zip => assets/Resources/images/back.png
@@ -302,6 +325,7 @@ Logfile initialized
 [DEBUG] from resource zip => assets/Resources/images/cross@2x.png
 [DEBUG] from resource zip => assets/Resources/images/down_arrow.png
 [DEBUG] from resource zip => assets/Resources/images/down_arrow@2x.png
+[DEBUG] from resource zip => assets/Resources/images/f_logo.png
 [DEBUG] from resource zip => assets/Resources/images/fb_login_back.png
 [DEBUG] from resource zip => assets/Resources/images/fb_login_back@2x.png
 [DEBUG] from resource zip => assets/Resources/images/finish_tag_button.png
@@ -378,6 +402,7 @@ Logfile initialized
 [DEBUG] from resource zip => assets/Resources/images/tag_button@2x.png
 [DEBUG] from resource zip => assets/Resources/images/trophy_box.png
 [DEBUG] from resource zip => assets/Resources/images/trophy_box@2x.png
+[DEBUG] from resource zip => assets/Resources/images/twitter_logo.png
 [DEBUG] from resource zip => assets/Resources/images/unfollow_button.png
 [DEBUG] from resource zip => assets/Resources/images/unfollow_button@2x.png
 [DEBUG] from resource zip => assets/Resources/images/up_arrow.png
@@ -391,8 +416,6 @@ Logfile initialized
 [DEBUG] from resource zip => assets/Resources/images/whiteArrow.png
 [DEBUG] from resource zip => assets/Resources/images/winner_nav_bar_unselected.png
 [DEBUG] from resource zip => assets/Resources/images/winner_nav_bar_unselected@2x.png
-[DEBUG] from resource zip => assets/Resources/lib/close_button.png
-[DEBUG] from resource zip => assets/Resources/lib/close_button@2x.png
 [DEBUG] from resource zip => assets/Resources/lib/oauth.js
 [DEBUG] from resource zip => assets/Resources/lib/oauth_adapter.js
 [DEBUG] from resource zip => assets/Resources/lib/sha1.js
@@ -411,6 +434,7 @@ Logfile initialized
 [DEBUG] from resource zip => assets/Resources/main_windows/nom/share.js
 [DEBUG] from resource zip => assets/Resources/main_windows/nom/tags.js
 [DEBUG] from resource zip => assets/Resources/main_windows/nom/votes.js
+[DEBUG] from resource zip => assets/Resources/main_windows/photo/detail.js
 [DEBUG] from resource zip => assets/Resources/main_windows/user/lib/close_button.png
 [DEBUG] from resource zip => assets/Resources/main_windows/user/lib/close_button@2x.png
 [DEBUG] from resource zip => assets/Resources/main_windows/user/lib/oauth.js
@@ -446,6 +470,12 @@ Logfile initialized
 [DEBUG] from resource zip => assets/Resources/main_windows/share.js
 [DEBUG] from resource zip => assets/Resources/Default.png
 [DEBUG] from resource zip => assets/Resources/Default@2x.png
+[DEBUG] from resource zip => assets/Resources/Icon-72.png
+[DEBUG] from resource zip => assets/Resources/Icon-Small-50.png
+[DEBUG] from resource zip => assets/Resources/Icon-Small.png
+[DEBUG] from resource zip => assets/Resources/Icon-Small@2x.png
+[DEBUG] from resource zip => assets/Resources/Icon.png
+[DEBUG] from resource zip => assets/Resources/Icon@2x.png
 [DEBUG] from resource zip => assets/Resources/KS_nav_ui.png
 [DEBUG] from resource zip => assets/Resources/KS_nav_views.png
 [DEBUG] from resource zip => assets/Resources/app.js
@@ -472,34 +502,35 @@ Logfile initialized
 [DEBUG] from resource zip => resources.arsc
 [DEBUG] from resource zip => res/drawable-hdpi/facebook_icon.png
 [DEBUG] from resource zip => res/drawable-ldpi/facebook_icon.png
-[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0/android/modules/titanium-ui.jar => ti/modules/titanium/ui/widget/webview/binding.js
-[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0/android/modules/titanium-ui.jar => ti/modules/titanium/ui/widget/webview/binding.min.js
-[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0/android/modules/titanium-ui.jar => ti/modules/titanium/ui/widget/webview/json2.js
-[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0/android/modules/titanium-facebook.jar => ti/modules/titanium/facebook/LICENSE
-[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0/android/titanium.jar => org/apache/Commons-NOTICE.txt
-[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0/android/titanium.jar => org/apache/HttpComponents-NOTICE.txt
-[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0/android/titanium.jar => org/apache/mime4j-NOTICE.txt
-[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0/android/titanium.jar => org/appcelerator/titanium/build.properties
-[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0/android/titanium.jar => org/appcelerator/titanium/res/drawable/background.png
-[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0/android/titanium.jar => org/appcelerator/titanium/res/drawable/btn_check_buttonless_on.png
-[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0/android/titanium.jar => org/appcelerator/titanium/res/drawable/btn_check_buttonless_on_18.png
-[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0/android/titanium.jar => org/appcelerator/titanium/res/drawable/btn_check_buttonless_on_48.png
-[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0/android/titanium.jar => org/appcelerator/titanium/res/drawable/btn_more.png
-[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0/android/titanium.jar => org/appcelerator/titanium/res/drawable/btn_more_18.png
-[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0/android/titanium.jar => org/appcelerator/titanium/res/drawable/btn_more_48.png
-[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0/android/titanium.jar => org/appcelerator/titanium/res/drawable/btn_picker_normal.9.png
-[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0/android/titanium.jar => org/appcelerator/titanium/res/drawable/btn_picker_pressed.9.png
-[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0/android/titanium.jar => org/appcelerator/titanium/res/drawable/btn_picker_selected.9.png
-[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0/android/titanium.jar => org/appcelerator/titanium/res/drawable/default_icon.png
-[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0/android/titanium.jar => org/appcelerator/titanium/res/drawable/photoDefault.png
-[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0/android/smalljs.jar => org/mozilla/javascript/resources/Messages.properties
-[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0/android/smalljs.jar => org/mozilla/javascript/resources/Messages_fr.properties
+[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0.RC1/android/smalljs.jar => org/mozilla/javascript/resources/Messages.properties
+[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0.RC1/android/smalljs.jar => org/mozilla/javascript/resources/Messages_fr.properties
+[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0.RC1/android/modules/titanium-facebook.jar => ti/modules/titanium/facebook/LICENSE
+[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0.RC1/android/titanium.jar => org/apache/Commons-NOTICE.txt
+[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0.RC1/android/titanium.jar => org/apache/HttpComponents-NOTICE.txt
+[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0.RC1/android/titanium.jar => org/apache/mime4j-NOTICE.txt
+[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0.RC1/android/titanium.jar => org/appcelerator/titanium/build.properties
+[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0.RC1/android/titanium.jar => org/appcelerator/titanium/res/drawable/background.png
+[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0.RC1/android/titanium.jar => org/appcelerator/titanium/res/drawable/btn_check_buttonless_on.png
+[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0.RC1/android/titanium.jar => org/appcelerator/titanium/res/drawable/btn_check_buttonless_on_18.png
+[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0.RC1/android/titanium.jar => org/appcelerator/titanium/res/drawable/btn_check_buttonless_on_48.png
+[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0.RC1/android/titanium.jar => org/appcelerator/titanium/res/drawable/btn_more.png
+[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0.RC1/android/titanium.jar => org/appcelerator/titanium/res/drawable/btn_more_18.png
+[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0.RC1/android/titanium.jar => org/appcelerator/titanium/res/drawable/btn_more_48.png
+[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0.RC1/android/titanium.jar => org/appcelerator/titanium/res/drawable/btn_picker_normal.9.png
+[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0.RC1/android/titanium.jar => org/appcelerator/titanium/res/drawable/btn_picker_pressed.9.png
+[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0.RC1/android/titanium.jar => org/appcelerator/titanium/res/drawable/btn_picker_selected.9.png
+[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0.RC1/android/titanium.jar => org/appcelerator/titanium/res/drawable/default_icon.png
+[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0.RC1/android/titanium.jar => org/appcelerator/titanium/res/drawable/photoDefault.png
+[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0.RC1/android/modules/titanium-ui.jar => ti/modules/titanium/ui/widget/webview/binding.js
+[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0.RC1/android/modules/titanium-ui.jar => ti/modules/titanium/ui/widget/webview/binding.min.js
+[DEBUG] from JAR /Library/Application Support/Titanium/mobilesdk/osx/1.7.0.RC1/android/modules/titanium-ui.jar => ti/modules/titanium/ui/widget/webview/json2.js
 [DEBUG] Waiting for device to be ready ...
 [TRACE] adb devices returned 1 devices/emulators
 [DEBUG] Device connected... (waited 0 seconds)
-[DEBUG] waited 0.015195 seconds on emulator to get ready
+[DEBUG] waited 0.012165 seconds on emulator to get ready
 [INFO] Installing application on device
 [INFO] Launching application ... Portrit
 [TRACE] Launch output: Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=com.portrit/.PortritActivity }
 
 [INFO] Deployed Portrit ... Application should be running.
+[INFO] Android Emulator has exited

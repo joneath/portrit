@@ -2057,6 +2057,105 @@ $(document).ready(function(){
         $('#notification_footer_popup_cont').append(notification_html);
     }
     
+    function render_share_wins(data){
+        var publish_share_win_html = '';
+        var notification_ids = '';
+        
+        var trophy_text = 'trophies';
+        if (data.length == 1){
+            trophy_text = 'trophy';
+        }
+        
+        publish_share_win_html ='<div id="share_win_cont">' +
+                                    '<h1>Congratulations!</h1>' +
+                                        '<p>You have won ' + data.length + ' ' + trophy_text + ' since your last visit.</p>' +
+                                        '<div id="trophy_cont">';
+        for (var i = 0; i < data.length; i++){
+            publish_share_win_html +=   '<div class="share_trophy_cont">' +
+                                            '<img src="' + data[i].photo.crop + '"/>' +
+                                            '<div class="trophy_img medium ' + data[i].nomination_category.replace(' ', '_').toLowerCase() + '"></div>' +
+                                        '</div>';
+            notification_ids += data[i].notification_id + ',';
+        }
+        
+        publish_share_win_html +=   '</div>' +
+                                    '<h2>Share Your Trophies</h2>' +
+                                    '<div id="caption_cont">' +
+                                        '<textarea class="inactive" id="share_nom_comment" value="Caption">Caption</textarea>' +
+                                        '<p id="text_remail_cont">0/140</p>' +
+                                    '</div>' +
+                                    '<div id="share_bottom_cont">' +
+                                        '<div id="share_options_cont">' +
+                                            '<div class="share_service">' +
+                                                '<img src="http://portrit.s3.amazonaws.com/img/f_logo.png">' +
+                                                '<h1>Facebook</h1>' +
+                                                '<div id="share_facebook" class="switch switch_off" value="on" name="facebook">' +
+                                            '</div>' +
+                                            '<div class="clear"></div>' +
+                                        '</div>' +
+                                        '<div id="share_mid"></div>' +
+                                        '<div class="share_service">' +
+                                            '<img src="http://portrit.s3.amazonaws.com/img/twitter_logo.png">' +
+                                            '<h1>Twitter</h1>' +
+                                            '<div id="share_twitter" class="switch switch_off" value="on" name="twitter"></div>' +
+                                            '<div class="clear"></div>' +
+                                        '</div>' +
+                                    '</div>' +
+                                    '<div class="clear"></div>' +
+                                    '<div id="share_row_cont">' +
+                                        '<a id="post_share" class="sick large off" style="color: #99CB6E;">Share</a>' +
+                                        '<a id="cancel_share" class="sick large">Cancel</a>' +
+                                        '<div class="clear"></div>' +
+                                    '</div>' +
+                                    '</div>'
+                                    '</div>';
+        
+        $('#context_overlay_cont').addClass('publish_share_win');
+        $('#context_overlay_cont > div').append(publish_share_win_html);
+        show_context_overlay(true);
+        
+        $.post('/notification_read/', {'notification_ids': notification_ids}, function(){
+
+        });
+        
+        $('#share_row_cont #cancel_share').bind('click', function(){
+            close_context_overlay();
+        });
+        
+        $('#share_row_cont #post_share').bind('click', function(){
+            // winning_notification_data
+            if ($(this).hasClass('off') == false){
+                var caption = $('#share_nom_comment').val();
+                var url = 'http://www.portrit.com/#!/' + me.username + '/trophies/all/';
+                var crop = winning_notification_data[0].photo.crop_small;
+                
+                if (caption == 'Caption'){
+                    caption = '';
+                }
+                
+                //Twitter
+                if ($('#share_twitter').hasClass('switch_on')){
+                    share_on_twitter(caption, url);
+                }
+                //Facebook
+                if ($('#share_facebook').hasClass('switch_on')){
+                    var title = me.name.split(' ')[0] + ' won new trophies on Portrit';
+                    share_on_facebook(title, caption, url, crop);
+                }
+                close_context_overlay();
+            }
+        });
+        
+        $('#share_win_cont .switch').live('click', function(){
+            if ($('#share_twitter').hasClass('switch_on') || $('#share_facebook').hasClass('switch_on')){
+                $('#post_share').removeClass('off');
+            }
+            else{
+                $('#post_share').addClass('off');
+            }
+        });
+    }
+    
     function render_publish_story(data){
         var cat_underscore = '',
             trophy_count_text = 'trophies',
@@ -2881,6 +2980,7 @@ $(document).ready(function(){
     }
     
     var notification_data = null;
+    var winning_notification_data = null;
     var allow_notifications = true;
     var allow_public_follows = true;
     var allow_portrit_album = false;
@@ -2913,6 +3013,7 @@ $(document).ready(function(){
                 var tut_counts = null;
                 var first = false;
                 notification_data = data.notifications;
+                winning_notification_data = data.winning_notifications;
                 tut_counts = data.tut_counts;
                 first = data.first;
                 first_visit = first;
@@ -5317,14 +5418,22 @@ $(document).ready(function(){
         var next_html = '';
         var prev_html = '';
         var selected_place = '';
+        var owner_username = '';
         for (var i = 0; i < data.length; i++){
             selected_place = getGetOrdinal(data[i]['selected_nom'].position + 1);
             
             next_html = '';
             if (data[i]['next']){
+                if (me && me.username == data[i]['next'].nominatee_username){
+                    owner_username = 'You';
+                }
+                else{
+                    owner_username = data[i]['next'].nominatee_username;
+                }
+                
                 next_html = '<div class="related_nom_next_cont">' +
                                 '<div class="related_nom_left_cont">' +
-                                    '<div class="related_nom_top_cont" name="' + data[i]['next'].nominatee_username + '">' +
+                                    '<div class="related_nom_top_cont" name="' + owner_username + '">' +
                                         '<p class="tooltip"></p>' +
                                         '<h2>' + getGetOrdinal(data[i]['next'].position + 1) + '</h2>' +
                                         '<a href="/#!/' + data[i]['next'].nominatee_username + '/">' +
@@ -5354,9 +5463,15 @@ $(document).ready(function(){
             
             prev_html = '';
             if (data[i]['prev']){
+                if (me && me.username == data[i]['prev'].nominatee_username){
+                    owner_username = 'You';
+                }
+                else{
+                    owner_username = data[i]['prev'].nominatee_username;
+                }
                 prev_html = '<div class="related_nom_prev_cont">' +
                                 '<div class="related_nom_left_cont">' +
-                                    '<div class="related_nom_top_cont" name="' + data[i]['prev'].nominatee_username + '">' +
+                                    '<div class="related_nom_top_cont" name="' + owner_username + '">' +
                                         '<p class="tooltip"></p>' +
                                         '<h2>' + getGetOrdinal(data[i]['prev'].position + 1) + '</h2>' +
                                         '<a href="/#!/' + data[i]['prev'].nominatee_username + '/">' +
@@ -6342,7 +6457,7 @@ $(document).ready(function(){
             }
         }
         else{
-            
+            $('#results_wrap').html('<h1>No results.</h1>');
         }
     }
     
@@ -6380,6 +6495,36 @@ $(document).ready(function(){
     function attach_main_handlers(){
         $('#tuts_wrap').live('click', function(){
             $(this).parent().fadeOut();
+        });
+        
+        $('#share_nom_comment').live('focus', function(){
+            $(this).removeClass().addClass('inputed');
+            if (this.value == 'Caption'){
+                this.value = '';
+            }  
+            if(this.value != 'Caption'){  
+                this.select();  
+            }
+        });
+        
+        $('#share_nom_comment').live('blur', function(){
+            if ($.trim(this.value) == ''){
+                $(this).removeClass().addClass('inactive');
+                this.value = 'Caption';
+            }
+        });
+        
+        $('#share_nom_comment').live('keyup', function(e){
+            var caption_length = $(this).val().length;
+            $('#text_remail_cont').text(caption_length + '/140');
+        });
+        
+        $('#share_nom_comment').live('keydown', function(e){
+            var caption_length = $(this).val().length;
+            $('#text_remail_cont').text(caption_length + '/140');
+            if (caption_length >= 140 && e.keyCode != 8){
+                return false;
+            }
         });
         
         $('.notification_pending_cont span').live('click', function(){
@@ -8385,10 +8530,6 @@ $(document).ready(function(){
             
             $('#cancel_share').unbind('click');
             $('#post_share').unbind('click');
-            $('#share_nom_comment').unbind('focus');
-            $('#share_nom_comment').unbind('blur');
-            $('#share_nom_comment').unbind('keyup');
-            $('#share_nom_comment').unbind('keydown');
         });
         
         $('#post_share').bind('click', function(){
@@ -8410,36 +8551,6 @@ $(document).ready(function(){
             }
             
             $('#cancel_share').click();
-        });
-        
-        $('#share_nom_comment').bind('focus', function(){
-            $(this).removeClass().addClass('inputed');
-            if (this.value == 'Caption'){
-                this.value = '';
-            }  
-            if(this.value != 'Caption'){  
-                this.select();  
-            }
-        });
-        
-        $('#share_nom_comment').bind('blur', function(){
-            if ($.trim(this.value) == ''){
-                $(this).removeClass().addClass('inactive');
-                this.value = 'Caption';
-            }
-        });
-        
-        $('#share_nom_comment').bind('keyup', function(e){
-            var caption_length = $(this).val().length;
-            $('#text_remail_cont').text(caption_length + '/140');
-        });
-        
-        $('#share_nom_comment').bind('keydown', function(e){
-            var caption_length = $(this).val().length;
-            $('#text_remail_cont').text(caption_length + '/140');
-            if (caption_length >= 140 && e.keyCode != 8){
-                return false;
-            }
         });
     }
     
@@ -8647,6 +8758,9 @@ $(document).ready(function(){
         }
         if (view_count == 1){
             render_notifications(notification_data);
+            if (winning_notification_data && winning_notification_data.length > 0){
+                render_share_wins(winning_notification_data);
+            }
         }
         
         clear_event_handles();

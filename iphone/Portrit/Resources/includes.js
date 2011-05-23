@@ -278,7 +278,6 @@ function share_nom(nom, method, title, from){
                 share_on_twitter(me, nom, comment_body);
             }
 
-
     	    comment_textarea.blur();
     		comment_window.close(fadeOut);
     	});
@@ -333,29 +332,79 @@ function share_nom(nom, method, title, from){
     }
 }
 
-function share_on_twitter(me, nom, caption){
-    try{
-        var share_twitter_request = Titanium.Network.createHTTPClient({enableKeepAlive:false});
+function open_share_window(me, nom){
 
-        var url = SERVER_URL + '/api/share_twitter/';
-        share_twitter_request.open('POST', url);
+}
 
-        if (typeof(nom['nomination_category']) == 'undefined'){
-            share_twitter_request.send({'access_token': me.access_token, 'url': 'http://portrit.com/#!/' + me.username + '/photos/' + nom.id, 'status': caption});
-        }
-        else{
-            share_twitter_request.send({'access_token': me.access_token, 'url': 'http://portrit.com/#!/nomination/' + nom.id, 'status': caption});        
+function share_on_portrit(me, nom, caption){
+    
+}
+
+function share_on_twitter(me, nom, caption, target){
+    if (oAuthAdapter.isAuthorized() == false){
+        if (!twitter_auth_shown){
+            twitter_auth_shown = true;
+            var receivePin = function() {
+                // get the access token with the provided pin/oauth_verifier
+                oAuthAdapter.getAccessToken('http://twitter.com/oauth/access_token');
+                // save the access token
+                oAuthAdapter.saveAccessToken('twitter');
+
+                // save twitter access token on server
+                var token = oAuthAdapter.get_access_token()
+                var xhr = Titanium.Network.createHTTPClient({enableKeepAlive:false});
+                xhr.onload = function(){
+                    share_on_twitter(me, nom, caption);
+                };
+                var url = SERVER_URL + '/api/save_mobile_twitter_token/';
+                xhr.open('POST', url);
+                xhr.send({
+                    'access_token': me.access_token,
+                    'twitter_access_token': token.access_token,
+                    'twitter_access_token_secret': token.access_token_secret,
+                });
+            };
+
+            var request_token = oAuthAdapter.getRequestToken('https://api.twitter.com/oauth/request_token', 'oob');
+
+            // show the authorization UI and call back the receive PIN function
+            oAuthAdapter.showAuthorizeUI('https://twitter.com/oauth/authorize?' + request_token, receivePin);
+            
+            setTimeout(function(){
+                twitter_auth_shown = false;
+            }, 10000);
         }
     }
-    catch (e){
-        
+    else{
+        try{
+            var share_twitter_request = Titanium.Network.createHTTPClient({enableKeepAlive:false});
+
+            var url = SERVER_URL + '/api/share_twitter/';
+            share_twitter_request.open('POST', url);
+            
+            if (typeof(nom['notification_id']) != 'undefined'){
+                share_twitter_request.send({'access_token': me.access_token, 'url': 'http://portrit.com/#!/' + me.username + '/trophies/all/', 'status': caption});
+            }
+            else if (typeof(nom['nomination_category']) == 'undefined'){
+                share_twitter_request.send({'access_token': me.access_token, 'url': 'http://portrit.com/#!/' + target + '/photos/' + nom.id, 'status': caption});
+            }
+            else{
+                share_twitter_request.send({'access_token': me.access_token, 'url': 'http://portrit.com/#!/nomination/' + nom.id, 'status': caption});        
+            }
+        }
+        catch (e){
+
+        }
     }
 }
 
-function share_on_facebook(me, nom, caption, title){
+function share_on_facebook(me, nom, caption, title, target){
     try{
-        if (typeof(nom['nomination_category']) == 'undefined'){
-            url_to_shorten = 'http://portrit.com/#!/' + me.username + '/photos/' + nom.id;
+        if (typeof(nom['notification_id']) != 'undefined'){
+            url_to_shorten = 'http://portrit.com/#!/' + me.username + '/trophies/all/';
+        }
+        else if (typeof(nom['nomination_category']) == 'undefined'){
+            url_to_shorten = 'http://portrit.com/#!/' + target + '/photos/' + nom.id;
         }
         else{
             url_to_shorten = 'http://portrit.com/#!/nomination/' + nom.id;

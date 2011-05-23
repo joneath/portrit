@@ -403,6 +403,19 @@ function render_active_list_view(data){
 //     }
 // }
 
+function add_photo_window(e){
+    var w = Ti.UI.createWindow({backgroundColor:"#222", url:'photo/detail.js'});
+	Titanium.UI.currentTab.open(w,{animated:true});
+	setTimeout(function(){
+	    Ti.App.fireEvent('pass_photo_detail', {
+            user_fid: e.source.user,
+            name: e.source.name,
+            username: e.source.username,
+            photo: e.source.photo
+        });
+	}, 200);
+}
+
 function add_profile_window(e){
     var w = Ti.UI.createWindow({backgroundColor:"#222", url:'user/profile.js'});
 	Titanium.UI.currentTab.open(w,{animated:true});
@@ -614,115 +627,562 @@ function open_options(e){
     var photo_id = e.source.photo_id;
     var nom = e.source.nom;
     
-    // if (!open_init){
-    //     open_init = true;
-    //     share_options_view = Titanium.UI.createView({
-    //         backgroundColor: '#fff',
-    //         height: 200,
-    //         bottom: -260,
-    //         width: 310,
-    //         layout: 'vertical'
-    //     });
-    //     
-    //     var share_options_drop_shadow = Titanium.UI.createView({
-    //         backgroundImage: '../images/upper_drop_shadow.png',
-    //         height: 2,
-    //         top: -2,
-    //         width: 320
-    //     });
-    //     share_options_view.add(share_options_drop_shadow);
-    // 
-    //     var share_options_header = Titanium.UI.createLabel({
-    //         text: 'Photo Options',
-    //         color: '#333',
-    //         textAlign: "center",
-    //         top: 5,
-    //         size: {width: 320, height: 30},
-    //         font:{fontSize: 22, fontWeight:'bold'}
-    //     });
-    // 
-    //     share_options_view.add(share_options_header);
-    //     
-    //     var share_cont = Titanium.UI.createView({
-    //         backgroundColor: '#fff',
-    //         height: 100,
-    //         width: 300,
-    //         layout: 'vertical'
-    //     });
-    //     share_options_view.add(share_cont);
-    //     
-    //     var share_header = Titanium.UI.createLabel({
-    //         text: 'Share Photo',
-    //         color: '#333',
-    //         textAlign: "left",
-    //         top: 5,
-    //         size: {width: 300, height: 30},
-    //         font:{fontSize: 18, fontWeight:'bold'}
-    //     });
-    //     share_cont.add(share_header);
-    //     
-    //     var flag_cont = Titanium.UI.createView({
-    //         backgroundColor: '#fff',
-    //         height: 100,
-    //         width: 300,
-    //         layout: 'vertical'
-    //     });
-    //     share_options_view.add(flag_cont);
-    //     
-    //     var flag_header = Titanium.UI.createLabel({
-    //         text: 'Flag Photo',
-    //         color: '#333',
-    //         textAlign: "left",
-    //         top: 5,
-    //         size: {width: 300, height: 30},
-    //         font:{fontSize: 18, fontWeight:'bold'}
-    //     });
-    //     flag_cont.add(flag_header);
-    //     
-    //     share_options_view.addEventListener('click', function(){
-    //         share_options_view.animate({
-    //             bottom: -260,
-    //             duration: 300,
-    //             curve: Ti.UI.ANIMATION_CURVE_EASE_OUT
-    //         });
-    //     });
-    //     
-    //     win.add(share_options_view);
-    // }
-    // 
-    // share_options_view.animate({
-    //     bottom: 0,
-    //     duration: 300,
-    //     curve: Ti.UI.ANIMATION_CURVE_EASE_IN
-    // });
-    
-    
-    
-        var optionsDialogOpts = {
-         options:['Flag photo', 'Share on Facebook', 'Share on Twitter', 'Cancel'],
-         destructive:0,
-         cancel:3,
-         title:'Photo options'
-        };
-    
-        var dialog = Titanium.UI.createOptionDialog(optionsDialogOpts);
-        
-        dialog.addEventListener('click',function(e){
-            // Flag Photo
-            if (e.index == 0){
-                flag_nom(me, nom, photo_id, win);
-            }
-            else if (e.index == 1){
-                // Facebook Share
-                var title = me.username + ' shared a nomination on Portrit';
-                share_nom(nom, 'Facebook', title);
-            }
-            else if (e.index == 2){
-                // Twitter Share
-                share_nom(nom, 'Twitter', '');
-            }
+    var t = Titanium.UI.create2DMatrix();
+	t = t.scale(.45);
+	
+	var t1 = Titanium.UI.create2DMatrix();
+	t1 = t1.scale(1);
+	var fadeIn = Titanium.UI.createAnimation({
+        curve: Ti.UI.ANIMATION_CURVE_EASE_OUT_IN,
+        opacity: 1,
+        transform: t1,
+        duration: 350
     });
-    dialog.show();
+
+    var t2 = Titanium.UI.create2DMatrix();
+	t2 = t2.scale(.45);
+    var fadeOut = Titanium.UI.createAnimation({
+        curve: Ti.UI.ANIMATION_CURVE_EASE_OUT_IN,
+        opacity: 0,
+        transform: t2,
+        duration: 350
+    });
+
+    var share_window = Titanium.UI.createWindow({
+		backgroundImage:'../images/share_window_background.png',
+		height: 440,
+		opacity: 0,
+		left: 8,
+		width: 304,
+		top: 8,
+		transform: t
+	});
+	
+	var share_cont = Titanium.UI.createView({
+        height: 410,
+        width: 290,
+        layout: 'vertical'
+    });
+    share_window.add(share_cont);
+    
+    var share_header = Titanium.UI.createLabel({
+	    text: 'Photo Options',
+	    textAlign: 'left',
+	    left: 10,
+	    top: 0,
+        color: '#333',
+        size: {width: 'auto', height: 'auto'},
+        font:{fontSize:20, fontWeight: 'bold'}
+    });
+    share_cont.add(share_header);
+    
+    var share_sub_header = Titanium.UI.createLabel({
+	    text: 'Click one of the options below.',
+	    textAlign: 'left',
+	    left: 10,
+	    top: 0,
+        color: '#333',
+        size: {width: 'auto', height: 'auto'},
+        font:{fontSize:16}
+    });
+    share_cont.add(share_sub_header);
+    
+    var share_table = Ti.UI.createTableView({
+        backgroundColor: '#fff',
+        // top: 40,
+        height: 320,
+        minRowHeight: 60,
+        style:Titanium.UI.iPhone.TableViewStyle.GROUPED
+    });
+    share_cont.add(share_table);
+    
+    var share_table_data = [ ];
+    
+    // Share Section
+    var share_label = Titanium.UI.createLabel({
+	    text: 'Share Photo',
+        color: '#666',
+        left: 10,
+        top: 0,
+        size: {width: 320, height: 'auto'},
+        font:{fontSize: 16, fontWeight: 'bold'}
+    });
+    var share_header = Titanium.UI.createView({
+        height: 'auto',
+        width: 320
+    });
+    share_header.add(share_label);
+    
+    var section = Titanium.UI.createTableViewSection({
+        headerView: share_header
+    });
+    
+    //Share Portrit
+    //     var portrit_row = Ti.UI.createTableViewRow({
+    //             color: '#333',
+    //             height: 'auto',
+    //             selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+    //     });
+    //     var portrit_share_shown = false;
+    //     portrit_row.addEventListener('click', function(){
+    //         if (!portrit_share_shown){
+    //             portrit_share_shown = true;
+    //             
+    //             var portrit_hidden_cont = Titanium.UI.createView({
+    //                 height: 'auto',
+    //                 width: 'auto',
+    //                 layout: 'vertical',
+    //                 top: 50,
+    //             });
+    // 
+    //             var portrit_textarea = Titanium.UI.createTextArea({
+    //              color: '#333',
+    //              width: 250,
+    //              height: 75,
+    //              bottom: 5,
+    //              borderWidth: 1,
+    //              borderColor: '#dedede',
+    //              borderRadius: 3,
+    //              font: {fontSize: 18, fontWeight: 'bold'},
+    //              suppressReturn: false
+    //          });
+    //             portrit_hidden_cont.add(portrit_textarea);
+    //             
+    //             close_portrit_button = Ti.UI.createButton({
+    //              title:"Cancel",
+    //                 font: {fontSize: 16, fontWeight: 'bold'},
+    //              backgroundImage: '../images/load_more_button.png',
+    //              width: 118,
+    //              height: 42,
+    //              bottom: 10,
+    //              left: 0,
+    //             });
+    //             close_portrit_button.addEventListener('click', function(){
+    //                 portrit_row.remove(portrit_hidden_cont);
+    //                 
+    //                 setTimeout(function(){
+    //                     portrit_share_shown = false;
+    //                 }, 300);
+    //             });
+    //             portrit_hidden_cont.add(close_portrit_button);
+    //             
+    //             share_portrit_button = Ti.UI.createButton({
+    //              title:"Share",
+    //              color: '#99CB6E',
+    //                 font: {fontSize: 16, fontWeight: 'bold'},
+    //              backgroundImage: '../images/load_more_button.png',
+    //              width: 118,
+    //              height: 42,
+    //              top: -52,
+    //              bottom: 10,
+    //                 right: 0,
+    //             });
+    //             share_portrit_button.addEventListener('click', function(){
+    //                 var caption = portrit_textarea.value;
+    //                 share_on_portrit(me, nom, caption);
+    //                 
+    //                 portrit_row.remove(portrit_hidden_cont);
+    //                 setTimeout(function(){
+    //                     portrit_share_shown = false;
+    //                 }, 300);
+    //             });
+    //             portrit_hidden_cont.add(share_portrit_button);
+    //             
+    //             portrit_row.add(portrit_hidden_cont);
+    //             
+    //             var caption_focus_interval = null;
+    //             var caption_focus_interval_count = 0;
+    //             clearInterval(caption_focus_interval);
+    //             caption_focus_interval = setInterval(function(){
+    //                 if (caption_focus_interval_count > 6){
+    //                     clearInterval(caption_focus_interval);
+    //                 }
+    //                 caption_focus_interval_count += 1;
+    //                 portrit_textarea.focus();
+    //             }, 50);
+    //         }
+    //     });
+    //     
+    //     var row_img = Ti.UI.createImageView({
+    //  image: '../images/portrit_logo.png',
+    //  left: 10,
+    //  top: 10,
+    //  height: 36,
+    //  width: 36,
+    //  hires: true
+    // });
+    // portrit_row.add(row_img);
+    //     
+    //     var row_title = Titanium.UI.createLabel({
+    //     text: 'Portrit',
+    //         color: '#333',
+    //         left: 55,
+    //         top: 12,
+    //         size: {width: 320, height: 20},
+    //         font:{fontSize: 18, fontWeight: 'bold'}
+    //     });
+    //     portrit_row.add(row_title);
+    //     
+    //     var row_sub_title = Titanium.UI.createLabel({
+    //     text: 'Share this photo with your followers.',
+    //         color: '#333',
+    //         left: 55,
+    //         top: 29,
+    //         size: {width: 240, height: 'auto'},
+    //         font:{fontSize: 13,}
+    //     });
+    //     portrit_row.add(row_sub_title);
+    //     
+    //     section.add(portrit_row);
+    
+    //Share Facebook
+    var facebook_row = Ti.UI.createTableViewRow({
+            color: '#333',
+            height: 'auto',
+            selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+    });
+    var facebook_share_shown = false;
+    facebook_row.addEventListener('click', function(){
+        if (!facebook_share_shown){
+            facebook_share_shown = true;
+            
+            share_table.scrollToTop(30);
+            
+            var facebook_hidden_cont = Titanium.UI.createView({
+                height: 'auto',
+                width: 'auto',
+                layout: 'vertical',
+                top: 50,
+            });
+
+            var facebook_textarea = Titanium.UI.createTextArea({
+        	    color: '#333',
+        	    width: 250,
+        	    height: 75,
+        	    bottom: 5,
+        	    borderWidth: 1,
+        	    borderColor: '#dedede',
+        	    borderRadius: 3,
+        	    font: {fontSize: 18, fontWeight: 'bold'},
+        	    suppressReturn: false
+        	});
+            facebook_hidden_cont.add(facebook_textarea);
+            
+            close_facebook_button = Ti.UI.createButton({
+            	title:"Cancel",
+                font: {fontSize: 16, fontWeight: 'bold'},
+            	backgroundImage: '../images/load_more_button.png',
+            	width: 118,
+            	height: 42,
+            	bottom: 10,
+            	left: 0,
+            });
+            close_facebook_button.addEventListener('click', function(){
+                facebook_row.remove(facebook_hidden_cont);
+                
+                setTimeout(function(){
+                    facebook_share_shown = false;
+                }, 300);
+            });
+            facebook_hidden_cont.add(close_facebook_button);
+            
+            share_facebook_button = Ti.UI.createButton({
+            	title:"Share",
+            	color: '#99CB6E',
+                font: {fontSize: 16, fontWeight: 'bold'},
+            	backgroundImage: '../images/load_more_button.png',
+            	width: 118,
+            	height: 42,
+            	top: -52,
+            	bottom: 10,
+                right: 0,
+            });
+            share_facebook_button.addEventListener('click', function(){
+                var title = me.name.split(' ')[0] + ' shared a nomination on Portrit';
+                var comment_body = facebook_textarea.value;
+                facebook_textarea.blur();
+                share_on_facebook(me, nom, comment_body, title);
+                
+                facebook_row.remove(facebook_hidden_cont);
+                setTimeout(function(){
+                    facebook_share_shown = false;
+                }, 300);
+            });
+            facebook_hidden_cont.add(share_facebook_button);
+            
+            facebook_row.add(facebook_hidden_cont);
+            
+            var caption_focus_interval = null;
+            var caption_focus_interval_count = 0;
+            clearInterval(caption_focus_interval);
+            caption_focus_interval = setInterval(function(){
+                if (caption_focus_interval_count > 6){
+                    clearInterval(caption_focus_interval);
+                }
+                caption_focus_interval_count += 1;
+                facebook_textarea.focus();
+            }, 50);
+        }
+    });
+    
+    var row_img = Ti.UI.createImageView({
+		image: '../images/fb_logo.png',
+		left: 10,
+		top: 10,
+		height: 36,
+		width: 36,
+		hires: true
+	});
+	facebook_row.add(row_img);
+    
+    var row_title = Titanium.UI.createLabel({
+	    text: 'Facebook',
+        color: '#333',
+        left: 55,
+        top: 12,
+        size: {width: 320, height: 20},
+        font:{fontSize: 18, fontWeight: 'bold'}
+    });
+    facebook_row.add(row_title);
+    
+    var row_sub_title = Titanium.UI.createLabel({
+	    text: 'Share this photo on Facebook.',
+        color: '#333',
+        left: 55,
+        top: 29,
+        size: {width: 200, height: 'auto'},
+        font:{fontSize: 13}
+    });
+    facebook_row.add(row_sub_title);
+    
+    section.add(facebook_row);
+    
+    //Share Twitter
+    var twitter_row = Ti.UI.createTableViewRow({
+            color: '#333',
+            height: 'auto',
+            selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+    });
+    var twitter_share_shown = false;
+    twitter_row.addEventListener('click', function(){
+        if (!twitter_share_shown){
+            twitter_share_shown = true;
+            
+            var twitter_hidden_cont = Titanium.UI.createView({
+                height: 'auto',
+                width: 'auto',
+                layout: 'vertical',
+                top: 50,
+            });
+
+            var twitter_textarea = Titanium.UI.createTextArea({
+        	    color: '#333',
+        	    width: 250,
+        	    height: 75,
+        	    bottom: 5,
+        	    borderWidth: 1,
+        	    borderColor: '#dedede',
+        	    borderRadius: 3,
+        	    font: {fontSize: 18, fontWeight: 'bold'},
+        	    suppressReturn: false
+        	});
+            twitter_hidden_cont.add(twitter_textarea);
+            
+            close_twitter_button = Ti.UI.createButton({
+            	title:"Cancel",
+                font: {fontSize: 16, fontWeight: 'bold'},
+            	backgroundImage: '../images/load_more_button.png',
+            	width: 118,
+            	height: 42,
+            	bottom: 10,
+            	left: 0,
+            });
+            close_twitter_button.addEventListener('click', function(){
+                twitter_row.remove(twitter_hidden_cont);
+                
+                setTimeout(function(){
+                    twitter_share_shown = false;
+                }, 300);
+            });
+            twitter_hidden_cont.add(close_twitter_button);
+            
+            share_twitter_button = Ti.UI.createButton({
+            	title:"Share",
+            	color: '#99CB6E',
+                font: {fontSize: 16, fontWeight: 'bold'},
+            	backgroundImage: '../images/load_more_button.png',
+            	width: 118,
+            	height: 42,
+            	top: -52,
+            	bottom: 10,
+                right: 0,
+            });
+            share_twitter_button.addEventListener('click', function(){
+                var comment_body = twitter_textarea.value;
+                twitter_textarea.blur();
+                share_on_twitter(me, nom, comment_body);
+                
+                twitter_row.remove(twitter_hidden_cont);
+                setTimeout(function(){
+                    twitter_share_shown = false;
+                }, 300);
+            });
+            twitter_hidden_cont.add(share_twitter_button);
+            
+            twitter_row.add(twitter_hidden_cont);
+            
+            var caption_focus_interval = null;
+            var caption_focus_interval_count = 0;
+            clearInterval(caption_focus_interval);
+            caption_focus_interval = setInterval(function(){
+                if (caption_focus_interval_count > 6){
+                    clearInterval(caption_focus_interval);
+                }
+                caption_focus_interval_count += 1;
+                twitter_textarea.focus();
+            }, 50);
+        }
+    });
+    
+    var row_img = Ti.UI.createImageView({
+		image: '../images/twitter_logo.png',
+		left: 10,
+		top: 10,
+		height: 36,
+		width: 36,
+		hires: true
+	});
+	twitter_row.add(row_img);
+    
+    var row_title = Titanium.UI.createLabel({
+	    text: 'Twitter',
+        color: '#333',
+        left: 55,
+        top: 12,
+        size: {width: 320, height: 20},
+        font:{fontSize: 18, fontWeight: 'bold'}
+    });
+    twitter_row.add(row_title);
+    
+    var row_sub_title = Titanium.UI.createLabel({
+	    text: 'Share this photo on Twitter.',
+        color: '#333',
+        left: 55,
+        top: 29,
+        size: {width: 200, height: 'auto'},
+        font:{fontSize: 13}
+    });
+    twitter_row.add(row_sub_title);
+    
+    section.add(twitter_row);
+    
+    share_table_data.push(section);
+    
+    var flag_label = Titanium.UI.createLabel({
+	    text: 'Flag Photo',
+        color: '#666',
+        left: 10,
+        top: 0,
+        size: {width: 320, height: 'auto'},
+        font:{fontSize: 16, fontWeight: 'bold'}
+    });
+    var flag_header = Titanium.UI.createView({
+        height: 'auto',
+        width: 320
+    });
+    flag_header.add(flag_label);
+    
+    var section = Titanium.UI.createTableViewSection({
+        headerView: flag_header
+    });
+    share_table_data.push(section);
+    
+    var flag_row = Ti.UI.createTableViewRow({
+        color: '#333',
+        height: 'auto',
+        selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+    });
+    var flag_cont_shown = false;
+    flag_row.addEventListener('click', function(){
+        if (!flag_cont_shown){
+            flag_cont_shown = true;
+            
+            var flag_hidden_cont = Titanium.UI.createView({
+                height: 'auto',
+                width: 250,
+                layout: 'vertical',
+                top: 60,
+            });
+            
+            close_flag_button = Ti.UI.createButton({
+            	title:"Cancel",
+                font: {fontSize: 16, fontWeight: 'bold'},
+            	backgroundImage: '../images/load_more_button.png',
+            	width: 118,
+            	height: 42,
+            	bottom: 10,
+            	left: 0,
+            });
+            close_flag_button.addEventListener('click', function(){
+                flag_row.remove(flag_hidden_cont);
+                setTimeout(function(){
+                    flag_cont_shown = false;
+                }, 300);
+            });
+            flag_hidden_cont.add(close_flag_button);
+            
+            share_flag_button = Ti.UI.createButton({
+            	title:"Submit",
+            	color: '#99CB6E',
+                font: {fontSize: 16, fontWeight: 'bold'},
+            	backgroundImage: '../images/load_more_button.png',
+            	width: 118,
+            	height: 42,
+            	top: -52,
+            	bottom: 10,
+                right: 0,
+            });
+            share_flag_button.addEventListener('click', function(){
+                flag_nom(me, nom, photo_id, win);
+                
+                flag_row.remove(flag_hidden_cont);
+                setTimeout(function(){
+                    flag_cont_shown = false;
+                }, 300);
+            });
+            flag_hidden_cont.add(share_flag_button);
+            
+            flag_row.add(flag_hidden_cont);
+        }
+    });
+    
+    var row_sub_title = Titanium.UI.createLabel({
+	    text: 'Please only flag photos that break the Portrit Terms of Service. Such as pornography, violence, spam, etc.',
+        color: '#333',
+        left: 10,
+        top: 5,
+        size: {width: 260, height: 'auto'},
+        font:{fontSize: 13}
+    });
+    flag_row.add(row_sub_title);
+    section.add(flag_row);
+    
+    share_table.setData(share_table_data);
+    
+    close_button = Ti.UI.createButton({
+    	title:"Close",
+        font: {fontSize: 20, fontWeight: 'bold'},
+    	backgroundImage: '../images/close_big_button.png',
+    	width: 274,
+    	height: 41,
+        top: 5,
+    });
+    share_cont.add(close_button);
+    close_button.addEventListener('click', function(){
+        share_window.close(fadeOut);
+    });
+    
+    share_window.open(fadeIn);
 }
 
 function get_comments(id, cont, loading){
@@ -818,6 +1278,8 @@ var nominator_footer = null;
 var nom_detail_button = null;
 var caption = null;
 var caption_text = '';
+var caption_by = null;
+var caption_left = 0;
 var nomination_cat_label = null;
 var photo_action_cont = null;
 var photo_action_row = null;
@@ -979,13 +1441,36 @@ function render_nom(nom, top, row_count){
         caption_text = 'No caption provided';
         if (nom.caption){
             caption_text = nom.caption;
+            
+            if (nom.nominatee != nom.nominator){
+                caption_by = Titanium.UI.createLabel({
+                    text: nom.nominator_username + ': ',
+                    color: '#fff',
+                    width: 'auto',
+                    height: 35,
+                    left: 10,
+                    font:{fontSize:14, fontWeight: 'bold'}
+                });
+                nominator_footer.add(caption_by);
+                caption_left = caption_by.width + 10;
+                
+                caption_by.user = nom.nominator;
+            	caption_by.name = nom.nominator_name;
+            	caption_by.username = nom.nominator_username;
+            	caption_by.addEventListener('click', add_profile_window);
+            }
+            else{
+                caption_left = 10;
+            }
+        }
+        else{
+            caption_left = 10;
         }
         caption = Titanium.UI.createLabel({
             text: caption_text,
             color: '#fff',
-            // left: 10,
-            // right: 5,
-            width: 300,
+            left: caption_left,
+            width: 'auto',
             height: 35,
             font:{fontSize:14}
         });
@@ -1408,7 +1893,8 @@ function render_stream_photos(data, append){
     	photo.user = data[i].user_fid;
     	photo.name = data[i].name;
     	photo.username = data[i].username;
-    	photo.addEventListener('click', add_profile_window);
+    	photo.photo = data[i].photo;
+    	photo.addEventListener('click', add_photo_window);
     	
     	row.add(photo);
     	
@@ -1524,6 +2010,531 @@ function activate_active_view(){
     }
 }
 
+function find_nom_index_in_list(id, data){
+    for (var i = 0; i < data.length; i++){
+        if (data[i].nomination == id){
+            return i;
+            break;
+        }
+    }
+}
+
+function render_share_wins(data){
+    var t = Titanium.UI.create2DMatrix();
+	t = t.scale(.45);
+	
+	var t1 = Titanium.UI.create2DMatrix();
+	t1 = t1.scale(1);
+	var fadeIn = Titanium.UI.createAnimation({
+        curve: Ti.UI.ANIMATION_CURVE_EASE_OUT_IN,
+        opacity: 1,
+        transform: t1,
+        duration: 350
+    });
+
+    var t2 = Titanium.UI.create2DMatrix();
+	t2 = t2.scale(.45);
+    var fadeOut = Titanium.UI.createAnimation({
+        curve: Ti.UI.ANIMATION_CURVE_EASE_OUT_IN,
+        opacity: 0,
+        transform: t2,
+        duration: 350
+    });
+
+    var share_window = Titanium.UI.createWindow({
+		backgroundImage:'../images/share_window_background.png',
+		height: 440,
+		opacity: 0,
+		left: 8,
+		width: 304,
+		top: 8,
+		transform: t
+	});
+	
+	var share_cont = Titanium.UI.createView({
+        height: 410,
+        width: 290,
+        layout: 'vertical'
+    });
+    share_window.add(share_cont);
+    
+    var share_header = Titanium.UI.createLabel({
+	    text: 'Congratulations! You have just won.',
+	    textAlign: 'left',
+	    left: 10,
+	    top: 0,
+        color: '#333',
+        size: {width: 'auto', height: 'auto'},
+        font:{fontSize:16, fontWeight: 'bold'}
+    });
+    share_cont.add(share_header);
+    
+    var share_sub_header = Titanium.UI.createLabel({
+	    text: 'Share the photos you have just won.',
+	    textAlign: 'left',
+	    left: 10,
+	    top: 0,
+        color: '#333',
+        size: {width: 'auto', height: 'auto'},
+        font:{fontSize:15}
+    });
+    share_cont.add(share_sub_header);
+    
+    var share_top_cont = Titanium.UI.createView({
+        height: 120,
+        width: 290,
+    });
+    share_cont.add(share_top_cont);
+    
+    var selected_thumb = Ti.UI.createImageView({
+        // image: nominatee_profile_img_url,
+        backgroundColor: '#000',
+		image: '../images/photo_loader.png',
+		borderWidth: 4,
+		borderColor: '#cecece',
+		left: 15,
+		top: 10,
+		height: 110,
+		width: 110,
+		hires: true
+	});
+	cachedImageView('images', data[0].photo.source, selected_thumb);
+	share_top_cont.add(selected_thumb);
+	
+	var trophy_arrow = Titanium.UI.createView({
+	    backgroundImage: '../images/large_right_arrow.png',
+        height: 42,
+        width: 56,
+        left: 155,
+        top: 50
+    });
+    share_top_cont.add(trophy_arrow);
+    
+    var nom_cat_underscore = data[0].nomination_category.replace(' ', '_').toLowerCase();
+    var selected_trophy = Titanium.UI.createView({
+	    backgroundImage: '../images/trophies/large/' + nom_cat_underscore + '.png',
+        height: 100,
+        width: 50,
+        left: 220,
+        top: 20
+    });
+    share_top_cont.add(selected_trophy);
+    
+    var scroll_width = (data.length * 60) + 5;
+    if (scroll_width <= 300){
+        scroll_width = 300;
+    }
+    
+    noms_scroll_view = Titanium.UI.createScrollView({
+    	contentWidth: scroll_width,
+    	contentHeight: 50,
+    	top: 0,
+    	height: 50,
+    	width: 300,
+    	backgroundColor: '#222',
+    	showVerticalScrollIndicator:false,
+    	showHorizontalScrollIndicator:true
+    });
+    share_cont.add(noms_scroll_view);
+    
+    var selected_thumb_index = 0;
+    var selected_nom = data[0];
+    var thumb_list = [ ];
+    for (var i = 0; i < data.length; i++){
+        photo_thumb = Ti.UI.createImageView({
+    		image: '../../images/photo_loader.png',
+    		borderColor: '#fff',
+            backgroundColor: '#000',
+    		borderWidth: 2,
+    		width: 55,
+    		height: 42,
+    		left: 5 + (60 * i),
+    		hires: true
+    	});
+    	cachedImageView('images', data[i].photo.crop, photo_thumb);
+	
+    	photo_thumb.nom = data[i];
+    	thumb_list.push(photo_thumb);
+	
+    	if (i > 0){
+    	    photo_thumb.opacity = 0.5;
+    	}
+    	else{
+    	    var scroll_pos = (i * 60) - 125;
+            if (scroll_pos < 0){
+                scroll_pos = 0;
+            }
+            else if (scroll_pos + 300 > scroll_width){
+                scroll_pos = scroll_width - 320;
+            }
+            noms_scroll_view.scrollTo(scroll_pos, 0);
+    	}
+    	photo_thumb.addEventListener('click', function(e){
+    	    var nom = e.source.nom;
+            var source_index = find_nom_index_in_list(nom.nomination, data);
+
+            var scroll_pos = (source_index * 60) - 125;
+            if (scroll_pos < 0){
+                scroll_pos = 0;
+            }
+            else if (scroll_pos + 300 > scroll_width){
+                scroll_pos = scroll_width - 300;
+            }
+            noms_scroll_view.scrollTo(scroll_pos, 0);
+            if (nom.nomination != selected_nom.nomination){
+                old_index = selected_thumb_index;
+                selected_thumb_index = find_nom_index_in_list(nom.nomination, data);
+                selected_nom = data[selected_thumb_index];
+
+                thumb_list[old_index].opacity = 0.5;
+                thumb_list[selected_thumb_index].opacity = 1;
+                
+                nom_cat_underscore = data[selected_thumb_index].nomination_category.replace(' ', '_').toLowerCase();
+                selected_trophy.backgroundImage = '../images/trophies/large/' + nom_cat_underscore + '.png';
+        	    cachedImageView('images', nom.photo.source, selected_thumb);
+            }
+    	});
+        noms_scroll_view.add(photo_thumb);
+    }
+    
+    var share_table = Ti.UI.createTableView({
+        backgroundColor: '#fff',
+        // top: 40,
+        height: 155,
+        minRowHeight: 60,
+        style:Titanium.UI.iPhone.TableViewStyle.GROUPED
+    });
+    share_cont.add(share_table);
+    
+    var share_table_data = [ ];
+    
+    // Share Section
+    var share_label = Titanium.UI.createLabel({
+	    text: 'Share Wins',
+        color: '#666',
+        left: 10,
+        top: 0,
+        size: {width: 320, height: 'auto'},
+        font:{fontSize: 16, fontWeight: 'bold'}
+    });
+    var share_header = Titanium.UI.createView({
+        height: 'auto',
+        width: 320
+    });
+    share_header.add(share_label);
+    
+    var section = Titanium.UI.createTableViewSection({
+        headerView: share_header
+    });
+    
+    //Share Facebook
+    var facebook_row = Ti.UI.createTableViewRow({
+            color: '#333',
+            height: 'auto',
+            selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+    });
+    var facebook_share_shown = false;
+    facebook_row.addEventListener('click', function(){
+        if (!facebook_share_shown){
+            facebook_share_shown = true;
+            
+            share_window.animate({
+                top: -140,
+                duration: 300,
+                curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
+            });
+            
+            var facebook_hidden_cont = Titanium.UI.createView({
+                height: 'auto',
+                width: 'auto',
+                layout: 'vertical',
+                top: 50,
+            });
+
+            var facebook_textarea = Titanium.UI.createTextArea({
+        	    color: '#333',
+        	    width: 250,
+        	    height: 75,
+        	    bottom: 5,
+        	    borderWidth: 1,
+        	    borderColor: '#dedede',
+        	    borderRadius: 3,
+        	    font: {fontSize: 18, fontWeight: 'bold'},
+        	    suppressReturn: false
+        	});
+            facebook_hidden_cont.add(facebook_textarea);
+            
+            close_facebook_button = Ti.UI.createButton({
+            	title:"Cancel",
+                font: {fontSize: 16, fontWeight: 'bold'},
+            	backgroundImage: '../images/load_more_button.png',
+            	width: 118,
+            	height: 42,
+            	bottom: 10,
+            	left: 0,
+            });
+            close_facebook_button.addEventListener('click', function(){
+                facebook_row.remove(facebook_hidden_cont);
+                
+                share_window.animate({
+                    top: 0,
+                    duration: 300,
+                    curve: Ti.UI.ANIMATION_CURVE_EASE_OUT,
+                });
+                
+                setTimeout(function(){
+                    facebook_share_shown = false;
+                }, 300);
+            });
+            facebook_hidden_cont.add(close_facebook_button);
+            
+            share_facebook_button = Ti.UI.createButton({
+            	title:"Share",
+            	color: '#99CB6E',
+                font: {fontSize: 16, fontWeight: 'bold'},
+            	backgroundImage: '../images/load_more_button.png',
+            	width: 118,
+            	height: 42,
+            	top: -52,
+            	bottom: 10,
+                right: 0,
+            });
+            share_facebook_button.addEventListener('click', function(){
+                var title = me.name.split(' ')[0] + ' won new trophies on Portrit';
+                var comment_body = facebook_textarea.value;
+                facebook_textarea.blur();
+                share_on_facebook(me, data[0], comment_body, title);
+                
+                share_window.animate({
+                    top: 0,
+                    duration: 300,
+                    curve: Ti.UI.ANIMATION_CURVE_EASE_OUT,
+                });
+                
+                facebook_row.remove(facebook_hidden_cont);
+                setTimeout(function(){
+                    facebook_share_shown = false;
+                }, 300);
+            });
+            facebook_hidden_cont.add(share_facebook_button);
+            
+            facebook_row.add(facebook_hidden_cont);
+            
+            var caption_focus_interval = null;
+            var caption_focus_interval_count = 0;
+            clearInterval(caption_focus_interval);
+            caption_focus_interval = setInterval(function(){
+                if (caption_focus_interval_count > 6){
+                    clearInterval(caption_focus_interval);
+                }
+                caption_focus_interval_count += 1;
+                facebook_textarea.focus();
+            }, 50);
+        }
+    });
+    
+    var row_img = Ti.UI.createImageView({
+		image: '../images/fb_logo.png',
+		left: 10,
+		top: 10,
+		height: 36,
+		width: 36,
+		hires: true
+	});
+	facebook_row.add(row_img);
+    
+    var row_title = Titanium.UI.createLabel({
+	    text: 'Facebook',
+        color: '#333',
+        left: 55,
+        top: 12,
+        size: {width: 320, height: 20},
+        font:{fontSize: 18, fontWeight: 'bold'}
+    });
+    facebook_row.add(row_title);
+    
+    var row_sub_title = Titanium.UI.createLabel({
+	    text: 'Share your wins on Facebook.',
+        color: '#333',
+        left: 55,
+        top: 29,
+        size: {width: 200, height: 'auto'},
+        font:{fontSize: 13}
+    });
+    facebook_row.add(row_sub_title);
+    
+    section.add(facebook_row);
+    
+    //Share Twitter
+    var twitter_row = Ti.UI.createTableViewRow({
+            color: '#333',
+            height: 'auto',
+            selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+    });
+    var twitter_share_shown = false;
+    twitter_row.addEventListener('click', function(){
+        if (!twitter_share_shown){
+            twitter_share_shown = true;
+            
+            share_window.animate({
+                top: -140,
+                duration: 300,
+                curve: Ti.UI.ANIMATION_CURVE_EASE_IN,
+            });
+            
+            var twitter_hidden_cont = Titanium.UI.createView({
+                height: 'auto',
+                width: 'auto',
+                layout: 'vertical',
+                top: 50,
+            });
+
+            var twitter_textarea = Titanium.UI.createTextArea({
+        	    color: '#333',
+        	    width: 250,
+        	    height: 75,
+        	    bottom: 5,
+        	    borderWidth: 1,
+        	    borderColor: '#dedede',
+        	    borderRadius: 3,
+        	    font: {fontSize: 18, fontWeight: 'bold'},
+        	    suppressReturn: false
+        	});
+            twitter_hidden_cont.add(twitter_textarea);
+            
+            close_twitter_button = Ti.UI.createButton({
+            	title:"Cancel",
+                font: {fontSize: 16, fontWeight: 'bold'},
+            	backgroundImage: '../images/load_more_button.png',
+            	width: 118,
+            	height: 42,
+            	bottom: 10,
+            	left: 0,
+            });
+            close_twitter_button.addEventListener('click', function(){
+                twitter_row.remove(twitter_hidden_cont);
+                
+                share_window.animate({
+                    top: 0,
+                    duration: 300,
+                    curve: Ti.UI.ANIMATION_CURVE_EASE_OUT,
+                });
+                
+                setTimeout(function(){
+                    twitter_share_shown = false;
+                }, 300);
+            });
+            twitter_hidden_cont.add(close_twitter_button);
+            
+            share_twitter_button = Ti.UI.createButton({
+            	title:"Share",
+            	color: '#99CB6E',
+                font: {fontSize: 16, fontWeight: 'bold'},
+            	backgroundImage: '../images/load_more_button.png',
+            	width: 118,
+            	height: 42,
+            	top: -52,
+            	bottom: 10,
+                right: 0,
+            });
+            share_twitter_button.addEventListener('click', function(){
+                var comment_body = twitter_textarea.value;
+                twitter_textarea.blur();
+                share_on_twitter(me, data[0], comment_body);
+                
+                share_window.animate({
+                    top: 0,
+                    duration: 300,
+                    curve: Ti.UI.ANIMATION_CURVE_EASE_OUT,
+                });
+                
+                twitter_row.remove(twitter_hidden_cont);
+                setTimeout(function(){
+                    twitter_share_shown = false;
+                }, 300);
+            });
+            twitter_hidden_cont.add(share_twitter_button);
+            
+            twitter_row.add(twitter_hidden_cont);
+            
+            var caption_focus_interval = null;
+            var caption_focus_interval_count = 0;
+            clearInterval(caption_focus_interval);
+            caption_focus_interval = setInterval(function(){
+                if (caption_focus_interval_count > 6){
+                    clearInterval(caption_focus_interval);
+                }
+                caption_focus_interval_count += 1;
+                twitter_textarea.focus();
+            }, 50);
+        }
+    });
+    
+    var row_img = Ti.UI.createImageView({
+		image: '../images/twitter_logo.png',
+		left: 10,
+		top: 10,
+		height: 36,
+		width: 36,
+		hires: true
+	});
+	twitter_row.add(row_img);
+    
+    var row_title = Titanium.UI.createLabel({
+	    text: 'Twitter',
+        color: '#333',
+        left: 55,
+        top: 12,
+        size: {width: 320, height: 20},
+        font:{fontSize: 18, fontWeight: 'bold'}
+    });
+    twitter_row.add(row_title);
+    
+    var row_sub_title = Titanium.UI.createLabel({
+	    text: 'Share you wins on Twitter.',
+        color: '#333',
+        left: 55,
+        top: 29,
+        size: {width: 200, height: 'auto'},
+        font:{fontSize: 13}
+    });
+    twitter_row.add(row_sub_title);
+    
+    section.add(twitter_row);
+    
+    share_table_data.push(section);
+    
+    share_table.setData(share_table_data);
+    
+    close_button = Ti.UI.createButton({
+    	title:"Close",
+        font: {fontSize: 20, fontWeight: 'bold'},
+    	backgroundImage: '../images/close_big_button.png',
+    	width: 274,
+    	height: 41,
+        top: 5,
+    });
+    share_cont.add(close_button);
+    close_button.addEventListener('click', function(){
+        share_window.close(fadeOut);
+    });
+    
+    share_window.open(fadeIn);
+    
+    //Mark notifications as read
+    var xhr = Titanium.Network.createHTTPClient();
+    var url = SERVER_URL + '/notification_read/';
+    xhr.open('POST', url);
+    
+    var ids = '';
+    for (var i = 0; i < data.length; i++){
+        ids += data[i].notification_id + ',';
+    }
+    
+    // send the data
+    xhr.send({'notification_ids': ids, 'kill': false, 'access_token': me.access_token});
+}
+
 function init_active_view(){
     if (!globals_attached){
         win.hideNavBar({animated:false});
@@ -1542,6 +2553,15 @@ function init_active_view(){
     	notification_count = data.notification_count;
     	me.username = data.username;
         Ti.App.Properties.setString("me", JSON.stringify(me));
+        
+        try{
+            if (data.winning_notifications.length > 0){
+                render_share_wins(data.winning_notifications);
+            }
+        }
+        catch(e){
+            
+        }
     	
     	if (notification_count > 0){
     	    var tabGroup = win.tabGroup;
@@ -1946,6 +2966,6 @@ win.addEventListener('focus', function(){
 Ti.App.addEventListener('reset', function(eventData) {
     reset = true;
     
-    tabGroup = win.tabGroup;
-    tabGroup.setActiveTab(0);
+    // tabGroup = win.tabGroup;
+    // tabGroup.setActiveTab(0);
 });

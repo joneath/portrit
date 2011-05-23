@@ -191,7 +191,6 @@ def get_user_data(user):
         winning_notifications = [ ]
         try:
             winning_notifications = get_winning_notifications(user)
-            print winning_notifications
         except:
             pass
             
@@ -207,6 +206,7 @@ def get_user_data(user):
 
         data = {
             'notifications': notifications,
+            'winning_notifications': winning_notifications,
             'tut_counts': tut_counts,
             'twitter_access_token': twitter_access_token,
             'email_on_follow': email_on_follow,

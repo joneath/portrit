@@ -145,11 +145,13 @@ a:hover{
 .off{
     cursor:         default;
     opacity:        .7;
+    text-decoration:    none;
 }
 
 .sick.off:hover{
     background-color:   #222;
     cursor:             default;
+    text-decoration:    none;
 }
 
 .sick.off:active{
@@ -908,6 +910,12 @@ div#search{
     padding:            10px;
     text-align:         left;
 }
+
+    #results_wrap h1{
+        color:              #555;
+        font-size:          24px;
+        text-align:         center;
+    }
 
     #results_wrap h2{
         color:              #555;
@@ -3755,6 +3763,84 @@ div#context_overlay{
         border-radius:          5px;
         -moz-border-radius:     5px;
     }
+    
+        #context_overlay_cont.publish_share_win{
+            padding:            10px;
+            width:              445px;
+        }
+        
+            #context_overlay_cont.publish_share_win h1{
+                font-size:          30px;
+                font-weight:        bold;
+                margin-bottom:      5px;
+            }
+            
+            #context_overlay_cont.publish_share_win p{
+                margin-bottom:      10px;
+                margin-left:        10px;
+            }
+            
+            #context_overlay_cont.publish_share_win h2{
+                font-size:          20px;
+                font-weight:        bold;
+                margin-top:         10px;
+            }
+            
+            #context_overlay_cont.publish_share_win #trophy_cont{
+                margin-top:         10px;
+                text-align:         center;
+                height:             165px;
+                overflow:           auto;
+            }
+            
+                #context_overlay_cont.publish_share_win .share_trophy_cont{
+                    display:            inline-block;
+                    margin:             5px;
+                    position:           relative;
+                }
+                
+                #context_overlay_cont.publish_share_win .trophy_img{
+                    position:           absolute;
+                    bottom:             0px;
+                    right:              0px;
+                }
+                
+            #context_overlay_cont.publish_share_win #share_options_cont{
+                border:             1px solid #BEBEBE;
+                border-radius:      5px;
+                -moz-border-radius: 5px;
+            }
+            
+            #context_overlay_cont.publish_share_win #caption_cont{
+                position:           relative;
+            }
+            
+                #context_overlay_cont.publish_share_win #caption_cont textarea{
+                    font-size:          22px;
+                    width:              413px;
+                    padding:            15px;
+                    border:             1px solid #BEBEBE;
+                    border-radius:      5px;
+                    -moz-border-radius: 5px;
+                    resize:             none;
+                }
+                
+                #context_overlay_cont.publish_share_win #caption_cont p{
+                    position:           absolute;
+                    bottom:             5px;
+                    right:              10px;
+                }
+                
+                #context_overlay_cont.publish_share_win #share_row_cont{
+                    margin-top:         10px;
+                }
+                
+                #context_overlay_cont.publish_share_win #share_row_cont a{
+                    float:              right;
+                    margin-left:        20px;
+                    text-align:         center;
+                    width:              60px;
+                }
     
         div#context_overlay_cont.share_nom{
             width:              675px;

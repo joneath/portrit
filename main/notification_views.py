@@ -135,7 +135,7 @@ def get_active_notifications(user):
 def get_winning_notifications(user):
     try:
         winning_notification_type = Notification_Type.objects.get(name='nom_won')
-        winning_notifications = Notification.objects(owner=user, active=True, notification_type=winning_notification_type).order_by('read', '-created_date')
+        winning_notifications = Notification.objects(owner=user, destination=user, active=True, read=False, notification_type=winning_notification_type).order_by('read', '-created_date')
     
         data = [ ]
         for notification in winning_notifications:

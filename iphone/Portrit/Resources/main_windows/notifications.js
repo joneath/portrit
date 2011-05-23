@@ -128,12 +128,26 @@ function add_profile_window(e){
     if (typeof(e.source.button) == 'undefined'){
         var w = Ti.UI.createWindow({backgroundColor:"#222", url:'user/profile.js'});
     	Titanium.UI.currentTab.open(w,{animated:true});
+    	
+    	var username = '';
+    	var user = '';
+    	var name = '';
+    	if (e.rowData && e.rowData.username){
+    	    username = e.rowData.username;
+    	    user = e.rowData.user;
+    	    name = e.rowData.name;
+    	}
+    	else{
+    	    username = e.source.username;
+    	    user = e.source.user;
+    	    name = e.source.name;
+    	}
 
     	setTimeout(function(){
     	    Ti.App.fireEvent('pass_user', {
-                user: e.source.user,
-                name: e.source.name,
-                username: e.rowData.username,
+                user: user,
+                name: name,
+                username: username,
             });
     	}, 250);
         if (notification_read_list.indexOf(e.rowData.notification_id) == -1){

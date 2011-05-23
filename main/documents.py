@@ -36,7 +36,6 @@ class Nomination(Document):
     
     nomination_category = StringField()
     caption = StringField(max_length=140)
-    # comments = ListField(ReferenceField(Comment))
     
     photo = ReferenceField('Photo')
     public = BooleanField(default=False)
@@ -172,6 +171,16 @@ class Nomination(Document):
         cache.delete(str(self.nominatee.id) + '_user_active_noms')
         cache.delete(str(self.nominatee.id) + '_related_noms')
         self.serialize_nom()
+        
+# class Shared_Nomination(Document):
+#     active = BooleanField(default=True)
+#     created_date = DateTimeField(default=datetime.datetime.now)
+#     nomination = ReferenceField('Nomination')
+#     shared_by = ReferenceField('Portrit_User')
+#     
+#     meta = {
+#         'ordering': ['-created_date']
+#     }
     
 class Photo_Flag(Document):
     active = BooleanField(default=True)
@@ -225,6 +234,8 @@ class Photo(Document):
         'ordering': ['-created_date'],
         'indexes': ['owner',
                     'location',
+                    'trophy',
+                    'active',
                     'nominations']
     }
     
