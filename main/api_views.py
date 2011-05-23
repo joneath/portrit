@@ -367,8 +367,12 @@ def get_nom_detail(request):
         
     following = [ ]
     if source and source != 'undefined':
-        source = Portrit_User.objects.get(username=source)
-        source_following = source.get_following()
+        try:
+            source = source.replace('=', '')
+            source = Portrit_User.objects.get(username=source)
+            source_following = source.get_following()
+        except:
+            pass
     
     if nav_selected == 'stream_active':
         cat = cat.replace('-', ' ');
