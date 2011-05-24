@@ -257,10 +257,10 @@ function update_nom_detail(index){
     
     if (selected_nom.caption){
         if (selected_nom.nominatee != selected_nom.nominator){
-            caption_text = selected_nom.nominator_username + ': ' + selected_nom.caption;
+            caption = selected_nom.nominator_username + ': ' + selected_nom.caption;
         }
         else{
-            caption_text = selected_nom.caption;
+            caption = selected_nom.caption;
         }
     }
     else{

@@ -89,9 +89,9 @@ def login_fb_user(request):
                     except:
                         pass
                 user.save()
-                graph = facebook.GraphAPI(cookie["access_token"])
-                portrit = Portrit_FB(graph, user, cookie["access_token"])
-                portrit.load_user_friends(True)
+                # graph = facebook.GraphAPI(cookie["access_token"])
+                # portrit = Portrit_FB(graph, user, cookie["access_token"])
+                # portrit.load_user_friends(True)
         
             if not user.username:
                 first = True

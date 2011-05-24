@@ -379,7 +379,9 @@ class Portrit_User(Document):
                     'name',
                     'email',
                     'following',
-                    'followers']
+                    'followers',
+                    'pending',
+                    'active']
     }
     
     def get_twitter_access_token(self):
@@ -397,8 +399,8 @@ class Portrit_User(Document):
             return None
     
     def check_follow(self, target):
-        following = filter(lambda follow: follow.user == target and follow.active == True, self.following)
-        if following:
+        following = self.get_following_ids()
+        if target.id in following:
             return True
         else:
             return False
@@ -434,16 +436,48 @@ class Portrit_User(Document):
         except Exception, err:
             print err
             return []
+            
+    def get_follower_ids(self):
+        from django.db.models import Q
+        try:
+            follower_id_list = cache.get(str(self.id) + '_follower_id')
+            if not follower_id_list:
+                follower = filter(lambda follow: follow.pending == False and follow.active == True and follow.user , self.followers)
+                follower_dict = {}
+                for follow in follower:
+                    if follow.user.username:
+                        follower_dict[follow.user.id] = follow.user.id
+
+                follower_list = follower_dict.values()
+                cache.set(str(self.id) + '_follower_id', follower_list)
+                return follower_list
+            else:
+                return follower_id_list
+        except Exception, err:
+            print err
+            return []
     
     def get_following(self):
         try:
-            following = filter(lambda follow: follow.pending == False and follow.active == True, self.following)
-            following_dict = { }
-            for follow in following:
-                if follow.user.username:
-                    following_dict[follow.user.id] = follow.user
-            
-            return following_dict.values()
+            following = cache.get(str(self.id) + '_following')
+            if not following:
+                following = filter(lambda follow: follow.pending == False and follow.active == True, self.following)
+                # try:
+                #     cache.set(str(self.id) + '_following', following, 60*5)
+                # except Exception, err:
+                #     print err
+                following_dict = { }
+                for follow in following:
+                    if follow.user.username:
+                        following_dict[follow.user.id] = follow.user
+                    
+                following = following_dict.values()
+                # import json
+                # print json.dumps(following)
+                return following
+            else:
+                print following
+                return following
         except:
             return []
         
@@ -454,7 +488,7 @@ class Portrit_User(Document):
             for follow in followers:
                 if follow.user.username:
                     followers_dict[follow.user.id] = follow.user
-
+                    
             return followers_dict.values()
         except:
             return []
@@ -550,6 +584,7 @@ class Follow(Document):
     
     meta = {
         'indexes': ['active',
+                    'pending',
                     'user',
                     'created_date']
     }

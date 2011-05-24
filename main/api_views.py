@@ -214,7 +214,7 @@ def get_recent_stream(request):
     try:
         portrit_user = get_user_from_access_token(access_token)
         user = portrit_user.fb_user
-        friends = portrit_user.get_following()
+        friends = portrit_user.get_following_ids()
         
         if dir == 'new':
             nomination = Nomination.objects.get(id=id)
@@ -260,7 +260,7 @@ def get_top_stream(request):
     try:
         portrit_user = get_user_from_access_token(access_token)
         user = portrit_user.fb_user
-        following = user.get_following()
+        following = user.get_following_ids()
         if new_date:
             new_date = datetime.fromtimestamp(float(new_date))
             nominations = Nomination.objects.select_related().filter(
@@ -293,7 +293,7 @@ def get_winners_stream(request):
     try:
         portrit_user = get_user_from_access_token(access_token)
         user = portrit_user.fb_user
-        friends = portrit_user.get_following()
+        friends = portrit_user.get_following_ids()
         
         if dir == 'new':
             nomination = Nomination.objects.get(id=id)
@@ -370,7 +370,7 @@ def get_nom_detail(request):
         try:
             source = source.replace('=', '')
             source = Portrit_User.objects.get(username=source)
-            source_following = source.get_following()
+            source_following = source.get_following_ids()
         except:
             pass
     
@@ -628,7 +628,7 @@ def get_noms_in_cat(request):
     
     try:
         user = get_user_from_access_token(access_token)
-        following = user.get_following()
+        following = user.get_following_ids()
         
         nom = Nomination.objects.get(id=str(nom_id))
         noms_in_cat = Nomination.objects.filter(
@@ -991,12 +991,12 @@ def get_follow_count(request):
         portrit_user = Portrit_User.objects.get(fb_user__fid=int(user))
 
         try:
-            following_count = len(portrit_user.get_following())
+            following_count = len(portrit_user.get_following_ids())
         except:
             following_count = 0
 
         try:
-            followers_count = len(portrit_user.get_followers())
+            followers_count = len(portrit_user.get_follower_ids())
         except:
             followers_count = 0
 
@@ -1020,6 +1020,16 @@ def follow_unfollow_user(request):
     try:
         source = get_user_from_access_token(access_token)
         target = Portrit_User.objects.get(username=target)
+        
+        # Clear follow id cache
+        try:
+            cache.delete(str(source.id) + '_following_id')
+            cache.delete(str(source.id) + '_follower_id')
+            
+            cache.delete(str(target.id) + '_following_id')
+            cache.delete(str(target.id) + '_follower_id')
+        except:
+            pass
         
         if method == 'follow':
             pending = False
@@ -1196,10 +1206,10 @@ def get_follow_data(request):
                 
             data['count'] = len(target_followers)
         
-            source_following_list = []
-            source_following = source.get_following()
-            for follower in source_following:
-                source_following_list.append(follower.id)
+            source_following_list = source.get_following_ids()
+            # source_following = source.get_following()
+            # for follower in source_following:
+            #     source_following_list.append(follower.id)
         
             for user in target_followers:
                 if source and user.id in source_following_list:
@@ -1225,10 +1235,10 @@ def get_follow_data(request):
                 
             data['count'] = len(target_following)
 
-            source_following_list = []
-            source_following = source.get_following()
-            for following in source_following:
-                source_following_list.append(following.id)
+            source_following_list = source.get_following_ids()
+            # source_following = source.get_following()
+            # for following in source_following:
+            #     source_following_list.append(following.id)
             
             if mutual and target.id != source.id:
                 source_following.append(source)
@@ -1293,10 +1303,10 @@ def get_follow_data_detailed(request):
                 target_followers = target_followers[PAGE_SIZE * (page - 1):PAGE_SIZE * page]
                 
             if source:
-                source_following = source_portrit_user.get_following()
-                source_following_list = []
-                for follower in source_following:
-                    source_following_list.append(follower.id)
+                # source_following = source_portrit_user.get_following()
+                source_following_list = source_portrit_user.get_following_ids()
+                # for follower in source_following:
+                #     source_following_list.append(follower.id)
         
             for user in target_followers:
                 photo_count = 0
@@ -1342,10 +1352,10 @@ def get_follow_data_detailed(request):
                 target_following = target_following[PAGE_SIZE * (page - 1):PAGE_SIZE * page]
             
             if source:
-                source_following = source_portrit_user.get_following()
-                source_following_list = []
-                for following in source_following:
-                    source_following_list.append(following.id)
+                # source_following = source_portrit_user.get_following()
+                source_following_list = source_portrit_user.get_following_ids()
+                # for following in source_following:
+                #     source_following_list.append(following.id)
         
             for user in target_following:
                 photo_count = 0
@@ -1434,7 +1444,7 @@ def get_user_profile(request):
         elif access_token:
             portrit_user = get_user_from_access_token(access_token)
             user = portrit_user.fb_user
-            
+
         # Set user data
         if portrit_user:
             data['user']['fid'] = user.fid
@@ -1463,7 +1473,7 @@ def get_user_profile(request):
                 cache.set(str(portrit_user.id) + '_trophy_count', trophy_count, 60*60*24)
             else:
                 data['trophy_count'] = user_trophy_count
-                
+    
         if not method or method == 'photos':
             try:
                 if not dir and pid:
@@ -1526,12 +1536,12 @@ def get_user_profile(request):
             follow_counts = cache.get(str(portrit_user.id) + '_follow_count')
             if not follow_counts:
                 try:
-                    following_count = len(portrit_user.get_following())
+                    following_count = len(portrit_user.get_following_ids())
                 except:
                     following_count = 0
 
                 try:
-                    followers_count = len(portrit_user.get_followers())
+                    followers_count = len(portrit_user.get_follower_ids())
                 except:
                     followers_count = 0
         
@@ -1559,7 +1569,7 @@ def get_profile_related_noms(request):
         
         related_noms = cache.get(str(target_user.id) + '_related_noms')
         if not related_noms:
-            friends = target_user.get_following()
+            friends = target_user.get_following_ids()
         
             target_user_active_noms = Nomination.objects.filter(Q(nominatee=target_user) | Q(tagged_users__in=[target_user]), active=True, won=False)
         
@@ -1616,7 +1626,7 @@ def get_user_stream_photos(request):
         portrit_user = get_user_from_access_token(access_token)
         user = portrit_user.fb_user
     
-        source_following = portrit_user.get_following()
+        source_following = portrit_user.get_following_ids()
         source_following_list = [ ]
         
         try:
@@ -2190,7 +2200,7 @@ def search(request):
     try:
         if source:
             source = Portrit_User.objects.get(fb_user__fid=int(source))
-            source_following = source.get_following()
+            source_following = source.get_following_ids()
         else:
             source_following = [ ]
             
@@ -2229,7 +2239,7 @@ def combined_search(request):
     try:
         if access_token:
             source = get_user_from_access_token(access_token)
-            source_following = source.get_following()
+            source_following = source.get_following_ids()
         else:
             source_following = [ ]
 
@@ -2269,7 +2279,7 @@ def search_by_names(request):
     try:
         if source:
             source = Portrit_User.objects.get(fb_user__fid=int(source))
-            source_following = source.get_following()
+            source_following = source.get_following_ids()
         else:
             source_following = [ ]
     
@@ -2309,7 +2319,7 @@ def search_by_email(request):
     try:
         if source:
             source = Portrit_User.objects.get(fb_user__fid=int(source))
-            source_following = source.get_following()
+            source_following = source.get_following_ids()
         else:
             source_following = [ ]
     
