@@ -1297,7 +1297,7 @@ def get_follow_data_detailed(request):
         target = target_portrit_user.fb_user
     
         if method == 'followers':
-            target_followers = target_portrit_user.get_followers()
+            target_followers = target_portrit_user.get_follower_ids()
             data['count'] = len(target_followers)
             if not all:
                 target_followers = target_followers[PAGE_SIZE * (page - 1):PAGE_SIZE * page]
@@ -1307,19 +1307,32 @@ def get_follow_data_detailed(request):
                 source_following_list = source_portrit_user.get_following_ids()
                 # for follower in source_following:
                 #     source_following_list.append(follower.id)
+            
+            target_followers = Portrit_User.objects.filter(id__in=target_followers)
         
             for user in target_followers:
                 photo_count = 0
                 trophy_count = 0
                 active_count = 0
                 try:
-                    photo_count = len(Photo.objects.filter(owner=user,
-                                                    nominations__size=0,
-                                                    trophy=False,
-                                                    active=True, 
-                                                    pending=False))
-                    trophy_count = len(Nomination.objects.filter(Q(nominatee=user) | Q(tagged_users__in=[user]), won=True))
-                    active_count = len(Nomination.objects.filter(Q(nominatee=user) | Q(tagged_users__in=[user]), active=True, won=False))
+                    photo_count = cache.get(str(user.id) + '_photo_count')
+                    if not photo_count:
+                        photo_count = len(Photo.objects.filter(owner=user,
+                                                        nominations__size=0,
+                                                        trophy=False,
+                                                        active=True, 
+                                                        pending=False))
+                        cache.set(str(user.id) + '_photo_count', photo_count, 60*60*24)
+                    
+                    trophy_count = cache.get(str(user.id) + '_trophy_count')
+                    if not trophy_count:
+                        trophy_count = len(Nomination.objects.filter(Q(nominatee=user) | Q(tagged_users__in=[user]), won=True))
+                        cache.set(str(user.id) + '_trophy_count', trophy_count, 60*60*24)
+                    
+                    active_count = cache.get(str(user.id) + '_active_count')
+                    if not active_count:
+                        active_count = len(Nomination.objects.filter(Q(nominatee=user) | Q(tagged_users__in=[user]), active=True, won=False))
+                        cache.set(str(user.id) + '_active_count', active_count, 60*60*24)
                 except:
                     pass
                     
@@ -1346,7 +1359,7 @@ def get_follow_data_detailed(request):
             
         
         elif method == 'following':
-            target_following = target_portrit_user.get_following()
+            target_following = target_portrit_user.get_following_ids()
             data['count'] = len(target_following)
             if not all:
                 target_following = target_following[PAGE_SIZE * (page - 1):PAGE_SIZE * page]
@@ -1356,19 +1369,32 @@ def get_follow_data_detailed(request):
                 source_following_list = source_portrit_user.get_following_ids()
                 # for following in source_following:
                 #     source_following_list.append(following.id)
+            
+            target_following = Portrit_User.objects.filter(id__in=target_following)
         
             for user in target_following:
                 photo_count = 0
                 trophy_count = 0
                 active_count = 0
                 try:
-                    photo_count = len(Photo.objects.filter(owner=user,
-                                                    nominations__size=0,
-                                                    trophy=False,
-                                                    active=True, 
-                                                    pending=False))
-                    trophy_count = len(Nomination.objects.filter(Q(nominatee=user) | Q(tagged_users__in=[user]), won=True))  #fb_user.winning_noms.all().count()
-                    active_count = len(Nomination.objects.filter(Q(nominatee=user) | Q(tagged_users__in=[user]), active=True, won=False))  #fb_user.active_nominations.all().count()
+                    photo_count = cache.get(str(user.id) + '_photo_count')
+                    if not photo_count:
+                        photo_count = len(Photo.objects.filter(owner=user,
+                                                        nominations__size=0,
+                                                        trophy=False,
+                                                        active=True, 
+                                                        pending=False))
+                        cache.set(str(user.id) + '_photo_count', photo_count, 60*60*24)
+                    
+                    trophy_count = cache.get(str(user.id) + '_trophy_count')
+                    if not trophy_count:
+                        trophy_count = len(Nomination.objects.filter(Q(nominatee=user) | Q(tagged_users__in=[user]), won=True))
+                        cache.set(str(user.id) + '_trophy_count', trophy_count, 60*60*24)
+                    
+                    active_count = cache.get(str(user.id) + '_active_count')
+                    if not active_count:
+                        active_count = len(Nomination.objects.filter(Q(nominatee=user) | Q(tagged_users__in=[user]), active=True, won=False))
+                        cache.set(str(user.id) + '_active_count', active_count, 60*60*24)
                 except:
                     pass
                     
@@ -1460,10 +1486,12 @@ def get_user_profile(request):
             else:
                 data['active_noms'] = user_active_noms
         elif not method:
-            user_active_count = cache.get(str(user.fid) + '_active_count')
+            user_active_count = cache.get(str(portrit_user.id) + '_active_count')
             if not user_active_count:
                 data['active_noms_count'] = len(Nomination.objects.filter(Q(nominatee=portrit_user) | Q(tagged_users__in=[portrit_user]), active=True, won=False))
                 cache.set(str(portrit_user.id) + '_active_count', data['active_noms_count'], 60*60*24)
+            else:
+                data['active_noms_count'] = user_active_count
 
         if not method or method == 'trophies':
             user_trophy_count = cache.get(str(portrit_user.id) + '_trophy_count')

@@ -1444,6 +1444,56 @@ div#login_content div#login_right_cont{
     height:             95px;
 }
 
+#profile_user_context .follow_wrap .user_stats_cont{
+    width:              auto;
+}
+
+#profile_user_context .follow_photos{
+    display:            none;
+}
+
+#profile_user_context .follow_trophies{
+    display:            none;
+}
+
+#profile_user_context .follow_active{
+    display:            none;
+}
+
+.user_stats_cont .follow_button_cont span{
+    width:              80px;
+}
+
+#profile_user_context .follow_name_cont > h3{
+    font-size:          22px;
+    margin-top:         16px;
+}
+
+#profile_user_context .follow_name_cont > h4{
+    font-size:          16px;
+    margin-top:         0px;
+}
+
+#recent_left_cont .community_photo_cont{
+    height:             117px;
+    width:              156px;
+}
+
+#recent_left_cont .community_photo_cont img{
+    height:             117px;
+    width:              156px;
+}
+
+#user_photo_cont .user_photo_wrap{
+    height:             111px;
+    width:              149px;
+}
+
+#user_photo_cont .user_photo_wrap img{
+    height:             111px;
+    width:              149px;
+}
+
 #footer{
     height:             50px;
     color:              #AEAEAE;

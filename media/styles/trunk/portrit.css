@@ -4836,14 +4836,10 @@ div#context_overlay{
     
     #profile_user_context .follow_wrap{
         background-color:   #EEE;
+        cursor:             pointer;
         height:             80px;
         margin-bottom:      15px;
         position:           relative;
-    }
-    
-    #profile_user_context .follow_wrap:hover{
-        background-color:   #ccc;
-        cursor:             pointer;
     }
     
         #profile_user_context .follow_wrap > img{
@@ -4854,12 +4850,21 @@ div#context_overlay{
             width:              50px;
         }
         
-        #profile_user_context .follow_wrap > h3{
+        #profile_user_context .follow_wrap .follow_name_cont{
             float:              left;
+            margin-left:        20px;
+        }
+        
+        #profile_user_context .follow_name_cont > h3{
             font-size:          18px;
             font-weight:        bold;
-            line-height:        80px;
-            margin-left:        20px;
+            margin-top:         18px;
+        }
+        
+        #profile_user_context .follow_name_cont > h4{
+            color:              #666;
+            font-size:          14px;
+            margin-top:         4px;
         }
         
         #profile_user_context .follow_wrap .user_stats_cont{

@@ -37,7 +37,7 @@ def get_trophy_wins(request):
                 winning_noms = Nomination.objects.select_related().filter(Q(nominatee=user) | Q(tagged_friends__fid__in=[user.fid]), won=True, nomination_category__name=cat).distinct('id').order_by('-current_vote_count', '-created_date')
             else:
                 user = FB_User.objects.get(fid=int(cookie["uid"]))
-                following = user.get_following()
+                following = user.get_following_ids()
                 winning_noms = Nomination.objects.select_related().filter(
                         Q(nominatee__in=following) |
                         Q(tagged_friends__fid__in=[user.fid]) |
@@ -880,7 +880,7 @@ def get_recent_stream(fb_user, created_date=None, page_size=10, ref_user=None):
     data = [ ]
     PAGE_SIZE = int(page_size)
     try:
-        friends = fb_user.get_following()
+        friends = fb_user.get_following_ids()
         if created_date:
             if ref_user:
                 nominations = Nomination.objects.select_related().filter(
@@ -911,7 +911,7 @@ def get_top_stream(user):
     try:
         user_top_stream_cache = cache.get(str(user.id) + '_top_stream')
         if not user_top_stream_cache:
-            following = user.get_following()
+            following = user.get_following_ids()
             nominations = Nomination.objects.filter(
                 Q(nominatee__in=following) |
                 Q(nominatee=user) |
@@ -934,12 +934,9 @@ def get_top_users(user):
     try:
         user_top_cache = cache.get(str(user.id) + '_top_users')
         if user_top_cache == None:
-            following = user.get_following()
-            following_id_list = [ ]
-            for friend in following:
-                following_id_list.append(str(friend.id))
+            following = user.get_following_ids()
             friends = Portrit_User.objects.filter(Q(id=user.id) | 
-                                                    Q(id__in=following_id_list), 
+                                                    Q(id__in=following), 
                                                     winning_nomination_count__gt=0, 
                                                     active=True, 
                                                     pending=False).order_by('-winning_nomination_count')[:10]
@@ -957,7 +954,7 @@ def get_top_users(user):
                     'top_nom_cat': top_cat
                 })
                 
-            cache.set(str(user.id) + '_top_users', data)
+            cache.set(str(user.id) + '_top_users', data, 60*60*24)
         else:
             data = user_top_cache
     except Exception, err:

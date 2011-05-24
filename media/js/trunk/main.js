@@ -669,7 +669,7 @@ $(document).ready(function(){
         close_size = 'mobile'
         
         if (typeof(_gaq) !== "undefined"){
-            meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-16.css"/>' +
+            meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-17.css"/>' +
                         '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
                         '<link rel="shortcut icon" href="http://portrit.s3.amazonaws.com/img/favicon.ico">' +
                         '<link rel="apple-touch-icon" href="http://portrit.s3.amazonaws.com/img/appicon@2x.png"/>' +
@@ -5384,7 +5384,10 @@ $(document).ready(function(){
                 }
                 follow_html =   '<div class="follow_wrap" value="' + data[i].username + '">' +
                                     '<img src="https://graph.facebook.com/' + data[i].fid + '/picture?type=square"/>' +
-                                    '<h3>' + data[i].username + '</h3>' +
+                                    '<div class="follow_name_cont">' +
+                                        '<h3>' + data[i].name + '</h3>' +
+                                        '<h4>aka ' + data[i].username + '</h4>' +
+                                    '</div>' +
                                     '<div class="user_stats_cont">' +
                                         '<div class="follow_photos"><h4>Photos</h4><p>' + data[i].photo_count + '</p></div>' +
                                         '<div class="follow_trophies"><h4>Trophies</h4><p>' + data[i].trophy_count + '</p></div>' +
@@ -6017,15 +6020,29 @@ $(document).ready(function(){
     }
     
     function attach_profile_handlers(){
-        $('#profile_stats_cont > div').live('click', function(){
-            var name = $(this).attr('name');
-            if (name == 'followers'){
-                window.location.href = '#!/' + selected_user.username + '/followers/';
-            }
-            else if (name == 'following'){
-                window.location.href = '#!/' + selected_user.username + '/following/';
-            }
-        });
+        if (!mobile){
+            $('#profile_stats_cont > div').live('click', function(){
+                var name = $(this).attr('name');
+                if (name == 'followers'){
+                    window.location.href = '#!/' + selected_user.username + '/followers/';
+                }
+                else if (name == 'following'){
+                    window.location.href = '#!/' + selected_user.username + '/following/';
+                }
+            });
+        }
+        else{
+            $('#profile_stats_cont > div').live('touchend', function(){
+                var name = $(this).attr('name');
+                if (name == 'followers'){
+                    window.location.href = '#!/' + selected_user.username + '/followers/';
+                }
+                else if (name == 'following'){
+                    window.location.href = '#!/' + selected_user.username + '/following/';
+                }
+            });
+        }
+
         
         $('.user_photo_wrap a').live('click', function(){
             selected_photo = $(this).attr('value');
@@ -6035,6 +6052,14 @@ $(document).ready(function(){
             var username = $(this).attr('value');
             stream_view = '';
             window.location.href = '/#!/' + username + '/';
+        });
+        
+        $('.follow_wrap').live('mouseover mouseout', function(event) {
+            if (event.type == 'mouseover') {
+                $(this).css('background-color', '#ccc');
+            } else {
+                $(this).css('background-color', '#eee');
+            }
         });
         
         $('.user_photo_wrap').live('mouseover mouseout', function(event) {
@@ -8699,10 +8724,17 @@ $(document).ready(function(){
         // Community View
         
         // Profile View
-        $('#profile_stats_cont > div').die('click')
+        if (!mobile){
+            $('#profile_stats_cont > div').die('click');
+        }
+        else{
+            $('#profile_stats_cont > div').die('touchend');
+        }
+        
         $('.user_photo_wrap a').die('click');
         $('.follow_wrap').die('click');
         $('.user_photo_wrap').die('mouseover mouseout');
+        $('.follow_wrap').die('mouseover mouseout');
         
         // Gallery
         $('#gallery_next').die('click');
