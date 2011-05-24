@@ -429,7 +429,7 @@ class Portrit_User(Document):
                         following_dict[follow.user.id] = follow.user.id
 
                 following_list = following_dict.values()
-                cache.set(str(self.id) + '_following_id', following_list)
+                cache.set(str(self.id) + '_following_id', following_list, 60*60*24)
                 return following_list
             else:
                 return following_id_list
@@ -449,7 +449,7 @@ class Portrit_User(Document):
                         follower_dict[follow.user.id] = follow.user.id
 
                 follower_list = follower_dict.values()
-                cache.set(str(self.id) + '_follower_id', follower_list)
+                cache.set(str(self.id) + '_follower_id', follower_list, 60*60*24)
                 return follower_list
             else:
                 return follower_id_list
