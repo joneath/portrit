@@ -2316,7 +2316,7 @@ def search_by_names(request):
         names = names.split(',')
         users = Portrit_User.objects.filter(name__in=names, active=True)[:100]
     
-        for user in users.iterator():
+        for user in users:
             if user.username:
                 if user in source_following:
                     data.append({
