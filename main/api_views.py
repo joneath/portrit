@@ -2228,6 +2228,7 @@ def search(request):
         if source:
             source = Portrit_User.objects.get(fb_user__fid=int(source))
             source_following = source.get_following_ids()
+            source_following = Portrit_User.objects.filter(id__in=source_following)
         else:
             source_following = [ ]
             
@@ -2267,6 +2268,7 @@ def combined_search(request):
         if access_token:
             source = get_user_from_access_token(access_token)
             source_following = source.get_following_ids()
+            source_following = Portrit_User.objects.filter(id__in=source_following)
         else:
             source_following = [ ]
 
@@ -2307,6 +2309,7 @@ def search_by_names(request):
         if source:
             source = Portrit_User.objects.get(fb_user__fid=int(source))
             source_following = source.get_following_ids()
+            source_following = Portrit_User.objects.filter(id__in=source_following)
         else:
             source_following = [ ]
     
@@ -2347,6 +2350,7 @@ def search_by_email(request):
         if source:
             source = Portrit_User.objects.get(fb_user__fid=int(source))
             source_following = source.get_following_ids()
+            source_following = Portrit_User.objects.filter(id__in=source_following)
         else:
             source_following = [ ]
     
