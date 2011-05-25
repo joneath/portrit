@@ -1494,6 +1494,10 @@ div#login_content div#login_right_cont{
     width:              149px;
 }
 
+#photo_list_cont{
+    margin-left:        10px;
+}
+
 #footer{
     height:             50px;
     color:              #AEAEAE;

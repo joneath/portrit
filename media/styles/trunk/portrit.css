@@ -2532,7 +2532,7 @@ div#community{
             #recent_left_cont .community_photo_cont{
                 background-color:       #dedede;
                 cursor:                 pointer;
-                display:                inline-block;
+                float:                  left;
                 margin:                 5px;
                 position:               relative;
                 height:                 150px;
@@ -2663,6 +2663,7 @@ div#community{
                 }
                 
 #photo_list_cont{
+    margin-left:            15px;
     text-align:             center;
     padding:                10px 0px;
 }

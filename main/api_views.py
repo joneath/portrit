@@ -1200,16 +1200,14 @@ def get_follow_data(request):
         target = Portrit_User.objects.get(fb_user__fid=int(target))
     
         if method == 'followers':
-            target_followers = target.get_followers()
+            target_followers = target.get_follower_ids()
+            target_followers = Portrit_User.objects.filter(id__in=target_followers)
             if not all:
                 target_followers = target_followers[PAGE_SIZE * (page - 1):PAGE_SIZE * page]
                 
             data['count'] = len(target_followers)
         
             source_following_list = source.get_following_ids()
-            # source_following = source.get_following()
-            # for follower in source_following:
-            #     source_following_list.append(follower.id)
         
             for user in target_followers:
                 if source and user.id in source_following_list:
@@ -1229,7 +1227,8 @@ def get_follow_data(request):
             
         
         elif method == 'following':
-            target_following = target.get_following()
+            target_following = target.get_following_ids()
+            target_following = Portrit_User.objects.filter(id__in=target_following)
             if not all:
                 target_following = target_following[PAGE_SIZE * (page - 1):PAGE_SIZE * page]
                 
