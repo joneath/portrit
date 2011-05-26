@@ -422,7 +422,7 @@ class Portrit_User(Document):
         try:
             following_id_list = cache.get(str(self.id) + '_following_id')
             if not following_id_list:
-                following = filter(lambda follow: follow.pending == False and follow.active == True and follow.user , self.following)
+                following = filter(lambda follow: follow.pending == False and follow.active == True and follow.user, self.following)
                 following_dict = {}
                 for follow in following:
                     if follow.user.username:
@@ -442,7 +442,7 @@ class Portrit_User(Document):
         try:
             follower_id_list = cache.get(str(self.id) + '_follower_id')
             if not follower_id_list:
-                follower = filter(lambda follow: follow.pending == False and follow.active == True and follow.user , self.followers)
+                follower = filter(lambda follow: follow.pending == False and follow.active == True and follow.user, self.followers)
                 follower_dict = {}
                 for follow in follower:
                     if follow.user.username:

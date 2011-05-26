@@ -5599,15 +5599,15 @@ div#latest_photos{
             }
             
     #top_right_cont .related_nom_cont{
-        height:             453px;
+        height:             350px;
+        padding-top:        50px;
         position:           absolute;
         width:              300px;
     }
     
         #top_right_cont .related_nom_cont > div{
             background-color:   #fff;
-            height:             150px;
-            margin:             15px;
+            height:             100px;
         }
         
         #top_right_cont .related_nom_cont > .related_selected_cont{
@@ -5634,60 +5634,60 @@ div#latest_photos{
         
         .related_nom_cont .related_nom_left_cont{
             float:              left;
+            width:              65px;
+        }
+        
+        .related_nom_cont .related_nom_mid_cont{
+            float:              left;
             width:              135px;
         }
         
-        .related_nom_cont .related_nom_right_cont{
-            float:              right;
-            overflow:           hidden;
-            width:              135px;
-        }
-        
-        .related_nom_cont .related_nom_top_cont{
-            border-bottom:      1px solid #dedede;
-            margin:             7px;
-            padding-bottom:     7px;
-        }
-        
-            .related_nom_cont .related_nom_top_cont h2{
-                color:              #999;
-                font-size:          30px;
-                font-weight:        bold;
-                float:              left;
-                line-height:        50px;
-                width:              63px;
+            .related_nom_cont .related_nom_mid_cont p{
+                color:              #555;
+                font-size:          20px;
+                margin-top:         14px;
                 text-align:         center;
             }
             
-            .related_nom_cont .related_nom_top_cont img{
-                float:              right;
+            .related_nom_cont .related_nom_mid_cont h3{
+                color:              #444;
+                font-size:          28px;
+                font-weight:        bold;
+                text-align:         center;
+                margin-top:         14px;
             }
-            
-        .related_nom_cont .related_nom_bottom_cont{
-            margin:             7px;
-            margin-top:         30px;   
+        
+        .related_nom_cont .related_nom_right_cont{
+            float:              right;
+            margin:             5px;
         }
         
-            .related_nom_cont .related_nom_bottom_cont p{
-                color:              #555;
-                float:              left;
-                font-size:          20px;
-                line-height:        24px;
-                margin-left:        10px;
+            .related_nom_cont .related_nom_right_cont img{
+                height:         90px;
+                width:          90px;
+            }
+        
+        .related_nom_cont .related_nom_top_cont{
+            margin:             7px;
+        }
+        
+            .related_nom_cont .related_nom_top_cont h2{
+                color:              #333;
+                font-size:          30px;
+                font-weight:        bold;
+                line-height:        32px;
+                margin-bottom:      5px;
+                text-align:         left;
             }
             
-            .related_nom_cont .related_nom_bottom_cont h3{
-                color:              #555;
-                float:              right;
-                font-size:          24px;
-                font-weight:        bold;
-                line-height:        24px;
-                margin-right:       10px;
+            .related_nom_cont .related_nom_top_cont img{
+                float:              left;
             }
         
         #top_right_cont .related_nom_cont .related_nom_prev_cont{
             position:           absolute;
             bottom:             0px;
+            width:              300px;
         }
                 
 #recent_cont_1{

@@ -842,7 +842,10 @@ def nominate_photo(request):
             for tagged_user in tagged_user_list:
                 target_friends.append(tagged_user)
                 
-            for user in new_nomination.nominatee.get_followers():
+            following_users = new_nomination.nominatee.get_follower_ids()
+            following_users = Portrit_User.objects.filter(id__in=following_users)
+                
+            for user in following_users:
                 target_friends.append(user)
                
             if new_nomination.nominator.id != new_nomination.nominatee.id:
@@ -936,7 +939,8 @@ def vote_on_nomination(request):
         except Exception, err:
             print err
 
-        target_friends = nomination.nominatee.get_following()
+        target_friends = nomination.nominatee.get_following_ids()
+        target_friends = list(Portrit_User.objects.filter(id__in=target_friends))
         for vote in nomination.votes:
             target_friends.append(vote)
             
@@ -1614,7 +1618,7 @@ def get_profile_related_noms(request):
                     Q(nominator=target_user),
                     nomination_category=nom_cat,
                     won=False, 
-                    active=True).order_by('current_vote_count')
+                    active=True).order_by('-current_vote_count')
                 
                 nominations = list(nominations)
                 selected_index = nominations.index(active_nom)

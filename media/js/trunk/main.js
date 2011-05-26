@@ -5444,17 +5444,17 @@ $(document).ready(function(){
                                         '</a>' +
                                         '<div class="clear"></div>' +
                                     '</div>' +
-                                    '<div class="related_nom_bottom_cont">' +
-                                        '<a href="/#!/' + selected_user.username +'/active/nominations/" class="nomination_id" value="' + data[i]['next'].id + '">' +
-                                            '<p>Votes</p>' +
-                                            '<h3><strong>' + data[i]['next'].vote_count + '</strong></h3>' +
-                                            '<div class="clear"></div>' +
-                                        '</a>' +
-                                    '</div>' +
+                                '</div>' +
+                                '<div class="related_nom_mid_cont">' +
+                                    '<a href="/#!/' + selected_user.username +'/active/nominations/" class="nomination_id" value="' + data[i]['next'].id + '">' +
+                                        '<p>Votes</p>' +
+                                        '<h3><strong>' + data[i]['next'].vote_count + '</strong></h3>' +
+                                        '<div class="clear"></div>' +
+                                    '</a>' +
                                 '</div>' +
                                 '<div class="related_nom_right_cont">' +
                                     '<a href="/#!/' + selected_user.username +'/active/nominations/" class="nomination_id" value="' + data[i]['next'].id + '">' +
-                                        '<img src="' + data[i]['next'].photo.crop + '"/>' +
+                                        '<img src="' + data[i]['next'].photo.crop_small + '"/>' +
                                     '</a>' +
                                 '</div>' +
                                 '<div class="clear"></div>' +
@@ -5482,13 +5482,13 @@ $(document).ready(function(){
                                         '</a>' +
                                         '<div class="clear"></div>' +
                                     '</div>' +
-                                    '<div class="related_nom_bottom_cont">' +
-                                        '<a href="/#!/' + selected_user.username +'/active/nominations/" class="nomination_id" value="' + data[i]['prev'].id + '">' +
-                                            '<p>Votes</p>' +
-                                            '<h3><strong>' + data[i]['prev'].vote_count + '</strong></h3>' +
-                                            '<div class="clear"></div>' +
-                                        '</a>' +
-                                    '</div>' +
+                                '</div>' +
+                                '<div class="related_nom_mid_cont">' +
+                                    '<a href="/#!/' + selected_user.username +'/active/nominations/" class="nomination_id" value="' + data[i]['prev'].id + '">' +
+                                        '<p>Votes</p>' +
+                                        '<h3><strong>' + data[i]['prev'].vote_count + '</strong></h3>' +
+                                        '<div class="clear"></div>' +
+                                    '</a>' +
                                 '</div>' +
                                 '<div class="related_nom_right_cont">' +
                                     '<a href="/#!/' + selected_user.username +'/active/nominations/" class="nomination_id" value="' + data[i]['prev'].id + '">' +
