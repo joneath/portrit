@@ -7498,6 +7498,16 @@ $(document).ready(function(){
             current_photo_id = next_photo_id;
         });
         
+        // $('.nom_photo_thumb_cont .close_img').live('click', function(){
+        //     var parent = $(this).parent();
+        //     var photo_id = $(parent).attr('value');
+        //     
+        //     delete selected_photo_noms[photo_id];
+        //     $(parent).fadeOut('fast', function(){
+        //         $(this).remove();
+        //     });
+        // });
+        
         $('.community_photo_cont > img').live('click', function(){
             var owner = $(this).attr('owner');
             var photo_id = $(this).attr('pid');
@@ -8008,7 +8018,7 @@ $(document).ready(function(){
             for (var i = 0; i < photos_to_upload.length; i++){
                 photos_html +=  '<div class="nom_photo_thumb_cont" value="' + photos_to_upload[i].id + '">' +
                                     '<img src="' + photos_to_upload[i].thumbnail + '"/>' +
-                                    '<p class="close_img normal"></p>' +
+                                    // '<p class="close_img normal"></p>' +
                                 '</div>';
             }
             var nom_photo_stream_html = '<div id="new_nom_photo_stream_cont">' +

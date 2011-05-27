@@ -25,7 +25,7 @@ def calc_noms_won():
             nominatee = nomination.nominatee
             try:
                 user_wins = [ ]
-                friends = nominatee.get_following()
+                friends = nominatee.get_following_ids()
                 user_noms = Nomination.objects.filter(active=True, won=False, nominatee=nominatee).order_by('-current_vote_count', '-created_date')
                 user_noms_cat = { }
                 for nom in user_noms:
@@ -49,7 +49,7 @@ def calc_noms_won():
                             active=True).order_by('-current_vote_count', '-created_date')
             
                         try:
-                            if user_cat_stream[0].id == nom.id:
+                            if user_cat_stream[0].id == nom.id or (user_cat_stream[1].id == nom.id and len(user_cat_stream) > 3):
                                 if (nom.won == False and nom.current_vote_count >= 1):
                                     mark_nom_as_won(nom)
                                     user_wins.append(nom)
@@ -59,6 +59,8 @@ def calc_noms_won():
                             pass
                     except Exception, err:
                         print err
+            except Exception, err:
+                print err
 
         Nomination.objects.filter(active=True).update(set__active=False)
 
