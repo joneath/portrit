@@ -1321,21 +1321,22 @@ def get_follow_data_detailed(request):
                     photo_count = cache.get(str(user.id) + '_photo_count')
                     if not photo_count:
                         photo_count = len(Photo.objects.filter(owner=user,
-                                                        nominations__size=0,
                                                         trophy=False,
                                                         active=True, 
                                                         pending=False))
                         cache.set(str(user.id) + '_photo_count', photo_count, 60*60*24)
                     
-                    trophy_count = cache.get(str(user.id) + '_trophy_count')
-                    if not trophy_count:
-                        trophy_count = len(Nomination.objects.filter(Q(nominatee=user) | Q(tagged_users__in=[user]), won=True))
-                        cache.set(str(user.id) + '_trophy_count', trophy_count, 60*60*24)
+                    trophy_count = user.winning_nomination_count
                     
-                    active_count = cache.get(str(user.id) + '_active_count')
-                    if not active_count:
-                        active_count = len(Nomination.objects.filter(Q(nominatee=user) | Q(tagged_users__in=[user]), active=True, won=False))
-                        cache.set(str(user.id) + '_active_count', active_count, 60*60*24)
+                    # cache.get(str(user.id) + '_trophy_count')
+                    # if not trophy_count:
+                    #     trophy_count = len(Nomination.objects.filter(Q(nominatee=user) | Q(tagged_users__in=[user]), won=True))
+                    #     cache.set(str(user.id) + '_trophy_count', trophy_count, 60*60*24)
+                    
+                    # active_count = cache.get(str(user.id) + '_active_count')
+                    # if not active_count:
+                    #     active_count = len(Nomination.objects.filter(Q(nominatee=user) | Q(tagged_users__in=[user]), active=True, won=False))
+                    #     cache.set(str(user.id) + '_active_count', active_count, 60*60*24)
                 except:
                     pass
                     
@@ -1346,7 +1347,7 @@ def get_follow_data_detailed(request):
                         'username': user.username,
                         'photo_count': photo_count,
                         'trophy_count': trophy_count,
-                        'active_count': active_count,
+                        # 'active_count': active_count,
                         'follow': False
                     })
                 elif not mutual:
@@ -1356,7 +1357,7 @@ def get_follow_data_detailed(request):
                         'username': user.username,
                         'photo_count': photo_count,
                         'trophy_count': trophy_count,
-                        'active_count': active_count,
+                        # 'active_count': active_count,
                         'follow': True
                     })
             
@@ -1389,15 +1390,15 @@ def get_follow_data_detailed(request):
                                                         pending=False))
                         cache.set(str(user.id) + '_photo_count', photo_count, 60*60*24)
                     
-                    trophy_count = cache.get(str(user.id) + '_trophy_count')
-                    if not trophy_count:
-                        trophy_count = len(Nomination.objects.filter(Q(nominatee=user) | Q(tagged_users__in=[user]), won=True))
-                        cache.set(str(user.id) + '_trophy_count', trophy_count, 60*60*24)
-                    
-                    active_count = cache.get(str(user.id) + '_active_count')
-                    if not active_count:
-                        active_count = len(Nomination.objects.filter(Q(nominatee=user) | Q(tagged_users__in=[user]), active=True, won=False))
-                        cache.set(str(user.id) + '_active_count', active_count, 60*60*24)
+                    trophy_count = user.winning_nomination_count
+                    # if not trophy_count:
+                    #     trophy_count = len(Nomination.objects.filter(Q(nominatee=user) | Q(tagged_users__in=[user]), won=True))
+                    #     cache.set(str(user.id) + '_trophy_count', trophy_count, 60*60*24)
+                    # 
+                    # active_count = cache.get(str(user.id) + '_active_count')
+                    # if not active_count:
+                    #     active_count = len(Nomination.objects.filter(Q(nominatee=user) | Q(tagged_users__in=[user]), active=True, won=False))
+                    #     cache.set(str(user.id) + '_active_count', active_count, 60*60*24)
                 except:
                     pass
                     
@@ -1408,7 +1409,7 @@ def get_follow_data_detailed(request):
                         'username': user.username,
                         'photo_count': photo_count,
                         'trophy_count': trophy_count,
-                        'active_count': active_count,
+                        # 'active_count': active_count,
                         'follow': False
                     })
                 elif not mutual:
@@ -1418,7 +1419,7 @@ def get_follow_data_detailed(request):
                         'username': user.username,
                         'photo_count': photo_count,
                         'trophy_count': trophy_count,
-                        'active_count': active_count,
+                        # 'active_count': active_count,
                         'follow': True
                     })
                     
@@ -2532,7 +2533,11 @@ def share_twitter(request):
     url = request.POST.get('url')
     status = request.POST.get('status')
     url = shorten_url(url)
-    status = status + ' ' + url
+    
+    if status != 'Caption':
+        status = status + ' ' + url
+    else:
+        status = url
     
     CONNECTION = httplib.HTTPSConnection(SERVER)
     try:
@@ -2575,7 +2580,7 @@ def shorten_url_request(request):
     data = {'url': None}
     url = request.POST.get('url')
     
-    url = url.replace('http://portrit', 'http://www.portrit')
+    url = url.replace('http://www.portrit', 'http://portrit')
 
     try:
         url = shorten_url(url)

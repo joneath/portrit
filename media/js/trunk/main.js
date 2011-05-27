@@ -669,7 +669,7 @@ $(document).ready(function(){
         close_size = 'mobile'
         
         if (typeof(_gaq) !== "undefined"){
-            meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-17.css"/>' +
+            meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-18.css"/>' +
                         '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
                         '<link rel="shortcut icon" href="http://portrit.s3.amazonaws.com/img/favicon.ico">' +
                         '<link rel="apple-touch-icon" href="http://portrit.s3.amazonaws.com/img/appicon@2x.png"/>' +
@@ -5391,7 +5391,7 @@ $(document).ready(function(){
                                     '<div class="user_stats_cont">' +
                                         '<div class="follow_photos"><h4>Photos</h4><p>' + data[i].photo_count + '</p></div>' +
                                         '<div class="follow_trophies"><h4>Trophies</h4><p>' + data[i].trophy_count + '</p></div>' +
-                                        '<div class="follow_active"><h4>Active</h4><p>' + data[i].active_count + '</p></div>' +
+                                        // '<div class="follow_active"><h4>Active</h4><p>' + data[i].active_count + '</p></div>' +
                                         '<div class="follow_button_cont">' +
                                             follow_button + 
                                         '</div>' +
@@ -7265,7 +7265,7 @@ $(document).ready(function(){
                 $(that).text('Saving...');
                 $(that).addClass('sick_hover_lock');
                 var comment_text = $('#nom_caption').val();
-                if (comment_text == 'Add a caption to this nomination.'){
+                if (comment_text == 'Add a caption to this nomination.' || comment_text == 'Caption'){
                     comment_text = '';
                 }
                 var params = {
@@ -7315,7 +7315,7 @@ $(document).ready(function(){
         
                         var photo_id = selected_photo_noms[key].photo_id;
                         var comment_text = selected_photo_noms[key].caption;
-                        if (comment_text == 'Add a caption to this nomination.'){
+                        if (comment_text == 'Add a caption to this nomination.' || comment_text == 'Caption'){
                             comment_text = '';
                         }
                         

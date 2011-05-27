@@ -18,7 +18,7 @@ def calc_noms_won():
         cache._cache.flush_all()
     except:
         pass
-    
+        
     try: 
         nominations = Nomination.objects.filter(active=True, won=False)
         for nomination in nominations:
@@ -59,80 +59,6 @@ def calc_noms_won():
                             pass
                     except Exception, err:
                         print err
-                    
-                # if len(user_wins) > 0:
-                #     try:
-                #         portrit_user = user_wins[0].nominatee
-                #         if portrit_user.allow_notifications and portrit_user.allow_portrit_album == False:
-                #             try:
-                #                 nom_cat = user_wins[0].nomination_category.name
-                #                 name = portrit_user.name.split(' ')[0]
-                #                 if len(user_wins) == 1:
-                #                     trophy = 'http://s3.amazonaws.com/portrit/img/invite/' + nom_cat.replace(' ', '_').lower() + '.png'
-                #                     trophy_text = name + ', won the ' + nom_cat + ' trophy for their rockin\' photo!'
-                #                 else:
-                #                     trophy = 'http://s3.amazonaws.com/portrit/img/invite/blank.png'
-                #                     trophy_text = name + ', won ' + str(len(user_wins)) + ' trophies for their rockin\' photos!'
-                # 
-                #                 values = {'access_token' : portrit_user.access_token,
-                #                           'picture' : trophy,
-                #                           'link' : 'http://portrit.com/#/nom_id=' + str(nom.id) + '/ref=facebook',
-                #                           'name': trophy_text, 
-                #                           'caption': 'Click the trophy to see ' + name + '\'s winning photos.',
-                #                           }
-                #                 url = 'https://graph.facebook.com/' + str(user_wins[0].nominatee.fid) + '/feed?' + urllib.urlencode(values)
-                #                 data = urllib.urlencode(values)
-                #                 req = urllib2.Request(url, data)
-                #                 response = urllib2.urlopen(req)
-                #                 data = response.read()
-                #             except:
-                #                 pass
-                #     except:
-                #         pass
-                #         
-                #     try:
-                #         for tagged_user in user_wins[0].tagged_friends.all():
-                #             portrit_user = tagged_user.get_portrit_user()
-                #             if portrit_user.allow_notifications and portrit_user.allow_portrit_album == False:
-                #                 try:
-                #                     nom_cat = user_wins[0].nomination_category.name
-                #                     name = portrit_user.name.split(' ')[0]
-                #                     if len(user_wins) == 1:
-                #                         trophy = 'http://s3.amazonaws.com/portrit/img/invite/' + nom_cat.replace(' ', '_').lower() + '.png'
-                #                         trophy_text = name + ', won the ' + nom_cat + ' trophy for their rockin\' photo!'
-                #                     else:
-                #                         trophy = 'http://s3.amazonaws.com/portrit/img/invite/blank.png'
-                #                         trophy_text = name + ', won ' + str(len(user_wins)) + ' trophies for their rockin\' photos!'
-                # 
-                #                     values = {'access_token' : portrit_user.access_token,
-                #                               'picture' : trophy,
-                #                               'link' : 'http://portrit.com/#/nom_id=' + str(nom.id) + '/ref=facebook',
-                #                               'name': trophy_text, 
-                #                               'caption': 'Click the trophy to see ' + name + '\'s winning photos.',
-                #                               }
-                #                     url = 'https://graph.facebook.com/' + str(user_wins[0].nominatee.fid) + '/feed?' + urllib.urlencode(values)
-                #                     data = urllib.urlencode(values)
-                #                     req = urllib2.Request(url, data)
-                #                     response = urllib2.urlopen(req)
-                #                     data = response.read()
-                #                 except:
-                #                     pass
-                #     except:
-                #         pass
-            except:
-                pass
-        
-        #Clear photo nominations
-        # print Nomination.objects.only('photo').filter(active=True)
-        # for nom in Nomination.objects.only('photo').filter(active=True):
-        #     photo = nom.photo
-        #     print "check photo"
-        #     print len(photo.nominations)
-        #     print photo.trophy
-        #     if len(photo.nominations) > 0 and not photo.trophy:
-        #         print "cleared photo nominations"
-        #         photo.nominations = []
-        #         photo.save()
 
         Nomination.objects.filter(active=True).update(set__active=False)
 
@@ -186,16 +112,7 @@ def mark_nom_as_won(nom):
         
     
         target_friends[nominatee.fb_user.fid] = nominatee
-    
-        #Check send to facebook
-        # try:
-        #     if nominatee.allow_portrit_album:
-        #         if not nominatee.portrit_fb_album_fid:
-        #             create_portrit_album(nominatee)
-        #         to_facebook_trophy_album(nominatee.fb_user.access_token, nom.get_photo()['source'], portrit_user.portrit_fb_album_fid, nom)
-        # except:
-        #     pass
-    
+
         #Save tagged user win
         try:
             for tagged_user in nom.tagged_users:
