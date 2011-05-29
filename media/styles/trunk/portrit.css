@@ -5607,29 +5607,44 @@ div#latest_photos{
     
         #top_right_cont .related_nom_cont > div{
             background-color:   #fff;
-            height:             100px;
+            height:             110px;
         }
         
         #top_right_cont .related_nom_cont > .related_selected_cont{
             background:             none;
             background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
-            background-position:    -750px -75px;
+            background-position:    -750px -87px;
             margin:             0px;
             position:           absolute;
             left:               -42px;
-            top:                157px;
-            height:             135px;
+            top:                160px;
+            height:             130px;
             width:              60px;
             z-index:            10;
         }
+            
+        #top_right_cont .related_nom_cont > .related_selected_post_cont{
+            background-color:   #374959;
+            height:             130px;
+            width:              300px;
+            position:           absolute;
+            top:                160px;
+        }
         
-            #top_right_cont .related_nom_cont > .related_selected_cont h2{
-                font-size:          24px;
+            #top_right_cont .related_nom_cont > .related_selected_post_cont h2{
+                font-size:          32px;
                 font-weight:        bold;
-                position:           absolute;
-                top:                54px;
-                right:              0px;
                 color:              white;
+                float:              left;
+                line-height:        130px;
+            }
+            
+            #top_right_cont .related_nom_cont > .related_selected_post_cont p{
+                font-size:          20px;
+                color:              white;
+                float:              left;
+                margin-left:        40px;
+                line-height:        135px;
             }
         
         .related_nom_cont .related_nom_left_cont{
@@ -5639,13 +5654,13 @@ div#latest_photos{
         
         .related_nom_cont .related_nom_mid_cont{
             float:              left;
-            width:              135px;
+            width:              125px;
         }
         
             .related_nom_cont .related_nom_mid_cont p{
                 color:              #555;
                 font-size:          20px;
-                margin-top:         14px;
+                margin-top:         18px;
                 text-align:         center;
             }
             
@@ -5663,12 +5678,12 @@ div#latest_photos{
         }
         
             .related_nom_cont .related_nom_right_cont img{
-                height:         90px;
-                width:          90px;
+                height:         100px;
+                width:          100px;
             }
         
         .related_nom_cont .related_nom_top_cont{
-            margin:             7px;
+            margin:             10px;
         }
         
             .related_nom_cont .related_nom_top_cont h2{

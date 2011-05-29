@@ -669,7 +669,7 @@ $(document).ready(function(){
         close_size = 'mobile'
         
         if (typeof(_gaq) !== "undefined"){
-            meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-18.css"/>' +
+            meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-19.css"/>' +
                         '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
                         '<link rel="shortcut icon" href="http://portrit.s3.amazonaws.com/img/favicon.ico">' +
                         '<link rel="apple-touch-icon" href="http://portrit.s3.amazonaws.com/img/appicon@2x.png"/>' +
@@ -4267,7 +4267,7 @@ $(document).ready(function(){
                     nom_detail_link = '/#!/nomination/' + nom.id + '/';
                 }
                 else if (selected_sub_nav == 'profile_active'){
-                    nom_detail_link = '/#!/' + selected_user.username + '/active/nominations/';
+                    nom_detail_link = '/#!/' + selected_user.username + '/active/' + nom_cat_text.replace(' ', '-') + '/';
                 }
 
 
@@ -5199,7 +5199,6 @@ $(document).ready(function(){
                                             '<img src="http://portrit.s3.amazonaws.com/img/ajax-loader-light.gif"/>' +
                                         '</div>' +
                                         '<div id="gallery_photo_bottom_cont">' +
-                                            '<p></p>' +
                                             // '<div class="flag flag_photo ' + flag_class + '" pid="' + selected_photo.id + '" thumb="' + selected_photo.crop + '" fb_crop="' + selected_photo.crop_small + '" owner="' + selected_user.username + '"></div>' +
                                         '</div>' +
                                     '</div>' + 
@@ -5510,7 +5509,11 @@ $(document).ready(function(){
             related_html =  '<div class="related_nom_cont" style="top: ' + nom_pos + 'px;">' +
                                 next_html + 
                                 '<div class="related_selected_cont">' +
+                                    // '<h2>' + selected_place + '</h2>' +
+                                '</div>' +
+                                '<div class="related_selected_post_cont">' +
                                     '<h2>' + selected_place + '</h2>' +
+                                    '<p>This is your place.</p>' +
                                 '</div>' +
                                 prev_html +
                             '</div>';
@@ -8769,29 +8772,30 @@ $(document).ready(function(){
         $('.top_cat_photo').die('mouseover mouseout');
     }
     
+    scroll_pos_stack = [];
     function push_scroll_pos(){
         // returns [x, y]
         var pos = getScrollXY();
-        scroll_pos_stack.push(pos[1]);
+        scroll_pos_stack.push({'view': view_active, 'pos': pos[1]});
     }
     
     function pop_scroll_pos(data){
-        var pos = scroll_pos_stack.pop();
-        if (!mobile){
+        var pos = scroll_pos_stack.splice(scroll_pos_stack.length - 2, 1)[0]['pos'];
+        //Async .html lag adjustment
+        setTimeout(function(){
             $('html, body').scrollTop(pos);
-        }
-        else{
-            //Async .html lag adjustment
-            setTimeout(function(){
-                $('html, body').scrollTop(pos);
-            }, 150);
-        }
+        }, 200);
     }
     
     var view_count = 0;
+    var prev_view = '';
     attach_main_handlers();
-    function update_view(){     
+    function update_view(){
         var url_vars_list = getUrlVars();
+        prev_view = view_active;
+        
+        push_scroll_pos();
+        
         view_count += 1;
         view_active = '';
         
@@ -8993,7 +8997,7 @@ $(document).ready(function(){
                     else if (url_vars_list[1] == 'active'){
                         if (url_vars_list.length > 2){
                             view_active = 'profile_active_detail';
-                            init_nom_detail('profile_active');
+                            init_nom_detail('profile_active', url_vars_list[2]);
                         }
                         else{
                             //Profile Active
@@ -9098,6 +9102,15 @@ $(document).ready(function(){
             else{
                 window.location.href = '/';
             }
+        }
+        
+        try{
+            if (scroll_pos_stack[scroll_pos_stack.length - 2].view == view_active){
+                pop_scroll_pos();
+            }
+        }
+        catch (e){
+            
         }
     }
     

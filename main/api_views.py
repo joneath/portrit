@@ -578,11 +578,23 @@ def get_nom_detail(request):
             data = serialize_noms(data)
         
     elif nav_selected == 'profile_active':
-        data = Nomination.objects.filter(
-            Q(tagged_users__in=[source]) |
-            Q(nominatee=source),
-            active=True, 
-            won=False).order_by('-created_date', '-current_vote_count')
+        if cat:
+            cat = cat.replace('-', ' ');
+            data = Nomination.objects.filter(
+                Q(nominatee__in=source_following) |
+                Q(tagged_users__in=source_following) |
+                Q(tagged_users__in=[source]) |
+                Q(nominatee=source) |
+                Q(nominator=source),
+                nomination_category=cat,
+                active=True, 
+                won=False).order_by('-current_vote_count', '-created_date')
+        else:
+            data = Nomination.objects.filter(
+                Q(tagged_users__in=[source]) |
+                Q(nominatee=source),
+                active=True, 
+                won=False).order_by('-created_date', '-current_vote_count')
             
         if dir:
             data = paginate_data(data, dir, pos)
@@ -1619,7 +1631,7 @@ def get_profile_related_noms(request):
                     Q(nominator=target_user),
                     nomination_category=nom_cat,
                     won=False, 
-                    active=True).order_by('-current_vote_count')
+                    active=True).order_by('-created_date', '-current_vote_count')
                 
                 nominations = list(nominations)
                 selected_index = nominations.index(active_nom)
