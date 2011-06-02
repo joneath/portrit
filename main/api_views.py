@@ -2245,14 +2245,14 @@ def search(request):
         if source:
             source = Portrit_User.objects.get(fb_user__fid=int(source))
             source_following = source.get_following_ids()
-            source_following = Portrit_User.objects.filter(id__in=source_following)
+            # source_following = Portrit_User.objects.filter(id__in=source_following)
         else:
             source_following = [ ]
             
         users = Portrit_User.objects.filter(Q(name__icontains=q) | Q(username__icontains=q), active=True)[:40]
         for user in users:
             if user.username:
-                if user in source_following:
+                if user.id in source_following:
                     data.append({
                         'fid': user.fb_user.fid,
                         'name': user.name,
@@ -2285,14 +2285,13 @@ def combined_search(request):
         if access_token:
             source = get_user_from_access_token(access_token)
             source_following = source.get_following_ids()
-            source_following = Portrit_User.objects.filter(id__in=source_following)
         else:
             source_following = [ ]
 
         users = Portrit_User.objects.filter(Q(username__icontains=q) | Q(name__icontains=q), active=True)[:SEARCH_LIMIT]
         for user in users:
             if user.username:
-                if user in source_following:
+                if user.id in source_following:
                     data.append({
                         'fid': user.fb_user.fid,
                         'name': user.name,
@@ -2326,7 +2325,7 @@ def search_by_names(request):
         if source:
             source = Portrit_User.objects.get(fb_user__fid=int(source))
             source_following = source.get_following_ids()
-            source_following = Portrit_User.objects.filter(id__in=source_following)
+            # source_following = Portrit_User.objects.filter(id__in=source_following)
         else:
             source_following = [ ]
     
@@ -2335,7 +2334,7 @@ def search_by_names(request):
     
         for user in users:
             if user.username:
-                if user in source_following:
+                if user.id in source_following:
                     data.append({
                         'fid': user.fb_user.fid,
                         'name': user.name,
@@ -2367,7 +2366,7 @@ def search_by_email(request):
         if source:
             source = Portrit_User.objects.get(fb_user__fid=int(source))
             source_following = source.get_following_ids()
-            source_following = Portrit_User.objects.filter(id__in=source_following)
+            # source_following = Portrit_User.objects.filter(id__in=source_following)
         else:
             source_following = [ ]
     
@@ -2376,7 +2375,7 @@ def search_by_email(request):
     
         for user in users.iterator():
             if user.username:
-                if user in source_following:
+                if user.id in source_following:
                     data.append({
                         'fid': user.fb_user.fid,
                         'name': user.name,

@@ -6485,7 +6485,7 @@ $(document).ready(function(){
             }
         }
         else{
-            $('#results_wrap').html('<h1>No results.</h1>');
+            $('#results_wrap').html('<h1 id="empty_results">No results.</h1>');
         }
     }
     

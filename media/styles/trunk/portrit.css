@@ -912,6 +912,12 @@ div#search{
 }
 
     #results_wrap h1{
+        color:              #fff;
+        font-size:          24px;
+        text-align:         center;
+    }
+    
+    #results_wrap #empty_results{
         color:              #555;
         font-size:          24px;
         text-align:         center;

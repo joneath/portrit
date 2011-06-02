@@ -30,13 +30,14 @@ def calc_top_users():
                                             Q(tagged_users__in=[user])), won=True).item_frequencies('nomination_category')
 
         cat_focus = sorted(cat_focus.items(), key=itemgetter(1), reverse=True)[:1][0][0]
-        user_list.append({
-            'fid': user.fb_user.fid,
-            'name': user.name,
-            'username': user.username,
-            'noms_won': user.winning_nomination_count,
-            'top_nom_cat': cat_focus
-        })
+        if user.username:
+            user_list.append({
+                'fid': user.fb_user.fid,
+                'name': user.name,
+                'username': user.username,
+                'noms_won': user.winning_nomination_count,
+                'top_nom_cat': cat_focus
+            })
         
     return user_list
     
@@ -62,12 +63,13 @@ def calc_interesting_users():
                                             Q(tagged_users__in=[user])), won=True).item_frequencies('nomination_category')
 
         cat_focus = sorted(cat_focus.items(), key=itemgetter(1), reverse=True)[:1][0][0]
-        user_list.append({
-            'fid': user.fb_user.fid,
-            'name': user.name,
-            'username': user.username,
-            'noms_won': user.winning_nomination_count,
-            'top_nom_cat': cat_focus
-        })
+        if user.username:
+            user_list.append({
+                'fid': user.fb_user.fid,
+                'name': user.name,
+                'username': user.username,
+                'noms_won': user.winning_nomination_count,
+                'top_nom_cat': cat_focus
+            })
         
     return user_list
