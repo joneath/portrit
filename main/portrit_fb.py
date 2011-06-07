@@ -58,6 +58,15 @@ class Portrit_FB(object):
                 target_portrit_user.followers.append(following_rec)
                 target_portrit_user.save()
                 
+                try:
+                    cache.delete(str(self.user.id) + '_following_id')
+                    cache.delete(str(self.user.id) + '_follower_id')
+
+                    cache.delete(str(target_portrit_user.id) + '_following_id')
+                    cache.delete(str(target_portrit_user.id) + '_follower_id')
+                except:
+                    pass
+                
                 #Create Notification for friend
                 try:
                     print "creating notification"
