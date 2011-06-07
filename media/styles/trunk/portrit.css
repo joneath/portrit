@@ -717,6 +717,7 @@ div#right_nav{
         cursor:             pointer;
         float:              left;
         height:             60px;
+		margin-left:		10px;
         width:              60px;
         opacity:            0.3;
         background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
@@ -747,6 +748,12 @@ div#right_nav{
     .nav_icon:hover{
         opacity:            1.0;
     }
+
+		#app_download{
+			width:					126px;
+			padding-top: 			8px;
+			height: 				43px;
+		}
     
         #back{
             background-image:       url(http://portrit.s3.amazonaws.com/img/sprite.png);
@@ -1860,6 +1867,17 @@ div#nom_detail_cont{
                     max-width:          700px;
                 }
                 
+                div#main_nom_cont_left_wrap div#main_nom_photo_post_time{
+                    background:         rgba(0,0,0,0.7);
+                    bottom:             60px;
+                    color:              #fff;
+                    right:              15px;
+                    overflow:           hidden;
+                    position:           absolute;
+                    text-align:         left;
+                    padding:            10px;
+                }
+                
                 div#main_nom_cont_left_wrap div#nominator_overlay_cont{
                     background:         rgba(0,0,0,0.7);
                     bottom:             0px;
@@ -2739,8 +2757,8 @@ div#community{
     }
     
         .top_nom_cat .top_cat_photo_cont img{
-            height:                 106px;
-            width:                  142px;
+            height:                 105px;
+            width:                  141px;
         }
 
 div#profile_cont{

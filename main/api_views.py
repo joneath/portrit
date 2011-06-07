@@ -551,7 +551,7 @@ def get_nom_detail(request):
             data = Nomination.objects.filter(
                 Q(tagged_users__in=[source]) |
                 Q(nominatee=source),
-                won=True).order_by('-current_vote_count', '-created_date')
+                won=True).order_by('-created_date')
             
         if dir:
             data = paginate_data(data, dir, pos)

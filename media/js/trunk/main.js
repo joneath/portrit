@@ -669,7 +669,7 @@ $(document).ready(function(){
         close_size = 'mobile'
         
         if (typeof(_gaq) !== "undefined"){
-            meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-19.css"/>' +
+            meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-20.css"/>' +
                         '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
                         '<link rel="shortcut icon" href="http://portrit.s3.amazonaws.com/img/favicon.ico">' +
                         '<link rel="apple-touch-icon" href="http://portrit.s3.amazonaws.com/img/appicon@2x.png"/>' +
@@ -3036,12 +3036,12 @@ $(document).ready(function(){
                         first_tuts_on = true;
                         $('#wrapper').after('<div id="first_tuts_cont" style="display:none;"><div id="tuts_wrap"></div></div>');
                     }
-                    $('#right_nav').prepend('<div id="activate_tut"><div id="tutorial_cont" style="display:none;"><div id="tut_arrow"></div><h1>Tutorial</h1><div id="tut_section_wrap"><div class="tut_section" id="nomination_tut"></div><div class="tut_section" id="vote_count_tut"></div><div class="tut_section" id="comment_count_tut"></div></div><a id="skip_tut" class="sick large">Skip</a></div></div>');
+                    $('#app_download').after('<div id="activate_tut"><div id="tutorial_cont" style="display:none;"><div id="tut_arrow"></div><h1>Tutorial</h1><div id="tut_section_wrap"><div class="tut_section" id="nomination_tut"></div><div class="tut_section" id="vote_count_tut"></div><div class="tut_section" id="comment_count_tut"></div></div><a id="skip_tut" class="sick large">Skip</a></div></div>');
                     render_initial_tutorial(tut_counts);
                 }
                 else{
                     if (tut_counts && (!mobile || tablet)){
-                        $('#right_nav').prepend('<div id="activate_tut"><div id="tutorial_cont" style="display:none;"><div id="tut_arrow"></div><h1>Tutorial</h1><div id="tut_section_wrap"><div class="tut_section" id="nomination_tut"></div><div class="tut_section" id="vote_count_tut"></div><div class="tut_section" id="comment_count_tut"></div></div><a id="skip_tut" class="sick large">Skip</a></div></div>');
+                        $('#app_download').after('<div id="activate_tut"><div id="tutorial_cont" style="display:none;"><div id="tut_arrow"></div><h1>Tutorial</h1><div id="tut_section_wrap"><div class="tut_section" id="nomination_tut"></div><div class="tut_section" id="vote_count_tut"></div><div class="tut_section" id="comment_count_tut"></div></div><a id="skip_tut" class="sick large">Skip</a></div></div>');
                         render_tut(tut_counts);
                     }
                     init_view(update_view);
@@ -3422,6 +3422,14 @@ $(document).ready(function(){
         if (mobile && !tablet){
             trophy_size = 'medium';
         }
+
+        var time_diff = '';
+        now = new Date();
+        time = new Date(nom.created_time * 1000);
+        time_diff = now - time;
+        time_diff /= 1000;
+        
+        $('#main_nom_photo_post_time').html(secondsToHms(time_diff));
         
         $('#nom_detail_cont .title').remove();
         $('#nom_detail_cont').prepend(title);
@@ -3950,7 +3958,7 @@ $(document).ready(function(){
         if (typeof(nom_cat) != undefined){
             cat = nom_cat;
         }
-        
+
         $('.stream_nav, .sub_stream_nav').removeClass('selected');
         $('#profile_cont_wrap').html('');
         stream_view = '';
@@ -3961,7 +3969,10 @@ $(document).ready(function(){
                                         '<div id="main_nom_cont_left">' +
                                             '<div id="main_nom_cont_left_wrap">' +
                                                 '<img id="main_nom_photo" src="http://portrit.s3.amazonaws.com/img/album-loader-dark.gif"/>' +
-                                                '<div id="nominator_overlay_cont">' +
+                                                '<div id="main_nom_photo_post_time">' +
+													'' +
+												'</div>' +
+												'<div id="nominator_overlay_cont">' +
                                                     '' +
                                                 '</div>' +
                                             '</div>' +
@@ -8111,6 +8122,14 @@ $(document).ready(function(){
             $('#vote_cont_left').addClass('active');
         }
         
+        var time_diff = '';
+        now = new Date();
+        time = new Date(nom.created_time * 1000);
+        time_diff = now - time;
+        time_diff /= 1000;
+        
+        $('#main_nom_photo_post_time').html(secondsToHms(time_diff));
+        
         $('#nomination_text_cont h3').text(nom.nomination_category);
         if (!mobile || tablet){
             $('#nom_trophy_icon').removeClass().addClass('trophy_img large ' + cat_underscore);//.attr('src', 'http://portrit.s3.amazonaws.com/img/trophies/large/' + cat_underscore + '.png');
@@ -8231,6 +8250,11 @@ $(document).ready(function(){
             });
         }
         else if (state == 'profile_trophies'){
+			var url_vars = getUrlVars();
+			if (url_vars[2] && url_vars[2] == 'all'){
+				cat = 'all';
+			}
+			
             $.getJSON('/api/get_nom_detail/', {'source': selected_user.username, 'nav_selected': state, 'cat': cat, 'dir': dir, 'pos': pos_to_load}, function(data){
                 render_more_nom_detail(data, dir);
             });
