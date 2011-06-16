@@ -2094,7 +2094,7 @@ def new_comment(request):
             nomination = Nomination.objects.get(id=nomination_id)
             owner = nomination.nominatee
             
-            body = strip_tags(body)
+            # body = strip_tags(body)
             
             comment = Comment(comment=body, owner=portrit_user, nomination=str(nomination.id))
             comment.save()

@@ -238,6 +238,14 @@
 					resize: 			none;
 				}
 				
+				#caption_cont textarea.unselected{
+					color:				#888;
+				}
+				
+				#caption_cont textarea.selected{
+					color:				#333;
+				}
+				
 				#selected_photo_triangle{
 					height: 21px;
 					width: 35px;
@@ -702,6 +710,23 @@
 					FB.login(handleSessionResponse, {perms:'publish_stream,offline_access,email'});
 				});
 				
+				$('#caption_cont textarea').live('focus', function(){
+		            $(this).removeClass().addClass('selected');
+		            if (this.value == 'Caption'){
+		                this.value = '';
+		            }  
+		            if(this.value != 'Caption'){  
+		                this.select();  
+		            }
+		        });
+
+		        $('#caption_cont textarea').live('blur', function(){
+		            if ($.trim(this.value) == ''){
+		                $(this).removeClass().addClass('unselected');
+		                this.value = 'Caption';
+		            }
+		        });
+				
 				$('#trophy_cont li').live('click', function(){
 					if ($(this).hasClass('active') && !$(this).hasClass('hover_lock')){
 						$('#trophy_cont li').not(this).removeClass().addClass('inactive');
@@ -762,10 +787,15 @@
 				$('#post').live('click', function(){
 					var caption = $('#caption_cont textarea').val();
 					var img_path = $('#img_wrap img').attr('src');
+					var source = $('#caption_cont textarea').attr('source');
 					
 					$('#saving_cont').show();
 					
-					$.post('/tools/save_share/', {'selected_nom': selected_nom, 'path': img_path, 'caption': caption}, function(data){
+					if (caption == 'Caption'){
+						caption = '';
+					}
+					
+					$.post('/tools/save_share/', {'selected_nom': selected_nom, 'path': img_path, 'caption': caption, 'source': source}, function(data){
 						var url = '';
 						if (data.photo_id){
 							url = 'http://www.portrit.com/#!/' + data.username + '/' + data.photo_id;
@@ -917,7 +947,7 @@
 			<div class="clear"></div>
 			<div id="caption_cont">
 				<div id="selected_photo_triangle"></div>
-				<textarea>Source: {{ page_url }}</textarea>
+				<textarea source="{{ page_url }}" class="unselected">Caption</textarea>
 				<div id="text_remail_cont">0/90</div>
 			</div>
 			<div id="share_bottom_cont">

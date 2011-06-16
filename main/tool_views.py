@@ -61,6 +61,7 @@ def save_share(request):
     data = False
     
     selected_nom = request.POST.get('selected_nom')
+    source_url = request.POST.get('source')
     comment_text = request.POST.get('caption')
     img_src = request.POST.get('path')
     
@@ -122,7 +123,8 @@ def save_share(request):
             small_cropped_image.close()
 
             s3_url = "http://cdn.portrit.com/"
-            photo = Photo(path=file_loc, 
+            photo = Photo(path=file_loc,
+                        source_url=source_url,
                         thumbnail=(s3_url+thumbnail_size_name), 
                         large=(s3_url+large_size_name),
                         crop=(s3_url+crop_size_name),

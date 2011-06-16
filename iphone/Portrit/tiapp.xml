@@ -5,7 +5,7 @@
         <target device="ipad">false</target>
         <target device="android">false</target>
     </deployment-targets>
-<id>com.portrit</id>
+<id>com.portrit.app</id>
 <name>Portrit</name>
 <version>1.0.0</version>
 <publisher>Portrit</publisher>

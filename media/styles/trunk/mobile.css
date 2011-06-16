@@ -99,6 +99,12 @@ div#tagline_top #app_row h3{
     font-size:          26px;
 }
 
+#app_download{
+    position:           relative;
+    top:                -75px;
+    right:              -140px;
+}
+
 div#login_content div#login_right_cont h2{
     font-size:          20px;
     margin-bottom:      10px;

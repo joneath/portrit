@@ -1871,7 +1871,7 @@ div#nom_detail_cont{
                     background:         rgba(0,0,0,0.7);
                     bottom:             60px;
                     color:              #fff;
-                    right:              15px;
+                    left:               10px;
                     overflow:           hidden;
                     position:           absolute;
                     text-align:         left;

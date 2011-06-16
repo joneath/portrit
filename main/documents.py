@@ -212,6 +212,8 @@ class Photo(Document):
     public = BooleanField(default=False)
     created_date = DateTimeField(default=datetime.datetime.now)
     
+    source_url = StringField()
+    
     path = StringField()
     thumbnail = StringField()
     large = StringField()
