@@ -5957,6 +5957,7 @@ div#latest_photos{
     .community_active_cont .community_active_left_cont{
         float:          left;
         position:       relative;
+        text-align:     center;
         width:          200px;
         height:         150px;
     }
