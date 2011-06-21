@@ -669,7 +669,7 @@ $(document).ready(function(){
         close_size = 'mobile'
         
         if (typeof(_gaq) !== "undefined"){
-            meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-20.css"/>' +
+            meta_html = '<link rel="stylesheet" href="http://portrit.s3.amazonaws.com/styles/production/mobile-21.css"/>' +
                         '<meta id="viewport_meta" name="viewport" content="width=520, user-scalable=no"/>' +
                         '<link rel="shortcut icon" href="http://portrit.s3.amazonaws.com/img/favicon.ico">' +
                         '<link rel="apple-touch-icon" href="http://portrit.s3.amazonaws.com/img/appicon@2x.png"/>' +
@@ -2771,7 +2771,8 @@ $(document).ready(function(){
                             if (!mobile || tablet){
                                 render_tut(tut_counts);
                             }
-                            init_view(update_view);
+                            init_view();
+                            window.location.href = '/#!/community/';
                         });
                         $('#wrapper').animate({
                             'opacity': '1.0'
@@ -3087,7 +3088,9 @@ $(document).ready(function(){
 
                 wait_for_message();
                 load_user_data();
-                func_ptr();
+                if (typeof(func_ptr) != 'undefined'){
+                    func_ptr();
+                }
             });
         }
         else{
@@ -3095,7 +3098,9 @@ $(document).ready(function(){
             me.username = my_username;
             wait_for_message();
             load_user_data();
-            func_ptr();
+            if (typeof(func_ptr) != 'undefined'){
+                func_ptr();
+            }
         }
     }
     
@@ -3700,6 +3705,15 @@ $(document).ready(function(){
         });
     }
     
+    function get_stream_empty(){
+        $.getJSON('/api/get_community_empty_nominations/', function(data){
+            if (data.length > 0){
+                $('#recent_left_cont').append('<h2 id="empty_exp">Recent Activity</h2>');
+                render_empty_overview_stream(data, $('#recent_left_cont'));
+            }
+        });
+    }
+    
     function init_community_active(){
         $('#recent_left_cont').html('');
         append_load($('#recent_left_cont'), 'light');
@@ -3729,6 +3743,8 @@ $(document).ready(function(){
                             '</div>';
 
                 $('#recent_left_cont').append(empty_html);
+                
+                get_stream_empty();
             }
         });
     }
@@ -4402,6 +4418,109 @@ $(document).ready(function(){
         }
     }
     
+    function render_empty_overview_stream(data, target){
+        var active_nom_html = '';
+        var nominator_name = '';
+        var nominatee_name = '';
+        var cat_name = '';
+        var cat_underscore = '';
+        var caption = '';
+        var time = null;
+        var time_diff = null;
+        var now = new Date();
+        var flag_class = '';
+        var won_class = '';
+        var won_text = '';
+        
+        if (public_view){
+            flag_class = 'off';
+        }
+        
+        create_nom_cache(data);
+        
+        for (var i = 0; i < data.length; i++){
+            cat_name = data[i].nomination_category;
+            cat_underscore = get_cat_under(cat_name);
+            nominatee_name = '';
+            nominator_name = '';
+            caption = '';
+            
+            if (me && data[i].nominatee == me.id){
+                nominatee_name = 'You';
+            }
+            else{
+                nominatee_name = data[i].nominatee_name;
+            }
+            
+            if (me && data[i].nominator == me.id){
+                nominator_name = 'You';
+            }
+            else{
+                nominator_name = data[i].nominator_name;
+            }
+            
+            if (data[i].caption){
+                caption = data[i].caption;
+                if (caption.length > 40){
+                    caption = data[i].caption.slice(0, 40) + '...';
+                }
+            }
+            else{
+                caption = 'No caption provided.'
+            }
+            
+            if (data[i].won){
+                won_class = 'won';
+                won_text = 'Won';
+            }
+            else{
+                won_class = 'lost';
+                won_text = 'Lost';
+            }
+            
+            time = new Date(data[i].created_time * 1000);
+            time_diff = now - time;
+            time_diff /= 1000;
+            
+            active_nom_html =   '<div class="community_active_cont prev" id="' + data[i].id + '">' +
+                                    '<div class="community_active_left_cont ' + won_class + '">' +
+                                        '<a href="/#!/community/active/' + data[i].id + '/" class="nomination_id" value="' + data[i].id + '">' +
+                                            '<img src="' + data[i].photo.crop + '"/>' +
+                                        '</a>' +
+                                    '</div>' +
+                                    '<div class="community_active_right_cont">' +
+                                        '<div class="community_active_header nom_cat_' + cat_underscore + '">' +
+                                            '<a href="/#!/' + data[i].nominatee_username + '/">' +
+                                                '<img src="https://graph.facebook.com/' + data[i].nominatee + '/picture?type=square"/>' +
+                                            '</a>' +
+                                            '<h3>' + won_text + ' ' + cat_name + '</h3>' +
+                                            '<h2><a href="/#!/' + data[i].nominatee_username + '/">' + data[i].nominatee_username + '</a></h2>' +
+                                        '</div>' +
+                                        '<div class="community_active_mid">' +
+                                            '<h2>' + caption + '</h2>' +
+                                        '</div>' +
+                                        '<div class="community_active_bottom">' +
+                                            '<div class="flag flag_photo ' + flag_class + '" nom_id="' + data[i].id + '"></div>' +
+                                            '<a href="/#!/community/active/' + data[i].id + '/" class="nomination_id" value="' + data[i].id + '">' +
+                                                '<div class="active_stat">' +
+                                                    '<h4>' + secondsToHms(time_diff) + '</h4>' +
+                                                '</div>' +
+                                            '</a>' +
+                                            '<a href="/#!/community/active/' + data[i].id + '/" class="nomination_id" value="' + data[i].id + '">' +
+                                                '<div class="active_stat">' +
+                                                    '<h5>Votes</h5>' +
+                                                    '<p>' + data[i].vote_count + '</p>' +
+                                                '</div>' +
+                                            '</a>' +
+                                        '</div>' +
+                                    '</div>' +
+                                    '<div class="clear"></div>' +
+                                '</div>';
+            
+            $(target).append(active_nom_html);
+        }
+    }
+    
     function render_active_overview_stream(data, target){
         var active_nom_html = '';
         var nominator_name = '';
@@ -4716,6 +4835,9 @@ $(document).ready(function(){
         $.getJSON('/api/get_recent_stream/', {'access_token': fb_session.access_token}, function(data){
             remove_load();
             render_recent_stream(data, $('#recent_left_cont'));
+            if (data.length == 0){
+                get_stream_empty();
+            }
         });
     }
     
@@ -4734,17 +4856,49 @@ $(document).ready(function(){
         append_load($('#recent_left_cont'), 'light');
         $.getJSON('/api/get_winners_stream/', {'access_token': fb_session.access_token}, function(data){
             remove_load();
-            render_recent_stream(data, $('#recent_left_cont'));
+            if (data.length > 0){
+                $.getJSON('/api/get_history_stream/', {'access_token': fb_session.access_token}, function(data){
+                    if (data.length > 0){
+                        render_empty_overview_stream(data, $('#recent_left_cont'));
+                    }
+                });
+            }
+            else{
+                empty_html ='<div id="stream_empty">' +
+                                '<h1>There are no <span class="strong">Winning Photos</span></h1>' +
+                                '<ul>' +
+                                    '<li>' +
+                                        '<h3>You can solve this by completing one of the following actions:</h3>' +
+                                    '</li>' +
+                                    '<li>' +
+                                        '<p>Nominate one of your photos.</p>' +
+                                    '</li>' +
+                                    '<li>' +
+                                        '<p>Nominate your friend\'s photos.</p>' +
+                                    '</li>' +
+                                    '<li>' +
+                                        '<p>Nominate photos from the community.</p>' +
+                                    '</li>' +
+                                '</ul>' +
+                                '<div class="clear"></div>' +
+                            '</div>';
+
+                $('#recent_left_cont').append(empty_html);
+                
+                get_stream_empty();
+            }
         });
     }
     
     function get_more_stream_winners(id){
         scroll_loading = true;
         append_load($('#recent_left_cont'), 'light');
-        $.getJSON('/api/get_winners_stream/', {'access_token': fb_session.access_token, 'id': id, 'dir': 'old'}, function(data){
+        $.getJSON('/api/get_history_stream/', {'access_token': fb_session.access_token, 'id': id, 'dir': 'old'}, function(data){
             scroll_loading = false;
             remove_load();
-            render_recent_stream(data, $('#recent_left_cont'));
+            if (data.length > 0){
+                render_empty_overview_stream(data, $('#recent_left_cont'));
+            }
         });
     }
     
@@ -4762,7 +4916,7 @@ $(document).ready(function(){
                                         '<h1>Stream</h1>' +
                                         '<ul>' +
                                             '<li>' +
-                                                '<h2 id="stream_winners" class="sub_stream_nav" name="stream_winners">Winners</h2>' +
+                                                '<h2 id="stream_winners" class="sub_stream_nav" name="stream_winners">History</h2>' +
                                             '</li>' +
                                             '<li>' +
                                                 '<h2 id="stream_active" class="sub_stream_nav" name="stream_active">Active</h2>' +
@@ -6825,9 +6979,9 @@ $(document).ready(function(){
                 }
             }
             else if (view_active == 'stream_winners'){
-                var last_nom = $('.recent_nom_cont:last');
+                var last_nom = $('.community_active_cont:last');
                 
-                if ($(last_nom).hasClass('end') == false && $('.recent_nom_cont').length >= 10){
+                if ($(last_nom).hasClass('end') == false && $('.community_active_cont').length >= 10){
                     $(last_nom).addClass('end');
                     var id = $(last_nom).attr('id');
                     if (id){

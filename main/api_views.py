@@ -250,6 +250,56 @@ def get_recent_stream(request):
     data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
+def get_empty_recent_stream(request):
+    data = [ ]
+    access_token = request.GET.get('access_token')
+    dir = request.GET.get('dir')
+    id = request.GET.get('id')
+    page_size = request.GET.get('page_size')
+    
+    if not page_size:
+        page_size = 10
+    
+    PAGE_SIZE = int(page_size)
+    try:
+        portrit_user = get_user_from_access_token(access_token)
+        user = portrit_user.fb_user
+        friends = portrit_user.get_following_ids()
+        
+        if dir == 'new':
+            nomination = Nomination.objects.get(id=id)
+            nominations = Nomination.objects.filter(
+                Q(nominatee__in=friends) |
+                Q(nominatee=portrit_user) |
+                Q(nominator=portrit_user),
+                created_date__gt=nomination.created_date, 
+                removed=False, 
+                active=False).order_by('-created_date')[:PAGE_SIZE]
+        elif dir == 'old':
+            nomination = Nomination.objects.get(id=id)
+            nominations = Nomination.objects.filter(
+                Q(nominatee__in=friends) |
+                Q(nominatee=portrit_user) |
+                Q(nominator=portrit_user),
+                created_date__lt=nomination.created_date, 
+                removed=False, 
+                active=False).order_by('-created_date')[:PAGE_SIZE]
+        else:
+            nominations = Nomination.objects.filter(
+                Q(nominatee__in=friends) |
+                Q(nominatee=portrit_user) |
+                Q(nominator=portrit_user),
+                removed=False, 
+                active=False).order_by('-created_date')[:PAGE_SIZE]
+        
+        data = serialize_noms(nominations)
+
+    except Exception, err:
+        print err
+    
+    data = json.dumps(data)
+    return HttpResponse(data, mimetype='application/json')
+    
 @check_access_token
 def get_top_stream(request):
     data = [ ]
@@ -317,6 +367,49 @@ def get_winners_stream(request):
                 Q(nominatee=portrit_user) |
                 Q(nominator=portrit_user),
                 won=True).order_by('-created_date')[:PAGE_SIZE]
+        
+        data = serialize_noms(nominations)
+    except Exception, err:
+        print err
+    
+    data = json.dumps(data)
+    return HttpResponse(data, mimetype='application/json')
+    
+@check_access_token
+def get_history_stream(request):
+    PAGE_SIZE = 10
+    data = [ ]
+    access_token = request.GET.get('access_token')
+    dir = request.GET.get('dir')
+    id = request.GET.get('id')
+    
+    try:
+        portrit_user = get_user_from_access_token(access_token)
+        user = portrit_user.fb_user
+        friends = portrit_user.get_following_ids()
+        
+        if dir == 'new':
+            nomination = Nomination.objects.get(id=id)
+            nominations = Nomination.objects.filter(
+                Q(nominatee__in=friends) |
+                Q(nominatee=portrit_user) |
+                Q(nominator=portrit_user),
+                created_date__gt=nomination.created_date, 
+                removed=False).order_by('-created_date')[:PAGE_SIZE]
+        elif dir == 'old':
+            nomination = Nomination.objects.get(id=id)
+            nominations = Nomination.objects.filter(
+                Q(nominatee__in=friends) |
+                Q(nominatee=portrit_user) |
+                Q(nominator=portrit_user),
+                created_date__lt=nomination.created_date, 
+                removed=False).order_by('-created_date')[:PAGE_SIZE]
+        else:
+            nominations = Nomination.objects.filter(
+                Q(nominatee__in=friends) |
+                Q(nominatee=portrit_user) |
+                Q(nominator=portrit_user),
+                removed=False).order_by('-created_date')[:PAGE_SIZE]
         
         data = serialize_noms(nominations)
     except Exception, err:
@@ -1883,6 +1976,36 @@ def get_community_nominations(request):
     else:
         nominations = Nomination.objects.filter(active=True, 
                                                 won=False, 
+                                                public=True).order_by('-created_date')[:PAGE_SIZE]
+        data = serialize_noms(nominations)
+    
+    data = json.dumps(data)
+    return HttpResponse(data, mimetype='application/json')
+    
+def get_community_empty_nominations(request):
+    data = []
+    PAGE_SIZE = 10
+    id = request.GET.get('id')
+    dir = request.GET.get('dir')
+    
+    if dir == 'new':
+        nomination = Nomination.objects.get(id=id)
+        nominations = Nomination.objects.filter(created_date__gt=nomination.created_date, 
+                                                active=False, 
+                                                removed=False,
+                                                public=True).order_by('-created_date')[:PAGE_SIZE]
+        data = serialize_noms(nominations)
+    elif dir == 'old':
+        nomination = Nomination.objects.get(id=id)
+        nominations = Nomination.objects.filter(created_date__lt=nomination.created_date, 
+                                                active=False, 
+                                                removed=False,
+                                                public=True).order_by('-created_date')[:PAGE_SIZE]
+                                                
+        data = serialize_noms(nominations)
+    else:
+        nominations = Nomination.objects.filter(active=False, 
+                                                removed=False, 
                                                 public=True).order_by('-created_date')[:PAGE_SIZE]
         data = serialize_noms(nominations)
     

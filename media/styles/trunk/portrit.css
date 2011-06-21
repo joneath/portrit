@@ -2552,6 +2552,10 @@ div#community{
             #community_cont .community_active_cont{
                 margin-bottom:          10px;
             }
+            
+            #community_cont .community_active_cont.prev h3{
+                font-size:              20px;
+            }
         
             #recent_left_cont .community_photo_cont{
                 background-color:       #dedede;
@@ -4565,14 +4569,19 @@ div#context_overlay{
                 }
                 
 #stream_empty{
-    width:              500px;
     margin:             0 auto;
-    margin-top:         50px;
+    padding-bottom:     10px;
+    -webkit-box-shadow:     rgba(0, 0, 0, 0.496094) 0px 0px 4px 2px;
+    -moz-box-shadow:        0px 0px 4px 2px rgba(0, 0, 0, 0.5);
+    box-shadow:             rgba(0, 0, 0, 0.496094) 0px 0px 4px 2px;
 }
 
     #stream_empty h1{
-        color:              #F95057;
+        background-color:   #F95057;
+        color:              #fff;
         font-size:          26px;
+        padding:            10px;
+        text-align:         center;
     }
     
     #stream_empty h3{
@@ -4581,6 +4590,7 @@ div#context_overlay{
     
     #stream_empty ul{
         list-style:         none;
+        margin:             0px 30px;
         margin-top:         20px;
     }
     
@@ -5947,6 +5957,13 @@ div#latest_photos{
             z-index:                20001;
         }
         
+#empty_exp{
+    margin-left:    15px;
+    margin-top:     15px;
+    font-size:      22px;
+    font-weight:    bold
+}
+        
 .community_active_cont{
     border:         1px solid #dedede;
     margin:         10px;
@@ -5960,6 +5977,10 @@ div#latest_photos{
         text-align:     center;
         width:          200px;
         height:         150px;
+    }
+    
+    .community_active_cont .community_active_left_cont.lost{
+        float:          right;
     }
     
         .community_active_left_cont .trophy_img{
