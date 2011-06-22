@@ -394,7 +394,8 @@ def get_history_stream(request):
                 Q(nominatee__in=friends) |
                 Q(nominatee=portrit_user) |
                 Q(nominator=portrit_user),
-                created_date__gt=nomination.created_date, 
+                created_date__gt=nomination.created_date,
+                active=False,
                 removed=False).order_by('-created_date')[:PAGE_SIZE]
         elif dir == 'old':
             nomination = Nomination.objects.get(id=id)
@@ -402,13 +403,15 @@ def get_history_stream(request):
                 Q(nominatee__in=friends) |
                 Q(nominatee=portrit_user) |
                 Q(nominator=portrit_user),
-                created_date__lt=nomination.created_date, 
+                created_date__lt=nomination.created_date,
+                active=False,
                 removed=False).order_by('-created_date')[:PAGE_SIZE]
         else:
             nominations = Nomination.objects.filter(
                 Q(nominatee__in=friends) |
                 Q(nominatee=portrit_user) |
                 Q(nominator=portrit_user),
+                active=False,
                 removed=False).order_by('-created_date')[:PAGE_SIZE]
         
         data = serialize_noms(nominations)
