@@ -2772,7 +2772,12 @@ $(document).ready(function(){
                                 render_tut(tut_counts);
                             }
                             init_view();
-                            window.location.href = '/#!/community/';
+                            if (window.location.hash == '#!/community/'){
+                                update_view();
+                            }
+                            else{
+                                window.location.href = '/#!/community/';
+                            }
                         });
                         $('#wrapper').animate({
                             'opacity': '1.0'
@@ -3752,11 +3757,21 @@ $(document).ready(function(){
     function get_more_community_active(id){
         scroll_loading = true;
         append_load($('#recent_left_cont'), 'light');
-        $.getJSON('/api/get_community_nominations/', {'id': id, 'dir': 'old'}, function(data){
-            scroll_loading = false;
-            remove_load();
-            render_active_overview_stream(data, $('#recent_left_cont'));
-        });
+        
+        if ($('#stream_empty').length == 0){
+            $.getJSON('/api/get_community_nominations/', {'id': id, 'dir': 'old'}, function(data){
+                scroll_loading = false;
+                remove_load();
+                render_active_overview_stream(data, $('#recent_left_cont'));
+            });
+        }
+        else{
+            $.getJSON('/api/get_community_empty_nominations/', {'id': id, 'dir': 'old'}, function(data){
+                scroll_loading = false;
+                remove_load();
+                render_empty_overview_stream(data, $('#recent_left_cont'));
+            });
+        }
     }
     
     function init_community_top(){
@@ -4844,11 +4859,20 @@ $(document).ready(function(){
     function get_more_stream_active(id){
         scroll_loading = true;
         append_load($('#recent_left_cont'), 'light');
-        $.getJSON('/api/get_recent_stream/', {'access_token': fb_session.access_token, 'id': id, 'dir': 'old'}, function(data){
-            scroll_loading = false;
-            remove_load();
-            render_recent_stream(data, $('#recent_left_cont'));
-        });
+        if ($('#stream_empty').length == 0){
+            $.getJSON('/api/get_recent_stream/', {'access_token': fb_session.access_token, 'id': id, 'dir': 'old'}, function(data){
+                scroll_loading = false;
+                remove_load();
+                render_recent_stream(data, $('#recent_left_cont'));
+            });
+        }
+        else{
+            $.getJSON('/api/get_community_empty_nominations/', {'access_token': fb_session.access_token, 'id': id, 'dir': 'old'}, function(data){
+                scroll_loading = false;
+                remove_load();
+                render_empty_overview_stream(data, $('#recent_left_cont'));
+            });
+        }
     }
     
     function init_stream_winners(){
@@ -6957,9 +6981,9 @@ $(document).ready(function(){
         
         function load_more_data(){
             if (view_active == 'stream_active'){
-                var last_nom = $('.recent_nom_cont:last');
+                var last_nom = $('.community_active_cont:last');
                 
-                if ($(last_nom).hasClass('end') == false && $('.recent_nom_cont').length >= 10){
+                if ($(last_nom).hasClass('end') == false && $('.community_active_cont').length >= 10){
                     $(last_nom).addClass('end');
                     var id = $(last_nom).attr('id');
                     if (id){
