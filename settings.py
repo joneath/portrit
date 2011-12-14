@@ -133,14 +133,13 @@ else:
     FACEBOOK_APP_SECRET = "d6c5a3023e9b92aa4bae8dd7581deeaf"
     
     NODE_SOCKET = 8081
-    NODE_HOST = '10.194.11.77'
+    NODE_HOST = 'localhost'
     
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
             'LOCATION': [
-                '10.117.81.230:11211',
-                '10.245.79.53:11211',
+                '127.0.0.1:11211',
             ],
             'TIMEOUT': 60*60*24,
         }
@@ -160,7 +159,7 @@ else:
     POSTMARK_TEST_MODE = False
     
     try:
-        connect('portrit', host='10.244.17.88:27017,10.204.138.242:27017,10.202.206.232:27017')
+        connect('portrit')
     except:
         print "Could not connect to Mongo"
         
