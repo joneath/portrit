@@ -29,7 +29,7 @@
 
     <script src="http://www.google.com/jsapi?key=ABQIAAAAv9UUX4Bh3gRCpbzjSE5MxxSfZ7BxKgj6oXj1KRYYnjuHN0SsnBTx1B5nTeUxCB_k-Yerxn8ZVGvnLA" type="text/javascript"></script>
     <script type="text/javascript">
-        google.load("jquery", "1.5.2");
+        google.load("jquery", "1.7.1");
     </script>
 
     {% if analytics %}
@@ -71,7 +71,7 @@
     <script type="text/javascript">
     	if (window.location.hostname == 'portrit.com' || window.location.hostname == 'www.portrit.com' || window.location.hostname == 'm.portrit.com'){
     	    window.fbAsyncInit = function() {
-                FB.init({appId: '126374870731237', status: true, cookie: true, xfbml: true});
+                FB.init({appId: '126374870731237', status: true, cookie: true, oauth: true, xfbml: true});
                 clearTimeout(fb_server_timeout);
                 fb_server_timeout = setTimeout(fb_down, 6000);
                 FB.getLoginStatus(handleSessionResponse);
@@ -79,7 +79,7 @@
         }
         else if (window.location.hostname == 'test.portrit.com' || window.location.hostname == 'new.portrit.com'){
             window.fbAsyncInit = function() {
-                FB.init({appId: '123063501058161', status: true, cookie: true, xfbml: true});
+                FB.init({appId: '123063501058161', status: true, cookie: true, oauth: true, xfbml: true});
                 clearTimeout(fb_server_timeout);
                 fb_server_timeout = setTimeout(fb_down, 6000);
                 FB.getLoginStatus(handleSessionResponse);
@@ -87,7 +87,7 @@
         }
         else{
             window.fbAsyncInit = function() {
-                FB.init({appId: '155664697800227', status: true, cookie: true, xfbml: true});
+                FB.init({appId: '155664697800227', status: true, cookie: true, oauth: true, xfbml: true});
                 clearTimeout(fb_server_timeout);
                 fb_server_timeout = setTimeout(fb_down, 6000);
                 FB.getLoginStatus(handleSessionResponse);

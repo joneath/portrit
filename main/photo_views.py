@@ -37,19 +37,19 @@ def crop_to_size(image, resize_to, image_size, requested_size):
     height_request = requested_size[1]
     width_in = image_size[0]
     height_in = image_size[1]
-    
+
     crop_x0 = 0
     crop_y0 = 0
     crop_x1 = 0
     crop_y1 = 0
-    
+
     if resize_to:
         image.thumbnail(resize_to, Image.ANTIALIAS)
         width_in = image.size[0]
         height_in = image.size[1]
-    
+
     if width_request < width_in:
-        width_diff = width_in - width_request;
+        width_diff = width_in - width_request
         crop_x0 = int(floor(width_diff / 2))
         crop_x1 = crop_x0 + width_request
     else:
@@ -58,19 +58,20 @@ def crop_to_size(image, resize_to, image_size, requested_size):
     if height_request < height_in:
         height_diff = height_in - height_request
         crop_y0 = int(floor(height_diff / 2))
-        crop_y1 =crop_y0 + height_request
+        crop_y1 = crop_y0 + height_request
     else:
         crop_y1 = height_in
-    
+
     return image.crop((crop_x0, crop_y0, crop_x1, crop_y1))
-    
+
 def upload_photo(request):
     data = False
     try:
+        print "Here"
         cookie = facebook.get_user_from_cookie(
             request.COOKIES, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET)
+        print cookie
         access_token = request.POST.get('access_token')
-        from_iphone = request.POST.get('iphone')
         if cookie or access_token:
             user = None
             if cookie:
@@ -80,84 +81,76 @@ def upload_photo(request):
 
             file = request.FILES['file']
             file_name = str(uuid.uuid4())
-            
+
             file_loc = MEDIA_ROOT + '/photos/' + file_name
             destination = open(file_loc, 'wb+')
             for chunk in file.chunks():
                     destination.write(chunk)
             destination.close()
-            
+
             thumbnail_size_name = file_name + '_130.jpg'
             large_size_name = file_name + '_720.jpg'
             crop_size_name = file_name + '_crop.jpg'
             crop_small_size_name = file_name + '_crop_small.jpg'
             # iphone_size_name = file_name + '_iphone.jpg'
-            
+
             image = Image.open(file_loc)
             size = 130, 130
             image.thumbnail(size, Image.ANTIALIAS)
             image.save(file_loc + '_130.jpg', 'JPEG', quality=95)
-            thumb_img_size = image.size
-            
-            image = Image.open(file_loc)           
+
+            image = Image.open(file_loc)
             size = 720, 720
             image.thumbnail(size, Image.ANTIALIAS)
-                
+
             image.save(file_loc + '_720.jpg', 'JPEG', quality=95)
             large_img_size = image.size
-            
-            #iphone
-            # image.save(file_loc + '_iphone.jpg', 'JPEG', quality=80)
-            
+
             #Create crop section
-            cropped_image = crop_to_size(image, (300,300), large_img_size, (200, 150))
+            cropped_image = crop_to_size(image, (300, 300), large_img_size, (200, 150))
             cropped_image.save(file_loc + '_crop.jpg', 'JPEG', quality=95)
-            
+
             #Create small crop
-            small_cropped_image = crop_to_size(image, (200,200), large_img_size, (100, 100))
+            small_cropped_image = crop_to_size(image, (200, 200), large_img_size, (100, 100))
             small_cropped_image.save(file_loc + '_crop_small.jpg', 'JPEG', quality=95)
-            
+
             s = S3Bucket('cdn.portrit.com', access_key=AWS_KEY, secret_key=AWS_SECRET_KEY)
             thumbnail = open(file_loc + '_130.jpg', 'rb+')
             s.put(thumbnail_size_name, thumbnail.read(), acl="public-read")
             thumbnail.close()
-            
+
             large_image = open(file_loc + '_720.jpg', 'rb+')
             s.put(large_size_name, large_image.read(), acl="public-read")
             large_image.close()
-            
-            # iphone_image = open(file_loc + '_iphone.jpg', 'rb+')
-            # s.put(iphone_size_name, iphone_image.read(), acl="public-read")
-            # iphone_image.close()
-            
+
             cropped_image = open(file_loc + '_crop.jpg', 'rb+')
             s.put(crop_size_name, cropped_image.read(), acl="public-read")
             cropped_image.close()
-            
+
             small_cropped_image = open(file_loc + '_crop_small.jpg', 'rb+')
             s.put(crop_small_size_name, small_cropped_image.read(), acl="public-read")
             small_cropped_image.close()
 
             s3_url = "http://cdn.portrit.com/"
-            photo = Photo(path=file_loc, 
-                        thumbnail=(s3_url+thumbnail_size_name), 
-                        large=(s3_url+large_size_name),
+            photo = Photo(path=file_loc,
+                        thumbnail=(s3_url + thumbnail_size_name),
+                        large=(s3_url + large_size_name),
                         # iphone=(s3_url+iphone_size_name),
-                        crop=(s3_url+crop_size_name),
-                        crop_small=(s3_url+crop_small_size_name),
+                        crop=(s3_url + crop_size_name),
+                        crop_small=(s3_url + crop_small_size_name),
                         width=large_img_size[0],
                         height=large_img_size[1],
                         owner=user,
-                        active=True, 
+                        active=True,
                         pending=True)
             photo.save()
-            
+
             data = {'id': str(photo.id), 'thumb': photo.thumbnail, 'name': file.name}
     except Exception, err:
         print err
     data = json.dumps(data)
     return HttpResponse(data, mimetype='text/html')
-    
+
 def mark_photos_live(request):
     data = False
     try:
@@ -166,24 +159,20 @@ def mark_photos_live(request):
         access_token = request.POST.get('access_token')
         if cookie or access_token:
             public_perm = request.POST.get('public_perm')
-            if cookie:
-                user = Portrit_User.objects.get(fb_user__fid=int(cookie["uid"]))
-            else:
-                user = get_user_from_access_token(access_token)
-                
+
             photo_id_list = request.POST.get('photo_ids')
             photo_id_temp_list = photo_id_list.split(',')
-            photo_id_list = [ ]
+            photo_id_list = []
             for id in photo_id_temp_list:
                 try:
                     if id != '':
                         photo_id_list.append(id)
                 except Exception, err:
                     print err
-            
+
             if public_perm == 'true' or public_perm == '1':
                 public_perm = True
-                
+
             photos = Photo.objects.filter(id__in=photo_id_list).update(set__pending=False, set__public=public_perm)
             photos = Photo.objects.filter(id__in=photo_id_list)
             for photo in photos:
@@ -191,20 +180,20 @@ def mark_photos_live(request):
                     photo.delete_local_copy()
                 except Exception, err:
                     print err
-            
+
             data = {'photo': photos[0].get_photo(), 'id': str(photo_id_list[0])}
     except Exception, err:
         print err
     data = json.dumps(data)
     return HttpResponse(data, mimetype='text/html')
-    
+
 def post_photo_to_facebook(user, access_token, portrit_photos_album_fid, photo):
     now = datetime.now()
     name = str(photo.id) + '_' + str(now.strftime("%Y%m%dT%H%M%S")) + '.jpg'
     path = photo.path + '_720.jpg'
-    
+
     message = 'http://portrit.com/!#/' + user.username + '/photos/' + str(photo.id) + '/'
-    
+
     bitly_params = {
         'login': BITLY_LOGIN,
         'apiKey': BITLY_APIKEY,
@@ -216,14 +205,14 @@ def post_photo_to_facebook(user, access_token, portrit_photos_album_fid, photo):
     data = urllib2.urlopen(bitly_request_url).read()
     data = simplejson.loads(data)
     message = data['data']['url']
-    
+
     args = {
         'access_token': access_token,
         'message': message,
     }
-    
+
     register_openers()
-    
+
     url = 'https://graph.facebook.com/' + str(portrit_photos_album_fid) + '/photos?' + urllib.urlencode(args)
     params = {'file': open(path, "rb"), 'value': 'source', 'name': name, 'filetype': 'image/jpeg'}
     datagen, headers = multipart_encode(params)
@@ -237,12 +226,10 @@ def post_photo_to_facebook(user, access_token, portrit_photos_album_fid, photo):
         print e.reason
     except:
         pass
-        
+
 def create_portrit_photo_album(user):
     url = 'https://graph.facebook.com/me/albums'
-    values = {'access_token' : user.fb_user.access_token,
-              'name' : 'Portrit Photos',
-              }
+    values = {'access_token': user.fb_user.access_token, 'name': 'Portrit Photos'}
     data = urllib.urlencode(values)
     req = urllib2.Request(url, data)
     response = urllib2.urlopen(req)

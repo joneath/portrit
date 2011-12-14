@@ -84,8 +84,7 @@ def mark_nom_as_won(nom):
         nom.photo.trophy = True
         nom.photo.save()
         nom.save()
-        print "Nomination Won Saved"
-    
+
         #Notification Types
         new_nom_notification_type = Notification_Type.objects.get(name='new_nom')
         notification_type = Notification_Type.objects.get(name="nom_won")
@@ -102,8 +101,6 @@ def mark_nom_as_won(nom):
         nominatee.winning_noms.append(nom)
         nominatee.save()
     
-        print "Nominatee Winning Record Saved"
-        
         try:
             if nominatee.allow_winning_fb_album:
                 if not nominatee.portrit_fb_album_fid:
@@ -172,9 +169,9 @@ def mark_nom_as_won(nom):
             target_friends[friend.fb_user.fid] = friend
         for friend in active_commentors:
             target_friends[friend.fb_user.fid] = friend
-    
+
         Notification.objects.filter(nomination=nom, notification_type=new_nom_notification_type).update(set__active=False)
-        
+
         for friend in target_friends.keys():
             try:
                 notification = Notification(destination=nom.nominatee, owner=target_friends[friend], nomination=nom, notification_type=notification_type)
@@ -184,14 +181,11 @@ def mark_nom_as_won(nom):
             try:
                 friends_to_notify[friend] = target_friends[friend].get_notification_data()
                 friends_to_notify[friend]['notification_id'] = str(notification.id)
-                
+
                 {'fid': friend, 'notification_id': str(notification.id)}
             except:
                 pass
-    
-        print "Friends To Notify"        
-        print friends_to_notify
-    
+
         node_data = {
             'method': 'nom_won',
             'payload': {
@@ -219,7 +213,7 @@ def mark_nom_as_won(nom):
             sock.close()
         except:
             pass
-            
+
         #Send email notification
         if nominatee.email_on_follow:
             node_data = {

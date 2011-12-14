@@ -1,14 +1,12 @@
-from django.shortcuts import render_to_response, get_object_or_404, redirect
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotFound
+from django.shortcuts import render_to_response
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
-from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.core.cache import cache
-from django.utils.html import strip_tags
 
 from main.documents import *
 
-from settings import ENV, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, NODE_SOCKET, NODE_HOST
+from settings import NODE_SOCKET, NODE_HOST
 
 from portrit_fb import Portrit_FB
 from nomination_views import serialize_noms, serialize_nom
@@ -16,7 +14,7 @@ from top_users import get_top_users, get_interesting_users
 from twitter_utils import *
 
 from datetime import datetime
-import facebook, json, socket, time, math, itertools, oauth, httplib
+import facebook, json, socket, time, math, oauth, httplib
 
 CONSUMER = oauth.OAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET)
 CONSUMER_MOBILE = oauth.OAuthConsumer(MOBILE_CONSUMER_KEY, MOBILE_CONSUMER_SECRET)
@@ -29,14 +27,14 @@ def check_access_token(function=None):
                     access_token = request.GET.get('access_token')
                 else:
                     access_token = request.POST.get('access_token')
-                    
+
                 if access_token:
                     user = Portrit_User.objects.get(Q(fb_user__mobile_access_token=access_token) | Q(fb_user__access_token=access_token))
                     if user.fb_user.mobile_access_token == access_token or user.fb_user.access_token == access_token:
                         return view_func(request, *args, **kwargs)
             except Exception, err:
                 print err
-                
+
             return HttpResponse(json.dumps({'access_token': 'invalid'}), mimetype='application/json')
 
         _view.__name__ = view_func.__name__
@@ -44,7 +42,7 @@ def check_access_token(function=None):
         _view.__doc__ = view_func.__doc__
 
         return _view
-        
+
     if function is None:
         return _dec
     else:
@@ -57,31 +55,31 @@ def get_user_from_access_token(token):
             return user
     except Exception, err:
         print err
-        
+
     return None
 
 def sign_in_create(request):
-    data = [ ]
-    
+    data = []
+
     fb_user = request.POST.get('fb_user')
     access_token = request.POST.get('access_token')
-    
+
     user = Portrit_User.objects.filter(fb_user__fid=int(fb_user))
     if len(user) == 0:
         graph = facebook.GraphAPI(access_token)
         try:
             profile = graph.get_object("me")
             fb_user = FB_User(fid=profile['id'], mobile_access_token=access_token)
-            
+
             email = None
             try:
                 email = profile['email']
             except Exception, err:
                 print err
-            
+
             portrit_user = Portrit_User(active=False,
-                                        fb_user=fb_user, 
-                                        name=profile['name'], 
+                                        fb_user=fb_user,
+                                        name=profile['name'],
                                         email=email,
                                         allow_winning_fb_album=False)
             portrit_user.save()
@@ -90,7 +88,7 @@ def sign_in_create(request):
                 portrit.load_user_friends(True)
             except:
                 pass
-            
+
             data = {'auth': 'valid',
                     'new': True,
                     'access_token': access_token}
@@ -106,7 +104,7 @@ def sign_in_create(request):
                 email = profile['email']
             except Exception, err:
                 print err
-            
+
             user = user[0]
             if not user.fb_user.mobile_access_token:
                 user.fb_user.mobile_access_token = access_token
@@ -117,15 +115,15 @@ def sign_in_create(request):
                     user.save()
                 else:
                     access_token = user.fb_user.mobile_access_token
-            
+
             data = {'auth': 'valid',
                     'new': new,
                     'username': user.username,
                     'access_token': access_token}
-                    
+
         except:
             data = {'auth': 'invalid'}
-    
+
     data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
@@ -137,10 +135,10 @@ def check_username_availability(request):
         data = True
     except Exception, err:
         print err
-    
+
     data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
-    
+
 @check_access_token
 def add_username(request):
     data = False
@@ -148,26 +146,27 @@ def add_username(request):
     username = request.POST.get('username')
     post_wins_to_fb = request.POST.get('post_wins')
     email_notifications = request.POST.get('email_notifications')
-    
+
     try:
         user = get_user_from_access_token(access_token)
-        try: 
+        print user
+        try:
             Portrit_User.objects.get(username__iexact=username)
             data = False
         except:
             user.username = username
-            
+
             if post_wins_to_fb == '1' or post_wins_to_fb == 'true' or post_wins_to_fb == True:
                 user.allow_winning_fb_album = True
-            
+
             if email_notifications == '1' or email_notifications == 'true' or email_notifications == True:
                 user.email_on_follow = True
                 user.email_on_nomination = True
                 user.email_on_win = True
-            
+
             user.active = True
             user.save()
-            
+
             #Send email notification
             if user.email:
                 node_data = {
@@ -190,40 +189,38 @@ def add_username(request):
                     sock.close()
                 except Exception, err:
                     print err
-            
+
             data = {'username': username, 'name': user.name}
-            print data
     except Exception, err:
         print err
-    
+
     data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
 
 @check_access_token
 def get_recent_stream(request):
-    data = [ ]
+    data = []
     access_token = request.GET.get('access_token')
     dir = request.GET.get('dir')
     id = request.GET.get('id')
     page_size = request.GET.get('page_size')
-    
+
     if not page_size:
         page_size = 10
-    
+
     PAGE_SIZE = int(page_size)
     try:
         portrit_user = get_user_from_access_token(access_token)
-        user = portrit_user.fb_user
         friends = portrit_user.get_following_ids()
-        
+
         if dir == 'new':
             nomination = Nomination.objects.get(id=id)
             nominations = Nomination.objects.filter(
                 Q(nominatee__in=friends) |
                 Q(nominatee=portrit_user) |
                 Q(nominator=portrit_user),
-                created_date__gt=nomination.created_date, 
-                won=False, 
+                created_date__gt=nomination.created_date,
+                won=False,
                 active=True).order_by('-created_date')[:PAGE_SIZE]
         elif dir == 'old':
             nomination = Nomination.objects.get(id=id)
@@ -231,49 +228,48 @@ def get_recent_stream(request):
                 Q(nominatee__in=friends) |
                 Q(nominatee=portrit_user) |
                 Q(nominator=portrit_user),
-                created_date__lt=nomination.created_date, 
-                won=False, 
+                created_date__lt=nomination.created_date,
+                won=False,
                 active=True).order_by('-created_date')[:PAGE_SIZE]
         else:
             nominations = Nomination.objects.filter(
                 Q(nominatee__in=friends) |
                 Q(nominatee=portrit_user) |
                 Q(nominator=portrit_user),
-                won=False, 
+                won=False,
                 active=True).order_by('-created_date')[:PAGE_SIZE]
-        
+
         data = serialize_noms(nominations)
 
     except Exception, err:
         print err
-    
+
     data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
-    
+
 def get_empty_recent_stream(request):
-    data = [ ]
+    data = []
     access_token = request.GET.get('access_token')
     dir = request.GET.get('dir')
     id = request.GET.get('id')
     page_size = request.GET.get('page_size')
-    
+
     if not page_size:
         page_size = 10
-    
+
     PAGE_SIZE = int(page_size)
     try:
         portrit_user = get_user_from_access_token(access_token)
-        user = portrit_user.fb_user
         friends = portrit_user.get_following_ids()
-        
+
         if dir == 'new':
             nomination = Nomination.objects.get(id=id)
             nominations = Nomination.objects.filter(
                 Q(nominatee__in=friends) |
                 Q(nominatee=portrit_user) |
                 Q(nominator=portrit_user),
-                created_date__gt=nomination.created_date, 
-                removed=False, 
+                created_date__gt=nomination.created_date,
+                removed=False,
                 active=False).order_by('-created_date')[:PAGE_SIZE]
         elif dir == 'old':
             nomination = Nomination.objects.get(id=id)
@@ -281,32 +277,32 @@ def get_empty_recent_stream(request):
                 Q(nominatee__in=friends) |
                 Q(nominatee=portrit_user) |
                 Q(nominator=portrit_user),
-                created_date__lt=nomination.created_date, 
-                removed=False, 
+                created_date__lt=nomination.created_date,
+                removed=False,
                 active=False).order_by('-created_date')[:PAGE_SIZE]
         else:
             nominations = Nomination.objects.filter(
                 Q(nominatee__in=friends) |
                 Q(nominatee=portrit_user) |
                 Q(nominator=portrit_user),
-                removed=False, 
+                removed=False,
                 active=False).order_by('-created_date')[:PAGE_SIZE]
-        
+
         data = serialize_noms(nominations)
 
     except Exception, err:
         print err
-    
+
     data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
-    
+
 @check_access_token
 def get_top_stream(request):
-    data = [ ]
+    data = []
     PAGE_SIZE = 10
     access_token = request.POST.get('access_token')
     new_date = request.GET.get('new_date')
-    
+
     try:
         portrit_user = get_user_from_access_token(access_token)
         user = portrit_user.fb_user
@@ -324,34 +320,33 @@ def get_top_stream(request):
                 Q(nominatee=user) |
                 Q(nominator=user),
                 active=True, won=False).distinct('id').order_by('-current_vote_count', '-created_date')[:PAGE_SIZE]
-    
+
         data = serialize_noms(nominations)
     except Exception, err:
         print err
-    
+
     data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
-    
+
 @check_access_token
 def get_winners_stream(request):
     PAGE_SIZE = 10
-    data = [ ]
+    data = []
     access_token = request.GET.get('access_token')
     dir = request.GET.get('dir')
     id = request.GET.get('id')
-    
+
     try:
         portrit_user = get_user_from_access_token(access_token)
-        user = portrit_user.fb_user
         friends = portrit_user.get_following_ids()
-        
+
         if dir == 'new':
             nomination = Nomination.objects.get(id=id)
             nominations = Nomination.objects.filter(
                 Q(nominatee__in=friends) |
                 Q(nominatee=portrit_user) |
                 Q(nominator=portrit_user),
-                created_date__gt=nomination.created_date, 
+                created_date__gt=nomination.created_date,
                 won=True).order_by('-created_date')[:PAGE_SIZE]
         elif dir == 'old':
             nomination = Nomination.objects.get(id=id)
@@ -359,7 +354,7 @@ def get_winners_stream(request):
                 Q(nominatee__in=friends) |
                 Q(nominatee=portrit_user) |
                 Q(nominator=portrit_user),
-                created_date__lt=nomination.created_date, 
+                created_date__lt=nomination.created_date,
                 won=True).order_by('-created_date')[:PAGE_SIZE]
         else:
             nominations = Nomination.objects.filter(
@@ -367,27 +362,26 @@ def get_winners_stream(request):
                 Q(nominatee=portrit_user) |
                 Q(nominator=portrit_user),
                 won=True).order_by('-created_date')[:PAGE_SIZE]
-        
+
         data = serialize_noms(nominations)
     except Exception, err:
         print err
-    
+
     data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
-    
+
 @check_access_token
 def get_history_stream(request):
     PAGE_SIZE = 10
-    data = [ ]
+    data = []
     access_token = request.GET.get('access_token')
     dir = request.GET.get('dir')
     id = request.GET.get('id')
-    
+
     try:
         portrit_user = get_user_from_access_token(access_token)
-        user = portrit_user.fb_user
         friends = portrit_user.get_following_ids()
-        
+
         if dir == 'new':
             nomination = Nomination.objects.get(id=id)
             nominations = Nomination.objects.filter(
@@ -413,14 +407,14 @@ def get_history_stream(request):
                 Q(nominator=portrit_user),
                 active=False,
                 removed=False).order_by('-created_date')[:PAGE_SIZE]
-        
+
         data = serialize_noms(nominations)
     except Exception, err:
         print err
-    
+
     data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
-    
+
 def paginate_data(data, dir, pos):
     PAGE_SIZE = 10
     bottom = 0
@@ -432,36 +426,30 @@ def paginate_data(data, dir, pos):
             top = pos + PAGE_SIZE
         else:
             top = pos
-            
+
     if top - PAGE_SIZE > 0:
         bottom = top - PAGE_SIZE
-        
-    print top
-    print bottom
-        
+
     data = data[bottom:top]
-    print len(data)
     data = serialize_noms(data, bottom)
-    return data
-    
+
 def get_nom_detail(request):
-    data = [ ]
+    data = []
     PAGE_SIZE = 10
-    
+
     nom_id = request.GET.get('nom_id')
     cat = request.GET.get('cat')
     source = request.GET.get('source')
-    community = request.GET.get('community')
     nav_selected = request.GET.get('nav_selected')
     pos = request.GET.get('pos')
     dir = request.GET.get('dir')
-    
+
     try:
         nomination = Nomination.objects.get(id=nom_id)
     except:
         nomination = None
-        
-    following = [ ]
+
+    following = []
     if source and source != 'undefined':
         try:
             source = source.replace('=', '')
@@ -469,9 +457,9 @@ def get_nom_detail(request):
             source_following = source.get_following_ids()
         except:
             pass
-    
+
     if nav_selected == 'stream_active':
-        cat = cat.replace('-', ' ');
+        cat = cat.replace('-', ' ')
         data = Nomination.objects.filter(
             Q(nominatee__in=source_following) |
             Q(tagged_users__in=source_following) |
@@ -479,25 +467,25 @@ def get_nom_detail(request):
             Q(nominatee=source) |
             Q(nominator=source),
             nomination_category=cat,
-            active=True, 
+            active=True,
             won=False).order_by('-current_vote_count', '-created_date')
-                
+
         if dir:
             data = paginate_data(data, dir, pos)
-            
+
         elif nomination:
             try:
                 data = list(data)
                 selected_index = data.index(nomination)
                 top = 10
                 bottom = 0
-        
+
                 if selected_index - 5 > 0:
                     bottom = selected_index - 4
-        
+
                 if selected_index + 5 > top:
                     top = selected_index + 5
-            
+
                 data = data[bottom:top]
                 data = serialize_noms(data, bottom)
             except:
@@ -505,7 +493,7 @@ def get_nom_detail(request):
         else:
             data = data[:PAGE_SIZE]
             data = serialize_noms(data)
-        
+
     elif nav_selected == 'stream_winners':
         data = Nomination.objects.filter(
             Q(nominatee__in=source_following) |
@@ -514,8 +502,8 @@ def get_nom_detail(request):
             Q(nominatee=source) |
             Q(nominator=source),
             won=True).order_by('-created_date', '-current_vote_count')
-            
-            
+
+
         if dir:
             data = paginate_data(data, dir, pos)
 
@@ -539,13 +527,13 @@ def get_nom_detail(request):
         else:
             data = data[:PAGE_SIZE]
             data = serialize_noms(data)
-        
+
     elif nav_selected == 'community_active':
         if nomination:
             cat = nomination.nomination_category
             if nomination.active:
                 data = Nomination.objects.filter(
-                    nomination_category=cat, 
+                    nomination_category=cat,
                     active=True,
                     public=True,
                     won=False).order_by('-current_vote_count', '-created_date')
@@ -573,7 +561,7 @@ def get_nom_detail(request):
                 data = [serialize_nom(nomination)]
         else:
             data = Nomination.objects.filter(
-                nomination_category=cat, 
+                nomination_category=cat,
                 active=True,
                 public=True,
                 won=False).order_by('-current_vote_count', '-created_date')
@@ -594,19 +582,19 @@ def get_nom_detail(request):
 
                 data = data[bottom:top]
                 data = serialize_noms(data, bottom)
-        
+
     elif nav_selected == 'community_top':
         if nomination:
             cat = nomination.nomination_category
         else:
-            cat = cat.replace('-', ' ');
-            
+            cat = cat.replace('-', ' ')
+
         data = Nomination.objects.filter(
-            nomination_category=cat, 
+            nomination_category=cat,
             active=True,
             public=True,
             won=False).order_by('-current_vote_count', '-created_date')
-            
+
         if dir:
             data = paginate_data(data, dir, pos)
 
@@ -630,13 +618,13 @@ def get_nom_detail(request):
         else:
             data = data[:PAGE_SIZE]
             data = serialize_noms(data)
-        
+
     elif nav_selected == 'profile_trophies':
         if nomination:
             cat = nomination.nomination_category
         else:
-            cat = cat.replace('-', ' ');
-        
+            cat = cat.replace('-', ' ')
+
         if cat != 'all':
             data = Nomination.objects.filter(
                 Q(tagged_users__in=[source]) |
@@ -648,7 +636,7 @@ def get_nom_detail(request):
                 Q(tagged_users__in=[source]) |
                 Q(nominatee=source),
                 won=True).order_by('-created_date')
-            
+
         if dir:
             data = paginate_data(data, dir, pos)
 
@@ -672,10 +660,10 @@ def get_nom_detail(request):
         else:
             data = data[:PAGE_SIZE]
             data = serialize_noms(data)
-        
+
     elif nav_selected == 'profile_active':
         if cat:
-            cat = cat.replace('-', ' ');
+            cat = cat.replace('-', ' ')
             data = Nomination.objects.filter(
                 Q(nominatee__in=source_following) |
                 Q(tagged_users__in=source_following) |
@@ -683,15 +671,15 @@ def get_nom_detail(request):
                 Q(nominatee=source) |
                 Q(nominator=source),
                 nomination_category=cat,
-                active=True, 
+                active=True,
                 won=False).order_by('-current_vote_count', '-created_date')
         else:
             data = Nomination.objects.filter(
                 Q(tagged_users__in=[source]) |
                 Q(nominatee=source),
-                active=True, 
+                active=True,
                 won=False).order_by('-created_date', '-current_vote_count')
-            
+
         if dir:
             data = paginate_data(data, dir, pos)
 
@@ -715,29 +703,29 @@ def get_nom_detail(request):
         else:
             data = data[:PAGE_SIZE]
             data = serialize_noms(data)
-        
+
     else:
         data = [serialize_nom(nomination)]
 
     data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
-    
+
 @check_access_token
 def get_noms_in_cat(request):
-    data = [ ]
+    data = []
     PAGE_SIZE = 10
     # user = request.GET.get('fb_user')
     access_token = request.GET.get('access_token')
     nom_id = request.GET.get('nom_id')
     page = request.GET.get('page')
-    
+
     if not page:
         page = 1
-    
+
     try:
         user = get_user_from_access_token(access_token)
         following = user.get_following_ids()
-        
+
         nom = Nomination.objects.get(id=str(nom_id))
         noms_in_cat = Nomination.objects.filter(
             Q(nominatee__in=following) |
@@ -745,8 +733,8 @@ def get_noms_in_cat(request):
             Q(tagged_users__in=[user]) |
             Q(nominatee=user) |
             Q(nominator=user),
-            nomination_category=nom.nomination_category, 
-            active=True, 
+            nomination_category=nom.nomination_category,
+            active=True,
             won=False).order_by('-current_vote_count', '-created_date')[PAGE_SIZE * (page - 1): PAGE_SIZE * page]
         data = {
             'noms': serialize_noms(noms_in_cat),
@@ -754,39 +742,38 @@ def get_noms_in_cat(request):
         }
     except Exception, err:
         print err
-    
+
     data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
-    
+
 def get_user_wins_trophy_cat(request):
-    data = [ ]
-    PAGE_SIZE = 10
+    data = []
     user = request.GET.get('fb_user')
     nom_cat = request.GET.get('nom_cat')
     nom_id = request.GET.get('nom_id')
     page = request.GET.get('page')
-    
+
     if not page:
         page = 1
-        
+
     user = FB_User.objects.get(fid=int(user))
-    
+
     nom = Nomination.objects.get(id=int(nom_id))
-    winning_noms = Nomination.objects.filter(Q(nominatee=user) | 
-                                            Q(tagged_friends__fid__in=[user.fid]), 
-                                            nomination_category=nom_cat, 
+    winning_noms = Nomination.objects.filter(Q(nominatee=user) |
+                                            Q(tagged_friends__fid__in=[user.fid]),
+                                            nomination_category=nom_cat,
                                             won=True).distinct('id').order_by('-current_vote_count', '-created_date')
-    
+
     data = {
         'noms': serialize_noms(winning_noms),
         'selected_nom': serialize_nom(nom),
     }
-    
+
     data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
-    
+
 def get_all_wins_trophy_cat(request):
-    data = [ ]
+    data = []
     PAGE_SIZE = 10
     user = request.GET.get('source')
     nom_cat = request.GET.get('nom_cat')
@@ -795,15 +782,15 @@ def get_all_wins_trophy_cat(request):
 
     if not page:
         page = 1
-    
+
     user = FB_User.objects.get(fid=int(user))
     following = list(user.get_following().values_list('fid', flat=True))
     following.append(user.fid)
     nom = Nomination.objects.get(id=int(nom_id))
-    
-    winning_noms = Nomination.objects.select_related().filter(Q(nominatee__fid__in=following) | 
-                                                                Q(tagged_friends__fid__in=following), 
-                                                                nomination_category=nom_cat, 
+
+    winning_noms = Nomination.objects.select_related().filter(Q(nominatee__fid__in=following) |
+                                                                Q(tagged_friends__fid__in=following),
+                                                                nomination_category=nom_cat,
                                                                 won=True).distinct('id').order_by('-created_date', '-current_vote_count')[PAGE_SIZE * (page - 1):PAGE_SIZE * page]
     data = {
         'noms': serialize_noms(winning_noms),
@@ -812,10 +799,10 @@ def get_all_wins_trophy_cat(request):
 
     data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
-    
+
 @check_access_token
 def nominate_photo(request):
-    data = [ ]
+    data = []
 
     access_token = request.POST.get('access_token')
     photo_id = request.POST.get('photo_id')
@@ -828,12 +815,12 @@ def nominate_photo(request):
     try:
         nominator_portrit_user = get_user_from_access_token(access_token)
         nominatee_portrit_user = Portrit_User.objects.get(fb_user__fid=int(owner))
-        
+
         photo = Photo.objects.get(id=photo_id)
         photo.pending = False
         if public == 'true' or public == '1':
             photo.public = True
-            
+
         if len(photo.nominations) == 0:
             try:
                 if nominator_portrit_user == nominatee_portrit_user:
@@ -858,11 +845,11 @@ def nominate_photo(request):
                 nominator_portrit_user.save()
             except Exception, err:
                 print err
-            
-            nom_data = [ ]
+
+            nom_data = []
             notification_type = Notification_Type.objects.get(name="new_nom")
             tagged_notification = Notification_Type.objects.get(name="tagged_nom")
-            tagged_user_list = [ ]
+            tagged_user_list = []
             new_nomination = None
             for nomination in nominations:
                 if nomination != '':
@@ -871,7 +858,7 @@ def nominate_photo(request):
                     nomination = Nomination(nomination_category=nom_cat.title)
                     if comment_text != "":
                         nomination.caption = comment_text
-                        
+
                     nomination.nominatee = nominatee_portrit_user
                     nomination.nominator = nominator_portrit_user
                     nomination.photo = photo
@@ -882,14 +869,14 @@ def nominate_photo(request):
 
                     nomination.save()
                     new_nomination = nomination
-                    
+
                     try:
                         for tag in tags:
                             if tag != '':
                                 tagged_user = Portrit_User.objects.get(fb_user__fid=int(tag))
                                 tagged_user_list.append(tagged_user)
                                 nomination.tagged_users.append(tagged_user)
-                                
+
                                 try:
                                     notification = Notification(owner=tagged_user, source=nominator_portrit_user, destination=tagged_user, nomination=nomination, notification_type=tagged_notification)
                                     notification.save()
@@ -902,13 +889,13 @@ def nominate_photo(request):
 
                     photo.nominations.append(nomination)
                     photo.save()
-                
+
                     #Create notification record
                     if nominator_portrit_user.id != nominatee_portrit_user.id:
-                        notification = Notification(source=nominator_portrit_user, 
-                                                    destination=nominatee_portrit_user, 
-                                                    owner=nominatee_portrit_user, 
-                                                    nomination=nomination, 
+                        notification = Notification(source=nominator_portrit_user,
+                                                    destination=nominatee_portrit_user,
+                                                    owner=nominatee_portrit_user,
+                                                    nomination=nomination,
                                                     notification_type=notification_type)
                         notification.save()
                     else:
@@ -929,7 +916,7 @@ def nominate_photo(request):
                         'created_time': time.mktime(nomination.created_date.utctimetuple()),
                         'caption': comment_text,
                         'comments': False,
-                        'quick_comments': [ ],
+                        'quick_comments': [],
                         'comment_count': 0,
                         'photo': photo.get_photo(),
                         'vote_count': nomination.current_vote_count,
@@ -938,35 +925,35 @@ def nominate_photo(request):
                             'vote_name': nomination.nominator.name,
                         }],
                     }
-                    
+
                     if notification:
                         data['notification_id'] = str(notification.id)
-                        
+
                     nom_data.append(data)
 
             #Send update notification to event handlers
             tagged_user_list = list(set(tagged_user_list))
-            target_friends = [ ]
+            target_friends = []
             for tagged_user in tagged_user_list:
                 target_friends.append(tagged_user)
-                
+
             following_users = new_nomination.nominatee.get_follower_ids()
             following_users = Portrit_User.objects.filter(id__in=following_users)
-                
+
             for user in following_users:
                 target_friends.append(user)
-               
+
             if new_nomination.nominator.id != new_nomination.nominatee.id:
                 target_friends.append(new_nomination.nominatee)
-                
+
             target_friends = list(set(target_friends))
-            friends = { }
+            friends = {}
             for friend in target_friends:
                 try:
                     friends[friend.fb_user.fid] = friend.get_notification_data()
                 except:
-                    friends = { }
-                
+                    friends = {}
+
             node_data = {
                 'method': 'new_nom',
                 'payload': {
@@ -984,11 +971,10 @@ def nominate_photo(request):
                 sock.close()
             except Exception, err:
                 print err
-                
+
             #Send email notification
             if new_nomination.nominator.id != new_nomination.nominatee.id and new_nomination.nominatee.email_on_nomination:
                 user = new_nomination.nominatee
-                source = new_nomination.nominator
                 node_data = {
                     'email': True,
                     'method': 'new_nom',
@@ -1001,7 +987,7 @@ def nominate_photo(request):
                         'nom_id': str(new_nomination.id),
                     }
                 }
-                
+
                 node_data = json.dumps(node_data)
                 try:
                     sock = socket.socket(
@@ -1016,9 +1002,9 @@ def nominate_photo(request):
     except Exception, err:
         print err
 
-    data = json.dumps(data) 
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
-  
+
 @check_access_token   
 def vote_on_nomination(request):
     data = []
@@ -1027,9 +1013,9 @@ def vote_on_nomination(request):
     nomination_id = request.POST.get('nomination_id')
     access_token = request.POST.get('access_token')
     voter = get_user_from_access_token(access_token)
-    
+
     nomination = Nomination.objects.get(id=nomination_id)
-    
+
     if not voter in nomination.votes and nomination.active:
         if direction == 'up':
             nomination.current_vote_count += 1
@@ -1051,16 +1037,16 @@ def vote_on_nomination(request):
         target_friends = list(Portrit_User.objects.filter(id__in=target_friends))
         for vote in nomination.votes:
             target_friends.append(vote)
-            
+
         target_friends.append(nomination.nominatee)
             
-        friends = { }
+        friends = {}
         for friend in target_friends:
             try:
                 friends[friend.fb_user.fid] = friend.get_notification_data()
             except:
-                friends = { }
-        
+                friends = {}
+
         node_data = {
             'method': 'vote',
             'payload': {
@@ -1094,7 +1080,7 @@ def vote_on_nomination(request):
 
     data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
-    
+
 def get_follow_count(request):
     data = False
     user = request.GET.get('user')
@@ -1121,55 +1107,55 @@ def get_follow_count(request):
 
     data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
-  
+
 @check_access_token  
 def follow_unfollow_user(request):
-    data = [ ]
+    data = []
     access_token = request.POST.get('access_token')
     target = request.POST.get('target')
     method = request.POST.get('method')
-    
+
     try:
         source = get_user_from_access_token(access_token)
         target = Portrit_User.objects.get(username=target)
-        
+
         # Clear follow id cache
         try:
             cache.delete(str(source.id) + '_following_id')
             cache.delete(str(source.id) + '_follower_id')
-            
+
             cache.delete(str(target.id) + '_following_id')
             cache.delete(str(target.id) + '_follower_id')
         except:
             pass
-        
+
         if method == 'follow':
             pending = False
             if not target.allow_follows:
                 pending = True
-            
+
             following_rec = Follow(user=target, pending=pending)
             following_rec.save()
             source.following.append(following_rec)
             source.save()
-            
+
             #Create follower following user record
             follower_rec = Follow(user=source, pending=pending)
             follower_rec.save()
             target.followers.append(follower_rec)
             target.save()
-                
+
             #Create following notification
             try:
                 # if not follower_rec.pending_notification:
                 notification_type = Notification_Type.objects.get(name='new_follow')
                 notification = Notification(owner=target, source=source, destination=target, pending=pending, notification_type=notification_type)
                 notification.save()
-            
+
                 if pending:
                     following_rec.pending_notification = notification
                     following_rec.save()
-                
+
                 node_data = {
                     'method': 'new_follow',
                     'secondary_method': 'new_follow_update',
@@ -1183,7 +1169,7 @@ def follow_unfollow_user(request):
                         'pending': pending
                     }
                 }
-            
+
                 node_data = json.dumps(node_data)
                 try:
                     sock = socket.socket(
@@ -1191,10 +1177,10 @@ def follow_unfollow_user(request):
                     sock.connect((NODE_HOST, NODE_SOCKET))
                     sock.send(node_data)
                     sock.close()
-                    
+
                 except Exception, err:
                     print err
-                    
+
                 #Send email notification
                 if target.email_on_follow:
                     node_data = {
@@ -1220,7 +1206,7 @@ def follow_unfollow_user(request):
                         sock.close()
                     except Exception, err:
                         print err
-                        
+
             except Exception, err:
                 print err
 
@@ -1231,7 +1217,7 @@ def follow_unfollow_user(request):
                 for rec in following_record:
                     rec.active = False
                     rec.save()
-                
+
                 target_followers = target.followers
                 follower_record = filter(lambda follow: follow.user == source and follow.active == True, target_followers)
                 for rec in follower_record:
@@ -1240,14 +1226,14 @@ def follow_unfollow_user(request):
 
             except Exception, err:
                 print err
-            
+
         data = [True]
     except Exception, ex:
         print ex
-    
+
     data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
-    
+
 @check_access_token
 def follow_permission_submit(request):
     data = False
@@ -1258,9 +1244,9 @@ def follow_permission_submit(request):
         notification.active = False
         notification.read = True
         notification.pending = False
-        
+
         follow_rec = Follow.objects.filter(pending_notification=notification)
-        
+
         follower = notification.source
         owner = notification.owner
         
@@ -2208,9 +2194,8 @@ def get_comments(request):
 @check_access_token 
 def new_comment(request):
     data = False
-    notification_id = None
     access_token = request.POST.get('access_token')
-    
+
     try:
         portrit_user = get_user_from_access_token(access_token)
         user = portrit_user.fb_user
@@ -2219,43 +2204,41 @@ def new_comment(request):
         try:
             nomination = Nomination.objects.get(id=nomination_id)
             owner = nomination.nominatee
-            
-            # body = strip_tags(body)
-            
+
             comment = Comment(comment=body, owner=portrit_user, nomination=str(nomination.id))
             comment.save()
-            
+
             #update comment cache
             cache.delete(str(nomination.id) + '_comments')
-            
+
             #Save and re-serialize nom
             nomination.save()
-            
+
             portrit_user.comment_count += 1
             portrit_user.save()
-            
+
             voters = nomination.votes
-            all_commentors = [ ]
+            all_commentors = []
             for other_comment in Comment.objects.filter(nomination=str(nomination.id), active=True):
                 all_commentors.append(other_comment.owner)
-                
+
             tagged_users = nomination.tagged_users
-            
-            friends = { }
+
+            friends = {}
             friends[nomination.nominator.fb_user.fid] = nomination.nominator.get_notification_data()
             friends[owner.fb_user.fid] = owner.get_notification_data()
-                            
+
             #Attach target user
             for friend in all_commentors:
                 if friend.fb_user.fid != user.fid:
                     if friend.fb_user.fid != nomination.nominator.fb_user.fid:
                         friends[friend.fb_user.fid] = friend.get_notification_data()
-                
+
             for friend in voters:
                 if friend.fb_user.fid != user.fid:
                     if friend.fb_user.fid != nomination.nominator.fb_user.fid:
                         friends[friend.fb_user.fid] = friend.get_notification_data()
-                                                
+
             for friend in tagged_users:
                 if friend.fb_user.fid != user.fid:
                     if friend.fb_user.fid != nomination.nominator.fb_user.fid:
@@ -2272,10 +2255,10 @@ def new_comment(request):
                     friend['notification_id'] = str(notification.id)
                 else:
                     me_to_remove = friend_id
-                    
+
             if me_to_remove:
                 del friends[me_to_remove]
-                       
+
             node_data = {
                 'method': 'new_comment',
                 'secondary_method': 'new_comment_update',
@@ -2295,7 +2278,7 @@ def new_comment(request):
                     'friends': friends,
                 }
             }
-            
+
             node_comment_notification_data = json.dumps(node_data)
             try:
                 sock = socket.socket(
@@ -2311,31 +2294,30 @@ def new_comment(request):
             print err
     except Exception, err:
         print err
-    
-    data = json.dumps(data) 
+
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
-    
+
 # Flag Views
 @check_access_token
 def flag_photo(request):
     data = False
     photo_id = request.POST.get('photo_id')
-    nom_id = request.POST.get('nom_id')
     access_token = request.POST.get('access_token')
-    
+
     try:
         portrit_user = get_user_from_access_token(access_token)
         photo = Photo.objects.get(id=str(photo_id))
-        
+
         if len(filter(lambda flag: flag.flagger == portrit_user, photo.flags)) == 0:
             flag_rec = Photo_Flag(flagger=portrit_user, photo=photo)
             flag_rec.save()
             photo.flags.append(flag_rec)
-            
+
             if len(photo.flags) >= 3 and not photo.validated:
                 photo.active = False
                 Nomination.objects.filter(photo=photo).update(set__removed=True, set__active=False)
-                
+
             photo.save()
             #Create Email, Send to Admins
             try:
@@ -2353,28 +2335,28 @@ def flag_photo(request):
                 msg.send()
             except:
                 pass
-        
+
         data = True
     except Exception, err:
         print err
-    
-    data = json.dumps(data) 
+
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
 
 # Search Views  
 def search(request):
-    data = [ ]
+    data = []
     q = request.GET.get('q')
     source = request.GET.get('fb_user')
-    
+
     try:
         if source:
             source = Portrit_User.objects.get(fb_user__fid=int(source))
             source_following = source.get_following_ids()
             # source_following = Portrit_User.objects.filter(id__in=source_following)
         else:
-            source_following = [ ]
-            
+            source_following = []
+
         users = Portrit_User.objects.filter(Q(name__icontains=q) | Q(username__icontains=q), active=True)[:40]
         for user in users:
             if user.username:
@@ -2392,17 +2374,17 @@ def search(request):
                         'username': user.username,
                         'follow': True
                     })
-                
-        from operator import itemgetter  
+
+        from operator import itemgetter
         data = sorted(data, key=itemgetter('name'))
     except Exception, err:
         print err
-    
+
     data = json.dumps(data) 
     return HttpResponse(data, mimetype='application/json')
-    
+
 def combined_search(request):
-    data = [ ]
+    data = []
     q = request.GET.get('query')
     access_token = request.GET.get('access_token')
     SEARCH_LIMIT = 10
@@ -2412,7 +2394,7 @@ def combined_search(request):
             source = get_user_from_access_token(access_token)
             source_following = source.get_following_ids()
         else:
-            source_following = [ ]
+            source_following = []
 
         users = Portrit_User.objects.filter(Q(username__icontains=q) | Q(name__icontains=q), active=True)[:SEARCH_LIMIT]
         for user in users:
@@ -2434,30 +2416,30 @@ def combined_search(request):
                         'following': False
                     })
 
-        from operator import itemgetter  
+        from operator import itemgetter
         data = sorted(data, key=itemgetter('following', 'name'), reverse=True)
     except Exception, err:
         print err
 
     data = json.dumps(data) 
     return HttpResponse(data, mimetype='application/json')
-    
+
 def search_by_names(request):
     data = [ ]
     source = request.POST.get('source')
     names = request.POST.get('names')
-    
+
     try:
         if source:
             source = Portrit_User.objects.get(fb_user__fid=int(source))
             source_following = source.get_following_ids()
             # source_following = Portrit_User.objects.filter(id__in=source_following)
         else:
-            source_following = [ ]
-    
+            source_following = []
+
         names = names.split(',')
         users = Portrit_User.objects.filter(name__in=names, active=True)[:100]
-    
+
         for user in users:
             if user.username:
                 if user.id in source_following:
@@ -2474,31 +2456,31 @@ def search_by_names(request):
                         'username': user.username,
                         'follow': True
                     })
-                
-        from operator import itemgetter  
+
+        from operator import itemgetter
         data = sorted(data, key=itemgetter('name'))
     except Exception, err:
         print err
-    
-    data = json.dumps(data) 
+
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
-    
+
 def search_by_email(request):
-    data = [ ]
+    data = []
     source = request.POST.get('source')
     emails = request.POST.get('emails')
-    
+
     try:
         if source:
             source = Portrit_User.objects.get(fb_user__fid=int(source))
             source_following = source.get_following_ids()
             # source_following = Portrit_User.objects.filter(id__in=source_following)
         else:
-            source_following = [ ]
-    
+            source_following = []
+
         emails = emails.split(',')
         users = Portrit_User.objects.filter(email__in=emails, active=True)[:100]
-    
+
         for user in users.iterator():
             if user.username:
                 if user.id in source_following:
@@ -2515,27 +2497,27 @@ def search_by_email(request):
                         'username': user.username,
                         'follow': True
                     })
-                
-        from operator import itemgetter  
+
+        from operator import itemgetter
         data = sorted(data, key=itemgetter('name'))
     except Exception, err:
         print err
-    
-    data = json.dumps(data) 
+
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
 
 @check_access_token
 def get_user_settings(request):
-    data = { }
+    data = {}
     access_token = request.GET.get('access_token')
-    
+
     try:
         portrit_user = get_user_from_access_token(access_token)
         data = portrit_user.get_settings()
     except Exception, err:
         print err
 
-    data = json.dumps(data) 
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
 
 @check_access_token
@@ -2544,7 +2526,7 @@ def change_user_settings(request):
     access_token = request.POST.get('access_token')
     method = request.POST.get('method')
     value = request.POST.get('value')
-    
+
     try:
         portrit_user = get_user_from_access_token(access_token)
         if value == 1 or value == '1':
@@ -2572,34 +2554,33 @@ def change_user_settings(request):
             portrit_user.push_nominations = value
         elif method == 'push_wins':
             portrit_user.push_wins = value
-            
+
         portrit_user.save()
         data = portrit_user.get_settings()
     except Exception, err:
         print err
-    
-    data = json.dumps(data) 
+
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
- 
-@check_access_token    
+
+@check_access_token
 def auth_twitter(request):
-    data = ''
     CONNECTION = httplib.HTTPSConnection(SERVER)
-    
+
     access_token = request.GET.get('access_token')
     portrit_user = get_user_from_access_token(access_token)
-    
+
     token = get_unauthorised_request_token(CONSUMER, CONNECTION)
     auth_url = get_authorisation_url(CONSUMER, token)
-    
+
     twitter_user = Twitter_User(pending=True, unauthed_token=token.to_string())
     portrit_user.twitter_user = twitter_user
     portrit_user.save()
-    
+
     response = HttpResponseRedirect(auth_url)
-    request.session['unauthed_token'] = token.to_string()  
+    request.session['unauthed_token'] = token.to_string()
     return response
-    
+
 @check_access_token
 def deauth_twitter(request):
     data = False
@@ -2614,34 +2595,34 @@ def deauth_twitter(request):
         print "deauthed"
     except Exception, err:
         print err
-        
-    data = json.dumps(data) 
+
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
-    
+
 def return_twitter(request):
     unauthed_token = request.session.get('unauthed_token', None)
     if not unauthed_token:
         return HttpResponse("No un-authed token cookie")
-    token = oauth.OAuthToken.from_string(unauthed_token)   
+    token = oauth.OAuthToken.from_string(unauthed_token)
     if token.key != request.GET.get('oauth_token', 'no-token'):
         return HttpResponse("Something went wrong! Tokens do not match")
     verifier = request.GET.get('oauth_verifier')
-    access_token = exchange_request_token_for_access_token(CONSUMER, token, params={'oauth_verifier':verifier})
-    
+    access_token = exchange_request_token_for_access_token(CONSUMER, token, params={'oauth_verifier': verifier})
+
     portrit_user = Portrit_User.objects.get(twitter_user__unauthed_token=unauthed_token)
     portrit_user.twitter_user.access_token = access_token.to_string()
     portrit_user.twitter_user.pending = False
     portrit_user.save()
-    
+
     return render_to_response('close_popup.html', {'access_token': portrit_user.twitter_user.access_token}, context_instance=RequestContext(request))
-   
-@check_access_token   
+
+@check_access_token
 def save_mobile_twitter_token(request):
     data = False
     access_token = request.POST.get('access_token')
     twitter_access_token = request.POST.get('twitter_access_token')
     twitter_access_token_secret = request.POST.get('twitter_access_token_secret')
-    
+
     try:
         portrit_user = get_user_from_access_token(access_token)
         twitter_token = 'oauth_token_secret=' + twitter_access_token_secret + '&oauth_token=' + twitter_access_token
@@ -2654,69 +2635,68 @@ def save_mobile_twitter_token(request):
             portrit_user.twitter_user = twitter_user
 
         portrit_user.save()
-        
+
         data = True
     except Exception, err:
         print err
-    
-    data = json.dumps(data) 
+
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
-  
-@check_access_token  
+
+@check_access_token
 def share_twitter(request):
     data = False
-    
+
     access_token = request.POST.get('access_token')
     url = request.POST.get('url')
     status = request.POST.get('status')
     url = shorten_url(url)
-    
+
     if status != 'Caption':
         status = status + ' ' + url
     else:
         status = url
-    
+
     CONNECTION = httplib.HTTPSConnection(SERVER)
     try:
         portrit_user = get_user_from_access_token(access_token)
         twitter_access_token = portrit_user.twitter_user.get_access_token()
         token = oauth.OAuthToken.from_string(twitter_access_token['access_token'])
-        if twitter_access_token['mobile']:  
+        if twitter_access_token['mobile']:
             update_status(CONSUMER_MOBILE, CONNECTION, token, status)
         else:
             update_status(CONSUMER, CONNECTION, token, status)
-        
+
         data = True
     except Exception, err:
         print err
-        
-    data = json.dumps(data) 
+
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
 
-@check_access_token     
+@check_access_token
 def push_notifications(request):
     data = False
     access_token = request.POST.get('access_token')
     method = request.POST.get('method')
-    
+
     try:
         portrit_user = get_user_from_access_token(access_token)
-        
+
         if method == 'on':
-            portrit_user.push_notifications = True;
+            portrit_user.push_notifications = True
             portrit_user.save()
-            
+
         data = True
     except:
         pass
-        
-    data = json.dumps(data) 
+
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
-    
+
 def shorten_url_request(request):
     data = {'url': None}
     url = request.POST.get('url')
-    
     url = url.replace('http://www.portrit', 'http://portrit')
 
     try:
@@ -2724,36 +2704,36 @@ def shorten_url_request(request):
         data['url'] = url
     except Exception, err:
         data['url'] = url
-        
-    data = json.dumps(data) 
+
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')
 
-@check_access_token    
+@check_access_token
 def delete_account(request):
     data = False
     access_token = request.POST.get('access_token')
-    
+
     try:
         portrit_user = get_user_from_access_token(access_token)
-        
+
         # Get all user photos
         photos = Photo.objects.filter(owner=portrit_user).update(set__active=False)
-        
+
         # Get all user nominations
         nominations = Nomination.objects.filter(nominatee=portrit_user).update(set__active=False)
-        
+
         # Get all user follow/following records
         following = portrit_user.following.all().update(set__active=False)
         followers = portrit_user.followers.all().update(set__active=False)
-        
+
         Follow.objects.filter(user=portrit_user).update(set__active=False)
-        
+
         portrit_user.active = False
         portrit_user.save()
-        
+
         data = True
     except:
         pass
-        
-    data = json.dumps(data) 
+
+    data = json.dumps(data)
     return HttpResponse(data, mimetype='application/json')

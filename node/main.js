@@ -1,5 +1,5 @@
 var events = require('events');
-var sys = require('sys');
+var sys = require('util');
 var http = require('http');
 var https = require('https');
 var url = require("url");
@@ -425,7 +425,7 @@ var Portrit = function(){
                     response.writeHead(200, { "Content-Type": "text/plain" });
                     response.end(callback + '(' + JSON.stringify([]) + ')');
                 }
-            }
+            };
 
             var nom_timeout = setTimeout(function(){
                 try{
@@ -450,12 +450,13 @@ var Portrit = function(){
     });
     
     if (dev){
-        request_server.listen(8080, '192.168.1.126');
+        request_server.listen(8080, '192.168.2.113');
     }
     else{
         request_server.listen(8080, '10.117.57.137');
     }
-}
+};
+
 var portrit = new Portrit();
 
 var Base64 = {

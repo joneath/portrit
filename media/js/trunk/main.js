@@ -1,8 +1,6 @@
 $(document).ready(function(){
     $('#back').click(function(){
-        // if (window.location.hash !== '#' && window.location.hash !== '' && window.location.hash !== '#!/' && window.location.hash != null){
-            window.history.back();
-        // }
+        window.history.back();
     });
     
     $('#home, #logo_link').bind('click', function(){
@@ -112,7 +110,7 @@ $(document).ready(function(){
 });
 
     var ENV = 'LOCAL';
-    var HOST = 'http://192.168.1.126:8080/';
+    var HOST = 'http://192.168.2.113:8080/';
     
     if (window.location.hostname == 'test.portrit.com'){
         ENV = 'TEST';
@@ -356,7 +354,7 @@ $(document).ready(function(){
                 
             }
         }
-        FB.login(handleSessionResponse, {perms:'publish_stream,offline_access,email'});
+        FB.login(handleSessionResponse, {scope:'publish_stream,offline_access,email'});
     }
 
     var watch_hashtag_interval = null;
@@ -372,11 +370,8 @@ $(document).ready(function(){
             window.location.href = window_href_replace_query;
             return;
         }
-        // if (window.location.hash == ''){
-        //     window.location.hash = '#!/';
-        // }
         
-        if (!response.session) {
+        if (!response.authResponse) {
             view_active = 'login';
             if (getUrlVars().length > 0){
                 clearInterval(watch_hashtag);
@@ -403,7 +398,8 @@ $(document).ready(function(){
         
         public_view = false;
         global_hash_tag = window.location.hash;
-        fb_session = response.session;
+        fb_session = response.authResponse;
+        fb_session.access_token = fb_session.accessToken;
         
         $('#login_cont').remove();
         

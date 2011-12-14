@@ -30,7 +30,7 @@ def check_username(user):
             username = username.replace(' ', '-')
             if count > 0:
                 username += '-' + str(count)
-            try: 
+            try:
                 existing_user = Portrit_User.objects.get(username__iexact=username)
             except:
                 user.username = username
@@ -38,7 +38,7 @@ def check_username(user):
                 username_found = True
             count += 1
         else:
-            username_found = True 
+            username_found = True
 
 def login_fb_user(request):
     data = False
@@ -49,7 +49,6 @@ def login_fb_user(request):
             user = None
             data = True
             first = False
-            permission_request = True
             try:
                 user = Portrit_User.objects.get(fb_user__fid=int(cookie["uid"]))
             except:
@@ -61,22 +60,21 @@ def login_fb_user(request):
 
                 fb_user = FB_User(fid=str(profile["id"]), access_token=cookie["access_token"])
                 user, created = Portrit_User.objects.get_or_create(fb_user=fb_user)
-                
                 user.active = False
                 user.name = profile['name']
-                
+
                 try:
                     email = profile['email']
                     user.email = email
                 except:
                     pass
-                
+
                 user.save()
-            
+
                 first = True
                 portrit = Portrit_FB(graph, user, cookie["access_token"])
                 portrit.load_user_friends()
-            
+
             elif user.fb_user.access_token != cookie["access_token"]:
                 user.fb_user.access_token = cookie["access_token"]
                 if not user.email:
@@ -92,22 +90,22 @@ def login_fb_user(request):
                 # graph = facebook.GraphAPI(cookie["access_token"])
                 # portrit = Portrit_FB(graph, user, cookie["access_token"])
                 # portrit.load_user_friends(True)
-        
+
             if not user.username:
                 first = True
             data = get_user_data(user)
-            
+
             data['username'] = user.username
             data['first'] = first
             data['allow_winning_fb_album'] = user.allow_winning_fb_album
             data['allow_public_follows'] = user.allow_follows
-            
+
         except Exception, err:
             print err
 
-    data = simplejson.dumps(data) 
+    data = simplejson.dumps(data)
     return HttpResponse(data, mimetype='application/json')
-    
+
 def create_portrit_album(portrit_user):
     url = 'https://graph.facebook.com/me/albums'
     values = {'access_token' : portrit_user.fb_user.get_access_token(),
@@ -120,7 +118,7 @@ def create_portrit_album(portrit_user):
     data = simplejson.loads(data)
     portrit_user.portrit_fb_album_fid = data['id']
     portrit_user.save()
-    
+
 def update_user_friends(request):
     data = False
     try:
@@ -132,7 +130,7 @@ def update_user_friends(request):
         data = True
     except:
         pass
-    data = simplejson.dumps(data) 
+    data = simplejson.dumps(data)
     return HttpResponse(data, mimetype='application/json')
     
 def logout_user(request):
